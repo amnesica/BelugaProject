@@ -1,0 +1,82 @@
+#map_canvas {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  visibility: visible;
+}
+
+#smallInfoBox {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  border-radius: 0rem;
+  padding: 0%;
+  background-color: #efeff4;
+  width: 10rem;
+}
+
+/** Wichtig, damit Schrift richtig angezeigt wird! */
+::ng-deep .mat-typography p {
+  margin: 0 0 0px !important;
+}
+
+mat-grid-tile div {
+  width: 100%;
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+mat-card-header {
+  height: 3rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+}
+
+#rangeDataPopup {
+  padding: 0%;
+  position: absolute;
+  background-color: #efeff4;
+  left: -49px;
+  min-width: 16rem;
+  z-index: 5;
+}
+
+#rangeDataPopup:after {
+  top: 100%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+}
+
+#rangeDataPopup:after {
+  border-top-color: #efeff4;
+  border-width: 10px;
+  left: 48px;
+  margin-left: -10px;
+  z-index: 5;
+}
+
+::ng-deep .ol-zoom {
+  top: 4rem !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+::ng-deep .ol-control button {
+  background-color: rgba(0, 0, 0, 1) !important;
+}
+
+::ng-deep .ol-attribution.ol-uncollapsible {
+  font-size: smaller !important;
+  padding: 0;
+}
+
+::ng-deep .ol-scale-line {
+  background: rgba(0, 0, 0, 0.4) !important;
+}

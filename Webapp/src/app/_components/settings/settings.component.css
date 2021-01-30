@@ -1,0 +1,57 @@
+.settingsDiv {
+  position: fixed;
+  border-radius: 0px;
+  background-color: #efeff4;
+  margin-top: 3.5rem;
+  right: 0;
+  top: 0;
+  color: black;
+  font-size: 14px;
+  bottom: 0;
+  overflow: auto;
+}
+
+::ng-deep .cdk-overlay-container {
+  z-index: 1500 !important;
+}
+
+::ng-deep .mat-tab-list {
+  background-color: #303030;
+  color: white;
+}
+
+/* Erhöhe min-width, wenn mehr tabs gezeigt werden sollen */
+::ng-deep .mat-tab-label {
+  color: white;
+  background-color: none;
+  height: 3.5rem !important;
+  min-width: 33.3% !important;
+}
+
+::ng-deep .mat-tab-label-active {
+  color: #f8c023;
+}
+
+::ng-deep .mat-ink-bar {
+  background-color: var(--primary-color, #f8c023) !important;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #f8c023;
+}
+
+.time-picker {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.info-text-range-data {
+  margin-top: 1rem;
+  white-space: normal;
+  line-height: 1rem;
+}
+
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+}

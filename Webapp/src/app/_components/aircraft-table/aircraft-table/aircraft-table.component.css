@@ -1,0 +1,103 @@
+.aircraft-table-div {
+  position: fixed;
+  border-radius: 0px;
+  background-color: #efeff4;
+  margin-top: 3.5rem;
+  right: 0;
+  top: 0;
+  color: black;
+  font-size: 14px;
+  overflow: auto;
+  bottom: 0;
+}
+
+.aircraft-table {
+  margin-top: 3.5rem;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-sort-header-sorted {
+  color: black;
+}
+
+.mat-row {
+  height: auto;
+  padding-left: 0.5rem;
+  line-height: 1.5rem;
+}
+
+.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
+  padding-right: 0.5rem;
+}
+
+.mat-header-cell {
+  background-color: #303030;
+  color: white;
+}
+
+.mat-cell {
+  background-color: #efeff4 !important;
+}
+
+.form-field-filter {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  background-color: #303030;
+  color: white;
+  padding-top: 0.5rem;
+}
+
+::ng-deep .mat-sort-header-arrow {
+  color: #f8c023 !important;
+}
+
+.mat-column-altitude,
+.mat-column-verticalRate,
+.mat-column-speed,
+.mat-column-track,
+.mat-column-lastSeen,
+.mat-column-distance {
+  text-align: right;
+  justify-content: flex-end;
+}
+
+.mat-column-feeder,
+.mat-column-hex,
+.mat-column-operator-country,
+.mat-column-type,
+.mat-column-registration {
+  text-align: center;
+  justify-content: center;
+}
+
+::ng-deep
+  .mat-checkbox-checked.mat-accent
+  .mat-checkbox-ripple
+  .mat-ripple-element {
+  background-color: #f8c023 !important;
+}
+
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #f8c023;
+}
+
+.selected {
+  background-color: lightgray !important;
+}
+
+::placeholder {
+  color: lightgray;
+}
+
+th.mat-header-cell:first-of-type,
+td.mat-cell:first-of-type,
+td.mat-footer-cell:first-of-type {
+  padding-left: 1rem;
+}

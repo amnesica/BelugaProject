@@ -1,0 +1,1796 @@
+<!-- Verbieten des Zooms auf Info-Elementen -->
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+/>
+
+<!-- große Info-Box Variante (wird als erstes auf dem Desktop angezeigt) -->
+<mat-card
+  id="largeInfo"
+  *ngIf="showInfoLarge"
+  [style.width]="widthInfoBox"
+  [style.top]="topInfoBox"
+>
+  <mat-card-header>
+    <!-- flightId -->
+    <mat-card-title *ngIf="aircraft.flightId" style="color: #f8c023">
+      {{ aircraft.flightId }}
+    </mat-card-title>
+    <mat-card-title *ngIf="!aircraft.flightId" style="color: #f8c023">
+      N/A
+    </mat-card-title>
+
+    <!-- operator name -->
+    <mat-card-subtitle *ngIf="aircraft.operatorName" style="color: #d5d5d5">{{
+      aircraft.operatorName
+    }}</mat-card-subtitle>
+    <mat-card-subtitle *ngIf="!aircraft.operatorName" style="color: #d5d5d5">
+      N/A
+    </mat-card-subtitle>
+
+    <!-- close button -->
+    <button mat-button id="closeButton" (click)="closeInfoBox()">
+      <mat-icon aria-hidden="false" aria-label="close window">close</mat-icon>
+    </button>
+  </mat-card-header>
+
+  <mat-card-content>
+    <!-- aircraft photo -->
+    <img
+      *ngIf="aircraft.urlPhotoDirect != 'noPhotoFound'"
+      mat-card-image
+      [src]="aircraft.urlPhotoDirect"
+      style="width: 100%; margin: 0%"
+    />
+    <img
+      *ngIf="aircraft.urlPhotoDirect == 'noPhotoFound'"
+      mat-card-image
+      src="../../../assets/placeholder_aircraft_photo.jpg"
+      style="width: 100%; margin: 0%"
+    />
+
+    <!-- Link zur Website mit dem Flugzeug-Photo -->
+    <div
+      *ngIf="aircraft.urlPhotoWebsite != 'noPhotoFound'"
+      style="position: relative; display: flex; align-items: center"
+    >
+      <a
+        href="{{ aircraft.urlPhotoWebsite }}"
+        target="_blank"
+        style="vertical-align: middle; position: absolute; right: 0.75rem"
+      >
+        <mat-icon aria-hidden="false" style="color: black">link</mat-icon></a
+      >
+      <span style="vertical-align: middle; padding-left: 0.75rem">
+        Link to aircraft photo</span
+      >
+    </div>
+
+    <mat-grid-list
+      cols="12"
+      rowHeight="1.2rem"
+      style="background-color: lightgrey"
+    >
+      <!-- origin value -->
+      <mat-grid-tile colspan="5" rowspan="2">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            padding-left: 1.8rem;
+            font-weight: 500;
+            padding-top: 0.1rem;
+          "
+        >
+          <p *ngIf="aircraft.originIataCode">
+            {{ aircraft.originIataCode }}
+          </p>
+          <p *ngIf="!aircraft.originIataCode">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- Flugzeug-Icon zum Anzeigen der Flugphase -->
+      <mat-grid-tile colspan="2" rowspan="2">
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0%;
+            padding-top: 0%;
+          "
+        >
+          <span
+            style="
+              height: 2.4rem;
+              width: 2.4rem;
+              background-color: white;
+              border-radius: 50%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              padding-left: 0%;
+            "
+          >
+            <mat-icon
+              *ngIf="aircraft.aircraftState && aircraft.aircraftState == 'UP'"
+              style="color: #f8c023"
+              >flight_takeoff</mat-icon
+            >
+            <mat-icon
+              *ngIf="aircraft.aircraftState && aircraft.aircraftState == 'DOWN'"
+              style="color: #f8c023"
+              >flight_land</mat-icon
+            >
+            <mat-icon *ngIf="!aircraft.aircraftState" style="color: #f8c023"
+              >help_outline</mat-icon
+            >
+            <img
+              *ngIf="aircraft.aircraftState && aircraft.aircraftState == 'HOLD'"
+              mat-card-image
+              src="../../../assets/flight_horiz.svg"
+              style="stroke: #f8c023; width: 60%; margin: 0%"
+            />
+            <img
+              *ngIf="
+                aircraft.aircraftState && aircraft.aircraftState == 'GROUND'
+              "
+              mat-card-image
+              src="../../../assets/flight_ground.svg"
+              style="stroke: #f8c023; width: 60%; margin: 0%"
+            />
+          </span>
+        </div>
+      </mat-grid-tile>
+
+      <!-- destination value -->
+      <mat-grid-tile colspan="5" rowspan="2">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            padding-right: 2.4rem;
+            font-weight: 500;
+            padding-top: 0.1rem;
+          "
+        >
+          <p *ngIf="aircraft.destinationIataCode">
+            {{ aircraft.destinationIataCode }}
+          </p>
+          <p *ngIf="!aircraft.destinationIataCode">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- origin value as full town -->
+      <mat-grid-tile
+        colspan="6"
+        rowspan="1"
+        style="border-right: 0.1em solid #fff"
+      >
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #393939;
+            padding-top: 0.1rem;
+            word-wrap: break-word;
+          "
+        >
+          <p *ngIf="aircraft.originFullTown">{{ aircraft.originFullTown }}</p>
+          <p *ngIf="!aircraft.originFullTown">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- destination value as full town -->
+      <mat-grid-tile colspan="6" rowspan="1">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #393939;
+            padding-top: 0.1rem;
+            word-wrap: break-word;
+          "
+        >
+          <p *ngIf="aircraft.destinationFullTown">
+            {{ aircraft.destinationFullTown }}
+          </p>
+          <p *ngIf="!aircraft.destinationFullTown">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- ident code origin airport -->
+      <mat-grid-tile
+        colspan="6"
+        rowspan="1"
+        style="border-right: 0.1em solid #fff"
+      >
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            text-transform: uppercase;
+            color: #a4a1a1;
+            font-size: 0.8rem;
+            font-weight: 800;
+          "
+        >
+          <p *ngIf="aircraft.origin">({{ aircraft.origin }})</p>
+          <p *ngIf="!aircraft.origin">(N/A)</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- ident code destination airport -->
+      <mat-grid-tile colspan="6" rowspan="1">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            text-transform: uppercase;
+            color: #a4a1a1;
+            font-size: 0.8rem;
+            font-weight: 800;
+          "
+        >
+          <p *ngIf="aircraft.destination">({{ aircraft.destination }})</p>
+          <p *ngIf="!aircraft.destination">(N/A)</p>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+
+    <mat-grid-list cols="9" rowHeight="1.75rem" style="background-color: white">
+      <!-- short information label -->
+      <mat-grid-tile colspan="9" rowspan="1" style="background-color: #efeff4">
+        <div
+          style="
+            background: #327db6;
+            color: white;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: large;
+            padding-left: 0;
+            font-weight: bold;
+          "
+        >
+          <p>Short information</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- space at left side -->
+      <mat-grid-tile colspan="1" rowspan="10" style="background-color: #efeff4">
+        <div
+          style="
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0%;
+            padding: 0%;
+            padding-top: 50%;
+          "
+        >
+          <mat-icon aria-hidden="false">info</mat-icon>
+        </div>
+      </mat-grid-tile>
+
+      <!-- type (short) -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Aircraft Type</p>
+          <p *ngIf="aircraft.type" style="font-size: larger; font-weight: bold">
+            {{ aircraft.type }}
+          </p>
+          <p
+            *ngIf="!aircraft.type"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- registration -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Registration</p>
+          <p
+            *ngIf="aircraft.registration"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.registration }}
+          </p>
+          <p
+            *ngIf="!aircraft.registration"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- hex -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">ICAO 24-bit address</p>
+          <p *ngIf="aircraft.hex" style="font-size: larger; font-weight: bold">
+            {{ aircraft.hex }}
+          </p>
+          <p *ngIf="!aircraft.hex" style="font-size: larger; font-weight: bold">
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- altitude -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Altitude</p>
+          <p
+            *ngIf="aircraft.altitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.altitude }} ft
+          </p>
+          <p
+            *ngIf="!aircraft.altitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- vertical speed -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Vertical Speed</p>
+          <p
+            *ngIf="aircraft.verticalRate != -9999999"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.verticalRate }} ft/min
+          </p>
+          <p
+            *ngIf="aircraft.verticalRate == -9999999"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- speed -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Speed</p>
+          <p
+            *ngIf="aircraft.speed"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.speed }} kn
+          </p>
+          <p
+            *ngIf="!aircraft.speed"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- track -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Track</p>
+          <p
+            *ngIf="aircraft.track != -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.track }}°
+          </p>
+          <p
+            *ngIf="aircraft.track == -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- last Seen -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Last Seen</p>
+          <p
+            *ngIf="aircraft.lastSeen != -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.lastSeen }} s
+          </p>
+          <p
+            *ngIf="aircraft.lastSeen == -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- feeder -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Feeder</p>
+          <p
+            *ngIf="aircraft.feeder"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.feeder }}
+          </p>
+          <p
+            *ngIf="!aircraft.feeder"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- distance -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Distance</p>
+          <p
+            *ngIf="aircraft.distance"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.distance }} km
+          </p>
+          <p
+            *ngIf="!aircraft.distance"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- more information label -->
+      <mat-grid-tile colspan="9" rowspan="1" style="background-color: #efeff4">
+        <div
+          style="
+            background: #327db6;
+            color: white;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: large;
+            padding-left: 0;
+            font-weight: bold;
+          "
+        >
+          <p>More information</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- aircraft label -->
+      <mat-grid-tile colspan="9" rowspan="1" style="background-color: #efeff4">
+        <div
+          style="
+            background: #303030;
+            color: white;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: large;
+            padding-left: 0;
+            font-weight: bold;
+          "
+        >
+          <p>Aircraft</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- space at left side -->
+      <mat-grid-tile colspan="1" rowspan="10" style="background-color: #efeff4">
+        <div
+          style="
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0%;
+            padding: 0%;
+            padding-top: 50%;
+          "
+        >
+          <mat-icon aria-hidden="false">flight</mat-icon>
+        </div>
+      </mat-grid-tile>
+
+      <!-- type -->
+      <mat-grid-tile colspan="8" rowspan="2" style="background-color: #efeff4">
+        <div *ngIf="aircraft.type">
+          <p style="color: grey">Aircraft Type ({{ aircraft.type }})</p>
+          <p
+            *ngIf="aircraft.fullType"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.fullType }}
+          </p>
+          <p
+            *ngIf="!aircraft.fullType"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+        <div *ngIf="!aircraft.type">
+          <p style="color: grey">Aircraft Type (N/A)</p>
+          <p
+            *ngIf="aircraft.fullType"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.fullType }}
+          </p>
+          <p
+            *ngIf="!aircraft.fullType"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- category -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Category</p>
+          <p
+            *ngIf="aircraft.category"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.category }}
+          </p>
+          <p
+            *ngIf="!aircraft.category"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- icao aircraft type -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">ICAO aircraft type</p>
+          <p
+            *ngIf="aircraft.icaoAircraftType"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.icaoAircraftType }}
+          </p>
+          <p
+            *ngIf="!aircraft.icaoAircraftType"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- engines -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Engines</p>
+          <p
+            *ngIf="aircraft.engines"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.engines }}
+          </p>
+          <p
+            *ngIf="!aircraft.engines"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- age -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Age</p>
+          <p *ngIf="aircraft.age" style="font-size: larger; font-weight: bold">
+            {{ aircraft.age }} Years
+          </p>
+          <p *ngIf="!aircraft.age" style="font-size: larger; font-weight: bold">
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- serial number -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Serial number</p>
+          <p
+            *ngIf="aircraft.serialNumber"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.serialNumber }}
+          </p>
+          <p
+            *ngIf="!aircraft.serialNumber"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- line number -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Line number</p>
+          <p
+            *ngIf="aircraft.lineNumber"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.lineNumber }}
+          </p>
+          <p
+            *ngIf="!aircraft.lineNumber"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- built date -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Built</p>
+          <p
+            *ngIf="aircraft.built"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.built }}
+          </p>
+          <p
+            *ngIf="!aircraft.built"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- first flight -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">First flight</p>
+          <p
+            *ngIf="aircraft.firstFlightDate"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.firstFlightDate }}
+          </p>
+          <p
+            *ngIf="!aircraft.firstFlightDate"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- registration label -->
+      <mat-grid-tile colspan="9" rowspan="1" style="background-color: #efeff4">
+        <div
+          style="
+            background: #303030;
+            color: white;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: large;
+            padding-left: 0;
+            font-weight: bold;
+          "
+        >
+          <p>Registration</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- space at left side -->
+      <mat-grid-tile colspan="1" rowspan="10" style="background-color: #efeff4">
+        <div
+          style="
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0%;
+            padding: 0%;
+            padding-top: 50%;
+          "
+        >
+          <mat-icon aria-hidden="false">domain</mat-icon>
+        </div>
+      </mat-grid-tile>
+
+      <!-- registration -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Registration</p>
+          <p
+            *ngIf="aircraft.registration"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.registration }}
+          </p>
+          <p
+            *ngIf="!aircraft.registration"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- country registration -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Country Registration</p>
+          <p
+            *ngIf="aircraft.regCodeName && aircraft.regCodeNameFlag"
+            style="font-size: larger; font-weight: bold"
+          >
+            <span [innerHTML]="aircraft.regCodeNameFlag"></span>
+            {{ aircraft.regCodeName }}
+          </p>
+          <p
+            *ngIf="!aircraft.regCodeName && !aircraft.regCodeNameFlag"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- registered since -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Registered since</p>
+          <p
+            *ngIf="aircraft.registered"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.registered }}
+          </p>
+          <p
+            *ngIf="!aircraft.registered"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- registered until -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Registered until</p>
+          <p
+            *ngIf="aircraft.regUntil"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.regUntil }}
+          </p>
+          <p
+            *ngIf="!aircraft.regUntil"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- operator name -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Operator</p>
+          <p
+            *ngIf="aircraft.operatorName"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.operatorName }}
+          </p>
+          <p
+            *ngIf="!aircraft.operatorName"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- country operator -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Country Operator</p>
+          <p
+            *ngIf="aircraft.operatorCountry && aircraft.operatorCountryFlag"
+            style="font-size: larger; font-weight: bold"
+          >
+            <span [innerHTML]="aircraft.operatorCountryFlag"></span>
+            {{ aircraft.operatorCountry }}
+          </p>
+          <p
+            *ngIf="!aircraft.operatorCountry && !aircraft.operatorCountryFlag"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- callsign operator -->
+      <mat-grid-tile colspan="8" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Operator Callsign</p>
+          <p
+            *ngIf="aircraft.operatorCallsign"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.operatorCallsign }}
+          </p>
+          <p
+            *ngIf="!aircraft.operatorCallsign"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- operator icao -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Operator ICAO</p>
+          <p
+            *ngIf="aircraft.operatorIcao"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.operatorIcao }}
+          </p>
+          <p
+            *ngIf="!aircraft.operatorIcao"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- operator iata -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Operator IATA</p>
+          <p
+            *ngIf="aircraft.operatorIata"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.operatorIata }}
+          </p>
+          <p
+            *ngIf="!aircraft.operatorIata"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- flight live data label -->
+      <mat-grid-tile colspan="9" rowspan="1" style="background-color: #efeff4">
+        <div
+          style="
+            background: #303030;
+            color: white;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: large;
+            padding-left: 0;
+            font-weight: bold;
+          "
+        >
+          <p>Flight live data</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- space at left side -->
+      <mat-grid-tile colspan="1" rowspan="10" style="background-color: #efeff4">
+        <div
+          style="
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0%;
+            padding: 0%;
+            padding-top: 50%;
+          "
+        >
+          <mat-icon aria-hidden="false">flight_takeoff</mat-icon>
+        </div>
+      </mat-grid-tile>
+
+      <!-- altitude -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Altitude</p>
+          <p
+            *ngIf="aircraft.altitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.altitude }} ft
+          </p>
+          <p
+            *ngIf="!aircraft.altitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- vertical speed -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Vertical Speed</p>
+          <p
+            *ngIf="aircraft.verticalRate != -9999999"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.verticalRate }} ft/min
+          </p>
+          <p
+            *ngIf="aircraft.verticalRate == -9999999"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- baro altitude -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Baro. Altitude</p>
+          <p
+            *ngIf="aircraft.elipsoidalAltitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.elipsoidalAltitude }} ft
+          </p>
+          <p
+            *ngIf="!aircraft.elipsoidalAltitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- track -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Track</p>
+          <p
+            *ngIf="aircraft.track != -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.track }}°
+          </p>
+          <p
+            *ngIf="aircraft.track == -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- speed -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Speed</p>
+          <p
+            *ngIf="aircraft.speed"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.speed }} kn
+          </p>
+          <p
+            *ngIf="!aircraft.speed"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- temperatur -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Temperature</p>
+          <p
+            *ngIf="aircraft.temperature"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.temperature }}°C
+          </p>
+          <p
+            *ngIf="!aircraft.temperature"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- wind speed -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Wind Speed</p>
+          <p
+            *ngIf="aircraft.windSpeed"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.windSpeed }} kn
+          </p>
+          <p
+            *ngIf="!aircraft.windSpeed"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- wind from direction -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Wind From Direction</p>
+          <p
+            *ngIf="aircraft.windFromDirection"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.windFromDirection }}°
+          </p>
+          <p
+            *ngIf="!aircraft.windFromDirection"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- squawk -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Squawk</p>
+          <p
+            *ngIf="aircraft.squawk"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.squawk }}
+          </p>
+          <p
+            *ngIf="!aircraft.squawk"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- on ground -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">On Ground</p>
+          <p
+            *ngIf="aircraft.onGround"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.onGround }}
+          </p>
+          <p
+            *ngIf="!aircraft.onGround"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- space at left side -->
+      <mat-grid-tile colspan="1" rowspan="4" style="background-color: #efeff4">
+        <div
+          style="
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0%;
+            padding: 0%;
+            padding-top: 50%;
+          "
+        >
+          <mat-icon aria-hidden="false">directions_car</mat-icon>
+        </div>
+      </mat-grid-tile>
+
+      <!-- autopilot engaged -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Autopilot Engaged</p>
+          <p
+            *ngIf="aircraft.autopilotEngaged"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.autopilotEngaged }}
+          </p>
+          <p
+            *ngIf="!aircraft.autopilotEngaged"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- selected qnh -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Selected QNH</p>
+          <p
+            *ngIf="aircraft.selectedQnh"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.selectedQnh }}
+          </p>
+          <p
+            *ngIf="!aircraft.selectedQnh"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- selected altitude -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Selected Altitude</p>
+          <p
+            *ngIf="aircraft.selectedAltitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.selectedAltitude }} ft
+          </p>
+          <p
+            *ngIf="!aircraft.selectedAltitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- selected heading -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Selected Heading</p>
+          <p
+            *ngIf="aircraft.selectedHeading"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.selectedHeading }}°
+          </p>
+          <p
+            *ngIf="!aircraft.selectedHeading"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- adsb label -->
+      <mat-grid-tile colspan="9" rowspan="1" style="background-color: #efeff4">
+        <div
+          style="
+            background: #303030;
+            color: white;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: large;
+            padding-left: 0;
+            font-weight: bold;
+          "
+        >
+          <p>ADSB</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- space at left side -->
+      <mat-grid-tile colspan="1" rowspan="8" style="background-color: #efeff4">
+        <div
+          style="
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            margin: 0%;
+            padding: 0%;
+            padding-top: 50%;
+          "
+        >
+          <mat-icon aria-hidden="false">my_location</mat-icon>
+        </div>
+      </mat-grid-tile>
+
+      <!-- latitude -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Latitude</p>
+          <p
+            *ngIf="aircraft.latitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.latitude }}°
+          </p>
+          <p
+            *ngIf="!aircraft.latitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- longitude -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Longitude</p>
+          <p
+            *ngIf="aircraft.longitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.longitude }}°
+          </p>
+          <p
+            *ngIf="!aircraft.longitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- distance -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Distance</p>
+          <p
+            *ngIf="aircraft.distance"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.distance }} km
+          </p>
+          <p
+            *ngIf="!aircraft.distance"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- rssi -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">RSSI</p>
+          <p *ngIf="aircraft.rssi" style="font-size: larger; font-weight: bold">
+            {{ aircraft.rssi }}
+          </p>
+          <p
+            *ngIf="!aircraft.rssi"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- feeder -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Feeder</p>
+          <p
+            *ngIf="aircraft.feeder"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.feeder }}
+          </p>
+          <p
+            *ngIf="!aircraft.feeder"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- source -->
+      <mat-grid-tile colspan="4" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Source</p>
+          <p
+            *ngIf="aircraft.source"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.source }}
+          </p>
+          <p
+            *ngIf="!aircraft.source"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- last Seen -->
+      <mat-grid-tile colspan="8" rowspan="2" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey">Last Seen</p>
+          <p
+            *ngIf="aircraft.lastSeen != -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.lastSeen }} s
+          </p>
+          <p
+            *ngIf="aircraft.lastSeen == -1"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-card-content>
+
+  <mat-card-footer>
+    <mat-grid-list
+      [cols]="amountColumnsFooter"
+      rowHeight="1.5rem"
+      style="background-color: black"
+    >
+      <mat-card-actions>
+        <mat-grid-tile colspan="1" rowspan="2">
+          <button
+            mat-button
+            class="buttonFooter"
+            (click)="toggleShowAircraftRoute()"
+          >
+            <mat-icon aria-hidden="false">timeline</mat-icon>
+            ROUTE
+          </button>
+        </mat-grid-tile>
+
+        <mat-grid-tile colspan="1" rowspan="2" *ngIf="!isDesktop">
+          <button mat-button class="buttonFooter" (click)="showSmallInfo()">
+            <mat-icon aria-hidden="false">expand_more</mat-icon>
+            LESS INFO
+          </button>
+        </mat-grid-tile>
+
+        <mat-grid-tile colspan="1" rowspan="2">
+          <button
+            mat-button
+            class="buttonFooter"
+            (click)="
+              openSnackBar('Dieser Button ist noch nicht implementiert', 'OKAY')
+            "
+          >
+            <mat-icon aria-hidden="false">share</mat-icon>
+            SHARE
+          </button>
+        </mat-grid-tile>
+      </mat-card-actions>
+    </mat-grid-list>
+  </mat-card-footer>
+</mat-card>
+
+<!-- kleine Info-Box Variante (wird als erstes auf dem Mobile angezeigt) -->
+<mat-card id="smallInfo" *ngIf="!showInfoLarge" [style.width]="widthInfoBox">
+  <mat-card-content>
+    <mat-grid-list
+      cols="23"
+      rowHeight="1.2rem"
+      style="background-color: lightgrey"
+    >
+      <!-- callsign und airline -->
+      <mat-grid-tile colspan="16" rowspan="3" style="background-color: #303030">
+        <div>
+          <p *ngIf="aircraft.flightId" style="color: #f8c023">
+            {{ aircraft.flightId }}
+          </p>
+          <p *ngIf="!aircraft.flightId" style="color: #f8c023">N/A</p>
+
+          <p *ngIf="aircraft.operatorName" style="color: #d5d5d5">
+            {{ aircraft.operatorName }}
+          </p>
+          <p *ngIf="!aircraft.operatorName" style="color: #d5d5d5">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- photo -->
+      <mat-grid-tile colspan="7" rowspan="3" style="background-color: white">
+        <img
+          *ngIf="aircraft.urlPhotoDirect != 'noPhotoFound'"
+          mat-card-image
+          [src]="aircraft.urlPhotoDirect"
+          style="width: 100%; margin: 0%"
+        />
+        <img
+          *ngIf="aircraft.urlPhotoDirect == 'noPhotoFound'"
+          mat-card-image
+          src="../../../assets/placeholder_aircraft_photo.jpg"
+          style="width: 100%; margin: 0%"
+        />
+      </mat-grid-tile>
+
+      <!-- origin -->
+      <mat-grid-tile colspan="7" rowspan="2">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            padding-left: 2.5rem;
+            font-weight: 500;
+            padding-top: 0.1rem;
+          "
+        >
+          <p *ngIf="aircraft.originIataCode">{{ aircraft.originIataCode }}</p>
+          <p *ngIf="!aircraft.originIataCode">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- Flugzeug-Icon zum Anzeigen der Flugphase -->
+      <mat-grid-tile colspan="4" rowspan="2">
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0%;
+            padding-top: 0%;
+          "
+        >
+          <span
+            style="
+              height: 2.4rem;
+              width: 2.4rem;
+              background-color: white;
+              border-radius: 50%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              padding-left: 0%;
+            "
+          >
+            <mat-icon
+              *ngIf="aircraft.aircraftState && aircraft.aircraftState == 'UP'"
+              style="color: #f8c023"
+              >flight_takeoff</mat-icon
+            >
+            <mat-icon
+              *ngIf="aircraft.aircraftState && aircraft.aircraftState == 'DOWN'"
+              style="color: #f8c023"
+              >flight_land</mat-icon
+            >
+            <img
+              *ngIf="aircraft.aircraftState && aircraft.aircraftState == 'HOLD'"
+              mat-card-image
+              src="../../../assets/flight_horiz.svg"
+              style="stroke: #f8c023; width: 60%; margin: 0%"
+            />
+            <img
+              *ngIf="
+                aircraft.aircraftState && aircraft.aircraftState == 'GROUND'
+              "
+              mat-card-image
+              src="../../../assets/flight_ground.svg"
+              style="stroke: #f8c023; width: 60%; margin: 0%"
+            />
+            <mat-icon *ngIf="!aircraft.aircraftState" style="color: #f8c023"
+              >help_outline</mat-icon
+            ></span
+          >
+        </div>
+      </mat-grid-tile>
+
+      <!-- destination -->
+      <mat-grid-tile colspan="7" rowspan="2">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            padding-right: 3.2rem;
+            font-weight: 500;
+            padding-top: 0.1rem;
+          "
+        >
+          <p *ngIf="aircraft.destinationIataCode">
+            {{ aircraft.destinationIataCode }}
+          </p>
+          <p *ngIf="!aircraft.destinationIataCode">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- altitude und speed -->
+      <mat-grid-tile colspan="5" rowspan="5" style="background-color: #efeff4">
+        <div>
+          <p style="color: grey; font-size: small">Altitude</p>
+
+          <p
+            *ngIf="aircraft.altitude"
+            style="font-size: small; font-weight: bold"
+          >
+            {{ aircraft.altitude }} ft
+          </p>
+          <p
+            *ngIf="!aircraft.altitude"
+            style="font-size: small; font-weight: bold"
+          >
+            N/A
+          </p>
+
+          <p style="color: grey; font-size: small">Speed</p>
+          <p *ngIf="aircraft.speed" style="font-size: small; font-weight: bold">
+            {{ aircraft.speed }} kn
+          </p>
+          <p
+            *ngIf="!aircraft.speed"
+            style="font-size: small; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- origin value as full town -->
+      <mat-grid-tile
+        colspan="9"
+        rowspan="1"
+        style="border-right: 0.1em solid #fff"
+      >
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #393939;
+            padding-top: 0.1rem;
+          "
+        >
+          <p *ngIf="aircraft.originFullTown">{{ aircraft.originFullTown }}</p>
+          <p *ngIf="!aircraft.originFullTown">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- destination value as full town -->
+      <mat-grid-tile colspan="9" rowspan="1">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #393939;
+            padding-top: 0.1rem;
+          "
+        >
+          <p *ngIf="aircraft.destinationFullTown">
+            {{ aircraft.destinationFullTown }}
+          </p>
+          <p *ngIf="!aircraft.destinationFullTown">N/A</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- ident code origin airport -->
+      <mat-grid-tile
+        colspan="9"
+        rowspan="1"
+        style="border-right: 0.1em solid #fff"
+      >
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            text-transform: uppercase;
+            color: #a4a1a1;
+            font-size: 0.8rem;
+            font-weight: 800;
+          "
+        >
+          <p *ngIf="aircraft.origin">({{ aircraft.origin }})</p>
+          <p *ngIf="!aircraft.origin">(N/A)</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- ident code destination airport -->
+      <mat-grid-tile colspan="9" rowspan="1">
+        <div
+          style="
+            background: lightgrey;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-left: 0;
+            text-transform: uppercase;
+            color: #a4a1a1;
+            font-size: 0.8rem;
+            font-weight: 800;
+          "
+        >
+          <p *ngIf="aircraft.destination">({{ aircraft.destination }})</p>
+          <p *ngIf="!aircraft.destination">(N/A)</p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- type -->
+      <mat-grid-tile
+        colspan="9"
+        rowspan="1"
+        style="background-color: #efeff4; border-right: 0.1em solid #fff"
+      >
+        <div>
+          <p *ngIf="aircraft.type" style="font-size: small; font-weight: bold">
+            {{ aircraft.type }}
+          </p>
+          <p *ngIf="!aircraft.type" style="font-size: small; font-weight: bold">
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- registration -->
+      <mat-grid-tile
+        colspan="9"
+        rowspan="1"
+        style="background-color: #efeff4; border-right: 0.1em solid #fff"
+      >
+        <div>
+          <p
+            *ngIf="aircraft.registration"
+            style="font-size: small; font-weight: bold"
+          >
+            {{ aircraft.registration }}
+          </p>
+          <p
+            *ngIf="!aircraft.registration"
+            style="font-size: small; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </mat-card-content>
+
+  <mat-card-footer>
+    <mat-grid-list cols="3" rowHeight="1.5rem" style="background-color: black">
+      <mat-card-actions>
+        <mat-grid-tile colspan="1" rowspan="2">
+          <button
+            mat-button
+            class="buttonFooter"
+            (click)="toggleShowAircraftRoute()"
+          >
+            <mat-icon aria-hidden="false">timeline</mat-icon>
+            ROUTE
+          </button>
+        </mat-grid-tile>
+
+        <mat-grid-tile colspan="1" rowspan="2">
+          <button mat-button (click)="showLargeInfo()" class="buttonFooter">
+            <mat-icon aria-hidden="false">expand_less</mat-icon>
+            MORE INFO
+          </button>
+        </mat-grid-tile>
+
+        <mat-grid-tile colspan="1" rowspan="2">
+          <button
+            mat-button
+            class="buttonFooter"
+            (click)="
+              openSnackBar('This button has not been implemented yet', 'OKAY')
+            "
+          >
+            <mat-icon aria-hidden="false">share</mat-icon>
+            SHARE
+          </button>
+        </mat-grid-tile>
+      </mat-card-actions>
+    </mat-grid-list>
+  </mat-card-footer>
+</mat-card>

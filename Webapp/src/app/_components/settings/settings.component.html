@@ -1,0 +1,271 @@
+<!-- Einstellungen-Button mit Einstellungs-Menu -->
+<button
+  mat-icon-button
+  (click)="showSettingsDiv = !showSettingsDiv"
+  aria-label="Settings icon"
+>
+  <mat-icon>settings</mat-icon>
+</button>
+
+<!-- Einstellungs-Menü Desktop -->
+<div
+  class="settingsDiv"
+  *ngIf="showSettingsDiv"
+  [style.width]="settingsDivWidth"
+>
+  <mat-tab-group
+    [disablePagination]="true"
+    [dynamicHeight]="true"
+    [disableRipple]="true"
+    animationDuration="0ms"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Tab Map-Eintellungen -->
+    <mat-tab label="Map">
+      <div style="padding: 0.5rem">
+        <h3>Aircrafts</h3>
+        <mat-slide-toggle
+          [checked]="showAircraftLabels"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAircraftLabels($event)"
+          >Toggle Aircraft Labels</mat-slide-toggle
+        >
+      </div>
+    </mat-tab>
+
+    <!-- Tab Statistik-Eintellungen -->
+    <mat-tab label="Statistics">
+      <div style="padding: 0.5rem">
+        <h3>Range Data</h3>
+        <!-- Toggle, um RangeData aus- oder einzublenden (initial disabled) -->
+        <div>
+          <mat-slide-toggle
+            [disabled]="disableRangeData"
+            [checked]="hideRangeData"
+            (click)="$event.stopPropagation()"
+            (change)="toggleHideRangeData($event)"
+            >hide range data</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Toggle, um RangeData nach Feeder farblich anzuzeigen-->
+        <div>
+          <mat-slide-toggle
+            [checked]="markRangeDataByFeeder"
+            (click)="$event.stopPropagation()"
+            (change)="toggleMarkRangeDataByFeeder($event)"
+            >mark range data by feeder</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Toggle, um RangeData nach Höhe farblich anzuzeigen-->
+        <div>
+          <mat-slide-toggle
+            [checked]="markRangeDataByHeight"
+            (click)="$event.stopPropagation()"
+            (change)="toggleMarkRangeDataByHeight($event)"
+            >mark range data by height</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Select, um Range Data nach Feeder zu selektieren (default: Alle Feeder)-->
+        <p class="info-text-range-data">
+          Select range data by feeder: (If no feeder is selected range data of
+          all feeder are shown)
+        </p>
+        <div style="display: flex; justify-content: center">
+          <mat-form-field appearance="fill">
+            <mat-label>Feeder</mat-label>
+            <mat-select
+              multiple
+              [formControl]="selectedFeederArray"
+              [disabled]="disableRangeData"
+              [disableRipple]="true"
+              (selectionChange)="selectRangeDataByFeeder()"
+            >
+              <mat-option
+                *ngFor="let feeder of listFeeder"
+                [value]="feeder.name"
+                [disabled]="feeder.disabled"
+                >{{ feeder.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Info-Text -->
+        <p class="info-text-range-data">
+          Please specify the desired period for which the range data should be
+          displayed
+        </p>
+
+        <h4 style="margin-top: 1rem; margin-bottom: 0">Selected times:</h4>
+        <p *ngIf="timesAsDateStrings && timesAsDateStrings[0]">
+          StartTime: {{ timesAsDateStrings[0] }}
+        </p>
+        <p *ngIf="timesAsDateStrings && timesAsDateStrings[1]">
+          EndTime: {{ timesAsDateStrings[1] }}
+        </p>
+        <p *ngIf="!timesAsDateStrings">StartTime: /</p>
+        <p *ngIf="!timesAsDateStrings">EndTime: /</p>
+
+        <h4 style="margin-top: 1rem; margin-bottom: 0">Predefined times:</h4>
+
+        <!-- Button-Toggles, um vordefinierte Zeiträume für die Range Data auszuwählen -->
+        <div style="display: flex; justify-content: center">
+          <button
+            mat-stroked-button
+            style="background-color: white; color: black; font-style: normal"
+            value="current-hour"
+            (click)="showRangeDataLastHour()"
+          >
+            Last Hour
+          </button>
+          <button
+            mat-stroked-button
+            style="background-color: white; color: black; font-style: normal"
+            (click)="showRangeDataToday()"
+          >
+            Today
+          </button>
+          <button
+            mat-stroked-button
+            style="background-color: white; color: black; font-style: normal"
+            (click)="showRangeDataLastSevenDays()"
+          >
+            Last 7 Days
+          </button>
+        </div>
+
+        <h4 style="margin-top: 1rem; margin-bottom: 0">
+          Pick your own time slot:
+        </h4>
+
+        <!-- Picker, um Start- und Endzeit für die Zeitspanne der 
+          anzuzeigenden Range Data auszuwählen -->
+        <div class="time-picker">
+          <!-- Starttime -->
+          <mat-form-field style="width: 80%">
+            <input
+              matInput
+              [(ngModel)]="times[0]"
+              [ngxMatDatetimePicker]="picker"
+              placeholder="Starttime"
+              [formControl]="dateControlStart"
+              [min]="minDate"
+              [max]="maxDate"
+              [disabled]="disabled"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="$any(picker)"
+            ></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker
+              #picker
+              [showSpinners]="showSpinners"
+              [showSeconds]="showSeconds"
+              [stepHour]="stepHour"
+              [stepMinute]="stepMinute"
+              [stepSecond]="stepSecond"
+              [touchUi]="touchUi"
+              [color]="color"
+              [enableMeridian]="enableMeridian"
+              [disableMinute]="disableMinute"
+              [hideTime]="hideTime"
+            >
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+        </div>
+
+        <div class="time-picker">
+          <!-- Endtime -->
+          <mat-form-field style="width: 80%">
+            <input
+              matInput
+              [(ngModel)]="times[1]"
+              [ngxMatDatetimePicker]="picker2"
+              placeholder="Endtime"
+              [formControl]="dateControlEnd"
+              [min]="minDate"
+              [max]="maxDate"
+              [disabled]="disabled"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="$any(picker2)"
+            ></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker
+              #picker2
+              [showSpinners]="showSpinners"
+              [showSeconds]="showSeconds"
+              [stepHour]="stepHour"
+              [stepMinute]="stepMinute"
+              [stepSecond]="stepSecond"
+              [touchUi]="touchUi"
+              [color]="color"
+              [enableMeridian]="enableMeridian"
+              [disableMinute]="disableMinute"
+              [hideTime]="hideTime"
+            >
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+        </div>
+
+        <!-- Endtime -->
+        <div mat-dialog-actions>
+          <button
+            mat-button
+            style="background-color: gray; color: white"
+            (click)="showRangeDataBetweenCustomTimestamps()"
+          >
+            Show data
+          </button>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Tab About -->
+    <mat-tab label="About">
+      <div style="padding: 0.5rem">
+        <h3>About</h3>
+        <div>
+          <!-- Logo -->
+          <img
+            mat-card-image
+            src="../../../favicon.ico"
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 3rem;
+              border-radius: 10%;
+              margin-top: 1rem;
+            "
+          />
+
+          <p style="display: flex; justify-content: center; height: 1.5rem">
+            <!-- App-Name -->
+            {{ appName }}
+          </p>
+
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              height: 1.5rem;
+              font-size: 0.8rem;
+            "
+          >
+            <!-- App-Version -->
+            Version {{ appVersion }}
+          </p>
+
+          <p style="display: flex; justify-content: center; height: 1.5rem">
+            <!-- Entwickler -->
+            made by RexKramer1 and amnesica
+          </p>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

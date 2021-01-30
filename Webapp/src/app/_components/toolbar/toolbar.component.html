@@ -1,0 +1,28 @@
+<mat-toolbar class="toolbar">
+  <!-- Anzahl der Flugzeuge -->
+  <div id="counter-aircraft">
+    {{ counterAircraft }}
+  </div>
+
+  <!-- Logo der App -->
+  <img
+    mat-card-image
+    src="../../../favicon.ico"
+    style="width: 2rem; margin: 0%; border-radius: 10%"
+  />
+
+  <!-- Abstandhalter -->
+  <span class="spacer"></span>
+
+  <!-- Einfaches Eingabefeld -->
+  <!-- <input matInput class="input" type="search" placeholder="Search" /> -->
+
+  <!-- Abstandhalter -->
+  <span class="spacer"></span>
+
+  <!-- Tabelle mit Flugzeugen -->
+  <app-aircraft-table></app-aircraft-table>
+
+  <!-- Einstellungs-Menu -->
+  <app-settings></app-settings>
+</mat-toolbar>

@@ -1,0 +1,78 @@
+#largeInfo {
+  position: fixed;
+  display: flex;
+  z-index: 2000;
+  bottom: 0;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  background: #efeff4;
+}
+
+#closeButton {
+  position: absolute;
+  color: white;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  line-height: 14px;
+  min-width: auto;
+}
+
+#smallInfo {
+  position: fixed;
+  border-radius: 0rem;
+  width: 100%;
+  bottom: 0%;
+  padding: 0%;
+  background-color: #efeff4;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.buttonFooter {
+  width: 100%;
+  height: 100%;
+}
+
+#photo-link {
+  height: 0.5rem;
+  width: 100%;
+  color: grey;
+  text-decoration: none;
+  display: inline-block;
+}
+
+mat-card-header {
+  height: 3rem;
+  background-color: #303030;
+  padding-top: 0.5rem;
+  flex-shrink: 0;
+}
+
+mat-card-content {
+  margin: 0%;
+  flex-grow: 1;
+  overflow: auto;
+  flex-direction: column;
+}
+
+mat-grid-tile div {
+  width: 100%;
+  text-align: left;
+  padding-left: 0.75rem;
+  margin-top: 0%;
+}
+
+mat-card-actions {
+  color: white;
+  margin: 0rem;
+  padding: 0rem;
+}
+
+mat-card-footer {
+  width: 100%;
+  padding: 0%;
+  margin: 0%;
+}

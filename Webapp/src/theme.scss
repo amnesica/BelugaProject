@@ -1,0 +1,74 @@
+@import "~@angular/material/theming";
+@include mat-core();
+
+$custom-blue: (
+  50: #e4e6ee,
+  100: #bcc1d5,
+  200: #8f98ba,
+  300: #626f9e,
+  400: #405089,
+  500: #1e3174,
+  600: #1a2c6c,
+  700: #162561,
+  800: #121f57,
+  900: #0a1344,
+  A100: #7b8bff,
+  A200: #485fff,
+  A400: #1532ff,
+  A700: #001ffb,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #ffffff,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #ffffff,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
+);
+
+$custom-yellow: (
+  50: #fef7e5,
+  100: #fdecbd,
+  200: #fce091,
+  300: #fad365,
+  400: #f9c944,
+  500: #f8c023,
+  600: #f7ba1f,
+  700: #f6b21a,
+  800: #f5aa15,
+  900: #f39c0c,
+  A100: #ffffff,
+  A200: #fff6ea,
+  A400: #ffe1b7,
+  A700: #ffd79d,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #000000,
+    600: #000000,
+    700: #000000,
+    800: #000000,
+    900: #000000,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  ),
+);
+
+$my-app-primary: mat-palette($custom-blue);
+$my-app-accent: mat-palette($custom-yellow);
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent);
+
+@include angular-material-theme($my-app-theme);

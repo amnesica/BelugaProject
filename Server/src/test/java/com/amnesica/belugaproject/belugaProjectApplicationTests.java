@@ -1,0 +1,13 @@
+package com.amnesica.belugaproject;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class AdsbUnifierApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

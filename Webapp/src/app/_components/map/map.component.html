@@ -1,0 +1,591 @@
+<!-- Map -->
+<div id="map_canvas">
+  <!-- Toolbar -->
+  <app-toolbar></app-toolbar>
+
+  <!-- Info, wenn Server nicht erreichbar ist und die Konfiguration fehlschlägt -->
+  <p
+    *ngIf="infoConfigurationFailureMessage"
+    style="position: absolute; top: 4rem; left: 0.5rem; z-index: 2000"
+  >
+    {{ infoConfigurationFailureMessage }}
+  </p>
+
+  <!-- Hover-Info-Box Variante (wird nur auf dem Desktop angezeigt) -->
+  <mat-card
+    id="smallInfoBox"
+    *ngIf="showSmallInfo && hoveredAircraft"
+    [style.top.px]="topValue"
+    [style.left.px]="leftValue"
+  >
+    <mat-card-header>
+      <!-- flightId -->
+      <mat-card-title *ngIf="hoveredAircraft.flightId" style="color: #f8c023">
+        {{ hoveredAircraft.flightId }}
+      </mat-card-title>
+      <mat-card-title *ngIf="!hoveredAircraft.flightId" style="color: #f8c023">
+        N/A
+      </mat-card-title>
+      <!-- hex -->
+      <mat-card-subtitle *ngIf="hoveredAircraft.hex" style="color: #d5d5d5">{{
+        hoveredAircraft.hex
+      }}</mat-card-subtitle>
+      <mat-card-subtitle *ngIf="!hoveredAircraft.hex" style="color: #d5d5d5">
+        N/A
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-grid-list cols="2" rowHeight="1rem" style="background-color: white">
+        <!-- altitude label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Altitude</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- altitude -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.altitude"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.altitude }} ft
+            </p>
+            <p
+              *ngIf="!hoveredAircraft.altitude"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- speed label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Speed</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- speed -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.speed"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.speed }} kn
+            </p>
+            <p
+              *ngIf="!hoveredAircraft.speed"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- type label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Type</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- type -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.type"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.type }}
+            </p>
+            <p
+              *ngIf="!hoveredAircraft.type"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- registration label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Registration</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- registration -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.registration"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.registration }}
+            </p>
+            <p
+              *ngIf="!hoveredAircraft.registration"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- track label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Track</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- track -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.track != -1"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.track }}°
+            </p>
+            <p
+              *ngIf="hoveredAircraft.track == -1"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- last seen label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Last seen</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- last seen -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.lastSeen != -1"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.lastSeen }} s
+            </p>
+            <p
+              *ngIf="hoveredAircraft.lastSeen == -1"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- distance label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Distance</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- distance -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.distance"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.distance }} km
+            </p>
+            <p
+              *ngIf="!hoveredAircraft.distance"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- feeder label -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p style="color: grey; font-size: small">Feeder</p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- feeder -->
+        <mat-grid-tile
+          colspan="1"
+          rowspan="1"
+          style="background-color: #efeff4"
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.feeder"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.feeder }}
+            </p>
+            <p
+              *ngIf="!hoveredAircraft.feeder"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Popup für RangeData -->
+  <div id="rangeDataPopup" [style.bottom]="rangeDataPopupBottomValue">
+    <div *ngIf="showPopupRangeDataPoint && rangeDataPoint">
+      <mat-card-content>
+        <mat-grid-list
+          cols="2"
+          rowHeight="1rem"
+          style="background-color: white"
+        >
+          <!-- latitude label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Latitude</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- latitude value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.x"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.x }}°
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.x"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- longitude label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Longitude</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- longitude value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.y"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.y }}°
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.y"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- altitude label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Altitude</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- altitude value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.altitude"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.altitude }} ft
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.altitude"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- distance label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Distance</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- distance value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.distance"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.distance }} km
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.distance"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- feeder label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Feeder</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- feeder value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.feeder"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.feeder }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.feeder"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- hex label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Hex</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- hex value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.hex"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.hex }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.hex"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- source label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Source</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- source value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.source"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.source }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.source"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- timestamp label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p style="color: grey; font-size: small">Timestamp</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- timestamp value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            style="background-color: #efeff4"
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.timestamp"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.timestamp }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.timestamp"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+        </mat-grid-list>
+      </mat-card-content>
+    </div>
+  </div>
+
+  <!-- Info-Box -->
+  <app-info
+    (showRouteEvent)="receiveToggleShowAircraftRoute($event)"
+    id="aircraft-info"
+    *ngIf="displayAircraftInfo"
+    [aircraft]="aircraft"
+  ></app-info>
+</div>
