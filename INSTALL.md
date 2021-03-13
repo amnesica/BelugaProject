@@ -209,7 +209,7 @@ $ ./loadBelugaDb.sh
 
 2. Start the spring boot application with right click on `Application.java` -> Run As -> Java Application
 
-3. Build and open the angular application in a browser with. If you are opening the angular application for the first time, run `npm install` first. Make sure the url of the server (here: `baseUrl`) in `/src/environments/environment.ts` fits.
+3. Build and open the angular application in a browser. If you are opening the angular application for the first time, run `npm install` first. Make sure the url of the server (here: `baseUrl`) in `/src/environments/environment.ts` fits.
 
 ```
 $ ng serve --open
