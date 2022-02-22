@@ -1,9 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Helper } from 'src/app/_classes/helper';
+import { ServerService } from 'src/app/_services/server-service/server-service.service';
+import { environment } from 'src/environments/environment';
+import { Globals } from 'src/app/_common/globals';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface DialogData {
   times: string[];
@@ -11,10 +24,17 @@ export interface DialogData {
 
 @Component({
   selector: 'app-settings',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent implements OnInit {
+  // Boolean, ob System im DarkMode ist
+  @Input() darkMode: boolean = false;
+
+  // Boolean, ob RangeData versteckt werden soll
+  @Input() hideRangeData: boolean = false;
+
   // Boolean, ob Settings angezeigt werden sollen
   showSettingsDiv = false;
 
@@ -26,9 +46,6 @@ export class SettingsComponent implements OnInit {
 
   // Boolean, ob Anwendung im Desktop-Modus ist
   isDesktop: boolean | undefined;
-
-  // Boolean, ob RangeData versteckt werden soll
-  hideRangeData: boolean = false;
 
   // Boolean, ob RangeData nach Feedern angezeigt werden soll
   markRangeDataByFeeder: boolean = false;
@@ -82,8 +99,11 @@ export class SettingsComponent implements OnInit {
   // Ausgewählte Start- und Endzeit als DateString zur Anzeige im FrontEnd
   timesAsDateStrings: String[] | undefined;
 
-  // Boolean, ob Flugzeug-Label gezeigt werden sollen
+  // Booleans für Toggles (mit Default-Werten, wenn nötig)
   showAircraftLabels: boolean | undefined;
+  showAirports: boolean = true;
+  showOpenskyPlanes: boolean | undefined;
+  showIss: boolean = true;
 
   // Boolean, ob Range Data verbunden angezeigt werden soll
   showFilteredRangeDatabyFeeder: boolean | undefined;
@@ -100,25 +120,93 @@ export class SettingsComponent implements OnInit {
   // App-Version
   appVersion: any;
 
+  // Boolean, ob POMD-Point angezeigt werden soll
+  showPOMDPoint: boolean | undefined;
+
+  // Boolean, ob WebGL verwendet werden soll
+  webgl: boolean = false;
+
+  // Boolean, ob WebGL vom Browser unterstützt wird
+  webglNotSupported: boolean = false;
+
+  // IP-Adresse des Clients
+  clientAddress: string = '';
+
+  // IP-Adresse des Servers
+  serverAddress: string = '';
+
+  // Boolean, ob die Karte über der ISS zentriert ist
+  centerMapOnIss: boolean = false;
+
+  // Boolean, ob Geräte-Standort Basis für Berechnungen
+  // sein soll
+  devicePositionAsBasis: boolean = false;
+
+  // Boolean, ob Opensky-Credentials existieren, wenn nicht disable switch
+  openskyCredentialsExist: boolean = false;
+
+  private ngUnsubscribe = new Subject();
+
   constructor(
     public settingsService: SettingsService,
-    public breakpointObserver: BreakpointObserver
-  ) {
-    // Weise Liste an Feeder zu
-    this.settingsService.listFeeder$.subscribe(
-      (listFeeder) => (this.listFeeder = listFeeder)
-    );
-
-    // Weise App-Name und App-Version zu
-    this.settingsService.appNameAndVersion$.subscribe((appNameAndVersion) => {
-      this.appName = appNameAndVersion[0];
-      this.appVersion = appNameAndVersion[1];
-    });
-  }
+    public breakpointObserver: BreakpointObserver,
+    public serverService: ServerService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
+    // Initiiere Abonnements
+    this.initSubscriptions();
+
+    // Prüfe WebGL-Support des Browsers und
+    // setze Default-Boolean entsprechend
+    this.checkWebglSupport();
+
+    // Hole IP-Adresse des Servers aus Environment
+    this.serverAddress = environment.baseUrl;
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+  /**
+   * Prüfe WebGL-Support des Browsers und setze Default-Boolean entsprechend.
+   * Sollte WebGL nicht supportet werden, wird der Toggle deaktiviert
+   */
+  checkWebglSupport() {
+    const webglSupported = Helper.detectWebGL();
+    if (webglSupported == 1) {
+      this.webgl = true;
+    } else if (webglSupported == 0) {
+      this.webgl = false;
+      console.log(
+        'WebGL is currently disabled in your browser. For better performance enable WebGL.'
+      );
+    } else {
+      this.webgl = false;
+      console.log(
+        'WebGL is not supported in your browser. For better performance use a browser with WebGL support.'
+      );
+    }
+
+    // Deaktiviere Toggle, wenn WebGL nicht unterstützt wird
+    if (!this.webgl) {
+      this.webglNotSupported = true;
+    }
+
+    // Setze Boolean, ob WebGL beim Start der Anwendung benutzt werden soll
+    Globals.useWebglOnStartup = this.webgl;
+  }
+
+  /**
+   * Initiierung der Abonnements
+   */
+  initSubscriptions() {
     this.breakpointObserver
       .observe(['(max-width: 599px)'])
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           // Setze Variable auf 'Mobile'
@@ -129,6 +217,33 @@ export class SettingsComponent implements OnInit {
           this.isDesktop = true;
           this.settingsDivWidth = '20rem';
         }
+      });
+    // Weise Liste an Feeder zu
+    this.settingsService.listFeeder$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((listFeeder) => (this.listFeeder = listFeeder));
+
+    // Weise App-Name und App-Version zu
+    this.settingsService.appNameAndVersion$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((appNameAndVersion) => {
+        this.appName = appNameAndVersion[0];
+        this.appVersion = appNameAndVersion[1];
+      });
+
+    // Weise IP-Adresse des Clients zu
+    this.settingsService.clientIpSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((clientIp) => {
+        this.clientAddress = clientIp;
+      });
+
+    // Weise openskyCredentialsExist zu, damit Switch
+    // disabled werden kann, falls diese nicht vorhanden sind
+    this.settingsService.openskyCredentialsExistSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((openskyCredentialsExist) => {
+        this.openskyCredentialsExist = openskyCredentialsExist;
       });
   }
 
@@ -310,5 +425,141 @@ export class SettingsComponent implements OnInit {
         this.selectedFeederArray.value
       );
     }
+  }
+
+  /**
+   * Selektiere Flugzeuge nach dem ausgewählten Feeder
+   */
+  selectPlanesByFeeder() {
+    // Kontaktiere Map-Component und übergebe
+    // selectFeeder-Name
+    this.settingsService.selectPlanesByFeeder(this.selectedFeederArray.value);
+  }
+
+  /**
+   * Methode zeigt oder versteckt die Flughäfen
+   * auf der Karte
+   * @param event MatSlideToggleChange
+   */
+  toggleAirports(event: MatSlideToggleChange) {
+    this.showAirports = event.checked;
+
+    // Kontaktiere Map-Component und übergebe toggleAirports-Boolean
+    this.settingsService.toggleAirports(this.showAirports);
+  }
+
+  /**
+   * Refreshe Flugzeuge nach ausgewähltem Feeder
+   */
+  refreshSelectedFeeder() {
+    if (this.selectedFeederArray.value) {
+      this.selectPlanesByFeeder();
+    }
+  }
+
+  /**
+   * Toggle Anzeige der Opensky Flugzeuge
+   */
+  toggleOpenskyPlanes(event: MatSlideToggleChange) {
+    this.showOpenskyPlanes = event.checked;
+
+    // Kontaktiere Map-Component und übergebe showOpenskyPlanes-Boolean
+    this.settingsService.toggleOpenskyPlanes(this.showOpenskyPlanes);
+  }
+
+  /**
+   * Toggle Anzeige der ISS
+   */
+  toggleIss(event: MatSlideToggleChange) {
+    this.showIss = event.checked;
+
+    // Kontaktiere Map-Component und übergebe showIss-Boolean
+    this.settingsService.toggleIss(this.showIss);
+  }
+
+  /**
+   * Toggle Dark Mode
+   * @param event MatSlideToggleChange
+   */
+  toggleDarkMode(event: MatSlideToggleChange) {
+    this.darkMode = event.checked;
+
+    // Kontaktiere Map-Component und übergebe showDarkMode-Boolean
+    this.settingsService.toggleDarkMode(this.darkMode);
+  }
+
+  /**
+   * Toggle WebGL
+   * @param event MatSlideToggleChange
+   */
+  toggleWebgl(event: MatSlideToggleChange) {
+    this.webgl = event.checked;
+
+    // Kontaktiere Map-Component und übergebe WebGL-Boolean
+    this.settingsService.toggleWebgl(this.webgl);
+  }
+
+  /**
+   * Toggle POMD-Point
+   * @param event MatSlideToggleChange
+   */
+  togglePOMDPoint(event: MatSlideToggleChange) {
+    this.showPOMDPoint = event.checked;
+
+    // Kontaktiere Map-Component und übergebe showPOMDPoint-Boolean
+    this.settingsService.togglePOMDPoint(this.showPOMDPoint);
+  }
+
+  /**
+   * Ruft die Map-Komponente, damit die Karte über der
+   * ISS zentriert wird
+   */
+  toggleCenterMapOnIss() {
+    this.centerMapOnIss = !this.centerMapOnIss;
+
+    // Kontaktiere Map-Component und übergebe centerMapOnIss-Boolean
+    this.settingsService.toggleCenterMapOnIss(this.centerMapOnIss);
+  }
+
+  /**
+   * Ruft die Map-Komponente, damit die aktuelle Geräte-Position
+   * bestimmt werden kann
+   */
+  setCurrentDevicePosition() {
+    // Kontaktiere Map-Component
+    this.settingsService.setCurrentDevicePosition(true);
+  }
+
+  /**
+   * Toggle Geräte-Position als Basis für weitere Berechnungen (Distanz, Range-Ringe)
+   * @param event MatSlideToggleChange
+   */
+  toggleDevicePositionAsBasis(event: MatSlideToggleChange) {
+    this.devicePositionAsBasis = event.checked;
+
+    if (Globals.DevicePosition === undefined) {
+      console.log(
+        'Device position needs to be set before enabling this toggle!'
+      );
+      this.openSnackbar(
+        'Device position needs to be set before enabling this toggle'
+      );
+      this.devicePositionAsBasis = false;
+    } else {
+      // Kontaktiere Map-Component und übergebe devicePositionAsBasis-Boolean
+      this.settingsService.toggleDevicePositionAsBasis(
+        this.devicePositionAsBasis
+      );
+    }
+  }
+
+  /**
+   * Öffnet eine Snackbar mit einem Text für zwei Sekunden
+   * @param message Text, der als Titel angezeigt werden soll
+   */
+  openSnackbar(message: string) {
+    this.snackBar.open(message, 'OK', {
+      duration: 2000,
+    });
   }
 }

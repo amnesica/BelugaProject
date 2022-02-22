@@ -6,7 +6,6 @@
   flex-direction: column;
   margin: 0;
   padding: 0;
-  background: #efeff4;
 }
 
 #closeButton {
@@ -75,4 +74,50 @@ mat-card-footer {
   width: 100%;
   padding: 0%;
   margin: 0%;
+}
+
+.background-and-color-light {
+  background-color: #efeff4;
+  color: black;
+}
+
+.background-and-color-dark {
+  background-color: #383838;
+  color: white;
+}
+
+.background-color-light {
+  background-color: white;
+}
+
+.background-color-dark {
+  background-color: #555555;
+}
+
+.background-color-lightgrey {
+  background-color: lightgrey;
+}
+
+.background-color-darkgrey {
+  background-color: #353535;
+}
+
+.color-grey {
+  color: grey;
+}
+
+.color-darkgrey {
+  color: #353535;
+}
+
+.color-verylightgrey {
+  color: #a4a1a1;
+}
+
+.border-right-light {
+  border-right: 0.1em solid #fff;
+}
+
+.border-right-dark {
+  border-right: 0.1em solid #303030;
 }

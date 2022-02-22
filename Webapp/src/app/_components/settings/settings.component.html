@@ -9,7 +9,11 @@
 
 <!-- Einstellungs-Menü Desktop -->
 <div
-  class="settingsDiv"
+  [ngClass]="
+    darkMode
+      ? 'background-and-color-dark settingsDiv'
+      : 'background-and-color-light settingsDiv'
+  "
   *ngIf="showSettingsDiv"
   [style.width]="settingsDivWidth"
 >
@@ -23,13 +27,149 @@
     <!-- Tab Map-Eintellungen -->
     <mat-tab label="Map">
       <div style="padding: 0.5rem">
-        <h3>Aircrafts</h3>
+        <h3>Planes</h3>
+
         <mat-slide-toggle
           [checked]="showAircraftLabels"
           (click)="$event.stopPropagation()"
           (change)="toggleAircraftLabels($event)"
-          >Toggle Aircraft Labels</mat-slide-toggle
+          >Aircraft Labels</mat-slide-toggle
         >
+
+        <div>
+          <mat-slide-toggle
+            [checked]="showPOMDPoint"
+            (click)="$event.stopPropagation()"
+            (change)="togglePOMDPoint($event)"
+            >Toggle POMD-Feature</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Select, um Flugzeuge nach Feeder zu selektieren (default: Alle Feeder) -->
+        <p class="info-text">
+          Select planes by feeder: (By default all feeders are displayed)
+        </p>
+        <div style="display: flex; justify-content: center">
+          <mat-form-field appearance="fill">
+            <mat-label>Feeder</mat-label>
+            <mat-select
+              multiple
+              [formControl]="selectedFeederArray"
+              [disableRipple]="true"
+              (selectionChange)="selectPlanesByFeeder()"
+              [multiple]="false"
+              [value]="0"
+            >
+              <mat-option value="AllFeeder">All feeder</mat-option>
+              <mat-option
+                *ngFor="let feeder of listFeeder"
+                [value]="feeder.name"
+                [disabled]="feeder.disabled"
+                >{{ feeder.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+
+          <div>
+            <button
+              mat-icon-button
+              (click)="refreshSelectedFeeder()"
+              aria-label="Refresh icon"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <h3 style="padding-top: 0rem">Airports</h3>
+        <mat-slide-toggle
+          [checked]="showAirports"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAirports($event)"
+          >Airport Labels</mat-slide-toggle
+        >
+
+        <h3 style="padding-top: 1rem">Opensky-Network</h3>
+        <mat-slide-toggle
+          [checked]="showOpenskyPlanes"
+          [disabled]="!openskyCredentialsExist"
+          (click)="$event.stopPropagation()"
+          (change)="toggleOpenskyPlanes($event)"
+          >Fetch from Opensky-Network</mat-slide-toggle
+        >
+
+        <h3 style="padding-top: 1rem">ISS</h3>
+        <mat-slide-toggle
+          [checked]="showIss"
+          (click)="$event.stopPropagation()"
+          (change)="toggleIss($event)"
+          >ISS</mat-slide-toggle
+        >
+        <div mat-dialog-actions>
+          <button
+            mat-button
+            [disabled]="!showIss"
+            style="background-color: gray; color: white"
+            (click)="toggleCenterMapOnIss()"
+          >
+            Show ISS
+          </button>
+        </div>
+
+        <h3 style="padding-top: 1rem">General</h3>
+
+        <!-- Aktuelle Geräte-Position -->
+        <p class="info-text">
+          Click on the button to set the current device position to use it for
+          distance and POMD results
+        </p>
+        <div
+          mat-dialog-actions
+          style="margin-top: 0.5rem; margin-bottom: 0.5rem"
+        >
+          <button
+            mat-button
+            style="background-color: gray; color: white"
+            (click)="setCurrentDevicePosition()"
+          >
+            Set Device Position
+          </button>
+        </div>
+
+        <!-- Toggle Geräte-Position als Basis für Berechnungen -->
+        <div>
+          <p class="info-text">
+            Set device position as basis for range rings, distance calculation
+            and POMD-feature
+          </p>
+          <mat-slide-toggle
+            [checked]="devicePositionAsBasis"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDevicePositionAsBasis($event)"
+            >Device Position as basis for calculations</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Dark mode -->
+        <div>
+          <mat-slide-toggle
+            [checked]="darkMode"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDarkMode($event)"
+            >Dark Mode</mat-slide-toggle
+          >
+        </div>
+
+        <!-- WebGL -->
+        <div>
+          <mat-slide-toggle
+            [checked]="webgl"
+            [disabled]="webglNotSupported"
+            (click)="$event.stopPropagation()"
+            (change)="toggleWebgl($event)"
+            >WebGL</mat-slide-toggle
+          >
+        </div>
       </div>
     </mat-tab>
 
@@ -69,7 +209,7 @@
         </div>
 
         <!-- Select, um Range Data nach Feeder zu selektieren (default: Alle Feeder)-->
-        <p class="info-text-range-data">
+        <p class="info-text">
           Select range data by feeder: (If no feeder is selected range data of
           all feeder are shown)
         </p>
@@ -94,7 +234,7 @@
         </div>
 
         <!-- Info-Text -->
-        <p class="info-text-range-data">
+        <p class="info-text">
           Please specify the desired period for which the range data should be
           displayed
         </p>
@@ -141,7 +281,7 @@
           Pick your own time slot:
         </h4>
 
-        <!-- Picker, um Start- und Endzeit für die Zeitspanne der 
+        <!-- Picker, um Start- und Endzeit für die Zeitspanne der
           anzuzeigenden Range Data auszuwählen -->
         <div class="time-picker">
           <!-- Starttime -->
@@ -238,7 +378,6 @@
               margin-left: auto;
               margin-right: auto;
               width: 3rem;
-              border-radius: 10%;
               margin-top: 1rem;
             "
           />
@@ -260,10 +399,39 @@
             Version {{ appVersion }}
           </p>
 
-          <p style="display: flex; justify-content: center; height: 1.5rem">
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              height: 1.5rem;
+              margin-bottom: 2rem;
+            "
+          >
             <!-- Entwickler -->
             made by RexKramer1 and amnesica
           </p>
+        </div>
+
+        <h3 style="padding-top: 1rem">Debug</h3>
+        <!-- Ip-Addresse des Clients -->
+        <p class="info-text">Client-IP: {{ clientAddress }}</p>
+
+        <!-- Ip-Addresse des Servers -->
+        <p class="info-text">Server-IP: {{ serverAddress }}</p>
+
+        <!-- Button zum Anzeigen der Debug-Logs -->
+        <div mat-dialog-actions style="padding-top: 0.5rem">
+          <button mat-button style="background-color: gray">
+            <!-- Hinweis: Nur im production-Mode wird der Link richtig aufgerufen -->
+            <a
+              href="/getLogs"
+              onclick="javascript:event.target.port=8080"
+              target="_blank"
+              style="color: white; text-decoration: none"
+            >
+              Show logs
+            </a>
+          </button>
         </div>
       </div>
     </mat-tab>

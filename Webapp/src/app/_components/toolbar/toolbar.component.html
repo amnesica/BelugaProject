@@ -8,21 +8,18 @@
   <img
     mat-card-image
     src="../../../favicon.ico"
-    style="width: 2rem; margin: 0%; border-radius: 10%"
+    style="width: 2rem; margin: 0%"
   />
 
   <!-- Abstandhalter -->
   <span class="spacer"></span>
 
-  <!-- Einfaches Eingabefeld -->
-  <!-- <input matInput class="input" type="search" placeholder="Search" /> -->
-
   <!-- Abstandhalter -->
   <span class="spacer"></span>
 
   <!-- Tabelle mit Flugzeugen -->
-  <app-aircraft-table></app-aircraft-table>
+  <app-aircraft-table [darkMode]="darkMode"></app-aircraft-table>
 
   <!-- Einstellungs-Menu -->
-  <app-settings></app-settings>
+  <app-settings [darkMode]="darkMode"></app-settings>
 </mat-toolbar>

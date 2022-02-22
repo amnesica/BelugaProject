@@ -10,15 +10,17 @@ export class AircraftTableService {
   private aircraftListSource = new Subject<any>();
   private isDesktopSource = new Subject<boolean>();
   private hexMarkUnmarkAircraftSource = new Subject<string>();
-  private aircraftselectUnselectInTableSource = new Subject<Aircraft>();
-  private unselectAllAircraftsInTableSource = new Subject<boolean>();
+  private aircraftSelectUnselectInTableSource = new Subject<Aircraft>();
+  private unselectAllPlanesInTableSource = new Subject<boolean>();
 
   // Observable streams
   aircraftList$ = this.aircraftListSource.asObservable();
   isDesktop$ = this.isDesktopSource.asObservable();
   hexMarkUnmarkAircraft$ = this.hexMarkUnmarkAircraftSource.asObservable();
-  aircraftSelectUnselectInTable$ = this.aircraftselectUnselectInTableSource.asObservable();
-  unselectAllAircraftsInTable$ = this.unselectAllAircraftsInTableSource.asObservable();
+  aircraftSelectUnselectInTable$ =
+    this.aircraftSelectUnselectInTableSource.asObservable();
+  unselectAllPlanesInTable$ =
+    this.unselectAllPlanesInTableSource.asObservable();
 
   constructor() {}
 
@@ -38,12 +40,12 @@ export class AircraftTableService {
   }
 
   selectOrUnselectAircraftInTable(aircraft: Aircraft) {
-    this.aircraftselectUnselectInTableSource.next(aircraft);
-    return this.aircraftselectUnselectInTableSource;
+    this.aircraftSelectUnselectInTableSource.next(aircraft);
+    return this.aircraftSelectUnselectInTableSource;
   }
 
-  unselectAllAircraftsInTable() {
-    this.unselectAllAircraftsInTableSource.next();
-    return this.unselectAllAircraftsInTableSource;
+  unselectAllPlanesInTable() {
+    this.unselectAllPlanesInTableSource.next();
+    return this.unselectAllPlanesInTableSource;
   }
 }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="24px"
+   viewBox="0 0 24 24"
+   width="24px"
+   fill="#000000"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="airport.svg"
+   inkscape:version="1.1 (c4e8f9ed74, 2021-05-24)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     showgrid="false"
+     inkscape:zoom="12.082768"
+     inkscape:cx="19.738855"
+     inkscape:cy="19.656093"
+     inkscape:window-width="1851"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg8" />
+  <path
+     id="circle6-3"
+     style="fill:#6699ff;stroke-width:0.91657"
+     d="M 12.089844 3.1015625 A 6.0193458 5.1277094 0 0 0 6.0703125 8.2285156 A 6.0193458 5.1277094 0 0 0 7.4941406 11.533203 A 4.5177398 7.4051328 0 0 0 7.4746094 12.005859 A 4.5177398 7.4051328 0 0 0 11.992188 19.410156 A 4.5177398 7.4051328 0 0 0 16.511719 12.005859 A 4.5177398 7.4051328 0 0 0 16.505859 11.701172 A 6.0193458 5.1277094 0 0 0 18.109375 8.2285156 A 6.0193458 5.1277094 0 0 0 12.089844 3.1015625 z " />
+  <path
+     d="M0 0h24v24H0V0z"
+     fill="none"
+     id="path2" />
+  <path
+     d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zM7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 2.88-2.88 7.19-5 9.88C9.92 16.21 7 11.85 7 9z"
+     id="path4"
+     style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-opacity:1" />
+  <circle
+     cx="12"
+     cy="9"
+     r="2.5"
+     id="circle6"
+     style="fill:#ffffff" />
+  <ellipse
+     style="opacity:0;fill:#6699ff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linejoin:bevel;stroke-dashoffset:4.0252;stroke-opacity:1"
+     id="path1429"
+     cx="15.871244"
+     cy="11.147639"
+     rx="10.268126"
+     ry="6.9694266" />
+</svg>

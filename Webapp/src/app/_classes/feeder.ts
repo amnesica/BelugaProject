@@ -21,8 +21,8 @@ export class Feeder {
         radius: 5,
         fill: new Fill({ color: this.color }),
         stroke: new Stroke({
-          color: this.color,
-          width: 2,
+          color: 'white',
+          width: 1,
         }),
       }),
     });

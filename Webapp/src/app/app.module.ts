@@ -6,7 +6,7 @@ import { MapComponent } from './_components/map/map.component';
 import { InfoComponent } from './_components/info/info.component';
 import { ToolbarComponent } from './_components/toolbar/toolbar.component';
 import { SettingsComponent } from './_components/settings/settings.component';
-import { AircraftTableComponent } from './_components/aircraft-table/aircraft-table/aircraft-table.component';
+import { AircraftTableComponent } from './_components/aircraft-table/aircraft-table.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from '@angular/cdk/layout';

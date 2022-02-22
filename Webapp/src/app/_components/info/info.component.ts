@@ -1,17 +1,30 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Aircraft } from '../../_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-info',
+  changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.css'],
 })
 export class InfoComponent implements OnInit {
   // Flugzeug, wofür die Info angezeigt wird als Eingabeparameter
-  @Input() aircraft!: Aircraft;
+  @Input() aircraft: Aircraft | null = null;
+
+  // Boolean, ob System im DarkMode ist
+  @Input() darkMode: boolean = false;
 
   // Boolean, ob große Info-Box-Variante angezeigt werden soll
   showInfoLarge: boolean | undefined;
@@ -34,14 +47,27 @@ export class InfoComponent implements OnInit {
   // Boolean, ob Route erstellt und gezeigt werden soll in Map-Component
   showRoute: boolean = false;
 
+  private ngUnsubscribe = new Subject();
+
   constructor(
     public breakpointObserver: BreakpointObserver,
     public snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
+    // Initiiere Abonnements
+    this.initSubscriptions();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+  initSubscriptions() {
     this.breakpointObserver
       .observe(['(max-width: 599px)'])
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           // Setze Variable auf 'Mobile'
@@ -131,7 +157,11 @@ export class InfoComponent implements OnInit {
     } else {
       // Setze showRoute nur auf true, wenn das Flugzeug auch die
       // Positionen des Herkunfts- und Zielorts hat
-      if (this.aircraft.positionOrg && this.aircraft.positionDest) {
+      if (
+        this.aircraft &&
+        this.aircraft.positionOrg &&
+        this.aircraft.positionDest
+      ) {
         this.showRoute = true;
       }
     }
@@ -158,5 +188,9 @@ export class InfoComponent implements OnInit {
         verticalPosition: 'top',
       });
     }
+  }
+
+  roundValue(altitude: number) {
+    return Math.round(altitude);
   }
 }

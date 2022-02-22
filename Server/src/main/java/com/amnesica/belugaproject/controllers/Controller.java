@@ -1,176 +1,204 @@
 package com.amnesica.belugaproject.controllers;
 
-import java.util.List;
-
+import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
+import com.amnesica.belugaproject.entities.data.AirportData;
+import com.amnesica.belugaproject.entities.data.RangeData;
+import com.amnesica.belugaproject.entities.trails.AircraftTrail;
+import com.amnesica.belugaproject.entities.trails.SpacecraftTrail;
+import com.amnesica.belugaproject.services.aircraft.*;
+import com.amnesica.belugaproject.services.data.*;
+import com.amnesica.belugaproject.services.helper.DebugService;
+import com.amnesica.belugaproject.services.trails.AircraftTrailService;
+import com.amnesica.belugaproject.services.trails.SpacecraftTrailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.amnesica.belugaproject.config.Configuration;
-import com.amnesica.belugaproject.entities.Aircraft;
-import com.amnesica.belugaproject.entities.AirportData;
-import com.amnesica.belugaproject.entities.CountryData;
-import com.amnesica.belugaproject.entities.FlightrouteData;
-import com.amnesica.belugaproject.entities.OperatorData;
-import com.amnesica.belugaproject.entities.RangeData;
-import com.amnesica.belugaproject.entities.RegcodeData;
-import com.amnesica.belugaproject.services.AircraftService;
-import com.amnesica.belugaproject.services.AirportDataService;
-import com.amnesica.belugaproject.services.CountryDataService;
-import com.amnesica.belugaproject.services.FlightrouteDataService;
-import com.amnesica.belugaproject.services.OperatorDataService;
-import com.amnesica.belugaproject.services.RangeDataService;
-import com.amnesica.belugaproject.services.RegcodeDataService;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @CrossOrigin
 public class Controller {
 
-	@Autowired
-	private AircraftService aircraftService;
-	@Autowired
-	private AirportDataService airportDataService;
-	@Autowired
-	private CountryDataService countryDataService;
-	@Autowired
-	private FlightrouteDataService flightrouteDataService;
-	@Autowired
-	private OperatorDataService operatorDataService;
-	@Autowired
-	private RegcodeDataService regcodeDataService;
-	@Autowired
-	private RangeDataService rangeDataService;
+    @Autowired
+    private FeederService feederService;
+    @Autowired
+    private LocalFeederService localFeederService;
+    @Autowired
+    private OpenskyService openskyService;
+    @Autowired
+    private SpacecraftService spacecraftService;
 
-	/**
-	 * Gibt die Konfiguration mit nötigen Variablen zurück, die aus den
-	 * Konfigurationsdateien stammt
-	 * 
-	 * @return Configuration
-	 */
-	@GetMapping(value = "/getConfigurationData", produces = "application/json")
-	public @ResponseBody Configuration getConfigurationData() {
-		return aircraftService.getConfiguration();
-	}
+    @Autowired
+    private AircraftService aircraftService;
 
-	/**
-	 * Gibt die Flugzeug-Liste für den Client zurück.
-	 * 
-	 * @return List<Aircraft>
-	 */
-	@GetMapping(value = "/getAircraftList", produces = "application/json")
-	public @ResponseBody List<Aircraft> getAircraftList() {
-		return aircraftService.getAircraftList();
-	}
+    @Autowired
+    private AirportDataService airportDataService;
+    @Autowired
+    private RangeDataService rangeDataService;
+    @Autowired
+    private HistoryAircraftService historyAircraftService;
 
-	/**
-	 * Gibt die Position der ISS zurück für den Client zurück
-	 * 
-	 * @return Aircraft
-	 */
-	@GetMapping(value = "/getIss", produces = "application/json")
-	public @ResponseBody Aircraft getIss() {
-		return aircraftService.getIssPosition();
-	}
+    @Autowired
+    private SpacecraftTrailService spacecraftTrailService;
+    @Autowired
+    private AircraftTrailService aircraftTrailService;
 
-	/**
-	 * Gibt Links zum Foto eines Flugzeugs und zur Website mit diesem Foto durch
-	 * Angabe seiner hex oder seiner registration zurück
-	 * 
-	 * @param hex          String
-	 * @param registration String
-	 * @return String[]
-	 */
-	@GetMapping(value = "/getAircraftPhoto", produces = "application/json")
-	public @ResponseBody String[] getAircraftPhoto(@RequestParam(value = "hex") String hex,
-			@RequestParam(value = "registration") String registration) {
-		return aircraftService.getAircraftPhoto(hex, registration);
-	}
+    @Autowired
+    private ShapeDataService shapeDataService;
 
-	/**
-	 * Gibt weitere Informationen zum Flughafen durch Aufruf der AirportData-Table
-	 * zurück
-	 * 
-	 * @param ident String
-	 * @return AirportData
-	 */
-	@GetMapping(value = "/getAirportData", produces = "application/json")
-	public @ResponseBody AirportData getAirportData(@RequestParam(value = "ident") String ident) {
-		return airportDataService.getAirportData(ident);
-	}
+    @Autowired
+    private MapCatToShapeDataService mapCatToShapeDataService;
 
-	/**
-	 * Gibt weitere Informationen zu einem Land durch Aufruf der CountryData-Table
-	 * zurück
-	 * 
-	 * @param countryIso2letter String
-	 * @return CountryData
-	 */
-	@GetMapping(value = "/getCountryData", produces = "application/json")
-	public @ResponseBody CountryData getCountryData(
-			@RequestParam(value = "countryIso2letter") String countryIso2letter) {
-		return countryDataService.getCountryData(countryIso2letter);
-	}
+    @Autowired
+    private MapTypeToShapeDataService mapTypeToShapeDataService;
 
-	/**
-	 * Gibt weitere Informationen zu einer Flugroute durch Aufruf der
-	 * FlightrouteData-Table zurück
-	 * 
-	 * @param flightId String
-	 * @return FlightrouteData
-	 */
-	@GetMapping(value = "/getFlightrouteData", produces = "application/json")
-	public @ResponseBody FlightrouteData getFlightrouteData(@RequestParam(value = "flightId") String flightId) {
-		return flightrouteDataService.getFlightrouteData(flightId);
-	}
+    @Autowired
+    private DebugService debugService;
 
-	/**
-	 * Gibt weitere Informationen zu einem Operator durch Aufruf der
-	 * OperatorData-Table zurück
-	 * 
-	 * @param operatorIcao String
-	 * @return OperatorData
-	 */
-	@GetMapping(value = "/getOperatorData", produces = "application/json")
-	public @ResponseBody OperatorData getOperatorData(@RequestParam(value = "operatorIcao") String operatorIcao) {
-		return operatorDataService.getOperatorData(operatorIcao);
-	}
+    /**
+     * Gibt die Konfiguration nur mit den nötigsten Variablen zurück
+     *
+     * @return Configuration
+     */
+    @GetMapping(value = "/getConfigurationData", produces = "application/json")
+    public @ResponseBody
+    HashMap<String, Object> getConfigurationData(HttpServletRequest httpRequest) {
+        return feederService.getConfiguration(httpRequest);
+    }
 
-	/**
-	 * Gibt weitere Informationen zu einem Regcode durch Aufruf der
-	 * RegcodeData-Table zurück
-	 * 
-	 * @param regcodePrefix String
-	 * @return RegcodeData
-	 */
-	@GetMapping(value = "/getRegcodeData", produces = "application/json")
-	public @ResponseBody RegcodeData getRegcodeData(@RequestParam(value = "regcodePrefix") String regcodePrefix) {
-		return regcodeDataService.getRegcodeData(regcodePrefix);
-	}
+    /**
+     * Gibt Flugzeuge innerhalb eines Extents zurück
+     *
+     * @param lomin            lower bound for the longitude in decimal degrees
+     * @param lamin            lower bound for the latitude in decimal degrees
+     * @param lomax            upper bound for the longitude in decimal degrees
+     * @param lamax            upper bound for the latitude in decimal degrees
+     * @param selectedFeeder   Ausgewählter Feeder (oder 'AllFeeder')
+     * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
+     * @param showIss          Boolean, ob ISS abgefragt werden soll
+     * @return Collection<AircraftSuperclass>
+     */
+    @GetMapping(value = "/getAircraftList", produces = "application/json")
+    public @ResponseBody
+    Collection<AircraftSuperclass> getAircraftList(@RequestParam(value = "lomin") double lomin,
+                                                   @RequestParam(value = "lamin") double lamin, @RequestParam(value = "lomax") double lomax,
+                                                   @RequestParam(value = "lamax") double lamax, @RequestParam(value = "selectedFeeder") String selectedFeeder,
+                                                   @RequestParam(value = "fetchFromOpensky") boolean fetchFromOpensky,
+                                                   @RequestParam(value = "showIss") boolean showIss, HttpServletRequest httpRequest) {
+        return feederService.getPlanesWithinExtent(lomin, lamin, lomax, lamax, selectedFeeder, fetchFromOpensky,
+                showIss, httpRequest);
+    }
 
-	/**
-	 * Gibt alle Informationen aus der RangeData-Tabelle zurück
-	 * 
-	 * @return List<RangeData>
-	 */
-	@GetMapping(value = "/getAllRangeData", produces = "application/json")
-	public @ResponseBody List<RangeData> getAllRangeData() {
-		return rangeDataService.getAllRangeData();
-	}
+    /**
+     * Gibt alle Flughäfen innerhalb eines Extents zurück
+     *
+     * @param lomin     lower bound for the longitude in decimal degrees
+     * @param lamin     lower bound for the latitude in decimal degrees
+     * @param lomax     upper bound for the longitude in decimal degrees
+     * @param lamax     upper bound for the latitude in decimal degrees
+     * @param zoomLevel Aktuelles Zoomlevel
+     * @return List<AirportData>
+     */
+    @GetMapping(value = "/getAirportList", produces = "application/json")
+    public @ResponseBody
+    List<AirportData> getAirportList(@RequestParam(value = "lomin") double lomin,
+                                     @RequestParam(value = "lamin") double lamin, @RequestParam(value = "lomax") double lomax,
+                                     @RequestParam(value = "lamax") double lamax, @RequestParam(value = "zoomLevel") double zoomLevel) {
+        return airportDataService.getAirportsInExtent(lomin, lamin, lomax, lamax, zoomLevel);
+    }
 
-	/**
-	 * Gibt alle Informationen aus der RangeData-Tabelle für eine bestimmte
-	 * Zeitspanne zurück
-	 * 
-	 * @param startTime Startzeit
-	 * @param endTime   Endzeit
-	 * @return List<RangeData>
-	 */
-	@GetMapping(value = "/getRangeDataBetweenTimestamps", produces = "application/json")
-	public @ResponseBody List<RangeData> getRangeDataBetweenTimestamps(
-			@RequestParam(value = "startTime") long startTime, @RequestParam(value = "endTime") long endTime) {
-		return rangeDataService.getRangeDataBetweenTimestamps(startTime, endTime);
-	}
+    /**
+     * Gibt alle Informationen über ein Flugzeug zurück (bis auf Trails)
+     *
+     * @param hex          String
+     * @param registration String
+     * @return Object[]
+     */
+    @GetMapping(value = "/getAllAircraftData", produces = "application/json")
+    public @ResponseBody
+    Object[] getAircraftData(@RequestParam(value = "hex") String hex,
+                             @RequestParam(value = "registration") String registration,
+                             @RequestParam(value = "isFromOpensky") boolean isFromOpensky) {
+
+        if (isFromOpensky) {
+            return openskyService.getAllAircraftData(hex, registration);
+        } else if (!hex.equals("ISS")) {
+            return localFeederService.getAllAircraftData(hex, registration);
+        }
+        return null;
+    }
+
+    /**
+     * Holt die Trails zu einem Flugzeug mit einer hex aus der Datenbank. Aus
+     * Kompatibilitätsgründen wird hier die Liste an Trails in ein Object[] gepackt
+     *
+     * @param hex            String
+     * @param selectedFeeder String
+     * @return Object[]
+     */
+    @GetMapping(value = "/getTrail", produces = "application/json")
+    public @ResponseBody
+    Object[] getTrail(@RequestParam(value = "hex") String hex,
+                      @RequestParam(value = "selectedFeeder") String selectedFeeder) {
+
+        // Baue jeweils Array als Rückgabewert
+        if (hex.equals("ISS")) {
+            List<SpacecraftTrail> trails = spacecraftTrailService.getAllTrails();
+            return new Object[]{trails};
+        } else {
+            List<AircraftTrail> trails = aircraftTrailService.getAllTrailsToHexAndFeeder(hex, selectedFeeder);
+            return new Object[]{trails};
+        }
+    }
+
+    /**
+     * Gibt eine Liste mit Range-Data, Start- und Endpunkt von Flugzeugen,
+     * welche in dem Zeitslot empfangen wurden
+     *
+     * @param startTime long
+     * @param endTime   long
+     * @return List<RangeData>
+     */
+    @GetMapping(value = "/getRangeDataBetweenTimestamps", produces = "application/json")
+    public @ResponseBody
+    List<RangeData> getRangeDataBetweenTimestamps(
+            @RequestParam(value = "startTime") long startTime, @RequestParam(value = "endTime") long endTime) {
+        return rangeDataService.getRangeDataBetweenTimestamps(startTime, endTime);
+    }
+
+    /**
+     * Gibt die vorhandenen Log-Dateien im Log-Verzeichnis (spezifiziert in application.properties) aus.
+     * Diese werden formatiert, sodass auf diese geklickt werden kann
+     *
+     * @return String
+     */
+    @GetMapping(value = "/getLogs")
+    public String getLogs() {
+        return debugService.getLogs();
+    }
+
+    /**
+     * Gibt eine bestimmte Log-Datei mit einem filename als String aus
+     *
+     * @param filename String
+     * @return String
+     */
+    @GetMapping(value = "/getLog", produces = "text/plain")
+    public String getSpecificLog(@RequestParam String filename) {
+        return debugService.getSpecificLog(filename);
+    }
+
+    /**
+     * Gibt die ISS direkt zurück, ohne das vorher mit einem Extent eine Datenbankabfrage geschieht
+     *
+     * @return AircraftSuperclass
+     */
+    @GetMapping(value = "/getIssWithoutExtent", produces = "application/json")
+    public @ResponseBody
+    AircraftSuperclass getIssWithoutExtent() {
+        return spacecraftService.getIssWithoutExtent();
+    }
 }

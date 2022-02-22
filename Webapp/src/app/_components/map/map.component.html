@@ -1,7 +1,7 @@
 <!-- Map -->
 <div id="map_canvas">
   <!-- Toolbar -->
-  <app-toolbar></app-toolbar>
+  <app-toolbar [darkMode]="darkMode"></app-toolbar>
 
   <!-- Info, wenn Server nicht erreichbar ist und die Konfiguration fehlschlägt -->
   <p
@@ -36,15 +36,34 @@
     </mat-card-header>
 
     <mat-card-content>
-      <mat-grid-list cols="2" rowHeight="1rem" style="background-color: white">
+      <mat-grid-list
+        cols="2"
+        rowHeight="1rem"
+        [ngClass]="
+          darkMode ? 'background-color-dark' : 'background-color-light'
+        "
+      >
         <!-- altitude label -->
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Altitude</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Altitude
+            </p>
           </div>
         </mat-grid-tile>
 
@@ -52,7 +71,11 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
@@ -74,10 +97,23 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Speed</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Speed
+            </p>
           </div>
         </mat-grid-tile>
 
@@ -85,7 +121,11 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
@@ -107,10 +147,23 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Type</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Type
+            </p>
           </div>
         </mat-grid-tile>
 
@@ -118,7 +171,11 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
@@ -140,10 +197,23 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Registration</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Registration
+            </p>
           </div>
         </mat-grid-tile>
 
@@ -151,7 +221,11 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
@@ -173,10 +247,23 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Track</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Track
+            </p>
           </div>
         </mat-grid-tile>
 
@@ -184,17 +271,21 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
-              *ngIf="hoveredAircraft.track != -1"
+              *ngIf="hoveredAircraft.track != null"
               style="font-size: small; font-weight: bold"
             >
               {{ hoveredAircraft.track }}°
             </p>
             <p
-              *ngIf="hoveredAircraft.track == -1"
+              *ngIf="hoveredAircraft.track == null"
               style="font-size: small; font-weight: bold"
             >
               N/A
@@ -206,10 +297,23 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Last seen</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Last seen
+            </p>
           </div>
         </mat-grid-tile>
 
@@ -217,17 +321,21 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
-              *ngIf="hoveredAircraft.lastSeen != -1"
+              *ngIf="hoveredAircraft.lastSeen != null"
               style="font-size: small; font-weight: bold"
             >
               {{ hoveredAircraft.lastSeen }} s
             </p>
             <p
-              *ngIf="hoveredAircraft.lastSeen == -1"
+              *ngIf="hoveredAircraft.lastSeen == null"
               style="font-size: small; font-weight: bold"
             >
               N/A
@@ -235,22 +343,41 @@
           </div>
         </mat-grid-tile>
 
-        <!-- distance label -->
+        <!-- distance label zur Antennen-Position (Site-position) -->
         <mat-grid-tile
+          *ngIf="hoveredAircraft && !hoveredAircraft.distanceDevicePos"
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Distance</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Dist. (Ant)
+            </p>
           </div>
         </mat-grid-tile>
 
-        <!-- distance -->
+        <!-- distance zur Antennen-Position (Site-position) -->
         <mat-grid-tile
+          *ngIf="hoveredAircraft && !hoveredAircraft.distanceDevicePos"
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
@@ -268,14 +395,79 @@
           </div>
         </mat-grid-tile>
 
+        <!-- distance label zur Geräte-Position -->
+        <mat-grid-tile
+          *ngIf="hoveredAircraft && hoveredAircraft.distanceDevicePos"
+          colspan="1"
+          rowspan="1"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
+        >
+          <div>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Dist. (Dev)
+            </p>
+          </div>
+        </mat-grid-tile>
+
+        <!-- distance zur Geräte-Position -->
+        <mat-grid-tile
+          *ngIf="hoveredAircraft && hoveredAircraft.distanceDevicePos"
+          colspan="1"
+          rowspan="1"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
+        >
+          <div>
+            <p
+              *ngIf="hoveredAircraft.distanceDevicePos"
+              style="font-size: small; font-weight: bold"
+            >
+              {{ hoveredAircraft.distanceDevicePos }} km
+            </p>
+            <p
+              *ngIf="!hoveredAircraft.distanceDevicePos"
+              style="font-size: small; font-weight: bold"
+            >
+              N/A
+            </p>
+          </div>
+        </mat-grid-tile>
+
         <!-- feeder label -->
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
-            <p style="color: grey; font-size: small">Feeder</p>
+            <p
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark'
+                  : 'background-and-color-light color-grey'
+              "
+              style="font-size: small"
+            >
+              Feeder
+            </p>
           </div>
         </mat-grid-tile>
 
@@ -283,17 +475,21 @@
         <mat-grid-tile
           colspan="1"
           rowspan="1"
-          style="background-color: #efeff4"
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light'
+          "
         >
           <div>
             <p
-              *ngIf="hoveredAircraft.feeder"
+              *ngIf="hoveredAircraft.feederList"
               style="font-size: small; font-weight: bold"
             >
-              {{ hoveredAircraft.feeder }}
+              {{ hoveredAircraft.feederList }}
             </p>
             <p
-              *ngIf="!hoveredAircraft.feeder"
+              *ngIf="!hoveredAircraft.feederList"
               style="font-size: small; font-weight: bold"
             >
               N/A
@@ -311,16 +507,63 @@
         <mat-grid-list
           cols="2"
           rowHeight="1rem"
-          style="background-color: white"
+          [ngClass]="
+            darkMode ? 'background-color-dark' : 'background-color-light'
+          "
         >
+          <!-- hex label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p style="font-size: small">Hex</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- hex value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.hex"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.hex }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.hex"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
           <!-- latitude label -->
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
-              <p style="color: grey; font-size: small">Latitude</p>
+              <p style="font-size: small">Latitude</p>
             </div>
           </mat-grid-tile>
 
@@ -328,7 +571,11 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
               <p
@@ -350,10 +597,14 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
-              <p style="color: grey; font-size: small">Longitude</p>
+              <p style="font-size: small">Longitude</p>
             </div>
           </mat-grid-tile>
 
@@ -361,7 +612,11 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
               <p
@@ -379,14 +634,182 @@
             </div>
           </mat-grid-tile>
 
+          <!-- type label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p style="font-size: small">Type</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- type value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.type"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.type }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.type"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- category label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p style="font-size: small">Category</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- category value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.category"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.category }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.category"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- registration label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p style="font-size: small">Registration</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- registration value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.registration"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.registration }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.registration"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- flightId label -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p style="font-size: small">FlightId</p>
+            </div>
+          </mat-grid-tile>
+
+          <!-- flightId value -->
+          <mat-grid-tile
+            colspan="1"
+            rowspan="1"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
+          >
+            <div>
+              <p
+                *ngIf="rangeDataPoint.flightId"
+                style="font-size: small; font-weight: bold"
+              >
+                {{ rangeDataPoint.flightId }}
+              </p>
+              <p
+                *ngIf="!rangeDataPoint.flightId"
+                style="font-size: small; font-weight: bold"
+              >
+                N/A
+              </p>
+            </div>
+          </mat-grid-tile>
+
           <!-- altitude label -->
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
-              <p style="color: grey; font-size: small">Altitude</p>
+              <p style="font-size: small">Altitude</p>
             </div>
           </mat-grid-tile>
 
@@ -394,7 +817,11 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
               <p
@@ -416,10 +843,14 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
-              <p style="color: grey; font-size: small">Distance</p>
+              <p style="font-size: small">Distance</p>
             </div>
           </mat-grid-tile>
 
@@ -427,7 +858,11 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
               <p
@@ -445,65 +880,40 @@
             </div>
           </mat-grid-tile>
 
-          <!-- feeder label -->
+          <!-- feederList label -->
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
-              <p style="color: grey; font-size: small">Feeder</p>
+              <p style="font-size: small">Feeder</p>
             </div>
           </mat-grid-tile>
 
-          <!-- feeder value -->
+          <!-- feederList value -->
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
               <p
-                *ngIf="rangeDataPoint.feeder"
+                *ngIf="rangeDataPoint.feederList"
                 style="font-size: small; font-weight: bold"
               >
-                {{ rangeDataPoint.feeder }}
+                {{ rangeDataPoint.feederList }}
               </p>
               <p
-                *ngIf="!rangeDataPoint.feeder"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- hex label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            style="background-color: #efeff4"
-          >
-            <div>
-              <p style="color: grey; font-size: small">Hex</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- hex value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            style="background-color: #efeff4"
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.hex"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.hex }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.hex"
+                *ngIf="!rangeDataPoint.feederList"
                 style="font-size: small; font-weight: bold"
               >
                 N/A
@@ -511,32 +921,40 @@
             </div>
           </mat-grid-tile>
 
-          <!-- source label -->
+          <!-- sourceList label -->
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
-              <p style="color: grey; font-size: small">Source</p>
+              <p style="font-size: small">Source</p>
             </div>
           </mat-grid-tile>
 
-          <!-- source value -->
+          <!-- sourceList value -->
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
               <p
-                *ngIf="rangeDataPoint.source"
+                *ngIf="rangeDataPoint.sourceList"
                 style="font-size: small; font-weight: bold"
               >
-                {{ rangeDataPoint.source }}
+                {{ rangeDataPoint.sourceList }}
               </p>
               <p
-                *ngIf="!rangeDataPoint.source"
+                *ngIf="!rangeDataPoint.sourceList"
                 style="font-size: small; font-weight: bold"
               >
                 N/A
@@ -548,10 +966,14 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
-              <p style="color: grey; font-size: small">Timestamp</p>
+              <p style="font-size: small">Timestamp</p>
             </div>
           </mat-grid-tile>
 
@@ -559,7 +981,11 @@
           <mat-grid-tile
             colspan="1"
             rowspan="1"
-            style="background-color: #efeff4"
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light'
+            "
           >
             <div>
               <p
@@ -587,5 +1013,6 @@
     id="aircraft-info"
     *ngIf="displayAircraftInfo"
     [aircraft]="aircraft"
+    [darkMode]="darkMode"
   ></app-info>
 </div>

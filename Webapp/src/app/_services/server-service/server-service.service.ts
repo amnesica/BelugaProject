@@ -12,117 +12,121 @@ export class ServerService {
   constructor(private httpClient: HttpClient) {}
 
   /**
-   * Methode ruft Flugzeuge von den Feedern ab (Server-Aufruf)
+   * Methode ruft Flugzeuge von den Feedern und vom Opensky-Network ab.
+   * Zusätzlich kann die ISS abgerufen werden (Server-Aufruf)
+   * @param lomin lower bound for the longitude in decimal degrees
+   * @param lamin lower bound for the latitude in decimal degrees
+   * @param lomax upper bound for the longitude in decimal degrees
+   * @param lamax upper bound for the latitude in decimal degrees
+   * @param selectedFeeder Ausgewählter Feeder (oder 'AllFeeder')
+   * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
+   * @param showIss Boolean, ob ISS abgefragt werden soll
+   * @returns
    */
-  getAircraftsUpdate(): Observable<Aircraft[]> {
-    return this.httpClient.get<Aircraft[]>(Globals.urlGetAircrafts);
+  getPlanesUpdate(
+    lomin: number,
+    lamin: number,
+    lomax: number,
+    lamax: number,
+    selectedFeeder: any,
+    fetchFromOpensky: boolean,
+    showIss: boolean
+  ): Observable<Aircraft[]> {
+    // Initialiere Params-Objekt
+    let params = new HttpParams();
+
+    // Weise Parameter zu
+    params = params.append('lomin', lomin.toString());
+    params = params.append('lamin', lamin.toString());
+    params = params.append('lomax', lomax.toString());
+    params = params.append('lamax', lamax.toString());
+    params = params.append('selectedFeeder', selectedFeeder.toString());
+    params = params.append('fetchFromOpensky', fetchFromOpensky.toString());
+    params = params.append('showIss', showIss.toString());
+
+    return this.httpClient.get<Aircraft[]>(Globals.urlGetPlanes, {
+      params: params,
+    });
   }
 
   /**
-   * Methode ruft Links für Flugzeug-Foto von den Feedern ab (Server-Aufruf)
+   * Methode ruft Flughäfen im Extent ab (Server-Aufruf)
+   * @param lomin lower bound for the longitude in decimal degrees
+   * @param lamin lower bound for the latitude in decimal degrees
+   * @param lomax upper bound for the longitude in decimal degrees
+   * @param lamax upper bound for the latitude in decimal degrees
+   * @param zoomLevel Aktuelles Zoomlevel
+   * @returns
    */
-  getAircraftPhoto(hex: string, registration: string): Observable<any> {
+  getAirportsInExtent(
+    lomin: number,
+    lamin: number,
+    lomax: number,
+    lamax: number,
+    zoomLevel: number
+  ): Observable<any> {
+    // Initialiere Params-Objekt
+    let params = new HttpParams();
+
+    // Weise Parameter zu
+    params = params.append('lomin', lomin.toString());
+    params = params.append('lamin', lamin.toString());
+    params = params.append('lomax', lomax.toString());
+    params = params.append('lamax', lamax.toString());
+    params = params.append('zoomLevel', zoomLevel.toString());
+
+    return this.httpClient.get<any>(Globals.urlGetAirports, {
+      params: params,
+    });
+  }
+
+  /**
+   * Methode ruft Flughäfen im Extent ab (Server-Aufruf)
+   * @param hex String
+   * @param registration String
+   * @returns
+   */
+  getAllAircraftData(
+    hex: string,
+    registration: string,
+    isFromOpensky: boolean
+  ): Observable<any> {
     // Initialiere Params-Objekt
     let params = new HttpParams();
 
     // Weise Parameter zu
     params = params.append('hex', hex);
     params = params.append('registration', registration);
+    params = params.append('isFromOpensky', isFromOpensky.toString());
 
-    return this.httpClient.get(Globals.urlGetAircraftPhoto, {
+    return this.httpClient.get(Globals.urlGetAircraftData, {
       params: params,
     });
   }
 
   /**
-   * Methode ruft die ISS ab (Server-Aufruf)
+   * Methode ruft alle Trail-Elemente eines Flugzeugs vom Server ab
+   * (Server-Aufruf)
+   * @param hex string
+   * @param selectedFeeder selectedFeeder
+   * @returns Observable<any>
    */
-  getIss(): Observable<Aircraft> {
-    return this.httpClient.get<Aircraft>(Globals.urlGetIss);
-  }
-
-  /**
-   * Methode holt Daten über Flughäfen mit ident aus Datenbank (Server-Aufruf)
-   * "ident" ist "destination" oder "origin" des Flugzeugs
-   */
-  getAirportData(ident: string): Observable<any> {
+  getTrail(hex: string, selectedFeeder: any): Observable<any> {
     // Initialiere Params-Objekt
     let params = new HttpParams();
 
     // Weise Parameter zu
-    params = params.append('ident', ident);
+    params = params.append('hex', hex);
+    params = params.append('selectedFeeder', selectedFeeder.toString());
 
-    let response = this.httpClient.get(Globals.urlGetAirportData, {
+    return this.httpClient.get(Globals.urlGetTrailData, {
       params: params,
     });
-
-    return response;
   }
 
   /**
-   * Methode holt Daten über Länder mit iso2letter-Code aus Datenbank (Server-Aufruf)
-   * "iso2letter-Code" ist der 2-stellige Länderschlüssel in Kleinbuchstaben, z. B. "de"
-   */
-  getCountryData(countryIso2letter: string): Observable<any> {
-    // Initialiere Params-Objekt
-    let params = new HttpParams();
-
-    // Weise Parameter zu
-    params = params.append('countryIso2letter', countryIso2letter);
-
-    let response = this.httpClient.get(Globals.urlGetCountryData, {
-      params: params,
-    });
-
-    return response;
-  }
-
-  /**
-   * Methode holt Daten über Operator mit ICAO-Code aus Datenbank (Server-Aufruf)
-   * "ICAO-Code" ist der 3-stellige Operator-Code in Grossbuchstaben, z. B. "DLH"
-   */
-  getOperatorData(operatorIcao: string): Observable<any> {
-    // Initialiere Params-Objekt
-    let params = new HttpParams();
-
-    // Weise Parameter zu
-    params = params.append('operatorIcao', operatorIcao);
-
-    let response = this.httpClient.get(Globals.urlGetOperatorData, {
-      params: params,
-    });
-
-    return response;
-  }
-
-  /**
-   * Methode holt Daten über Reg-Code-Prefix aus Datenbank (Server-Aufruf)
-   * "Reg-Code-Prefix" ist der Prefix der Registrierung in Grossbuchstaben, z. B. "D"
-   */
-  getRegcodeData(regcodePrefix: string): Observable<any> {
-    // Initialiere Params-Objekt
-    let params = new HttpParams();
-
-    // Weise Parameter zu
-    params = params.append('regcodePrefix', regcodePrefix);
-
-    let response = this.httpClient.get(Globals.urlGetRegcodeData, {
-      params: params,
-    });
-
-    return response;
-  }
-
-  /**
-   * Methode ruft alle Informationen der Entfernungs-Daten ab (Server-Aufruf)
-   */
-  getAllRangeData(): Observable<any> {
-    return this.httpClient.get(Globals.urlGetAllRangeData);
-  }
-
-  /**
-   * Methode ruft alle Informationen der Entfernungs-Daten innerhalb einer
-   * bestimmten Zeitspanne mit Start- und Endzeit ab (Server-Aufruf)
+   * Methode ruft alle RangeData-Einträge zwischen einer Start- und
+   * einer Endzeit vom Server ab (Server-Aufruf)
    */
   getRangeDataBetweenTimestamps(
     startTime: number,
@@ -150,5 +154,12 @@ export class ServerService {
    */
   getConfigurationData(): any {
     return this.httpClient.get(Globals.urlGetConfigurationData);
+  }
+
+  /**
+   * Methode ruft die ISS ohne Angabe eines Extents vom Server ab (Server-Aufruf)
+   */
+  getISSWithoutExtent(): Observable<any> {
+    return this.httpClient.get(Globals.urlGetISSWithoutExtent);
   }
 }

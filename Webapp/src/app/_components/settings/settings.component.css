@@ -1,11 +1,9 @@
 .settingsDiv {
   position: fixed;
   border-radius: 0px;
-  background-color: #efeff4;
   margin-top: 3.5rem;
   right: 0;
   top: 0;
-  color: black;
   font-size: 14px;
   bottom: 0;
   overflow: auto;
@@ -46,7 +44,7 @@
   width: 100%;
 }
 
-.info-text-range-data {
+.info-text {
   margin-top: 1rem;
   white-space: normal;
   line-height: 1rem;
@@ -54,4 +52,14 @@
 
 ::ng-deep .mat-dialog-container {
   padding: 0 !important;
+}
+
+.background-and-color-light {
+  background-color: #efeff4;
+  color: black;
+}
+
+.background-and-color-dark {
+  background-color: #383838;
+  color: white;
 }

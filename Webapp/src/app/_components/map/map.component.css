@@ -38,7 +38,6 @@ mat-card-header {
 #rangeDataPopup {
   padding: 0%;
   position: absolute;
-  background-color: #efeff4;
   left: -49px;
   min-width: 16rem;
   z-index: 5;
@@ -68,6 +67,10 @@ mat-card-header {
   background: rgba(0, 0, 0, 0.4) !important;
 }
 
+::ng-deep .ol-attribution.ol-collapsed {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
 ::ng-deep .ol-control button {
   background-color: rgba(0, 0, 0, 1) !important;
 }
@@ -75,8 +78,35 @@ mat-card-header {
 ::ng-deep .ol-attribution.ol-uncollapsible {
   font-size: smaller !important;
   padding: 0;
+  background-color: rgba(0, 0, 0, 0.4) !important;
 }
 
 ::ng-deep .ol-scale-line {
   background: rgba(0, 0, 0, 0.4) !important;
+}
+
+.background-and-color-light {
+  background-color: #efeff4;
+  color: black;
+}
+
+.background-and-color-dark {
+  background-color: #383838;
+  color: white;
+}
+
+.background-color-light {
+  background-color: white;
+}
+
+.background-color-dark {
+  background-color: #555555;
+}
+
+.color-grey {
+  color: grey;
+}
+
+.mat-card-content {
+  margin-bottom: 0px;
 }

@@ -32,14 +32,14 @@
   z-index: 1000;
   font-size: 0.8rem;
   font-weight: bold;
-  width: 1.5em;
+  width: 2.5em;
   height: 1.5em;
   box-sizing: initial;
   background: #fff;
   border: 0.1em solid rgb(0, 0, 0);
   color: #000;
   text-align: center;
-  border-radius: 50%;
+  border-radius: 10%;
   line-height: 2em;
   box-sizing: content-box;
   margin-left: 1rem;

@@ -1,0 +1,15 @@
+[Unit]
+Description=The Beluga Project
+After=syslog.target network.target
+
+[Service]
+SuccessExitStatus=143
+User=beluga
+Type=simple
+
+WorkingDirectory=/home/beluga/.local/share/applications/BelugaProject
+ExecStart=java -jar BelugaProject-TODO.jar
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target

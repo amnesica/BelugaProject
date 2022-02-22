@@ -1,283 +1,646 @@
 ## Install
 
-### 1. Download and install requirements
+This manual will give you instructions to run the Beluga Project on a Debian based system like RasbianOS or Ubuntu.
 
-In order to run the beluga project git, angular, postgres and java 11 have to be installed. To manage the database pgAdmin is highly recommended. Following instructions were tested on manjaro linux.
+Local installation was tested on Ubuntu 20.04 and on Ubuntu 18.04. Server installation was tested on Raspbian GNU/Linux 10 (buster) and on Raspberry Pi OS Debian 11 (bullseye).
 
-0. Update package database.
-   First of all update the package database of pacman package manager with the following command
+If you just want to try out BelugaProject without changing your system we recommend to use a virtual machine created with [Gnome Boxes](https://en.wikipedia.org/wiki/GNOME_Boxes).
 
-```
-$ sudo pacman -Sy
-```
+If you face any issues please let us know. Happy installing!
 
-1. Install Git
+<details>
+<summary><b>Table of Contents</b> (click to open)</summary>
+<!-- MarkdownTOC -->
 
-```
-$ sudo pacman -S git
-```
+- [Overview](#overview)
+- [Install dependencies](#Install-dependencies)
+- [Setup PostgreSQL for BelugaProject](#Setup-PostgreSQL-for-BelugaProject)
+  - [Create PostgreSQL user and database for BelugaProject](#Create-PostgreSQL-user-and-database-for-BelugaProject)
+  - [Enable networking for PostgreSQL](#Enable-networking-for-PostgreSQL)
+  - [Configure remote access for PostgreSQL](#Configure-remote-access-for-PostgreSQL)
+- [Install further dependencies](#install-further-dependencies)
+- [Configure application properties](#configure-application-properties)
+- [Configure IP adress of backend service (local system)](#configure-ip-adress-of-backend-service--local-system-)
+- [Build BelugaProject jar file (local system)](#build-belugaproject-jar-file--local-system-)
+  - [Build BelugaProject with build script](#Build-BelugaProject-with-build-script)
+  - [Run BelugaProject](#Run-BelugaProject)
+  - [Manual Build of BelugaProject](#Manual-Build-of-BelugaProject)
+  - [Build BelugaProject from IDE](#build-belugaproject-from-ide)
+- [Load database tables](#load-database-tables)
+- [Deployment to remote server](#deployment-to-remote-server)
+  - [Build jar file (on local system)](#build-jar-file-on-local-system)
+  - [Setup server (Raspberry Pi)](#setup-server-raspberry-pi)
+  - [Configure application properties for server](#Configure-application-properties-for-server)
+- [Check database tables](#check-database-tables)
 
-2. Install Java
-   (at least Java 11 is required)
+<!-- /MarkdownTOC -->
+</details>
 
-```
-$ sudo pacman -S jdk11-openjdk
-```
+### Overview
 
-3. Install Maven
+The BelugaProject consists of a java spring boot server application as backend, a postgres database and an angular frontend.
 
-```
-$ sudo pacman -S maven
-```
+<p align="center">
+<img alt="BelugaProject Overview" src="Assets/Images/BelugaProjectOverview.png" width="50%"/>
 
-4. Install PostgreSQL.
-   To install and setup PostgreSQL use [this](https://linuxhint.com/install-postgresql-10-arch-linux/) excellent tutorial
+It requires a java runtime system, Maven (for building the BelugaProject jar-file with dependencies), postgres database and angular. If you want to develop the app, you need an IDE (like Intellij or eclipse), angular and (optionally) git.
 
-5. Install pgAdmin
+It is necessary to configure the postgres database including a postgres user "beluga". Running the application on a server requires to create an unix user "beluga" aswell. For local testing the unix user "beluga" is optional.
 
-```
-$ sudo pacman -S pgadmin4
-```
+Next step is to adapt the config files `application.properties` and `environment.prod.ts` for your installation. Then the build process can be executed. The result is a file `BelugaProject-X-X-X.jar` (X-X-X is replaced by the version number) which can be run on your local system. At first run the spring boot application creates the database tables. They have to be filled with a load-script afterwards.
 
-6. Install a Java IDE like Eclipse. See [this](https://www.eclipse.org/downloads/packages/release/2020-12/r/eclipse-ide-java-developers) link for further instructions
+Finally the `BelugaProject-X-X-X.jar` file with the corresponding configuration should be deployed to a dedicated server system such as a RaspberryPi. The server has to be set up similarly to the local system before.
 
-7. Install Angular: To install and setup Angular use [this](https://angular.io/guide/setup-local) tutorial
+### Install dependencies
 
-### 2. Create new postgres user and database
+This can be done with the provided script `install_dependencies.sh` in `/Assets/Scripts`.
+Execution requires sudo, so you may check the script code before.
 
-Postgres uses the user `postgres` as a default user. However, it is recommended to create a new user for further operations. We will create a new user `beluga` who is the owner of the database used by the beluga project application.
+It will install the dependencies needed
+to run and build the Beluga Project. If you are running
+this script on your production server (lika a Raspberry Pi)
+you can skip the installation of dependecies only needed for
+building the jar file of the Beluga Project.
 
-1. Create postgres user `beluga`: Login as the unix user `postgres`
+Dependencies needed for running the Beluga Project:
 
-```
-$ sudo -i -u postgres
-```
+- Java (at least Java 14, script will install Java 17)
+- Postgresql
 
-2. Go into postgres
+Dependencies needed for building the Beluga Project:
 
-```
-$ psql
-```
-
-3. Create postgres user `beluga`
-
-```
-$ CREATE ROLE beluga WITH LOGIN SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION CONNECTION LIMIT -1;
-```
-
-3. Create user default database of user `beluga`
-
-```
-$ CREATE DATABASE beluga WITH OWNER = beluga ENCODING = 'UTF8' TABLESPACE = pg_default CONNECTION LIMIT = -1;
-```
-
-4. Set a password for postgres user `beluga`
-
-```
-$  \password beluga
-```
-
-5. Log out of postgres
+- Maven 3.8.4
+- Nodejs 16.x
+- Npm
+- Angular
 
 ```
-$  exit
+  $ cd /Assets/Scripts
+  $ sudo ./install_dependencies.sh
 ```
 
-6. Login to psql as the postgres user `beluga`
+### Setup PostgreSQL for BelugaProject
+
+#### Create PostgreSQL user and database for BelugaProject
+
+- Connect to postgres psql console with user `postgres`
+
+  ```
+  $ sudo -i -u postgres
+  $ psql
+  ```
+
+- Try to list all db
+
+  ```
+  postgres=# \l
+  ```
+
+- Create postgres user `beluga` (output should be "CREATE ROLE")
+
+  ```
+  postgres=# CREATE ROLE beluga WITH LOGIN SUPERUSER CREATEDB CREATEROLE INHERIT REPLICATION CONNECTION LIMIT -1;
+  ```
+
+- Create user default database for postgres user `beluga` (output should be "CREATE DATABASE")
+
+  ```
+  postgres=# CREATE DATABASE beluga WITH OWNER = beluga ENCODING = 'UTF-8' TABLESPACE = pg_default CONNECTION LIMIT -1;
+  ```
+
+- Set a password for postgres user `beluga`
+
+  ```
+  postgres=# \password beluga
+  ```
+
+- Log out of psql console
+
+  ```
+  postgres=# \q
+  ```
+
+- Login to psql console as newly created user `beluga`
+
+  ```
+  $ psql -U beluga -h 127.0.0.1
+  ```
+
+- Create `belugaDb` database with user `beluga` (output should be "CREATE DATABASE")
+
+  ```
+  beluga=# CREATE DATABASE "belugaDb";
+  ```
+
+- Log out of psql console
+
+  ```
+  beluga=# \q
+  ```
+
+- Log out as user `postgres`
+
+  ```
+  $ exit
+  ```
+
+- Configure local login for user `beluga`
+
+  ```
+  $ cd /etc/postgresql/<yourVersion>/main
+  $ sudo nano pg_hba.conf
+  ```
+
+  To avoid that user database user `beluga` must enter a password on local system add this line for user `beluga` to `pg_hba.conf` right before the line `local all all peer`.
+
+  ```
+  # "local" is for Unix domain socket connections only
+  local   all             beluga                                  trust
+  local   all             all                                     peer
+  ```
+
+- Restart postgresql service
+
+  ```
+    $ sudo systemctl restart postgresql
+  ```
+
+- Check that postgresql service is running
+
+  ```
+    $ sudo systemctl status postgresql
+  ```
+
+- If postgresql restart fails, check postgresql logfile (replace XX with postgresql version number)
+  ```
+    $ sudo nano /var/log/postgresql/postgresql-XX-main.log
+  ```
+  Check that there is no problem with `pg_hba.conf`.
+
+#### Enable networking for PostgreSQL
+
+By default PostgreSQL listens to `localhost` only. If remote access to PostgreSQL is required, listening to foreign IP-addresses must be configured (typically on a server installation).
+
+- Open `postgresql.conf`
+
+  ```
+  $ cd /etc/postgresql/<yourVersion>/main
+  $ sudo nano postgresql.conf
+  ```
+
+- Find the line
+  `#listen_addresses = 'localhost'`
+- Change it to
+  `listen_addresses = '*'`
+  (**important**: remove the '#')
+
+- Save and exit
+
+- Restart PostgreSQL service
+
+  ```
+  $ sudo systemctl restart postgresql
+  ```
+
+- If PostgreSQL restart fails, check PostgreSQL logfile (replace XX with postgresql version number)
+  ```
+  $ sudo nano /var/log/postgresql/postgresql-XX-main.log
+  ```
+  Check that there is no problem with `postgresql.conf`.
+
+#### Configure remote access for PostgreSQL
+
+The following step is optional. It is required if you want to manage the PostgreSQL database from a remote system or need direct access to it (e.g. with pgAdmin-Tool or DBeaver). It is **not** required for BelugaProject-clients, because they access the database only via BelugaProject-webservices.
+
+- Change file `pg_hba.conf`
+  ```
+  $ cd /etc/postgresql/<yourVersion>/main
+  $ sudo nano pg_hba.conf
+  ```
+- Add the following line(s) with your resp. IP address from where you want to access the database (save and exit).
+
+  ```
+  host    all        all      192.168.XXX.XX/24      trust
+  ```
+
+- Check that `/24` follows your IP-adress!
+
+- Restart PostgreSQL service
+  ```
+  $ sudo service postgresql restart
+  ```
+- If postgresql restart fails, check postgresql logfile (replace XX with postgresql version number)
+  ```
+  $ sudo nano /var/log/postgresql/postgresql-XX-main.log
+  ```
+  Check that there is no problem with `pg_hba.conf`.
+
+### Install further dependencies
+
+(if you want to dive into development)
+
+- pgAdmin4 or DBeaver
+
+- An IDE like Intellij IDEA
+
+### Configure application properties
+
+To be able to run the spring boot application you have to provide some information in the configuration file `application.properties` in `/Server/src/main/resources/config` which is used when you run the application.
+
+First duplicate template file `application.properties.template` and name it `application.properties`. To configure the file use following instructions to replace the `TODO`s. If you missed to provide some information or forgot to replace some `TODO`s the application start may fail or some features will not work properly.
+
+When configuring multiple feeders the order of the entries in the following instructions are important. The first entries in `ipFeeder`, `typeFeeder`, `nameFeeder` and `colorFeeder` belong to the same feeder as well as the second and so on.
+
+- Set your feeder location. Replace the values with your antenna position coordinates. Later this will be the shown on the map with an antenna icon.
+
+  ```
+  latitudeLocation=54.1234
+  longitudeLocation=8.1234
+  ```
+
+- Enter the URLs of your feeders with an json output seperated by comma.
+
+  - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
+  - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
+  - for fr24feeder use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
+
+  ```
+  ipFeeder=URL1, URL2
+  ```
+
+- Enter the type of your feeders (currently supported: fr24feeder, airsquitter, adsbx (for tar1090))
+
+  ```
+  typeFeeder=typeoffeeder1, typeoffeeder2
+  ```
+
+- Enter the name of your feeders seperated by comma
+
+  ```
+  nameFeeder=Name1, Name2
+  ```
+
+- Enter the color of your feeders seperated by comma. This color is used later in statistical views
+
+  ```
+  colorFeeder=red, blue
+  ```
+
+- Enter the amount of your feeders
+
+  ```
+  amountFeeder=2
+  ```
+
+- Database properties: Set password for the database `belugaDb`
+
+- Opensky-Credentials: (Optional) Replace `TODO`s with your opensky network credentials. If you do not provide credentials this function will be disabled.
+
+- Search engine url to search for aircraft pictures when planespotters.net does not find results (default is startpage): (Optional) Replace given url with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex
+
+It is possible to configure application.properties **after** building the jar-file. You will find instructions in [Configure application properties for server](#Configure-application-properties-for-server).
+
+### Configure IP adress of backend service (local system)
+
+To tell the frontend where to find the backend server it is required to set the IP address of your backend server in file `/Webapp/src/environments/environment.prod.ts`.
+
+Open file and replace `TODO` in parameter `baseUrl` with the IP address of your local system.
+
+### Build BelugaProject jar file (local system)
+
+<p align="center">
+<img alt="BelugaProject Overview Dev Mode" src="Assets/Images/BelugaProjectOverview_DevMode.png" width="50%"/>
+
+After configuring `application.properties` and `environment.prod.ts` the build process can be executed. There are three different build methods described below.
+
+#### Build BelugaProject with build script
+
+You can do this with the provided script `build.sh` in `/Assets/Scripts` folder.
+
+Make the script executable with
 
 ```
-$  psql -U beluga
+chmod +x build.sh
 ```
 
-7. Create new database for application beluga project as user `beluga` whereas `belugaDb` is the chosen name for the database of the application
+Execute the script with
 
 ```
-$  createDb belugaDb
+./build.sh
 ```
 
-### 3. Setup and run beluga project for first time
+The gentle reminder prompts to check the URL and the version can be accepted with `y`.
 
-On first startup of the spring boot application the tables in the database are being created. To be able to run the spring boot application you have to provide some information in the configuration file `app.config` in `/Server/src/main/resources/` which is used when you run the application from Eclipse. The `app.config` in the root directory of the project is used in production mode when you are running the application as a jar file. For a first startup inside Eclipse this file is not needed.
+Building the frontend requires some memory. The build may fail with an error message like
+`Generating browser application bundles (phase: building)... 16869 Killed`
+if your system has less then 3 GiB RAM.
 
-To configure the `app.config` file in `/Server/src/main/resources/` use following instructions. If you missed to provide some information the application will not start.
+#### Run BelugaProject
 
-You can easily add multiple feeder. Just go through the instructions and add an entry with an increasing number for the feeder. A feeder consists of `ipFeeder`, `typeFeeder`, `nameFeeder` and `colorFeeder` (e.g. a third feeder would consist of an `ipFeeder3`, `typeFeeder3`, `nameFeeder3` and `colorFeeder3`). Make sure you enter the right amount of feeders to `amountFeeder`.
-
-1. Open the `app.config` in `/Server/src/main/resources/` with your favourite text editor
-2. Enter your position. Later this will be the shown location on the map
-
-```
-latitudeLocation=54.1234
-longitudeLocation=8.1234
-```
-
-3. Enter the ip addresses of your feeder with an json output. Currently the Flightradar24 feeder and the AirSquitter feeder are supported. Other feeder can be configured to work with this application as well
+After successful build process run the application (replace X-X-X with current version) with
 
 ```
-ipFeeder1=http://XXX.XXX.XXX.XX/aircraftlist.json
-ipFeeder2=http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json
-```
-
-4. Next specify the type of your feeders. This step is important as it assigns the mapping of the feeder to the aircraft entity used in the application. For example for the AirSquitter feeder the mapping will be listed in `airsquitter.config`. Other currently unsupported feeders do need to have a proper mapping configuration file
-
-```
-typeFeeder1=airsquitter
-typeFeeder2=fr24feeder
-```
-
-5. Enter the names of your feeders which are later displayed in the aircraft information on the map
-
-```
-nameFeeder1=AirSquitterFeeder
-nameFeeder2=Flightradar24Feeder
-```
-
-6. Specify a color for every feeder which is later used when the range data of this feeder is shown
-
-```
-colorFeeder1=red
-colorFeeder2=blue
-```
-
-7. Enter the amount of your feeder
-
-```
-amountFeeder=2
-```
-
-8. Mention if the position of the International Space Station (ISS) should be displayed on your map. The position is feeded from the Open-Notify-API [here](http://open-notify.org/Open-Notify-API/ISS-Location-Now/)
-
-```
-showIss=true
-```
-
-9. Enter the amount and distances of range rings (in nautical miles) that should be displayed on the map
-
-```
-circleDistanceOfRing1=50
-circleDistanceOfRing2=100
-circleDistanceOfRing3=150
-```
-
-10. Enter the credentials and the name of the newly created database in the `application.properties` in `/Server/src/main/resources/`. The provided password "password" here is just an example
-
-```
-spring.datasource.url=jdbc:postgresql://localhost:5432/belugaDb
-spring.datasource.username=beluga
-spring.datasource.password=password
-```
-
-11. Start Eclipse and import the project with File -> Import -> Existing Maven Projects and locate the beluga project `/Server` folder
-
-12. Run the application for the first time with a right click on `Application.java` -> Run As -> Java Application. The application should start for the first time and the tables should be created in the database `belugaDb`. If you missed to provide some information the application will not start. In this case check if you have filled all entries
-
-### 4. Import database contents
-
-Your application will start now but currently there is no information in the database to provide some additional information about the aircraft or its operator.
-
-To fill the database tables `aircraftData`, `airportData`, `country_data`, `regcode_data` and `operator_data` use the following instructions. The provided csv file `operator_data.csv` is based on [this](https://en.wikipedia.org/wiki/List_of_airline_codes).
-
-1. For the table `aircraft_data` download the file `aircraftDatabase.csv` from Opensky-Network [here](https://opensky-network.org/datasets/metadata/)
-
-2. For the table `airport_Data` download the file `airports.csv` from OurAirports [here](https://ourairports.com/data/)
-
-3. For the tables `country_data`, `regcode_data` and `operator_data` use the provided csv files in `/DbContent`
-
-4. Unfortunately, if you want to fill the table `flightroute_data` you have to provide the data yourself
-
-5. Copy the csv-files to a directory like `/var/lib/postgresql`
-
-6. In the script `loadBelugaDb.sh` specify the path `pathToDirectoryWithCsv` to the directory with the csv-files (e.g. `/var/lib/postgresql/DbContent`)
-
-7. Make the script `loadBelugaDb.sh` executable
-
-```
-$ chmod +x loadBelugaDb.sh
-```
-
-8. Execute the script to import the data from the csv files into the database tables (this might take some time)
-
-```
-$ ./loadBelugaDb.sh
-```
-
-## Run
-
-### Build and run beluga project in Eclipse
-
-1. Make sure you configured the configuration file `app.config` in `/Server/src/main/resources/`
-
-2. Start the spring boot application with right click on `Application.java` -> Run As -> Java Application
-
-3. Build and open the angular application in a browser. If you are opening the angular application for the first time, run `npm install` first. Make sure the url of the server (here: `baseUrl`) in `/src/environments/environment.ts` fits.
-
-```
-$ ng serve --open
-```
-
-4. If your browser is not open yet, go to `http://localhost:4200/`
-
-### Build and run beluga project as a jar file (production mode)
-
-1. Make sure you configured the configuration file `app.config` in the projects root folder to be identical with the configuration file `app.config` in `/Server/src/main/resources/`
-
-2. Build the angular application in production mode. If you are opening the angular application for the first time, run `npm install` first. Make sure the url of the server (here: `baseUrl`) in `/src/environments/environment.prod.ts` fits.
-
-```
-$ ng build --prod
-```
-
-3. Go into the `/Server` folder. Build the spring boot application with the command below. Afterwards, the jar file should be placed inside the `/Server/target` folder
-
-```
-$ mvn clean install
-```
-
-3. Execute the jar file (make sure to replace the given filename)
-
-```
+$ cd /Server/prod
 $ java -jar BelugaProject-X-X-X.jar
 ```
 
-4. Open your browser and go to `http://*yourIpAddress*:8080/`
+On first startup of the spring boot application the tables in database `belugaDb` are created automatically.
 
-### Execute the application on startup
+You can check this, see [Check database tables](#check-database-tables).
 
-To start the program on startup use the following instructions. We will create a cronjob to start the application on startup as the process of a user.
+If you missed to provide some information in the file `application.properties` the application start may fail or some features will not work properly. In this case check if you have filled all entries in `application.properties`.
 
-1. Check if the script `beluga_start_script` has unix file format (lf) (very important step!)
+Don't worry, if just the map but no aircraft appears. Displaying aircraft icons requires loading of database tables as described in [Load database tables](#load-database-tables).
 
-2. Enter the path to the jar file and the filename of the beluga jar to 'pathBelugaJarWithFilename' (the filepath below is an example)
+The application is running on port 8080, open you browser and go to `http://localhost:8080/`.
+
+#### Manual Build of BelugaProject
+
+If you have no IDE installed, you can build the angular frontend and the java spring boot backend JAR-file in a Terminal.
+
+- Build the angular frontend
+
+  ```
+  $ cd /Webapp
+  $ ng build --prod
+  ```
+
+  This process may take some time.
+
+  Building the frontend requires some memory. The build may fail with an error message like
+  `Generating browser application bundles (phase: building) ... 16869 Killed`
+  if your system has less then 3 GiB RAM.
+
+- Build the spring boot application
+  ```
+  $ cd /Server
+  $ mvn clean install
+  ```
+  This process may take some time.
+- After successful build run the application, see [Run BelugaProject](#Run-BelugaProject).
+
+#### Build BelugaProject from IDE
+
+Alternatively you can build the backend and the frontend from your IDE.
+
+For building the backend open the `/Server` folder in your IDE (Intellij or eclipse) as new project and build the application.
+
+For building the frontend go to `/Webapp` folder. If you are opening the angular application for the first time, run `npm install` first.
+
+Execute command
 
 ```
-# path to beluga jar file with filename
-pathBelugaJarWithFilename="/home/beluga/BelugaProject/BelugaProject-X-X-X.jar"
+ng serve --open
 ```
 
-3. Make the script `beluga_start_script` executable
+If your browser is not open yet, go to `http://localhost:4200/`.
+
+Don't worry, if just the map but no aircraft appears. Displaying aircraft icons requires loading of database tables as described in [Load database tables](#load-database-tables).
+
+When building the frontend this way file `environment.ts` with `baseUrl: 'localhost'` is used instead of `environment.prod.ts`.
+
+Building the frontend requires some memory. The build may fail with an error message like
+`Generating browser application bundles (phase: building)... 16869 Killed`
+if your system has less then 3 GiB RAM.
+
+### Load database tables
+
+**Important:** This step requires that the spring boot application has been executed before at least one time to create the database tables. You can check this, see [Check database tables](#check-database-tables).
+
+To fill the database tables use the following instructions.
+
+The provided csv file `operator_data.csv` is based on [https://en.wikipedia.org/wiki/List_of_airline_codes](https://en.wikipedia.org/wiki/List_of_airline_codes).
+
+- For the table `aircraft_data` download the file `aircraftDatabase.csv` from Opensky-Network at [https://opensky-network.org/datasets/metadata/](https://opensky-network.org/datasets/metadata/)
+
+- For the table `airport_data` download the file `airports.csv` from OurAirports at [https://ourairports.com/data/](https://ourairports.com/data/)
+
+- Unfortunately, if you want to fill the table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample
+
+- For the tables
+
+  - `country_data`
+  - `regcode_data`
+  - `operator_data`
+  - `map_cat_to_shape`
+  - `map_type_to_shape`
+  - `shape_data`
+
+    use the provided csv files in `Assets/DbContent`.
+
+- For the tables
+
+  - `aircraft_data`
+  - `airport_data`
+
+    copy the downloaded files to `.../Assets/DbContent`.
+
+  To load the csv-files it is necessary that the files can be accessed by postgres. Therefore create a folder `DbContent` inside the postgres folder.
+
+  ```
+  $ cd /var/lib/postgresql/
+  $ sudo mkdir DbContent
+  ```
+
+- Copy all csv-files to the newly created directory `/var/lib/postgresql/DbContent`
+
+- In the script `loadBelugaDb.sh` set the path in `pathToDirectoryWithCsv` to the directory with the csv-files (e.g. `/var/lib/postgresql/DbContent`)
+
+- Make the script `loadBelugaDb.sh` executable
+
+  ```
+  $ chmod +x loadBelugaDb.sh
+  ```
+
+- Execute the script to import the data from the csv files into the database tables (this might take some time).
+
+  ```
+  $ ./loadBelugaDb.sh
+  ```
+
+### Deployment to remote server
+
+<p align="center">
+<img alt="BelugaProject Overview Prod Mode" src="Assets/Images/BelugaProjectOverview_ProdMode.png" width="50%"/>
+
+#### Build jar file (on local system)
+
+Set the IP address of your server (replace `TODO` at parameter `baseUrl`) in `Webapp/src/environments/environment.prod.ts`.
+
+To initialize the angular application, run `npm install` first.
+
+The following steps can be done automatically with the provided build script `build.sh` in `/Assets/Scripts`. Make the script executable with `chmod +x build.sh`. Execute the script with `./build.sh`. The gentle reminder prompts to check the URL and the version can be accepted with `y`.
+
+If you don't want to use the build script, follow the manual procedure described here:
+
+- Build the angular application in production mode.
+
+  ```
+  $ ng build --prod
+  ```
+
+- Go into the `/Server` folder. Build the spring boot application with the command below. Afterwards, the jar file should be inside the `/Server/target` and `/Server/prod` folder.
+
+  ```
+  $ mvn clean install
+  ```
+
+- For test purpose: Execute the jar file (make sure to replace the version X-X-X in the given filename below)
+
+  ```
+  $ java -jar BelugaProject-X-X-X.jar
+  ```
+
+- For test purpose: Open your browser and go to `http://<yourIpAddress>:8080/`
+
+  Don't worry, if just the map but no aircraft appears. Displaying aircraft icons requires loading of database tables as described in [Load database tables](#load-database-tables).
+
+#### Setup server (Raspberry Pi)
+
+For permanent use it is recommended to run the Beluga Project on a permanent available server like a Raspberry Pi.
+
+The following instructions will setup the BelugaProject on your Raspberry Pi.
+
+- Log into Raspberry Pi with default user `pi`
+
+- Setup dependencies for the project
+
+  Run script `install_dependencies` from `/Assets/scripts/` on your server. Use instructions from [Install dependencies](#install-dependencies).
+
+- Setup Postgresql on server
+
+  - Use instructions from [Create PostgreSQL user and database for BelugaProject](#Create-PostgreSQL-user-and-database-for-BelugaProject)
+  - Use instructions from [Enable networking for PostgreSQL](#Enable-networking-for-PostgreSQL)
+  - Use instructions from [Configure remote access for PostgreSQL](#Configure-remote-access-for-PostgreSQL)
+
+- Create unix user `beluga`
+
+  ```
+  $ sudo adduser beluga
+  ```
+
+- Change to unix user `beluga` for the following steps
+
+  ```
+  $ su - beluga
+  ```
+
+- Create BelugaProject directory in `home/beluga/.local/share/applications/BelugaProject`:
+
+  ```
+  $ mkdir .local
+  $ cd .local
+  $ mkdir share
+  $ cd share
+  $ mkdir applications
+  $ cd applications
+  $ mkdir BelugaProject
+  ```
+
+- Prepare service (on your local system)
+
+  - Duplicate the `BelugaProject.service.template` file in `/Assets/Scripts` and rename it to `BelugaProject.service`.
+  - Replace the jar name in line `ExecStart` with the actual jar name.
+
+- Do on your local system:
+
+  - Copy the file `/Server/src/resources/config/application.properties` to `/Server/prod/config`.
+  - Copy the contents of `/Server/prod`, the `BelugaProject.service` file and the `loadBelugaDb.sh` to the Beluga Project folder on the Raspberry Pi `/home/beluga/.local/share/applications/BelugaProject`
+
+- Optional: If your local system is a Windows system, convert CRLF in all shellscripts to LF (install and execute dos2unix on the Raspberry Pi)
+
+  ```
+  $ sudo apt-get install dos2unix
+  $ dos2unix BelugaProject.service
+  $ dos2unix loadBelugaDb.sh
+  ```
+
+- Install and enable service
+
+  - Check that `BelugaProject.service` has unix file format (LF) (very important step!)
+  - Make the script `BelugaProject.service` executable (with user `pi`)
+
+    ```
+    $ sudo chmod +x BelugaProject.service
+    ```
+
+  - Copy script to systemd/system-directory
+    ```
+    $ sudo cp BelugaProject.service /etc/systemd/system/
+    ```
+  - Enable service
+    ```
+    $ sudo systemctl enable BelugaProject.service
+    ```
+  - Start service
+    ```
+    $ sudo systemctl start BelugaProject.service
+    ```
+  - Check status of service
+
+    ```
+    $ sudo systemctl status BelugaProject.service
+    ```
+
+  - Check status of postgres & BelugaProject after reboot
+
+  - Check remote access to postgresql via pgAdmin-Tool (installed on Windows or Linux-Client)
+  - Check belugaDb: make sure that database tables have been created, see [Check database tables](#check-database-tables)
+  - Check that `BelugaProject.service` is active
+    ```
+    $ sudo systemctl status BelugaProject.service
+    ```
+  - Check web interface in Browser `http://<your-server-ip>:8080/`
+
+  At this moment no aircraft are visible because database-tables are still empty. Execute step [Load database tables](#load-database-tables) (on server system) to fix this.
+
+#### Configure application properties for server
+
+You can configure the application **after** building the jar file. Duplicate the `application.properties.template` file in `/Server/prod/config`, name it to `application.properties` and fill out the file.
+To make BelugaProject use the newly created `application.properties` file copy the file inside the `config` directory which should be in the same directory as the jar file. When you have a running server restart the server and if necessary reload the site in the browser. The application should now use the new properties file.
+
+### Check database tables
+
+With the first run of the spring boot application database tables are created automatically. You can check this following the steps listed below.
+
+- Login to postgreSQL as user `beluga` (if you don't have a user `beluga` use the user `postgres` instead in the following commands)
+  ```
+  $ sudo -i -u beluga
+  $ psql
+  ```
+- Connect to database `belugaDb`
+  ```
+  beluga=# \c belugaDb
+  ```
+- List all tables of database `belugaDb`
+
+  ```
+  belugaDb=# \dt
+  ```
+
+  You should get a result like this:
 
 ```
-$ chmod +x beluga_start_script.sh
+                   Liste der Relationen
+
+  Schema | Name | Typ | Eigentümer
+  --------+------------------------+---------+------------
+  public | aircraft | Tabelle | beluga
+  public | aircraft_data | Tabelle | beluga
+  public | aircraft_trail | Tabelle | beluga
+  public | airport_data | Tabelle | beluga
+  public | country_data | Tabelle | beluga
+  public | flightroute_data | Tabelle | beluga
+  public | history_aircraft | Tabelle | beluga
+  public | history_aircraft_trail | Tabelle | beluga
+  public | map_cat_to_shape_data | Tabelle | beluga
+  public | map_type_to_shape_data | Tabelle | beluga
+  public | opensky_aircraft | Tabelle | beluga
+  public | operator_data | Tabelle | beluga
+  public | range_data | Tabelle | beluga
+  public | regcode_data | Tabelle | beluga
+  public | shape_data | Tabelle | beluga
+  public | spacecraft | Tabelle | beluga
+  public | spacecraft_trail | Tabelle | beluga
+  (17 Zeilen)
 ```
-
-4. Open crontab as the current user with `crontab -e`. If you want to use another user as the current one use `sudo crontab -u *yourUsername* -e`
-
-5. Add the following line at the very bottom of the opened file
-
-```
-@reboot sh *pathToBelugaStartScript*/beluga_start_script.sh
-```
-
-6. Save the file and reboot your computer
-
-## Additional information
-
-### How to add additional feeder?
-
-For additional Flightradar24 or AirSquitter feeder refer to the section "3. Setup and run beluga project for first time".
-
-If you want to add a feeder which is not yet supported you need to do more changes. In addition to the changes in the config files you have to add a proper mapping file and change corresponding methods in `AircraftService.java`. One method is `getAircraftsFromFeeder()` which must be adapted so that the values are read out correctly.
-
-### Why are there no aircraft images displayed?
-
-Unfortunately, the photo API we use is not open source and therefore it cannot be displayed in this repository. To display photos you have to modify the `getAircraftPhoto()` method in the `AircraftService.java` to return a photo-url using the hex or registration of the given aircraft.

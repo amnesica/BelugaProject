@@ -1,0 +1,588 @@
+type_designator	creator	description	shape_designator	shape_scale	version
+K35R	RexKramer1	Boeing KC-135 Stratotanker CFM Engines	K35E	0.5	2.0
+FA20	RexKramer1	13t  	JET_swept	0.35	2.0
+K35E	RexKramer1	Boeing KC-135 Stratotanker CFM Engines	K35E	0.5	2.0
+MD11	RexKramer1	  	MD11	0.5	2.0
+B29	RexKramer1	  	B29	0.5	2.0
+PC12	RexKramer1	""	PC12	0.65	2.0
+RJ70	RexKramer1		RJ85	0.5	2.0
+A20N	RexKramer1	  	A20N	0.5	2.0
+A306	RexKramer1	  	A306	0.5	2.0
+A21N	RexKramer1		A21N	0.5	2.0
+A30B	RexKramer1	""	A306	0.48	2.0
+A310	RexKramer1	""	A310	0.5	2.0
+A319	RexKramer1		A19N	0.5	2.0
+A318	RexKramer1		A318	0.5	2.0
+A19N	RexKramer1		A19N	0.5	2.0
+A320	RexKramer1		A320	0.5	2.0
+A321	RexKramer1		A321	0.5	2.0
+A332	RexKramer1	  	A332	0.5	2.0
+A333	RexKramer1	  	A333	0.5	2.0
+A338	RexKramer1		A338	0.5	2.0
+A339	RexKramer1		A339	0.5	2.0
+A342	RexKramer1	""	A342	0.5	2.0
+A343	RexKramer1	""	A343	0.5	2.0
+A345	RexKramer1	""	A345	0.5	2.0
+A346	RexKramer1	""	A346	0.5	2.0
+A359	RexKramer1	""	A359	0.5	2.0
+A35K	RexKramer1	""	A35K	0.5	2.0
+B732	RexKramer1	""	Cat_A3	0.4	2.0
+B731	RexKramer1	""	Cat_A3	0.37	2.0
+AN26	RexKramer1	""	AN26	0.5	2.0
+B350	RexKramer1	""	B350	0.65	2.0
+B190	RexKramer1	""	B190	0.65	2.0
+B38M	RexKramer1	""	B38M	0.5	2.0
+B39M	RexKramer1	""	B39M	0.5	2.0
+B701	RexKramer1	""	B703	0.47	2.0
+B703	RexKramer1	""	B703	0.5	2.0
+B733	RexKramer1	""	B733	0.5	2.0
+B734	RexKramer1	""	B734	0.5	2.0
+B735	RexKramer1	""	B735	0.5	2.0
+B737	RexKramer1	""	B737	0.5	2.0
+B738	RexKramer1	""	B738	0.5	2.0
+B739	RexKramer1	""	B739	0.5	2.0
+B744	RexKramer1	  	B744	0.5	2.0
+B748	RexKramer1	""	B748	0.5	2.0
+B74S	RexKramer1	  	B74S	0.5	2.0
+B752	RexKramer1	""	B752	0.5	2.0
+B753	RexKramer1	""	B753	0.5	2.0
+B762	RexKramer1	""	B762	0.5	2.0
+B763	RexKramer1	""	B763	0.5	2.0
+B764	RexKramer1	""	B764	0.5	2.0
+B772	RexKramer1	""	B772	0.5	2.0
+B773	RexKramer1	""	B773	0.5	2.0
+B779	RexKramer1	""	B779	0.5	2.0
+B77L	RexKramer1	""	B77L	0.5	2.0
+B77W	RexKramer1	""	B77W	0.5	2.0
+B788	RexKramer1	""	B788	0.5	2.0
+B789	RexKramer1	""	B789	0.5	2.0
+B78X	RexKramer1	""	B78X	0.5	2.0
+BLCF	RexKramer1	  	BLCF	0.5	2.0
+BCS1	RexKramer1		BCS1	0.5	2.0
+BALL	RexKramer1	Balloon  	BALL	0.35	2.0
+SHIP	RexKramer1	Blimp  	BALL	0.5	1.0
+BCS3	RexKramer1		BCS3	0.5	2.0
+D328	RexKramer1	""	D328	0.65	2.0
+C208	RexKramer1	""	C208	0.65	2.0
+D228	RexKramer1	""	D228	0.65	2.0
+DA42	RexKramer1	""	DA42	0.7	2.0
+C162	RexKramer1	""	C172	0.75	2.0
+C182	RexKramer1	""	C172	0.75	2.0
+C152	RexKramer1	""	C172	0.75	2.0
+DC10	RexKramer1	  	DC10	0.5	2.0
+DH8A	RexKramer1	""	DH8C	0.5	2.0
+DH8B	RexKramer1	""	DH8C	0.5	2.0
+DH8C	RexKramer1	""	DH8C	0.5	2.0
+DH8D	RexKramer1	""	DH8D	0.5	2.0
+E170	RexKramer1		E170	0.5	2.0
+E75S	RexKramer1		E170	0.5	2.0
+E75L	RexKramer1	  	E170	0.5	2.0
+E295	RexKramer1		E195	0.5	2.0
+E190	RexKramer1		E195	0.5	2.0
+E195	RexKramer1		E195	0.5	2.0
+E290	RexKramer1		E195	0.5	2.0
+C42	RexKramer1	""	F406	0.65	2.0
+F406	RexKramer1	""	F406	0.65	2.0
+F50	RexKramer1	""	F50	0.5	2.0
+B741	RexKramer1	  	B742	0.5	2.0
+B742	RexKramer1	  	B742	0.5	2.0
+B743	RexKramer1	  	B742	0.5	2.0
+B74D	RexKramer1	  	B742	0.5	2.0
+B74R	RexKramer1	  	B742	0.5	2.0
+J328	RexKramer1		J328	0.5	2.0
+RJ85	RexKramer1		RJ85	0.5	2.0
+RJ1H	RexKramer1		RJ85	0.5	2.0
+B461	RexKramer1		RJ85	0.5	2.0
+B462	RexKramer1		RJ85	0.5	2.0
+B463	RexKramer1		RJ85	0.5	2.0
+SF34	RexKramer1	""	SF34	0.5	2.0
+G650	RexKramer1		GLF6	0.5	2.0
+DC87	RexKramer1	  	DC87	0.5	2.0
+E8	RexKramer1		E8	0.5	2.0
+DC3	RexKramer1		DC3	0.5	2.0
+R135	RexKramer1	""	R135	0.5	1.0
+DC92	RexKramer1	  	JET_swept	0.5	2.0
+DC93	RexKramer1	  	JET_swept	0.5	2.0
+LJ23	RexKramer1	  	JET_nonswept	0.5	2.0
+C560	RexKramer1	9t  	JET_nonswept	0.5	2.0
+C550	RexKramer1	  	JET_nonswept	0.5	2.0
+C510	RexKramer1	  	JET_nonswept	0.5	2.0
+FA10	RexKramer1	8t  	JET_nonswept	0.65	2.0
+ATP	RexKramer1	""	ATP	0.5	2.0
+BE40	RexKramer1	7.3t  	JET_nonswept	0.65	2.0
+DC94	RexKramer1	  	JET_swept	0.5	2.0
+C680	RexKramer1	14t  	JET_swept	0.4	2.0
+C68A	RexKramer1	14t  	JET_swept	0.4	2.0
+YK40	RexKramer1	16t  	JET_swept	0.45	2.0
+FA50	RexKramer1	18t  	JET_swept	0.35	2.0
+CL30	RexKramer1	14t  	JET_swept	0.35	2.0
+CL35	RexKramer1	  	JET_swept	0.4	2.0
+F900	RexKramer1	21t  	JET_swept	0.4	2.0
+CL60	RexKramer1	22t  	JET_swept	0.35	2.0
+G200	RexKramer1	16t  	JET_swept	0.35	2.0
+G280	RexKramer1	18t  	JET_nonswept	0.65	2.0
+GLF2	RexKramer1	29t  	JET_swept	0.4	2.0
+GLF3	RexKramer1	31t  	JET_swept	0.4	2.0
+GLF4	RexKramer1	34t  	JET_swept	0.4	2.0
+GA5C	RexKramer1	34t  	JET_swept	0.4	2.0
+GLF5	RexKramer1	41t  	JET_swept	0.4	2.0
+GA6C	RexKramer1	41t  	JET_swept	0.4	2.0
+DC95	RexKramer1	  	JET_swept	0.5	2.0
+MD80	RexKramer1	60t  	JET_swept	0.5	2.0
+E45X	RexKramer1	24t  	JET_swept	0.47	2.0
+CRJ1	RexKramer1	24t  	CRJ2	0.45	2.0
+DC91	RexKramer1	  	JET_swept	0.5	2.0
+MD81	RexKramer1	  	JET_swept	0.5	2.0
+E145	RexKramer1	22t  	E35L	0.5	2.0
+LJ35	RexKramer1		LJ35	0.7	2.0
+MIR2	RexKramer1	  	MIR2	0.9	2.0
+SB39	RexKramer1	  	SB39	0.8	2.0
+C97	RexKramer1	  	SGUP	0.5	2.0
+SGUP	RexKramer1	  	SGUP	0.5	2.0
+T38	RexKramer1	  	T38	0.9	2.0
+TOR	RexKramer1	  	TOR_slow	0.7	2.0
+GLF6	RexKramer1		GLF6	0.5	2.0
+A10	RexKramer1	  	A10	0.7	2.0
+B712	RexKramer1		B712	0.5	2.0
+AJET	RexKramer1	  	AJET	0.9	2.0
+CRJ2	RexKramer1		CRJ2	0.5	2.0
+C750	RexKramer1		C750	0.55	2.0
+E135	RexKramer1		E35L	0.5	2.0
+CRJ7	RexKramer1		CRJ7	0.5	2.0
+E35L	RexKramer1		E35L	0.5	2.0
+FA7X	RexKramer1		FA7X	0.5	2.0
+GLEX	RexKramer1	  	GL5T	0.5	2.0
+FA8X	RexKramer1		FA7X	0.5	2.0
+GL5T	RexKramer1	  	GL5T	0.5	2.0
+LYNX	RexKramer1		LYNX	0.7	2.0
+TIGR	RexKramer1		TIGR	0.7	2.0
+C501	RexKramer1	  	JET_nonswept	0.65	2.0
+MI24	RexKramer1		MI24	0.8	2.0
+A37	RexKramer1	  	EUFI	0.9	2.0
+A700	RexKramer1	  	EUFI	0.9	2.0
+LEOP	RexKramer1	  	EUFI	0.9	2.0
+ME62	RexKramer1	  	EUFI	0.9	2.0
+EUFI	RexKramer1	  	EUFI	0.9	2.0
+AS65	RexKramer1		AS65	0.8	2.0
+GAZL	RexKramer1	  	GAZL	0.7	2.0
+C25B	RexKramer1	  	C25B	0.65	2.0
+C25A	RexKramer1	  	C25B	0.65	2.0
+C25C	RexKramer1	  	C25B	0.65	2.0
+C525	RexKramer1	  	C25B	0.65	2.0
+HA4T	RexKramer1	18t  	JET_nonswept	0.65	2.0
+L159	RexKramer1	  	L159	0.7	2.0
+L39	RexKramer1	  	L159	0.7	2.0
+LANC	RexKramer1	  	B29	0.5	2.0
+B17	RexKramer1	  	B29	0.5	2.0
+M339	RexKramer1	  	M326	0.7	2.0
+M326	RexKramer1	  	M326	0.7	2.0
+EC25	RexKramer1	11t  	S61	0.8	2.0
+A4	RexKramer1	  	A4	0.9	2.0
+MRF1	RexKramer1	  	MRF1	0.9	2.0
+P3	RexKramer1	  	P3	0.5	2.0
+S61R	RexKramer1	10t  	S61	0.99	2.0
+PA24	RexKramer1	  	PA28	0.7	2.0
+P28A	RexKramer1	""	PA28	0.7	2.0
+RFAL	RexKramer1	  	RFAL	0.7	2.0
+S61	RexKramer1	8.6t  	S61	0.9	2.0
+A149	RexKramer1	8.6t  	S61	0.9	2.0
+A169	RexKramer1	5t  	S61	0.7	2.0
+H160	RexKramer1	6t  	S61	0.75	2.0
+A139	RexKramer1	7t  	S61	0.75	2.0
+EC75	RexKramer1	8t  	S61	0.8	2.0
+A189	RexKramer1	8.3t  	S61	0.8	2.0
+Q1	RexKramer1	  	Q4	0.5	2.0
+SF25	RexKramer1	  	SF25	0.65	2.0
+F5	RexKramer1	  	F5	0.9	2.0
+TORF	RexKramer1	  	TOR_fast	0.7	2.0
+U2	RexKramer1	  	U2	0.5	2.0
+DRON	RexKramer1	  	Q4	0.5	2.0
+Q25	RexKramer1	  	Q4	0.5	2.0
+A225	RexKramer1	  	A225	0.5	2.0
+A124	RexKramer1	""	A124	0.5	2.0
+A400	RexKramer1	  	A400	0.5	2.0
+B52	RexKramer1	  	B52	0.5	2.0
+H64	RexKramer1	  	H64	0.9	2.0
+C30J	RexKramer1	  	C130	0.5	2.0
+HAWK	RexKramer1	  	HAWK	0.9	2.0
+EC55	RexKramer1	5t  	AS65	0.8	2.0
+C130	RexKramer1	  	C130	0.5	2.0
+C17	unknown	  	C17	0.5	2.0
+C2	RexKramer1	  	C2	0.6	2.0
+C5M	RexKramer1	  	C5M	0.5	2.0
+H47	RexKramer1	  	H47	0.65	2.0
+A210	RexKramer1	  	SR22	0.7	2.0
+ULAC	RexKramer1	  	C172	0.5	2.0
+BL8	unknown	  	C172	0.75	2.0
+SR22	RexKramer1	  	SR22	0.7	2.0
+RV9	RexKramer1	  	SR22	0.7	2.0
+RV12	RexKramer1	  	SR22	0.7	2.0
+RV14	RexKramer1	  	SR22	0.7	2.0
+E3CF	RexKramer1	  	E3CF	0.5	2.0
+E3TF	RexKramer1	  	E3TF	0.5	2.0
+F18H	RexKramer1	  	F18H	0.7	2.0
+EC35	RexKramer1		EC35	0.9	2.0
+F18S	RexKramer1	  	F18S	0.7	2.0
+VF35	RexKramer1	  	F35	0.7	2.0
+F35	RexKramer1	  	F35	0.7	2.0
+GLID	RexKramer1	  	AS21	0.7	2.0
+IL76	RexKramer1	  	IL76	0.5	2.0
+R44	RexKramer1	  	R44	0.9	2.0
+GYRO	RexKramer1	  	GYRO	0.75	2.0
+Q9	RexKramer1	  	Q4	0.5	2.0
+Q4	RexKramer1	  	Q4	0.5	2.0
+S12	RexKramer1	  	AS21	0.7	2.0
+V22F	RexKramer1	  	V22_fast	0.7	2.0
+V22	RexKramer1	  	V22_slow	0.7	2.0
+F15	RexKramer1	  	F15	0.8	2.0
+F16	RexKramer1	  	F16	0.8	2.0
+F22	unknown	  	F22	0.7	1.0
+F22A	unknown	  	F22	0.7	1.0
+EC45	RexKramer1		EC45	0.9	2.0
+F4	RexKramer1	  	EUFI	0.9	2.0
+FOUG	RexKramer1	  	EUFI	0.9	2.0
+J8A	RexKramer1	  	EUFI	0.9	2.0
+J8B	RexKramer1	  	EUFI	0.9	2.0
+JH7	RexKramer1	  	EUFI	0.9	2.0
+LTNG	RexKramer1	  	EUFI	0.9	2.0
+METR	RexKramer1	  	EUFI	0.9	2.0
+MG19	RexKramer1	  	EUFI	0.9	2.0
+MG25	RexKramer1	  	EUFI	0.9	2.0
+MG29	RexKramer1	  	EUFI	0.9	2.0
+MG31	RexKramer1	  	EUFI	0.9	2.0
+HUNT	RexKramer1	  	HUNT	0.9	2.0
+IL62	RexKramer1	  	IL62	0.5	2.0
+AS32	RexKramer1		AS32	0.7	2.0
+T2	RexKramer1	  	EUFI	0.9	2.0
+K35T	RexKramer1	Boeing KC-135 Stratotanker TF33 Engines	K35E	0.5	2.0
+LJ25	RexKramer1	  	LJ35	0.65	2.0
+T37	RexKramer1	  	EUFI	0.9	2.0
+A337	RexKramer1	  	A337	0.5	2.0
+A388	RexKramer1	""	A388	0.5	2.0
+A3ST	RexKramer1	  	A3ST	0.5	2.0
+B3XM	RexKramer1	""	Cat_A3	0.5	2.0
+A3	RexKramer1	  	EUFI	0.9	2.0
+A6	RexKramer1	  	EUFI	0.9	2.0
+B736	RexKramer1	""	Cat_A3	0.37	2.0
+B37M	RexKramer1	""	Cat_A3	0.37	2.0
+A148	RexKramer1		Cat_A3	0.4	2.0
+BE20	RexKramer1	  	B350	0.65	2.0
+AT3	RexKramer1	  	EUFI	0.9	2.0
+unidentified	RexKramer1	Default Shape for unknown	unidentified	1	2.0
+CKUO	RexKramer1	  	EUFI	0.9	2.0
+H60	RexKramer1		H60	0.7	2.0
+S92	RexKramer1		H60	0.7	2.0
+C295	RexKramer1		C295	0.5	2.0
+C172	RexKramer1	""	C172	0.75	2.0
+C150	RexKramer1	""	C172	0.75	2.0
+CN35	RexKramer1		CN35	0.5	2.0
+CRJ9	RexKramer1		CRJ9	0.5	2.0
+CRJX	RexKramer1		CRJX	0.5	2.0
+AA5	RexKramer1	  	SR22	0.7	2.0
+D250	RexKramer1	  	SR22	0.7	2.0
+DA20	RexKramer1	  	SR22	0.7	2.0
+DA40	RexKramer1	  	SR22	0.7	2.0
+DR40	RexKramer1	  	SR22	0.7	2.0
+G115	RexKramer1	  	SR22	0.7	2.0
+SR20	RexKramer1	  	SR22	0.7	2.0
+S22T	RexKramer1	  	SR22	0.7	2.0
+GL6T	RexKramer1		GL5T	0.52	2.0
+AS21	RexKramer1		AS21	0.7	2.0
+UH1	RexKramer1		UH1	0.9	2.0
+F1	RexKramer1	  	EUFI	0.9	2.0
+EMER	RexKramer1	  	ground_emergency	1	2.0
+SERV	RexKramer1	  	ground_service	1	2.0
+TWR	RexKramer1	  	ground_tower	0.5	2.0
+GND	RexKramer1	  	ground_unknown	1	2.0
+GRND	RexKramer1	  	ground_unknown	1	2.0
+LJ31	RexKramer1	  	LJ35	0.7	2.0
+F111	RexKramer1	  	EUFI	0.9	2.0
+F117	RexKramer1	  	EUFI	0.9	2.0
+F14	RexKramer1	  	EUFI	0.9	2.0
+MG44	RexKramer1	  	EUFI	0.9	2.0
+MIR4	RexKramer1	  	EUFI	0.9	2.0
+MT2	RexKramer1	  	EUFI	0.9	2.0
+Q5	RexKramer1	  	EUFI	0.9	2.0
+S3	RexKramer1	  	EUFI	0.9	2.0
+S37	RexKramer1	  	EUFI	0.9	2.0
+SR71	RexKramer1	  	EUFI	0.9	2.0
+SU15	RexKramer1	  	EUFI	0.9	2.0
+SU24	RexKramer1	  	EUFI	0.9	2.0
+SU25	RexKramer1	  	EUFI	0.9	2.0
+SU27	RexKramer1	  	EUFI	0.9	2.0
+T22M	RexKramer1	  	EUFI	0.9	2.0
+T4	RexKramer1	  	EUFI	0.9	2.0
+TU22	RexKramer1	  	EUFI	0.9	2.0
+VAUT	RexKramer1	  	EUFI	0.9	2.0
+Y130	RexKramer1	  	EUFI	0.9	2.0
+YK28	RexKramer1	  	EUFI	0.9	2.0
+LJ45	RexKramer1	  	LJ35	0.7	2.0
+ISS	RexKramer1	ISS Space Station	ISS	0.25	2.0
+LJ24	RexKramer1	  	JET_nonswept	0.65	2.0
+LJ28	RexKramer1	  	JET_nonswept	0.65	2.0
+LR35	RexKramer1	wrong but in	JET_nonswept	0.65	2.0
+LJ40	RexKramer1	  	JET_nonswept	0.65	2.0
+LR45	RexKramer1	wrong but in	JET_nonswept	0.65	2.0
+LJ55	RexKramer1	  	JET_nonswept	0.65	2.0
+LJ60	RexKramer1	10t  	JET_nonswept	0.65	2.0
+LJ70	RexKramer1	  	JET_nonswept	0.65	2.0
+LJ75	RexKramer1	  	JET_nonswept	0.65	2.0
+LJ85	RexKramer1	  	JET_nonswept	0.65	2.0
+PC9	RexKramer1	""	PC9	0.8	2.0
+P46T	RexKramer1	""	PA46	0.7	2.0
+NH90	RexKramer1		NH90	0.6	2.0
+P32R	RexKramer1	""	PA28	0.7	2.0
+P28T	RexKramer1	""	PA28	0.7	2.0
+P28B	RexKramer1	""	PA28	0.7	2.0
+TB20	RexKramer1	""	PA28	0.7	2.0
+PA42	RexKramer1	""	PA28	0.7	2.0
+C650	RexKramer1	11t  	JET_nonswept	0.65	2.0
+ASTR	RexKramer1	11t  	JET_nonswept	0.65	2.0
+G150	RexKramer1	11t  	JET_nonswept	0.65	2.0
+H25A	RexKramer1	11t  	JET_nonswept	0.65	2.0
+H25B	RexKramer1	11t  	JET_nonswept	0.65	2.0
+H25C	RexKramer1	11t  	JET_nonswept	0.65	2.0
+PRM1	RexKramer1	  	JET_nonswept	0.65	2.0
+E55P	RexKramer1	  	JET_nonswept	0.65	2.0
+E50P	RexKramer1	  	JET_nonswept	0.65	2.0
+EA50	RexKramer1	  	JET_nonswept	0.65	2.0
+HDJT	RexKramer1	  	JET_nonswept	0.65	2.0
+SF50	RexKramer1	  	JET_nonswept	0.65	2.0
+MD82	RexKramer1	  	JET_swept	0.5	2.0
+MD90	RexKramer1	  	B712	0.5	2.0
+MD83	RexKramer1	  	JET_swept	0.55	2.0
+MD87	RexKramer1	  	JET_swept	0.55	2.0
+MD88	RexKramer1	72t  	JET_swept	0.6	2.0
+F100	RexKramer1	45t  	JET_swept	0.5	2.0
+T154	RexKramer1	100t  	JET_swept	0.6	2.0
+ARCP	RexKramer1	Schempp-Hirth Arcus T/M	AS21	0.7	2.0
+AS26	RexKramer1	Schleicher ASH-26E	AS21	0.7	2.0
+AV68	RexKramer1	M&D Flugzeugbau AVo 68 Samburo	SF25	0.65	2.0
+B429	RexKramer1	Bell 429 GlobalRanger	EC35	0.9	2.0
+BE24	RexKramer1	Beech 24 Musketeer Super / Sierra	PA28	0.7	2.0
+BE30	RexKramer1	Beech 300 Super King Air	B350	0.65	2.0
+BE33	RexKramer1	Beech 33 Bonanza / Debonair	PA28	0.7	2.0
+BE35	RexKramer1	Beech 35 Bonanza	PA28	0.7	2.0
+BREZ	RexKramer1	Aerostyle Breezer	SR22	0.7	2.0
+C140	RexKramer1	Cessna 140	C172	0.7	2.0
+C175	RexKramer1	Cessna 175 Skylark	C172	0.75	2.0
+C207	RexKramer1	Cessna 207	C172	0.8	2.0
+C25M	RexKramer1	Cessna 525 Citation M2	C25B	0.65	2.0
+C402	RexKramer1	Cessna 402	F406	0.7	2.0
+C404	RexKramer1	Cessna 404 Titan	F406	0.7	2.0
+C421	RexKramer1	Cessna 421 Executive Commuter / Golden Eagle	DA42	0.7	2.0
+C500	RexKramer1	Cessna 500 Citation 1	C25B	0.65	2.0
+C551	RexKramer1	Cessna 551 Citation 2SP	C25B	0.65	2.0
+C56X	RexKramer1	Cessna 560XL Citation XLS	C25B	0.65	2.0
+CH60	RexKramer1	AMD Zodiac (ULA)	SR22	0.7	2.0
+CH7A	RexKramer1	Aeronca Champion	C172	0.6	2.0
+CL85	RexKramer1	invalid icao type designator	unidentified	1	2.0
+D140	RexKramer1	SAN Jodel D.140 Mousquetaire	PA28	0.7	2.0
+F2TH	RexKramer1	Dassault Falcon 2000	JET_swept	0.4	2.0
+EUPA	RexKramer1	Europa Aircraft (ULA)	SR22	0.65	2.0
+EV97	RexKramer1	Evektor EV-97 (ULA)	SR22	0.65	2.0
+E230	RexKramer1	Extra EA-230	PA28	0.7	2.0
+EXPL	RexKramer1	Boeing / McDonnell Douglas MD-902 Explorer	EC35	0.85	2.0
+F9DX	RexKramer1	Dassault Falcon 900DX / invalid icao type designator	JET_swept	0.4	2.0
+FK9	RexKramer1	B & F Technik FK-9 (ULA)	C172	0.6	2.0
+G109	RexKramer1	Grob G-109	SF25	0.65	2.0
+G3	RexKramer1	Mirage G3 (ULA)	C172	0.6	2.0
+G400	RexKramer1	Gulfstream G400 (ICAO = GLF4)	JET_swept	0.4	2.0
+GLST	RexKramer1	Glasair Glastar (ULA)	C172	0.65	2.0
+GY80	RexKramer1	Gardan GY-80 Horizon	PA28	0.65	2.0
+HROC	RexKramer1	Harmon Rocket	unidentified	1	2.0
+J3	RexKramer1	American Legend AL-3C Legend Cub	C172	0.68	2.0
+L8	RexKramer1	Luscombe 8	C172	0.65	2.0
+LNC2	RexKramer1	Lancair	SR22	0.65	2.0
+MCR1	RexKramer1	Dynaero MC-01 (ULA)	SR22	0.65	2.0
+M20P	RexKramer1	Mooney M20	PA28	0.7	2.0
+MCR4	RexKramer1	Dynaero MCR 4S	SR22	0.7	2.0
+MU2	RexKramer1	Mitsubishi MU-2	F406	0.65	2.0
+P28R	RexKramer1	Piper Cherokee Arrow	PA28	0.7	2.0
+PA22	RexKramer1	Piper PA-22 Tri-Pacer	C172	0.68	2.0
+PA23	RexKramer1	Piper PA-23 Apache	F406	0.65	2.0
+PA34	RexKramer1	Piper PA-34 Seneca	F406	0.65	2.0
+PA38	RexKramer1	Piper PA-38 Tomahawk	PA28	0.65	2.0
+PAY1	RexKramer1	Piper Cheyenne 1	F406	0.65	2.0
+PC24	RexKramer1	Pilatus PC-24	JET_nonswept	0.65	2.0
+PC7	RexKramer1	Pilatus PC-7	PC9	0.8	2.0
+PIVI	RexKramer1	Pipistrel Virus (ULA)	C172	0.65	2.0
+PNR3	RexKramer1	Alpi Pioneer 300	SR22	0.65	2.0
+R100	RexKramer1	Robin Aigion	PA28	0.7	2.0
+R300	RexKramer1	Robin R3000	SR22	0.65	2.0
+R90R	RexKramer1	Ruschmeyer R90R	PA28	0.7	2.0
+RALL	RexKramer1	SOCATA Rallye	PA28	0.7	2.0
+S10S	RexKramer1	Stemme S-10	AS21	0.7	2.0
+S208	RexKramer1	Siai-Marchetti S-208	PA28	0.7	2.0
+SUBA	RexKramer1	Fuji FA-200 Aero Subaru	SR22	0.7	2.0
+TB21	RexKramer1	Socata TB-21	PA28	0.7	2.0
+TBM7	RexKramer1	Socata TBM-700	PC12	0.65	2.0
+TWEN	RexKramer1	Tecnam P2010	C172	0.7	2.0
+TBM8	RexKramer1	Socata TBM-800	PC9	0.8	2.0
+WA50	RexKramer1	Wassmer WA-50 Family	PA28	0.7	2.0
+WT9	RexKramer1	Aerospool WT9 Dynamic (ULA)	SR22	0.65	2.0
+AC95	RexKramer1	Rockwell 695 Jetprop Commander 1000	D328	0.65	2.0
+ALSL	RexKramer1	Airlony Skylane	C172	0.7	2.0
+AS16	RexKramer1	Schleicher ASK-16	AS21	0.7	2.0
+AN12	RexKramer1	Antonov AN-12	AN12	0.5	2.0
+DO27	RexKramer1	Dornier Do-27	DO27	0.75	2.0
+ST75	RexKramer1	Boeing-Stearman Model 75	ST75	0.7	2.0
+B721	RexKramer1		JET_swept	0.5	2.0
+E300	RexKramer1	Extra EA-300	E300	1	2.0
+B722	RexKramer1		B722	0.5	2.0
+AS3B	RexKramer1	Aerospatiale / Eurocopter Super Puma Mk2	AS32	0.7	2.0
+AS50	RexKramer1	Aerospatiale / Airbus Helicopters AS-350 / AS-550 / H-125	EC35	0.8	2.0
+B209	RexKramer1	Bölkow BO-209 Monsun	SR22	0.7	2.0
+BE23	RexKramer1	Beech 23 Musketeer / Sundowner	PA28	0.7	2.0
+BE36	RexKramer1	Beech 36 Bonanza	PC12	0.65	2.0
+BE58	RexKramer1	Beech 58 Baron	F406	0.65	2.0
+BE60	RexKramer1	Beech 60 Duke	DA42	0.7	2.0
+BE95	RexKramer1	Beech 95 Travel Air	PA28	0.7	2.0
+C177	RexKramer1	Cessna 177 Cardinal	C172	0.75	2.0
+C190	RexKramer1	Cessna 190	PA46	0.8	2.0
+C210	RexKramer1	Cessna 210 Centurion	C172	0.75	2.0
+C310	RexKramer1	Cessna 310	DA42	0.65	2.0
+C425	RexKramer1	Cessna 425	F406	0.7	2.0
+C441	RexKramer1	Cessna 441 Conquest	F406	0.7	2.0
+C55B	RexKramer1	Cessna 550B Citation Bravo	C25B	0.65	2.0
+C700	RexKramer1	Cessna 700 Citation Longitude	C750	0.55	2.0
+C72R	RexKramer1	Cessna 172RG Cutlass RG	C172	0.75	2.0
+C77R	RexKramer1	Cessna 177RG Cardinal RG	C172	0.75	2.0
+COL3	RexKramer1	Columbia / Cessna 350	PA28	0.7	2.0
+COL4	RexKramer1	Columbia / Cessna 400	PA28	0.7	2.0
+CRUZ	RexKramer1	CZAW SportCruiser	SR22	0.65	2.0
+D253	RexKramer1	Centre Est / Robin DR.253	PA28	0.7	2.0
+DA62	RexKramer1	Diamond DA62	DA42	0.7	2.0
+DAL4	RexKramer1	UL-Jih / Dallach D.4 Fascination	SR22	0.65	2.0
+DV20	RexKramer1	Diamond DA-20	SR22	0.65	2.0
+DIMO	RexKramer1	Diamond HK-36	SF25	0.65	2.0
+EA55	RexKramer1	invalid icao type designator	unidentified	1	2.0
+E545	RexKramer1	Embraer EMB-545 Legacy 450	JET_swept	0.55	2.0
+EXNG	RexKramer1	Extra NG	PA28	0.7	2.0
+F9EX	RexKramer1	Dassault Falcon 900EX / invalid icao type designator	JET_swept	0.4	2.0
+F2TS	RexKramer1	Dassault Falcon 2000S / invalid icao type designator	JET_swept	0.4	2.0
+FDCT	RexKramer1	Flight Design CT (ULA)	SR22	0.65	2.0
+G100	RexKramer1	Gulfstream G100 (ICAO = ASTR)	JET_swept	0.35	2.0
+G450	RexKramer1	Gulfstream G450 (ICAO = GLF4)	JET_swept	0.4	2.0
+GL7T	RexKramer1	Bombardier Global 7000 / 7500	JET_swept	0.4	2.0
+GOLF	RexKramer1	Tecnam P-96 Golf (ULA)	SR22	0.65	2.0
+GLAS	RexKramer1	Glasair (ULA)	PA28	0.65	2.0
+GX	RexKramer1	Remos GX (ULA)	C172	0.65	2.0
+H750	RexKramer1	Hawker 750 (ICAO = H25B)	JET_nonswept	0.65	2.0
+HUSK	RexKramer1	Aviat A-1 Husky	C172	0.67	2.0
+JB15	RexKramer1	Oberlechner JOB-15	SR22	0.7	2.0
+KL07	RexKramer1	Bölkow Bo 207 / Klemm Kl-107	PA28	0.7	2.0
+KODI	RexKramer1	Daher / Quest Kodiak	C208	0.65	2.0
+KR2	RexKramer1	Rand KR2	SR22	0.65	2.0
+L13S	RexKramer1	Aerotechnik L-13S	AS21	0.7	2.0
+LAE1	RexKramer1	Lange E-1 Antares 20E	AS21	0.7	2.0
+M20T	RexKramer1	Mooney M20	PA28	0.7	2.0
+M600	RexKramer1	Piper PA-46-600 TP M600	PA46	0.7	2.0
+NG6	RexKramer1	invalid icao type designator	SR22	0.65	2.0
+P210	RexKramer1	Cessna 210 Centurion	C172	0.7	2.0
+P32T	RexKramer1	Piper Cherokee Six	PA28	0.7	2.0
+P68	RexKramer1	Partenavia P-68	F406	0.65	2.0
+PA16	RexKramer1	Piper PA-16 Clipper	C172	0.68	2.0
+PA27	RexKramer1	Piper PA-27 Aztec	F406	0.65	2.0
+PA30	RexKramer1	Piper PA-30	F406	0.65	2.0
+PA44	RexKramer1	Piper PA-44 Seminole	F406	0.65	2.0
+PICO	RexKramer1	Odessa Y-1 Delfin	SR22	0.65	2.0
+RF6	RexKramer1	Slingsby T67 Firefly / Fournier RF-6	PA28	0.7	2.0
+PULS	RexKramer1	Aero Designs Pulsar	SR22	0.65	2.0
+R200	RexKramer1	Alpha Aviation Alpha 2000	PA28	0.7	2.0
+RV6	RexKramer1	Van's Aircraft RV-6	SR22	0.7	2.0
+SC01	RexKramer1	Gyroflug Speed Canard	unidentified	1	2.0
+SHRK	RexKramer1	Shark.Aero Shark	SR22	0.65	2.0
+SIRA	RexKramer1	Tecnam P2002 Sierra	SR22	0.7	2.0
+SVNH	RexKramer1	Aerotex MXP-740 Savannah	C172	0.6	2.0
+SW4	RexKramer1	Fairchild / Swearingen Metro	F50	0.45	2.0
+TAMP	RexKramer1	Socata TB Family	PA28	0.7	2.0
+TBM9	RexKramer1	Socata TBM-900	PC9	0.8	2.0
+TFUN	RexKramer1	Valentin Taifun	SF25	0.65	2.0
+TOBA	RexKramer1	Socata TB-10	PA28	0.7	2.0
+VL3	RexKramer1	Aveko VL-3 Sprint	SR22	0.7	2.0
+Z42	RexKramer1	Zlin Z 42	PA28	0.7	2.0
+AC11	RexKramer1	Rockwell Commander 112/114/115	PA28	0.7	2.0
+AC90	RexKramer1	Rockwell Turbo Commander 690	D328	0.65	2.0
+AS25	RexKramer1	Schleicher ASH-25	AS21	0.7	2.0
+AS29	RexKramer1	Schleicher ASG-29E	AS21	0.7	2.0
+AS55	RexKramer1	Eurocopter / Airbus Helicopters AS-355	EC35	0.8	2.0
+SLG4	RexKramer1	Sling Aircraft Sling 4	SR22	0.7	2.0
+ASSO	RexKramer1	Asso 4 Whisky (ULA) (invalid icao type designator)	SR22	0.7	2.0
+B06	RexKramer1	Bell 206 JetRanger / LongRanger	UH1	0.9	2.0
+FW44	RexKramer1	Focke-Wulf FW-44 Stieglitz 	ST75	0.7	2.0
+P180	RexKramer1	Piaggio P-180 Avanti	P180	0.65	2.0
+PC6T	RexKramer1	Pilatus PC-6 Turbo Porter	PC6T	0.65	2.0
+SC7	RexKramer1	Short SC.7 Skyvan	SC7	0.55	2.0
+T204	RexKramer1	Tupolev Tu-204 Family	T204	0.5	2.0
+EC20	RexKramer1	Eurocopter / Airbus Helicopters EC-120 Colibri	EC20	0.85	2.0
+C414	RexKramer1	Cessna 414 Chancellor	JET_nonswept	0.5	2.0
+BE9L	RexKramer1	Beech 90 King Air	B350	0.65	2.0
+PA46	RexKramer1	tbd	PA46	0.7	2.0
+C206	RexKramer1	Cessna 206	C172	0.8	2.0
+C303	RexKramer1	Cessna T303 Crusader	F406	0.7	2.0
+C340	RexKramer1	Cessna 340	F406	0.7	2.0
+C82R	RexKramer1	Cessna R182 Skylane RG	C172	0.75	2.0
+CL61	RexKramer1	Bombardier Challenger 601 (invalid ICAO Type Designator)	JET_swept	0.35	2.0
+CL64	RexKramer1	Bombardier Challenger 604 (invalid ICAO Type Designator)	JET_swept	0.35	2.0
+CL65	RexKramer1	Bombardier Challenger 605 (invalid ICAO Type Designator)	JET_swept	0.35	2.0
+CP30	RexKramer1	Piel CP-30 Emeraude	SR22	0.65	2.0
+D11	RexKramer1	Jodel D.11	SR22	0.65	2.0
+DG80	RexKramer1	DG Flugzeugbau DG-800	AS21	0.7	2.0
+DR10	RexKramer1	Centre Est / Robin DR100	PA28	0.7	2.0
+VENT	RexKramer1	Schempp-Hirth Ventus	AS21	0.7	2.0
+DR22	RexKramer1	Centre Est / Robin DR220	PA28	0.7	2.0
+DUOD	RexKramer1	Schempp-Hirth Duo Discus	AS21	0.7	2.0
+E550	RexKramer1	Embraer EMB-550 Legacy 500 / 600	JET_swept	0.55	2.0
+ECHO	RexKramer1	Tecnam P-92 (ULA)	C172	0.65	2.0
+F260	RexKramer1	Alenia / Aermacchi F-260 / T-260	PA28	0.7	2.0
+F2EX	RexKramer1	Dassault Falcon 2000EX (invalid icao type designator)	JET_swept	0.4	2.0
+F2LX	RexKramer1	Dassault Falcon 2000LX / invalid icao type designator	JET_swept	0.4	2.0
+F5EX	RexKramer1	Dassault Falcon 50 / invalid icao type designator	JET_swept	0.4	2.0
+F9LX	RexKramer1	Dassault Falcon 900LX / invalid icao type designator	JET_swept	0.4	2.0
+G550	RexKramer1	Gulfstream G550 (ICAO = GLF5)	JET_swept	0.4	2.0
+GC1	RexKramer1	Globe / Temco GC-1 Swift (ULA)	SR22	0.65	2.0
+H900	RexKramer1	Hawker 900 (ICAO = H25B)	JET_nonswept	0.65	2.0
+JUNR	RexKramer1	Malmö Flygindustri MFI-9  / Bölkow Bo-208 Junior	C172	0.65	2.0
+KC10	RexKramer1	McDonnel Douglas KC-10  (ICAO = DC10)	DC10	0.5	2.0
+NG5	RexKramer1	BRM Aero Bristell NG-5 (ULA)	SR22	0.65	2.0
+P06T	RexKramer1	Tecnam P-2006T	F406	0.65	2.0
+P149	RexKramer1	Piaggio P-149	PA28	0.7	2.0
+PA18	RexKramer1	Piper PA-18 Super Cub	C172	0.68	2.0
+PAY2	RexKramer1	Piper Cheyenne 2	F406	0.65	2.0
+PAY3	RexKramer1	Piper Cheyenne 3	F406	0.65	2.0
+RF4	RexKramer1	Fournier RF-4	PA28	0.75	2.0
+RV10	RexKramer1	Van's Aircraft RV-10	SR22	0.7	2.0
+RV4	RexKramer1	Van's Aircraft RV-4	SR22	0.65	2.0
+RV7	RexKramer1	Van's Aircraft RV-7	SR22	0.7	2.0
+RV8	RexKramer1	Van's Aircraft RV-8	SR22	0.7	2.0
+Z43	RexKramer1	Zlin Z 43	SR22	0.7	2.0
+B23	RexKramer1	Bristell B23 (ICAO-Type=B23E)	SR22	0.7	2.0
+C135	RexKramer1	Boeing NC-135 / OC-135 / WC-135	R135	0.5	2.0
+SAVG	RexKramer1	Zlin Savage	C172	0.65	2.0
+Falcon 8X	RexKramer1	Dassault Falcon 8X (ICAO-Type=FA8X)	FA7X	0.5	2.0
+G2T1	RexKramer1	Great Lakes Sport Trainer	unidentified	1	2.0
+GA8	RexKramer1	GippsAero GA8 Airvan	unidentified	1	2.0
+MT	RexKramer1	AutoGyro MT-03	GYRO	0.75	2.0
+P212	RexKramer1	Tecnam P-2012 Traveller	C208	0.65	2.0
+E500	RexKramer1	Extra EA-500	C208	0.6	2.0
+PA12	RexKramer1	PA-12 Super Cruiser	C172	0.67	2.0
+PA32	RexKramer1	Piper PA-32 Cherokee Six	PA28	0.7	2.0
+RS18	RexKramer1	Sportavia-Pützer RS 180 Sportsman	PA28	0.7	2.0
+TRIN	RexKramer1	Socata TB-20 Trinidad (ICAO=TB20)	PA28	0.7	2.0
+Y18T	RexKramer1	Yakovlev Yak-18T	PA28	0.7	2.0
+BE55	RexKramer1	Beech 55 Baron	F406	0.65	2.0
+H500	RexKramer1	Boeing MD-500	EC35	0.8	2.0
+ATLA	RexKramer1	invalid icao type designator	unidentified	0.5	2.0
+BN2P	RexKramer1	Britten-Norman BN-2 Islander	BN2P	0.65	2.0
+C160	RexKramer1	C-160 Transall	C160	0.5	2.0
+DO28	RexKramer1	Dornier Do-28 Skyservant	DO28	0.65	2.0
+SU95	RexKramer1	Suchoi Superjet 100-95	SU95	0.5	2.0
+AT43	RexKramer1	""	AT45	0.5	2.0
+AT45	RexKramer1	""	AT45	0.5	2.0
+AT46	RexKramer1	""	AT45	0.5	2.0
+AT72	RexKramer1	""	AT75	0.5	2.0
+AT73	RexKramer1	""	AT75	0.5	2.0
+AT75	RexKramer1	""	AT75	0.5	2.0
+AT76	RexKramer1	""	AT75	0.5	2.0
+LJ36	RexKramer1		LJ35	0.7	2.0

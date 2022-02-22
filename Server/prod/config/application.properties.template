@@ -1,0 +1,61 @@
+# configuration file of the beluga-project (template) (production)
+# shown location with range rings on the map
+latitudeLocation=TODO
+longitudeLocation=TODO
+
+# ip addresses of the feeders with json output
+# (change type and amount of feeders accordingly!!)
+ipFeeder=TODO
+
+# type of feeder (currently supported: fr24feeder, airsquitter, adsbx)
+typeFeeder=TODO
+
+# name of feeder which is later displayed
+nameFeeder=TODO
+
+# color of feeder to be displayed in statistical views
+colorFeeder=TODO
+
+# amount of feeders
+amountFeeder=TODO
+
+# scale of aircraft icons (default is 1.3)
+scaleIcons=1.3
+
+# distances of range rings (in nautical miles)
+circleDistanceOfRings=50,100,150,200
+
+# Search engine url to search for aircraft pictures when planespotters.net does not find results
+# (default is startpage; <PLACEHOLDER> will be replaced with registration or hex and is required)
+searchEngineUrl=https://www.startpage.com/sp/search?language=english&t=default&lui=english&query=aircraft+photo+<PLACEHOLDER>&cat=images
+
+# Spring Security
+management.security.enabled=false
+
+# Logging
+# logging.level.org.springframework=INFO
+# logging.level.com.amnesica=DEBUG
+# logging.level.root=ERROR
+# logging.pattern.console=%-5level %logger{36} - %msg%n
+# logging.pattern.file=%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+logging.file.name=.local/share/applications/BelugaProject/logfiles/BelugaProject-Debug.log
+
+# Database Properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/belugaDb
+spring.datasource.username=beluga
+spring.datasource.password=TODO
+spring.datasource.hikari.connectionTimeout=20000
+spring.datasource.hikari.maximumPoolSize=5
+
+# Hibernate Properties
+# The SQL dialect makes Hibernate generate better SQL for the chosen database
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQL95Dialect
+spring.jpa.generate-ddl=true
+# spring.jpa.show-sql=true
+
+# Hibernate ddl auto (create, create-drop, validate, update)
+spring.jpa.hibernate.ddl-auto=update
+
+# Opensky-Network-Credentials
+opensky-network.username=TODO
+opensky-network.password=TODO
