@@ -268,11 +268,15 @@ When configuring multiple feeders the order of the entries in the following inst
   ipFeeder=URL1, URL2
   ```
 
+  If you do not have a local feeder, set `ipFeeder=NONE`.
+
 - Enter the type of your feeders (currently supported: fr24feeder, airsquitter, adsbx (for tar1090))
 
   ```
   typeFeeder=typeoffeeder1, typeoffeeder2
   ```
+
+  If you do not have a local feeder, set `typeFeeder=NONE`.
 
 - Enter the name of your feeders seperated by comma
 
@@ -280,17 +284,23 @@ When configuring multiple feeders the order of the entries in the following inst
   nameFeeder=Name1, Name2
   ```
 
+  If you do not have a local feeder, set `nameFeeder=NONE`.
+
 - Enter the color of your feeders seperated by comma. This color is used later in statistical views
 
   ```
   colorFeeder=red, blue
   ```
 
+  If you do not have a local feeder, set `colorFeeder=NONE`.
+
 - Enter the amount of your feeders
 
   ```
   amountFeeder=2
   ```
+
+  If you do not have a local feeder, set `amountFeeder=1` (this value must match with the amount of feeder configuration entries).
 
 - Database properties: Set password for the database `belugaDb`
 
