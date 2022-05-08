@@ -13,20 +13,20 @@
 # * Postgresql
 #
 # Dependencies needed for building the Beluga Project:
-# * Maven 3.8.4
-# * Nodejs 16.x
+# * Maven
+# * Nodejs
 # * Npm 
 # * Angular
 
 set -e # fail on error
 
-# globals
+# globals - if necessary adjust these values!
 javaInstalled=no
 installJava17=yes
 
 mavenInstalled=no
 installMaven=yes
-installMavenVersion=3.8.4
+installMavenVersion=3.8.5
 
 postgresInstalled=no
 
@@ -117,7 +117,7 @@ function install_maven() {
     local filename=apache-maven-$installMavenVersion-bin.tar.gz
     local maven_directory=/opt/maven
 
-    # download maven 3.8.4 and rename file to "apache-maven-3.8.4-bin.tar.gz"
+    # download maven and rename file
     echo download maven $installMavenVersion ...
     wget -O $filename "https://dlcdn.apache.org/maven/maven-3/"$installMavenVersion"/binaries/apache-maven-"$installMavenVersion"-bin.tar.gz"
 
@@ -135,7 +135,7 @@ function install_maven() {
     source ~/.bashrc
     sudo ln -s -f  /opt/maven/apache-maven-$installMavenVersion/bin/mvn /usr/bin/mvn
 
-    # check if maven 3.8.4 is running
+    # check if maven is running
     echo check maven version ...
     if command -v mvn &>/dev/null; 
     then
@@ -290,7 +290,7 @@ function main(){
         * ) echo "invalid, let's stop here"; exit;;
         esac
     
-    echo "## ------------- Install Maven 3.8.4  ------------- ##"
+    echo "## ------------- Install Maven $installMavenVersion ------------- ##"
 
     # Check if maven is already installed
     if command -v mvn &>/dev/null;
@@ -298,11 +298,11 @@ function main(){
         mavenInstalled=yes
     fi
 
-    # Install maven if it is not installed or version is lower than 3.8.4
+    # Install maven if it is not installed or version is lower than installMavenVersion
     if [[ $mavenInstalled == yes ]]; then
         echo "maven is already installed"
 
-        # Check maven version is greater than 3.8.4
+        # Check maven version is greater than installMavenVersion
         echo checking maven version is greater than $installMavenVersion ...
         currentMavenVersion=$(mvn -version | sed -Ee 's/Apache Maven ([0-9.]+).*/\1/;q')
         
@@ -319,12 +319,12 @@ function main(){
 
     if [[ $installMaven == yes ]] || [[ $mavenInstalled == no ]]
     then
-        # Remind user to check if maven 3.8.4 should be installed
+        # Remind user to check if maven should be installed
         read -p "maven is not installed or version is lower than $installMavenVersion. The script will install maven $installMavenVersion. Do you want to proceed? (y/n)?" choice
         case "$choice" in 
         y|Y|yes|Yes ) 
             echo "yes, let's continue ..."
-            # install maven 3.8.4
+            # install maven
             install_maven
             ;;
         n|N|no|No ) echo "no, let's not install maven $installMavenVersion";;
