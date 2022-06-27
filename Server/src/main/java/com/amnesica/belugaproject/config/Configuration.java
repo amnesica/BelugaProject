@@ -28,7 +28,7 @@ import java.util.*;
 public class Configuration {
     // Name und Version der App
     private final String appName = "The Beluga Project";
-    private final String appVersion = "3-0-0";
+    private final String appVersion = "3-0-1";
 
     // Angezeigte Feeder-Position auf der Karte
     @Value("${latitudeLocation}")
