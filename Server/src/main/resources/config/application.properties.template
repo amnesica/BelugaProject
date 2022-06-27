@@ -1,22 +1,43 @@
-# configuration file of the beluga-project (template) (development)
+# configuration file of the beluga-project (template) (production)
+# please replace all TODO with your configuration values
+#
 # shown location with range rings on the map
+# example: 54.1234 (Latitude) 8.1234 (Longitude)
 latitudeLocation=TODO
 longitudeLocation=TODO
 
 # ip addresses of the feeders with json output
+# enter the URLs of your local feeders with json output, seperated by comma:
+#  - for AirSquitter use `http://XXX.XXX.XXX.XX/aircraftlist.json`
+#  - for tar1090 use `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
+#  - for adsbx use  `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
+#  - for fr24feeder (dump1090) use `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
+#  - for dump1090-fa use `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
 # (change type and amount of feeders accordingly!!)
+# example: ipfeeeder=http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json, http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json
+# if you do not have a local feeder (but want to use OpenSky-network as data source), set ipFeeder=NONE
 ipFeeder=TODO
 
-# type of feeder (currently supported: fr24feeder, airsquitter, adsbx)
+# type of feeder (currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder)
+# example: typefeeder=adsbx,dump1090-fa
+# if you do not have a local feeder, set typeFeeder=NONE
 typeFeeder=TODO
 
-# name of feeder which is later displayed
+# name of feeder which is displayed later
+# should be not too long to fit well in control elements
+# example: namefeeder=AX,DF
+# if you do not have a local feeder, set nameFeeder=NONE
 nameFeeder=TODO
 
 # color of feeder to be displayed in statistical views
+# example: colorFeeder=red,blue
+# if you do not have a local feeder, set colorFeeder=NONE
 colorFeeder=TODO
 
 # amount of feeders
+# example=2
+# if you do not have a local feeder, set amountFeeder=1
+# this value must match with the amount of feeder configuration entries
 amountFeeder=TODO
 
 # scale of aircraft icons (default is 1.3)
@@ -25,7 +46,7 @@ scaleIcons=1.3
 # distances of range rings (in nautical miles)
 circleDistanceOfRings=50,100,150,200
 
-# Search engine url to search for aircraft pictures when planespotters.net does not find results
+# search engine url to search for aircraft pictures when planespotters.net does not find results
 # (default is startpage; <PLACEHOLDER> will be replaced with registration or hex and is required)
 searchEngineUrl=https://www.startpage.com/sp/search?language=english&t=default&lui=english&query=aircraft+photo+<PLACEHOLDER>&cat=images
 

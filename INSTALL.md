@@ -262,23 +262,31 @@ When configuring multiple feeders the order of the entries in the following inst
 
   - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
   - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
-  - for fr24feeder use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
+  - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
+  - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
+  - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
 
   ```
   ipFeeder=URL1, URL2
   ```
 
-- Enter the type of your feeders (currently supported: fr24feeder, airsquitter, adsbx (for tar1090))
+  If you do not have a local feeder, set `ipFeeder=NONE`.
+
+- Enter the type of your feeders (currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder)
 
   ```
   typeFeeder=typeoffeeder1, typeoffeeder2
   ```
 
-- Enter the name of your feeders seperated by comma
+  If you do not have a local feeder, set `typeFeeder=NONE`.
+
+- Enter the name of your feeders seperated by comma. Name should be not too long to fit well in control elements.
 
   ```
   nameFeeder=Name1, Name2
   ```
+
+  If you do not have a local feeder, set `nameFeeder=NONE`.
 
 - Enter the color of your feeders seperated by comma. This color is used later in statistical views
 
@@ -286,11 +294,15 @@ When configuring multiple feeders the order of the entries in the following inst
   colorFeeder=red, blue
   ```
 
+  If you do not have a local feeder, set `colorFeeder=NONE`.
+
 - Enter the amount of your feeders
 
   ```
   amountFeeder=2
   ```
+
+  If you do not have a local feeder, set `amountFeeder=1` (this value must match with the amount of feeder configuration entries).
 
 - Database properties: Set password for the database `belugaDb`
 

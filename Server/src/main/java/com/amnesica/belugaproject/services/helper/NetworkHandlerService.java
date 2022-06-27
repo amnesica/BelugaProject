@@ -96,19 +96,20 @@ public class NetworkHandlerService {
      * @return String
      */
     public String makeServiceCallLocalFeeder(String url) {
-        try {
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header("User-Agent", userAgentBelugaProject)
-                    .build();
+        if (!url.equalsIgnoreCase("none")) {
+            try {
+                Request request = new Request.Builder()
+                        .url(url)
+                        .header("User-Agent", userAgentBelugaProject)
+                        .build();
 
-            try (Response response = clientLocalFeeder.newCall(request).execute()) {
-                return response.body().string();
+                try (Response response = clientLocalFeeder.newCall(request).execute()) {
+                    return response.body().string();
+                }
+            } catch (Exception e) {
+                log.error("Server - Error when retrieving information from url " + url + ": Exception = " + e);
             }
-        } catch (Exception e) {
-            log.error("Server - Error when retrieving information from url " + url + ": Exception = " + e);
         }
-
         return null;
     }
 }
