@@ -69,7 +69,10 @@ Dependencies needed for running the Beluga Project:
 
 Dependencies needed for building the Beluga Project:
 
-- Maven 3.8.4
+- Maven 3.8.6
+
+  (or later, please check latest version [here](https://maven.apache.org/download.cgi) and if required change version in "# globals" section of `install_dependencies.sh`)
+
 - Nodejs 16.x
 - Npm
 - Angular
