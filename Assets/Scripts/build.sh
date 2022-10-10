@@ -18,8 +18,8 @@ case "$choice" in
   * ) echo "Invalid, let's stop here."; exit;;
 esac
 
-# Install angular and dependencies
-echo 1. Install angular and dependencies
+# Install npm and dependencies
+echo 1. Install npm and dependencies
 cd ../../Webapp && npm install
 echo Done.
 
@@ -30,5 +30,5 @@ echo Done.
 
 # Build maven project and generate jar
 echo 3. Building maven application and generating jar ...
-cd ../Server && mvn clean install
+cd ../Server && mvn clean install -DskipTests
 echo Done. You can find the jar along with the config files in Server/prod/
