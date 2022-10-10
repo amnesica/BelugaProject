@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  server:
+    tty: true
+    image: 'server:latest'
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    container_name: server
+    depends_on:
+      - postgresdb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/belugaDb
+      - SPRING_DATASOURCE_USERNAME=beluga
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  postgresdb:
+    image: 'postgres:13.1-alpine'
+    container_name: postgresdb
+    environment:
+      - POSTGRES_USER=beluga
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=belugaDb
+    ports:
+      - "5433:5432"
