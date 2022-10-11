@@ -1,28 +1,37 @@
 ## Temp docker install manual (Ubuntu and Windows)
 
-With this manual you can install the Beluga Project in a docker container on your system. Only docker is required on your machine. Everything else will be taken care of in the  container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project.
+With this manual you can install the Beluga Project in a docker container on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems
 
-0. Install docker and docker compose with [docker desktop](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary)
+0. Install docker and docker compose with [docker desktop](https://docs.docker.com/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi 
 
-1. Download the Beluga Project from [Github](https://github.com/amnesica/BelugaProject) as ZIP and extract it
+1. Download the Beluga Project from [Github](https://github.com/amnesica/BelugaProject) as ZIP and extract it (TODO: Change 'dev' to 'master' in url)
+    ```
+    $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/dev.zip -O BelugaProject.zip
+    $ unzip BelugaProject.zip
+    ```
 
-2. Config `application.properties.template` file in `/Server/src/main/resources/config` and rename to `application.properties`
+2. Config `application.properties.template` file in `/Server/src/main/resources/config` and rename to `application.properties`. Here we use `nano` for editing the config file
+    ```
+    $ cd Server/src/main/resources/config
+    $ cp application.properties.template application.properties
+    $ nano application.properties
+    ```
 
 3. Change prod url in `/Webapp/src/environments` to your productive systems ip address (for a simple test you can use `localhost`)
 
-4. Build the docker image and execute the containers (1x postgresql, 1x server incl. webapp) in the base path of Beluga Project
+4. Build the docker image and execute the containers (1x postgresql, 1x server incl. webapp) in the base path of Beluga Project. Note: If you installed docker only for root user, you need to execute `docker compose up` with sudo privilege
 
-```
-$ docker compose up
-```
+    ```
+    $ docker compose up
+    ```
 
-5. When Beluga Project is running go to `<system-prod-ip>:8080` in your browser. There are no aircraft and airport icons yet, let's import them into the database. If you're on a linux system such as the Raspberry Pi you can use linux variant. If you're currently on windows and just want to try things out you can use the windows variant. 
+5. When Beluga Project is running (if you see the BelugaProject-Font in the terminal window) go to `<system-prod-ip>:8080` in your browser. There are no aircraft and airport icons yet, let's import them into the database. If you're on a linux system such as the Raspberry Pi you can use linux variant. If you're currently on windows and just want to try things out you can use the windows variant
 
     1. Instructions on **linux**
         <details>
         <summary>Click to expand</summary>
 
-        Open a new terminal window and run the following commands to populate the database in the docker container. Check the file `loadBelugaDb_output.txt` to see the output of the `loadBelugaDb.sh` script
+        Open a new terminal window and run the following commands to populate the database in the docker container. Check the file `loadBelugaDb_output.txt` to see the output of the `loadBelugaDb.sh` script. Note: If you installed docker only for root user, you need to execute the following command: `chmod +x Assets/Scripts/docker_load_db.sh && sudo ./Assets/Scripts/docker_load_db.sh` (note the sudo before `./Assets/Scripts/docker_load_db.sh`)
 
         ```
         $ chmod +x Assets/Scripts/docker_load_db.sh && ./Assets/Scripts/docker_load_db.sh
@@ -61,6 +70,15 @@ $ docker compose up
         $ docker exec postgresdb bash -c ". loadBelugaDb.sh" >loadBelugaDb_output.txt
         ```
         </details>
+
+    Possible errors:
+
+    The following error might appear after you run the command above:
+    
+    > psql: error: FATAL:  the database system is in recovery mode
+
+    
+    In this case try the command above again after some time.
 
     The following error might appear if you don't specify a flightroute.csv file:
     
