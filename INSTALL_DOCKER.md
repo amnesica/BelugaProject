@@ -1,6 +1,8 @@
 ## Temp docker install manual (Ubuntu and Windows)
 
-With this manual you can install the Beluga Project in a docker container on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems
+With this manual you can install the Beluga Project in a docker container on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems.
+
+If you don't have a ADS-B receiver you can use the [Opensky-Network](https://opensky-network.org/). Create an account there first.
 
 0. Install docker and docker compose with [docker desktop](https://docs.docker.com/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi 
 
