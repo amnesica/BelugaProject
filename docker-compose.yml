@@ -14,7 +14,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresdb:5432/belugaDb
       - SPRING_DATASOURCE_USERNAME=beluga
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_PASSWORD=TODO
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
   postgresdb:
@@ -22,7 +22,7 @@ services:
     container_name: postgresdb
     environment:
       - POSTGRES_USER=beluga
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=TODO
       - POSTGRES_DB=belugaDb
     ports:
       - "5433:5432"

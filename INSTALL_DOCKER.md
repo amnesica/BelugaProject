@@ -4,7 +4,7 @@ With this manual you can install the Beluga Project in a docker container on you
 
 If you don't have a ADS-B receiver you can use the [Opensky-Network](https://opensky-network.org/). Create an account there first.
 
-0. Install docker and docker compose with [docker desktop](https://docs.docker.com/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi 
+0. Install docker and docker compose (at least version 2) from [here](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi 
 
 1. Download the Beluga Project from [Github](https://github.com/amnesica/BelugaProject) as ZIP and extract it (TODO: Change 'dev' to 'master' in url)
     ```
@@ -24,7 +24,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
     To be able to run the spring boot application you have to provide some information in the configuration file `application.properties` in `/Server/src/main/resources/config` which is used when you run the application.
 
-    First duplicate template file `application.properties.template` and name it `application.properties`. To configure the file use following instructions to replace the `TODO`s. If you missed to provide some information or forgot to replace some `TODO`s the application start may fail or some features will not work properly.
+    First duplicate template file `application.properties.template` and name it `application.properties`. To configure the file use following instructions to replace the `TODO`s. **If you missed to provide some information or forgot to replace some `TODO`s the application start may fail or some features will not work properly.**
 
     When configuring multiple feeders the order of the entries in the following instructions are important. The first entries in `ipFeeder`, `typeFeeder`, `nameFeeder` and `colorFeeder` belong to the same feeder as well as the second and so on.
 
@@ -89,16 +89,17 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
            
     </details>
 
+3. Change the `SPRING_DATASOURCE_PASSWORD` and `POSTGRES_PASSWORD` in `docker-compose.yml` to your database password from `application.properties` (replace `TODO`s here)
 
-3. Change prod url in `/Webapp/src/environments` to your productive systems ip address (for a simple test you can use `localhost`)
+4. Change prod url in `Webapp/src/environments` to your productive systems ip address (for a simple test you can use `localhost`)
 
-4. Build the docker image and execute the containers (1x postgresql, 1x server incl. webapp) in the base path of Beluga Project. Note: If you installed docker only for root user, you need to execute `docker compose up` with sudo privilege
+5. Build the docker image and execute the containers (1x postgres database, 1x server incl. webapp) in the base path of Beluga Project. Note: If you installed docker only for root user, you need to execute `docker compose up` with sudo privilege. Check the version of docker compose with `docker compose version` (needs to be >=2)
 
     ```
     $ docker compose up
     ```
 
-5. When Beluga Project is running (if you see the BelugaProject-Font in the terminal window) go to `<system-prod-ip>:8080` in your browser. There are no aircraft and airport icons yet, let's import them into the database. If you're on a linux system such as the Raspberry Pi you can use linux variant. If you're currently on windows and just want to try things out you can use the windows variant
+6. When Beluga Project is running (if you see the BelugaProject-Font in the terminal window) go to `<system-prod-ip>:8080` in your browser. There are no aircraft and airport icons yet, let's import them into the database. If you're on a linux system such as the Raspberry Pi you can use linux variant. If you're currently on windows and just want to try things out you can use the windows variant
 
     1. Instructions on **linux**
         <details>
@@ -161,6 +162,6 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
     You can ignore the error if you don't have a flightroute.csv file.
 
-6. Reload the configuration in the browser with a reload of `<system-prod-ip>:8080`. Aircraft and airport icons should be visible now (if you're not sure about the aircraft icons you can test it with the Opensky-Network functionality)
+7. Reload the configuration in the browser with a reload of `<system-prod-ip>:8080`. Aircraft and airport icons should be visible now. If you're not sure about the aircraft icons you can test it with the Opensky-Network functionality (an Opensky-Network account is needed)
 
-9. TODO: Run docker container at startup of productive system!
+8. TODO: Run docker container at startup of productive system!
