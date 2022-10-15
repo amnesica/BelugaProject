@@ -12,7 +12,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     $ unzip BelugaProject.zip
     ```
 
-2. Configure the application properties. Rename `application.properties.template` file to `application.properties` in `/Server/src/main/resources/config` and replace the TODO's. Here we use `nano` for editing the config file
+2. Configure the application properties. Rename `application.properties.template` file to `application.properties` in `Server/src/main/resources/config` and replace the TODO's. Here we use `nano` for editing the config file
     ```
     $ cd Server/src/main/resources/config
     $ cp application.properties.template application.properties
@@ -22,7 +22,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     <details>
     <summary>Click to expand</summary>
 
-    To be able to run the spring boot application you have to provide some information in the configuration file `application.properties` in `/Server/src/main/resources/config` which is used when you run the application.
+    To be able to run the spring boot application you have to provide some information in the configuration file `application.properties` in `Server/src/main/resources/config` which is used when you run the application.
 
     First duplicate template file `application.properties.template` and name it `application.properties`. To configure the file use following instructions to replace the `TODO`s. **If you missed to provide some information or forgot to replace some `TODO`s the application start may fail or some features will not work properly.**
 
