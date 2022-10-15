@@ -9,6 +9,7 @@ services:
     ports:
       - "8080:8080"
     container_name: server
+    restart: always
     depends_on:
       - postgresdb
     environment:
@@ -20,6 +21,7 @@ services:
   postgresdb:
     image: 'postgres:13.1-alpine'
     container_name: postgresdb
+    restart: always
     environment:
       - POSTGRES_USER=beluga
       - POSTGRES_PASSWORD=TODO
