@@ -55,6 +55,9 @@ export class MapComponent implements OnInit {
   // Openlayers Layer auf Karte
   layers!: Collection<any>;
 
+  // Layer für die OSM Map
+  osmLayer: any;
+
   // Layer für Range Data
   rangeDataLayer!: VectorLayer;
 
@@ -363,6 +366,8 @@ export class MapComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showDarkMode) => {
         this.darkMode = showDarkMode;
+        this.setLightDarkModeInMap();
+        this.setCenterOfRangeRings(Globals.useDevicePositionForDistance);
       });
 
     // Toggle POMD-Point
@@ -422,15 +427,15 @@ export class MapComponent implements OnInit {
     // Initiiere Abonnements
     this.initSubscriptions();
 
+    // Initialisiere Dark- oder Light-Mode
+    this.initDarkMode();
+
     // Initialisiere Map
     this.initMap();
 
     // Initialisiere Beobachtung
     // des Anwendungsmoduses
     this.initBreakPointObserver();
-
-    // Initialisiere Dark- oder Lightmode
-    this.initDarkMode();
 
     // Initialisiere WebGL beim Start der Anwendung
     this.initWebglOnStartup();
@@ -569,7 +574,7 @@ export class MapComponent implements OnInit {
     this.layers = new Collection();
     let url = 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-    let osmLayer: any = new TileLayer({
+    this.osmLayer = new TileLayer({
       source: new OSM({
         url: url,
         imageSmoothing: false,
@@ -578,16 +583,9 @@ export class MapComponent implements OnInit {
       useInterimTilesOnError: true,
     });
 
-    // Custom filter, damit osmLayer dunkler wird
-    // (ehem. in CSS filter: brightness(55%))
-    var filter = new Colorize();
-    osmLayer.addFilter(filter);
-    filter.setFilter({
-      operation: 'luminosity',
-      value: Globals.luminosityValueMap,
-    });
+    this.setLightDarkModeInMap();
 
-    this.layers.push(osmLayer);
+    this.layers.push(this.osmLayer);
   }
 
   /**
@@ -669,8 +667,8 @@ export class MapComponent implements OnInit {
       // Style des Rings
       let circleStyle = new Style({
         stroke: new Stroke({
-          color: 'black',
-          width: 1,
+          color: this.darkMode ? 'white' : 'black',
+          width: this.darkMode ? 0.4 : 1,
         }),
       });
 
@@ -683,7 +681,9 @@ export class MapComponent implements OnInit {
     // fuege Marker zu StaticFeatures hinzu
     const antennaStyle = new Style({
       image: new Icon({
-        src: '../../assets/antenna.svg',
+        src: this.darkMode
+          ? '../../assets/antenna_dark.svg'
+          : '../../assets/antenna.svg',
         offset: [0, 0],
         opacity: 1,
         scale: 0.7,
@@ -738,7 +738,6 @@ export class MapComponent implements OnInit {
         center: olProj.fromLonLat(Globals.SitePosition),
         zoom: Globals.zoomLevel,
         minZoom: 2,
-        maxZoom: 15,
       }),
     });
   }
@@ -2711,6 +2710,60 @@ export class MapComponent implements OnInit {
     } else {
       // Benutze Antennen-Position als Zentrum (Site-Position)
       this.createRangeRingsAndSitePos(Globals.SitePosition);
+    }
+  }
+
+  setLightDarkModeInMap() {
+    if (!this.osmLayer) return;
+
+    var allFilters = this.osmLayer.getFilters();
+    this.disableCurrentFiltersOnMap(allFilters);
+
+    // Custom filter, damit osmLayer dunkler wird
+    // (ehem. in CSS filter: brightness(55%))
+    if (this.osmLayer.getFilters().length > 0) {
+      if (this.darkMode) {
+        this.enableCurrentFiltersOnMap(allFilters);
+      } else {
+        // enable only luminosity filter for light mode
+        this.osmLayer.getFilters()[2].setActive(true);
+      }
+    } else {
+      if (this.darkMode) {
+        var filter1 = new Colorize();
+        filter1.setFilter('sepia');
+        this.osmLayer.addFilter(filter1);
+
+        var filter2 = new Colorize();
+        filter2.setFilter('invert');
+        this.osmLayer.addFilter(filter2);
+
+        var filter3 = new Colorize();
+        filter3.setFilter({
+          operation: 'luminosity',
+          value: '0.3',
+        });
+        this.osmLayer.addFilter(filter3);
+      } else {
+        var filter1 = new Colorize();
+        filter1.setFilter({
+          operation: 'luminosity',
+          value: Globals.luminosityValueMap,
+        });
+        this.osmLayer.addFilter(filter1);
+      }
+    }
+  }
+
+  enableCurrentFiltersOnMap(allFilters: any) {
+    for (let i = 0; i < allFilters.length; i++) {
+      this.osmLayer.getFilters()[i].setActive(true);
+    }
+  }
+
+  disableCurrentFiltersOnMap(allFilters: any) {
+    for (let i = 0; i < allFilters.length; i++) {
+      this.osmLayer.getFilters()[i].setActive(false);
     }
   }
 }
