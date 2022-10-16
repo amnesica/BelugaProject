@@ -31,7 +31,7 @@ nameFeeder=TODO
 
 # color of feeder to be displayed in statistical views
 # example: colorFeeder=red,blue
-# if you do not have a local feeder, set colorFeeder=NONE
+# if you do not have a local feeder, set colorFeeder=red (valid color is needed here)
 colorFeeder=TODO
 
 # amount of feeders

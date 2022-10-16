@@ -71,7 +71,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     colorFeeder=red, blue
     ```
 
-    If you do not have a local feeder, set `colorFeeder=NONE`.
+    If you do not have a local feeder, set `colorFeeder=red` (valid color is needed here)
 
     - Enter the amount of your feeders
 
