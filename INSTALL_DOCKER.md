@@ -6,7 +6,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
 0. Install docker and docker compose (at least version 2) from [here](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi 
 
-1. Download the Beluga Project from [Github](https://github.com/amnesica/BelugaProject) as ZIP and extract it (TODO: Change 'dev' to 'master' in url)
+1. Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP and extract it (TODO: Change 'dev' to 'master' in url)
     ```
     $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/dev.zip -O BelugaProject.zip
     $ unzip BelugaProject.zip
@@ -18,7 +18,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     $ cp application.properties.template application.properties
     $ nano application.properties
     ```
-    For furher information on how to configure the `application.properties` expand the following secion
+    For furher information on how to configure the `application.properties` expand the following section
     <details>
     <summary>Click to expand</summary>
 
