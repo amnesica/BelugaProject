@@ -22,7 +22,7 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 
 ## Features
 
-- View the application on your desktop or mobile (for the android app see folder "Android App")
+- View the application on your desktop or mobile (for the android app see folder "android_app")
 - Display on a map in the browser
   - aircraft from your local ADS-B feeders (like tar1090, AirSquitter, fr24feeder)
   - aircraft from Opensky-Network (update interval is 5 seconds)
