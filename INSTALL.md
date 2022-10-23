@@ -317,7 +317,7 @@ It is possible to configure application.properties **after** building the jar-fi
 
 ### Configure IP adress of backend service (local system)
 
-To tell the frontend where to find the backend server it is required to set the IP address of your backend server in file `/Webapp/src/environments/environment.prod.ts`.
+To tell the frontend where to find the backend server it is required to set the IP address of your backend server in file `/webapp/src/environments/environment.prod.ts`.
 
 Open file and replace `TODO` in parameter `baseUrl` with the IP address of your local system.
 
@@ -376,7 +376,7 @@ If you have no IDE installed, you can build the angular frontend and the java sp
 - Build the angular frontend
 
   ```
-  $ cd /Webapp
+  $ cd /webapp
   $ ng build --prod
   ```
 
@@ -400,7 +400,7 @@ Alternatively you can build the backend and the frontend from your IDE.
 
 For building the backend open the `/server` folder in your IDE (Intellij or eclipse) as new project and build the application.
 
-For building the frontend go to `/Webapp` folder. If you are opening the angular application for the first time, run `npm install` first.
+For building the frontend go to `/webapp` folder. If you are opening the angular application for the first time, run `npm install` first.
 
 Execute command
 
@@ -480,7 +480,7 @@ The provided csv file `operator_data.csv` is based on [https://en.wikipedia.org/
 
 #### Build jar file (on local system)
 
-Set the IP address of your server (replace `TODO` at parameter `baseUrl`) in `Webapp/src/environments/environment.prod.ts`.
+Set the IP address of your server (replace `TODO` at parameter `baseUrl`) in `webapp/src/environments/environment.prod.ts`.
 
 To initialize the angular application, run `npm install` first.
 

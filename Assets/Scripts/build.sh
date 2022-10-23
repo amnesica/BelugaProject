@@ -3,7 +3,7 @@
 echo -- Starting build process for the BelugaProject --
 
 # Remind user to check prod url in angular
-read -p "Gentle reminder: Have you checked for the correct prod baseurl in the Webapp (y/n)?" choice
+read -p "Gentle reminder: Have you checked for the correct prod baseurl in the webapp (y/n)?" choice
 case "$choice" in 
   y|Y ) echo "Yes, let's continue...";;
   n|N ) echo "No, let's stop here."; exit;;
@@ -20,7 +20,7 @@ esac
 
 # Install npm and dependencies
 echo 1. Install npm and dependencies
-cd ../../Webapp && npm install
+cd ../../webapp && npm install
 echo Done.
 
 # Build angular in production mode

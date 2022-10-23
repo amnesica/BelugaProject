@@ -37,7 +37,7 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: Webapp/Dockerfile
+      dockerfile: webapp/Dockerfile
     image: frontend
     container_name: frontend
     environment:

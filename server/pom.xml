@@ -118,7 +118,7 @@
                             <outputDirectory>${project.build.directory}/classes/static/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>../Webapp/dist/Webapp</directory>
+                                    <directory>../webapp/dist/webapp</directory>
                                 </resource>
                             </resources>
                         </configuration>
