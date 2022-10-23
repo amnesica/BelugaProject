@@ -29,9 +29,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### application.properties ###
-application.properties
-
-### debug logs
+### debug logs ###
 *.log
 *.gz
