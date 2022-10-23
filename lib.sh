@@ -15,7 +15,7 @@ airport_database_url=https://davidmegginson.github.io/ourairports-data/$airport_
 
 load_beluga_db=loadBelugaDb
 load_beluga_db_filename=$load_beluga_db.sh
-path_load_beluga_db=assets/Scripts/$load_beluga_db_filename
+path_load_beluga_db=assets/scripts/$load_beluga_db_filename
 load_beluga_db_output_file=$load_beluga_db-output.txt
 
 _docker_run() {

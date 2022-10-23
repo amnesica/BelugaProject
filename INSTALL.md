@@ -53,7 +53,7 @@ Finally the `BelugaProject-X-X-X.jar` file with the corresponding configuration 
 
 ### Install dependencies
 
-This can be done with the provided script `install_dependencies.sh` in `/assets/Scripts`.
+This can be done with the provided script `install_dependencies.sh` in `/assets/scripts`.
 Execution requires sudo, so you may check the script code before.
 
 It will install the dependencies needed
@@ -78,7 +78,7 @@ Dependencies needed for building the Beluga Project:
 - Angular
 
 ```
-  $ cd /assets/Scripts
+  $ cd /assets/scripts
   $ sudo ./install_dependencies.sh
 ```
 
@@ -330,7 +330,7 @@ After configuring `application.properties` and `environment.prod.ts` the build p
 
 #### Build BelugaProject with build script
 
-You can do this with the provided script `build.sh` in `/assets/Scripts` folder.
+You can do this with the provided script `build.sh` in `/assets/scripts` folder.
 
 Make the script executable with
 
@@ -484,7 +484,7 @@ Set the IP address of your server (replace `TODO` at parameter `baseUrl`) in `we
 
 To initialize the angular application, run `npm install` first.
 
-The following steps can be done automatically with the provided build script `build.sh` in `/assets/Scripts`. Make the script executable with `chmod +x build.sh`. Execute the script with `./build.sh`. The gentle reminder prompts to check the URL and the version can be accepted with `y`.
+The following steps can be done automatically with the provided build script `build.sh` in `/assets/scripts`. Make the script executable with `chmod +x build.sh`. Execute the script with `./build.sh`. The gentle reminder prompts to check the URL and the version can be accepted with `y`.
 
 If you don't want to use the build script, follow the manual procedure described here:
 
@@ -554,7 +554,7 @@ The following instructions will setup the BelugaProject on your Raspberry Pi.
 
 - Prepare service (on your local system)
 
-  - Duplicate the `BelugaProject.service.template` file in `/assets/Scripts` and rename it to `BelugaProject.service`.
+  - Duplicate the `BelugaProject.service.template` file in `/assets/scripts` and rename it to `BelugaProject.service`.
   - Replace the jar name in line `ExecStart` with the actual jar name.
 
 - Do on your local system:
