@@ -35,12 +35,13 @@ import {
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
 import { SymbolType } from 'ol/style/LiteralStyle';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
 import GeometryType from 'ol/geom/GeometryType';
+import { asString } from 'ol/color';
 
 @Component({
   selector: 'app-map',
@@ -368,6 +369,7 @@ export class MapComponent implements OnInit {
         this.darkMode = showDarkMode;
         this.setLightDarkModeInMap();
         this.setCenterOfRangeRings(Globals.useDevicePositionForDistance);
+        this.toggleDarkModeInRangeData();
       });
 
     // Toggle POMD-Point
@@ -2161,7 +2163,11 @@ export class MapComponent implements OnInit {
     // hinzugefügt werden kann
     let feature = new Feature(polygon);
     feature.set('name', 'RangeDataPolygon');
-    feature.setStyle(Styles.RangeDataPolygonStyle);
+    feature.setStyle(
+      this.darkMode
+        ? Styles.RangeDataPolygonStyleDark
+        : Styles.RangeDataPolygonStyle
+    );
     this.RangeDataFeatures.addFeature(feature);
 
     // Zum kontrollieren des Polygons können mit folgendem Code
@@ -2187,7 +2193,11 @@ export class MapComponent implements OnInit {
         feature.category = pointsSorted[i].category;
 
         // Setze Style RangeDataPointStyle
-        feature.setStyle(Styles.RangeDataPointStyle);
+        feature.setStyle(
+          this.darkMode
+            ? Styles.RangeDataPointStyleDark
+            : Styles.RangeDataPointStyle
+        );
 
         // Füge Feature zu RangeDataFeatures hinzu
         this.RangeDataFeatures.addFeature(feature);
@@ -2357,6 +2367,37 @@ export class MapComponent implements OnInit {
           // Setze Default-Style für alle Range-Data-Features
           feature.setStyle(Styles.RangeDataPointStyle);
         }
+      }
+    }
+  }
+
+  /**
+   * Zeigt die RangeData-Points und das Polygon im Dark- oder Light-Mode an
+   */
+  toggleDarkModeInRangeData() {
+    if (this.rangeDataLayer) {
+      this.RangeDataFeatures.getFeatures().forEach((feature) => {
+        if (feature.get('name') != 'RangeDataPolygon') {
+          feature.setStyle(
+            this.darkMode
+              ? Styles.RangeDataPointStyleDark
+              : Styles.RangeDataPointStyle
+          );
+        } else if (feature.get('name') == 'RangeDataPolygon') {
+          feature.setStyle(
+            this.darkMode
+              ? Styles.RangeDataPolygonStyleDark
+              : Styles.RangeDataPolygonStyle
+          );
+        }
+      });
+
+      if (this.bMarkRangeDataByHeight) {
+        this.markRangeDataByHeight();
+      }
+
+      if (this.bMarkRangeDataByFeeder) {
+        this.markRangeDataByFeeder();
       }
     }
   }
@@ -2713,57 +2754,59 @@ export class MapComponent implements OnInit {
     }
   }
 
+  /**
+   * Setzt den Light- oder Dark-Mode auf der Map mittels Filter
+   */
   setLightDarkModeInMap() {
     if (!this.osmLayer) return;
 
-    var allFilters = this.osmLayer.getFilters();
-    this.disableCurrentFiltersOnMap(allFilters);
+    var currentFilters = this.osmLayer.getFilters();
+    this.enableDisableCurrentFilters(currentFilters, false);
 
     // Custom filter, damit osmLayer dunkler wird
     // (ehem. in CSS filter: brightness(55%))
     if (this.osmLayer.getFilters().length > 0) {
       if (this.darkMode) {
-        this.enableCurrentFiltersOnMap(allFilters);
+        this.enableDisableCurrentFilters(currentFilters, true);
       } else {
         // enable only luminosity filter for light mode
         this.osmLayer.getFilters()[2].setActive(true);
       }
     } else {
       if (this.darkMode) {
-        var filter1 = new Colorize();
-        filter1.setFilter('sepia');
-        this.osmLayer.addFilter(filter1);
-
-        var filter2 = new Colorize();
-        filter2.setFilter('invert');
-        this.osmLayer.addFilter(filter2);
-
-        var filter3 = new Colorize();
-        filter3.setFilter({
-          operation: 'luminosity',
-          value: '0.3',
-        });
-        this.osmLayer.addFilter(filter3);
+        this.createNewSepiaFilter();
+        this.createNewInvertFilter();
+        this.createNewLuminosityFilter('0.25');
       } else {
-        var filter1 = new Colorize();
-        filter1.setFilter({
-          operation: 'luminosity',
-          value: Globals.luminosityValueMap,
-        });
-        this.osmLayer.addFilter(filter1);
+        this.createNewLuminosityFilter(Globals.luminosityValueMap.toString());
       }
     }
   }
 
-  enableCurrentFiltersOnMap(allFilters: any) {
-    for (let i = 0; i < allFilters.length; i++) {
-      this.osmLayer.getFilters()[i].setActive(true);
-    }
+  private createNewLuminosityFilter(brightnessValue: string) {
+    var filter = new Colorize();
+    filter.setFilter({
+      operation: 'luminosity',
+      value: brightnessValue,
+    });
+    this.osmLayer.addFilter(filter);
   }
 
-  disableCurrentFiltersOnMap(allFilters: any) {
-    for (let i = 0; i < allFilters.length; i++) {
-      this.osmLayer.getFilters()[i].setActive(false);
+  private createNewInvertFilter() {
+    var filter = new Colorize();
+    filter.setFilter('invert');
+    this.osmLayer.addFilter(filter);
+  }
+
+  private createNewSepiaFilter() {
+    var filter = new Colorize();
+    filter.setFilter('sepia');
+    this.osmLayer.addFilter(filter);
+  }
+
+  enableDisableCurrentFilters(filters: [], enable: boolean) {
+    for (let i = 0; i < filters.length; i++) {
+      this.osmLayer.getFilters()[i].setActive(enable);
     }
   }
 }

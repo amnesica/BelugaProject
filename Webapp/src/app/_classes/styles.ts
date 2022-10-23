@@ -110,11 +110,32 @@ export class Styles {
     }),
   });
 
+  // Dark-Style für Range-Data Polygon
+  static RangeDataPolygonStyleDark: Style = new Style({
+    fill: new Fill({
+      color: 'rgba(100, 100, 100, 0.5)',
+    }),
+  });
+
   // Style für Range-Data Points
   static RangeDataPointStyle: Style = new Style({
     image: new Circle({
       fill: new Fill({
         color: 'rgba(30, 30, 30, 1)',
+      }),
+      stroke: new Stroke({
+        color: 'white',
+        width: 1,
+      }),
+      radius: 5,
+    }),
+  });
+
+  // Dark-Style für Range-Data Points
+  static RangeDataPointStyleDark: Style = new Style({
+    image: new Circle({
+      fill: new Fill({
+        color: 'rgba(100, 100, 100, 1)',
       }),
       stroke: new Stroke({
         color: 'white',
