@@ -41,7 +41,7 @@ If you face any issues please let us know. Happy installing!
 The BelugaProject consists of a java spring boot server application as backend, a postgres database and an angular frontend.
 
 <p align="center">
-<img alt="BelugaProject Overview" src="Assets/Images/BelugaProjectOverview.png" width="50%"/>
+<img alt="BelugaProject Overview" src="assets/Images/BelugaProjectOverview.png" width="50%"/>
 
 It requires a java runtime system, Maven (for building the BelugaProject jar-file with dependencies), postgres database and angular. If you want to develop the app, you need an IDE (like Intellij or eclipse), angular and (optionally) git.
 
@@ -53,7 +53,7 @@ Finally the `BelugaProject-X-X-X.jar` file with the corresponding configuration 
 
 ### Install dependencies
 
-This can be done with the provided script `install_dependencies.sh` in `/Assets/Scripts`.
+This can be done with the provided script `install_dependencies.sh` in `/assets/Scripts`.
 Execution requires sudo, so you may check the script code before.
 
 It will install the dependencies needed
@@ -78,7 +78,7 @@ Dependencies needed for building the Beluga Project:
 - Angular
 
 ```
-  $ cd /Assets/Scripts
+  $ cd /assets/Scripts
   $ sudo ./install_dependencies.sh
 ```
 
@@ -324,13 +324,13 @@ Open file and replace `TODO` in parameter `baseUrl` with the IP address of your 
 ### Build BelugaProject jar file (local system)
 
 <p align="center">
-<img alt="BelugaProject Overview Dev Mode" src="Assets/Images/BelugaProjectOverview_DevMode.png" width="50%"/>
+<img alt="BelugaProject Overview Dev Mode" src="assets/Images/BelugaProjectOverview_DevMode.png" width="50%"/>
 
 After configuring `application.properties` and `environment.prod.ts` the build process can be executed. There are three different build methods described below.
 
 #### Build BelugaProject with build script
 
-You can do this with the provided script `build.sh` in `/Assets/Scripts` folder.
+You can do this with the provided script `build.sh` in `/assets/Scripts` folder.
 
 Make the script executable with
 
@@ -441,14 +441,14 @@ The provided csv file `operator_data.csv` is based on [https://en.wikipedia.org/
   - `map_type_to_shape`
   - `shape_data`
 
-    use the provided csv files in `Assets/DbContent`.
+    use the provided csv files in `assets/DbContent`.
 
 - For the tables
 
   - `aircraft_data`
   - `airport_data`
 
-    copy the downloaded files to `.../Assets/DbContent`.
+    copy the downloaded files to `.../assets/DbContent`.
 
   To load the csv-files it is necessary that the files can be accessed by postgres. Therefore create a folder `DbContent` inside the postgres folder.
 
@@ -476,7 +476,7 @@ The provided csv file `operator_data.csv` is based on [https://en.wikipedia.org/
 ### Deployment to remote server
 
 <p align="center">
-<img alt="BelugaProject Overview Prod Mode" src="Assets/Images/BelugaProjectOverview_ProdMode.png" width="50%"/>
+<img alt="BelugaProject Overview Prod Mode" src="assets/Images/BelugaProjectOverview_ProdMode.png" width="50%"/>
 
 #### Build jar file (on local system)
 
@@ -484,7 +484,7 @@ Set the IP address of your server (replace `TODO` at parameter `baseUrl`) in `we
 
 To initialize the angular application, run `npm install` first.
 
-The following steps can be done automatically with the provided build script `build.sh` in `/Assets/Scripts`. Make the script executable with `chmod +x build.sh`. Execute the script with `./build.sh`. The gentle reminder prompts to check the URL and the version can be accepted with `y`.
+The following steps can be done automatically with the provided build script `build.sh` in `/assets/Scripts`. Make the script executable with `chmod +x build.sh`. Execute the script with `./build.sh`. The gentle reminder prompts to check the URL and the version can be accepted with `y`.
 
 If you don't want to use the build script, follow the manual procedure described here:
 
@@ -520,7 +520,7 @@ The following instructions will setup the BelugaProject on your Raspberry Pi.
 
 - Setup dependencies for the project
 
-  Run script `install_dependencies` from `/Assets/scripts/` on your server. Use instructions from [Install dependencies](#install-dependencies).
+  Run script `install_dependencies` from `/assets/scripts/` on your server. Use instructions from [Install dependencies](#install-dependencies).
 
 - Setup Postgresql on server
 
@@ -554,7 +554,7 @@ The following instructions will setup the BelugaProject on your Raspberry Pi.
 
 - Prepare service (on your local system)
 
-  - Duplicate the `BelugaProject.service.template` file in `/Assets/Scripts` and rename it to `BelugaProject.service`.
+  - Duplicate the `BelugaProject.service.template` file in `/assets/Scripts` and rename it to `BelugaProject.service`.
   - Replace the jar name in line `ExecStart` with the actual jar name.
 
 - Do on your local system:

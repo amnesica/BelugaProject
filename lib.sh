@@ -15,7 +15,7 @@ airport_database_url=https://davidmegginson.github.io/ourairports-data/$airport_
 
 load_beluga_db=loadBelugaDb
 load_beluga_db_filename=$load_beluga_db.sh
-path_load_beluga_db=Assets/Scripts/$load_beluga_db_filename
+path_load_beluga_db=assets/Scripts/$load_beluga_db_filename
 load_beluga_db_output_file=$load_beluga_db-output.txt
 
 _docker_run() {
@@ -44,9 +44,9 @@ _copy_db_content_to_container() {
   echo "-> Create DbContent directory in $path_db_content. Done."
 
   # copy content from DbContent to container
-  echo "Copy content from Assets/DbContent to $path_db_content ..."
-  docker cp Assets/DbContent $container_name_db:$path_postgresql
-  echo "-> Copy content from Assets/DbContent to $path_db_content. Done."
+  echo "Copy content from assets/DbContent to $path_db_content ..."
+  docker cp assets/DbContent $container_name_db:$path_postgresql
+  echo "-> Copy content from assets/DbContent to $path_db_content. Done."
 }
 
 _download_aircraft_database() {
