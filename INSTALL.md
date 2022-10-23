@@ -41,7 +41,7 @@ If you face any issues please let us know. Happy installing!
 The BelugaProject consists of a java spring boot server application as backend, a postgres database and an angular frontend.
 
 <p align="center">
-<img alt="BelugaProject Overview" src="assets/Images/BelugaProjectOverview.png" width="50%"/>
+<img alt="BelugaProject Overview" src="assets/images/BelugaProjectOverview.png" width="50%"/>
 
 It requires a java runtime system, Maven (for building the BelugaProject jar-file with dependencies), postgres database and angular. If you want to develop the app, you need an IDE (like Intellij or eclipse), angular and (optionally) git.
 
@@ -324,7 +324,7 @@ Open file and replace `TODO` in parameter `baseUrl` with the IP address of your 
 ### Build BelugaProject jar file (local system)
 
 <p align="center">
-<img alt="BelugaProject Overview Dev Mode" src="assets/Images/BelugaProjectOverview_DevMode.png" width="50%"/>
+<img alt="BelugaProject Overview Dev Mode" src="assets/images/BelugaProjectOverview_DevMode.png" width="50%"/>
 
 After configuring `application.properties` and `environment.prod.ts` the build process can be executed. There are three different build methods described below.
 
@@ -476,7 +476,7 @@ The provided csv file `operator_data.csv` is based on [https://en.wikipedia.org/
 ### Deployment to remote server
 
 <p align="center">
-<img alt="BelugaProject Overview Prod Mode" src="assets/Images/BelugaProjectOverview_ProdMode.png" width="50%"/>
+<img alt="BelugaProject Overview Prod Mode" src="assets/images/BelugaProjectOverview_ProdMode.png" width="50%"/>
 
 #### Build jar file (on local system)
 
