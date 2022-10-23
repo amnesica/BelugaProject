@@ -30,5 +30,5 @@ echo Done.
 
 # Build maven project and generate jar
 echo 3. Building maven application and generating jar ...
-cd ../Server && mvn clean install -DskipTests
-echo Done. You can find the jar along with the config files in Server/prod/
+cd ../server && mvn clean install -DskipTests
+echo Done. You can find the jar along with the config files in server/prod/

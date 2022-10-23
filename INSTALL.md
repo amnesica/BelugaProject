@@ -248,7 +248,7 @@ The following step is optional. It is required if you want to manage the Postgre
 
 ### Configure application properties
 
-To be able to run the spring boot application you have to provide some information in the configuration file `application.properties` in `/Server/src/main/resources/config` which is used when you run the application.
+To be able to run the spring boot application you have to provide some information in the configuration file `application.properties` in `/server/src/main/resources/config` which is used when you run the application.
 
 First duplicate template file `application.properties.template` and name it `application.properties`. To configure the file use following instructions to replace the `TODO`s. If you missed to provide some information or forgot to replace some `TODO`s the application start may fail or some features will not work properly.
 
@@ -355,7 +355,7 @@ if your system has less then 3 GiB RAM.
 After successful build process run the application (replace X-X-X with current version) with
 
 ```
-$ cd /Server/prod
+$ cd /server/prod
 $ java -jar BelugaProject-X-X-X.jar
 ```
 
@@ -388,7 +388,7 @@ If you have no IDE installed, you can build the angular frontend and the java sp
 
 - Build the spring boot application
   ```
-  $ cd /Server
+  $ cd /server
   $ mvn clean install
   ```
   This process may take some time.
@@ -398,7 +398,7 @@ If you have no IDE installed, you can build the angular frontend and the java sp
 
 Alternatively you can build the backend and the frontend from your IDE.
 
-For building the backend open the `/Server` folder in your IDE (Intellij or eclipse) as new project and build the application.
+For building the backend open the `/server` folder in your IDE (Intellij or eclipse) as new project and build the application.
 
 For building the frontend go to `/Webapp` folder. If you are opening the angular application for the first time, run `npm install` first.
 
@@ -494,7 +494,7 @@ If you don't want to use the build script, follow the manual procedure described
   $ ng build --prod
   ```
 
-- Go into the `/Server` folder. Build the spring boot application with the command below. Afterwards, the jar file should be inside the `/Server/target` and `/Server/prod` folder.
+- Go into the `/server` folder. Build the spring boot application with the command below. Afterwards, the jar file should be inside the `/server/target` and `/server/prod` folder.
 
   ```
   $ mvn clean install
@@ -559,8 +559,8 @@ The following instructions will setup the BelugaProject on your Raspberry Pi.
 
 - Do on your local system:
 
-  - Copy the file `/Server/src/resources/config/application.properties` to `/Server/prod/config`.
-  - Copy the contents of `/Server/prod`, the `BelugaProject.service` file and the `loadBelugaDb.sh` to the Beluga Project folder on the Raspberry Pi `/home/beluga/.local/share/applications/BelugaProject`
+  - Copy the file `/server/src/resources/config/application.properties` to `/server/prod/config`.
+  - Copy the contents of `/server/prod`, the `BelugaProject.service` file and the `loadBelugaDb.sh` to the Beluga Project folder on the Raspberry Pi `/home/beluga/.local/share/applications/BelugaProject`
 
 - Optional: If your local system is a Windows system, convert CRLF in all shellscripts to LF (install and execute dos2unix on the Raspberry Pi)
 
@@ -611,7 +611,7 @@ The following instructions will setup the BelugaProject on your Raspberry Pi.
 
 #### Configure application properties for server
 
-You can configure the application **after** building the jar file. Duplicate the `application.properties.template` file in `/Server/prod/config`, name it to `application.properties` and fill out the file.
+You can configure the application **after** building the jar file. Duplicate the `application.properties.template` file in `/server/prod/config`, name it to `application.properties` and fill out the file.
 To make BelugaProject use the newly created `application.properties` file copy the file inside the `config` directory which should be in the same directory as the jar file. When you have a running server restart the server and if necessary reload the site in the browser. The application should now use the new properties file.
 
 ### Check database tables
