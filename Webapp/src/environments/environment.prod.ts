@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: 'TODO',
+  baseUrl: window["env"]["baseUrl"] || "default",
 };

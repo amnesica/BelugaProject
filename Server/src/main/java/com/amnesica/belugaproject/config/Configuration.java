@@ -3,12 +3,14 @@ package com.amnesica.belugaproject.config;
 import com.amnesica.belugaproject.Application;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Min;
@@ -22,65 +24,60 @@ import java.util.*;
 @Slf4j
 @Validated
 @ConstructorBinding
-@EnableConfigurationProperties
-@ConfigurationProperties("application")
 @org.springframework.context.annotation.Configuration
 public class Configuration {
+
+    @Autowired
+    private Environment environment;
+
     // Name und Version der App
     private final String appName = "The Beluga Project";
     private final String appVersion = "3-0-1";
 
     // Angezeigte Feeder-Position auf der Karte
-    @Value("${latitudeLocation}")
-    @NotNull(message = "latitudeLocation was not found in application.properties")
+    @Value("${location.latitude}")
     private Double latFeeder;
 
-    @Value("${longitudeLocation}")
-    @NotNull(message = "longitudeLocation was not found in application.properties")
+    @Value("${location.longitude}")
     private Double lonFeeder;
 
     // Anzahl der Feeder
-    @Value("${amountFeeder}")
+    @Value("${feeder.amount}")
     @Min(1)
-    @NotNull(message = "amountFeeder was not found in application.properties")
     private Double amountFeeder;
 
     // Skalierung der Icons
-    @Value("${scaleIcons}")
-    @NotNull(message = "scaleIcons was not found in application.properties")
+    @Value("${scale.icons}")
     private Double scaleIcons;
 
     // Ip-Adressen der Feeder
-    @Value("#{'${ipFeeder}'.split(',\\s*')}")
+    @Value("#{'${feeder.ip}'.split(',\\s*')}")
     private List<String> listIpFeeder;
 
     // Art der Feeder
-    @Value("#{'${typeFeeder}'.split(',\\s*')}")
+    @Value("#{'${feeder.type}'.split(',\\s*')}")
     private List<String> listTypeFeeder;
 
     // Namen der Feeder
-    @Value("#{'${nameFeeder}'.split(',\\s*')}")
+    @Value("#{'${feeder.name}'.split(',\\s*')}")
     private List<String> listNameFeeder;
 
     // Farben der Feeder
-    @Value("#{'${colorFeeder}'.split(',\\s*')}")
+    @Value("#{'${feeder.color}'.split(',\\s*')}")
     private List<String> listColorFeeder;
 
     // Anzuzeigende Range Ringe
-    @Value("#{'${circleDistanceOfRings}'.split(',\\s*')}")
+    @Value("#{'${circle.distance.of.rings}'.split(',\\s*')}")
     private List<Integer> listCircleDistancesInNm;
 
-    @Value("${opensky-network.username}")
-    @NotNull(message = "opensky-network.username was not found in application.properties")
+    @Value("${opensky.network.username}")
     private String openskyUsername;
 
-    @Value("${opensky-network.password}")
-    @NotNull(message = "opensky-network.password was not found in application.properties")
+    @Value("${opensky.network.password}")
     private char[] openskyPassword;
 
     // Url zur Photo-Suche einer Suchmaschine
-    @Value("${searchEngineUrl}")
-    @NotNull(message = "searchEngineUrl was not found in application.properties")
+    @Value("${search.engine.url}")
     private String searchEngineUrl;
 
     // Liste mit Feedern aus der Konfigurationsdatei
@@ -130,12 +127,7 @@ public class Configuration {
 
             // Weise Feeder die Mappings von der jeweiligen Konfigurationsdatei zu
             FeederMapping mapping = getMappingsFromConfig(feeder.getType());
-            if (mapping != null) {
-                feeder.setMapping(mapping);
-            } else {
-                exitProgram(
-                        "Server: Mappings could not be read from the configuration files. Program will be terminated!");
-            }
+            feeder.setMapping(mapping);
 
             // Füge Feeder zur Liste an Feedern hinzu
             addFeederToList(feeder);
@@ -176,94 +168,89 @@ public class Configuration {
         if (typeFeederProperty != null && !typeFeederProperty.isEmpty()) {
             Properties propsFeeder = readPropertiesFromResourcesFile(pathToFeederMappings + typeFeederProperty + ".config");
 
-            if (propsFeeder != null) {
-                if (propsFeeder.getProperty("hex") != null) {
-                    mapping.setHex(propsFeeder.getProperty("hex"));
-                }
-                if (propsFeeder.getProperty("latitude") != null) {
-                    mapping.setLatitude(propsFeeder.getProperty("latitude"));
-                }
-                if (propsFeeder.getProperty("longitude") != null) {
-                    mapping.setLongitude(propsFeeder.getProperty("longitude"));
-                }
-                if (propsFeeder.getProperty("altitude") != null) {
-                    mapping.setAltitude(propsFeeder.getProperty("altitude"));
-                }
-                if (propsFeeder.getProperty("track") != null) {
-                    mapping.setTrack(propsFeeder.getProperty("track"));
-                }
-                if (propsFeeder.getProperty("type") != null) {
-                    mapping.setType(propsFeeder.getProperty("type"));
-                }
-                if (propsFeeder.getProperty("registration") != null) {
-                    mapping.setRegistration(propsFeeder.getProperty("registration"));
-                }
-                if (propsFeeder.getProperty("onGround") != null) {
-                    mapping.setOnGround(propsFeeder.getProperty("onGround"));
-                }
-                if (propsFeeder.getProperty("speed") != null) {
-                    mapping.setSpeed(propsFeeder.getProperty("speed"));
-                }
-                if (propsFeeder.getProperty("squawk") != null) {
-                    mapping.setSquawk(propsFeeder.getProperty("squawk"));
-                }
-                if (propsFeeder.getProperty("flightId") != null) {
-                    mapping.setFlightId(propsFeeder.getProperty("flightId"));
-                }
-                if (propsFeeder.getProperty("verticalRate") != null) {
-                    mapping.setVerticalRate(propsFeeder.getProperty("verticalRate"));
-                }
-                if (propsFeeder.getProperty("rssi") != null) {
-                    mapping.setRssi(propsFeeder.getProperty("rssi"));
-                }
-                if (propsFeeder.getProperty("category") != null) {
-                    mapping.setCategory(propsFeeder.getProperty("category"));
-                }
-                if (propsFeeder.getProperty("temperature") != null) {
-                    mapping.setTemperature(propsFeeder.getProperty("temperature"));
-                }
-                if (propsFeeder.getProperty("windSpeed") != null) {
-                    mapping.setWindSpeed(propsFeeder.getProperty("windSpeed"));
-                }
-                if (propsFeeder.getProperty("windFromDirection") != null) {
-                    mapping.setWindFromDirection(propsFeeder.getProperty("windFromDirection"));
-                }
-                if (propsFeeder.getProperty("destination") != null) {
-                    mapping.setDestination(propsFeeder.getProperty("destination"));
-                }
-                if (propsFeeder.getProperty("origin") != null) {
-                    mapping.setOrigin(propsFeeder.getProperty("origin"));
-                }
-                if (propsFeeder.getProperty("distance") != null) {
-                    mapping.setDistance(propsFeeder.getProperty("distance"));
-                }
-                if (propsFeeder.getProperty("autopilotEngaged") != null) {
-                    mapping.setAutopilotEngaged(propsFeeder.getProperty("autopilotEngaged"));
-                }
-                if (propsFeeder.getProperty("elipsoidalAltitude") != null) {
-                    mapping.setElipsoidalAltitude(propsFeeder.getProperty("elipsoidalAltitude"));
-                }
-                if (propsFeeder.getProperty("selectedQnh") != null) {
-                    mapping.setSelectedQnh(propsFeeder.getProperty("selectedQnh"));
-                }
-                if (propsFeeder.getProperty("selectedAltitude") != null) {
-                    mapping.setSelectedAltitude(propsFeeder.getProperty("selectedAltitude"));
-                }
-                if (propsFeeder.getProperty("selectedHeading") != null) {
-                    mapping.setSelectedHeading(propsFeeder.getProperty("selectedHeading"));
-                }
-                if (propsFeeder.getProperty("feeder") != null) {
-                    mapping.setFeeder(propsFeeder.getProperty("feeder"));
-                }
-                if (propsFeeder.getProperty("lastSeen") != null) {
-                    mapping.setLastSeen(propsFeeder.getProperty("lastSeen"));
-                }
-                if (propsFeeder.getProperty("source") != null) {
-                    mapping.setSource(propsFeeder.getProperty("source"));
-                }
-            } else {
-                exitProgram(
-                        "Server: No configuration file with mappings of a feeder found. Program will be terminated!");
+            if (propsFeeder.getProperty("hex") != null) {
+                mapping.setHex(propsFeeder.getProperty("hex"));
+            }
+            if (propsFeeder.getProperty("latitude") != null) {
+                mapping.setLatitude(propsFeeder.getProperty("latitude"));
+            }
+            if (propsFeeder.getProperty("longitude") != null) {
+                mapping.setLongitude(propsFeeder.getProperty("longitude"));
+            }
+            if (propsFeeder.getProperty("altitude") != null) {
+                mapping.setAltitude(propsFeeder.getProperty("altitude"));
+            }
+            if (propsFeeder.getProperty("track") != null) {
+                mapping.setTrack(propsFeeder.getProperty("track"));
+            }
+            if (propsFeeder.getProperty("type") != null) {
+                mapping.setType(propsFeeder.getProperty("type"));
+            }
+            if (propsFeeder.getProperty("registration") != null) {
+                mapping.setRegistration(propsFeeder.getProperty("registration"));
+            }
+            if (propsFeeder.getProperty("onGround") != null) {
+                mapping.setOnGround(propsFeeder.getProperty("onGround"));
+            }
+            if (propsFeeder.getProperty("speed") != null) {
+                mapping.setSpeed(propsFeeder.getProperty("speed"));
+            }
+            if (propsFeeder.getProperty("squawk") != null) {
+                mapping.setSquawk(propsFeeder.getProperty("squawk"));
+            }
+            if (propsFeeder.getProperty("flightId") != null) {
+                mapping.setFlightId(propsFeeder.getProperty("flightId"));
+            }
+            if (propsFeeder.getProperty("verticalRate") != null) {
+                mapping.setVerticalRate(propsFeeder.getProperty("verticalRate"));
+            }
+            if (propsFeeder.getProperty("rssi") != null) {
+                mapping.setRssi(propsFeeder.getProperty("rssi"));
+            }
+            if (propsFeeder.getProperty("category") != null) {
+                mapping.setCategory(propsFeeder.getProperty("category"));
+            }
+            if (propsFeeder.getProperty("temperature") != null) {
+                mapping.setTemperature(propsFeeder.getProperty("temperature"));
+            }
+            if (propsFeeder.getProperty("windSpeed") != null) {
+                mapping.setWindSpeed(propsFeeder.getProperty("windSpeed"));
+            }
+            if (propsFeeder.getProperty("windFromDirection") != null) {
+                mapping.setWindFromDirection(propsFeeder.getProperty("windFromDirection"));
+            }
+            if (propsFeeder.getProperty("destination") != null) {
+                mapping.setDestination(propsFeeder.getProperty("destination"));
+            }
+            if (propsFeeder.getProperty("origin") != null) {
+                mapping.setOrigin(propsFeeder.getProperty("origin"));
+            }
+            if (propsFeeder.getProperty("distance") != null) {
+                mapping.setDistance(propsFeeder.getProperty("distance"));
+            }
+            if (propsFeeder.getProperty("autopilotEngaged") != null) {
+                mapping.setAutopilotEngaged(propsFeeder.getProperty("autopilotEngaged"));
+            }
+            if (propsFeeder.getProperty("elipsoidalAltitude") != null) {
+                mapping.setElipsoidalAltitude(propsFeeder.getProperty("elipsoidalAltitude"));
+            }
+            if (propsFeeder.getProperty("selectedQnh") != null) {
+                mapping.setSelectedQnh(propsFeeder.getProperty("selectedQnh"));
+            }
+            if (propsFeeder.getProperty("selectedAltitude") != null) {
+                mapping.setSelectedAltitude(propsFeeder.getProperty("selectedAltitude"));
+            }
+            if (propsFeeder.getProperty("selectedHeading") != null) {
+                mapping.setSelectedHeading(propsFeeder.getProperty("selectedHeading"));
+            }
+            if (propsFeeder.getProperty("feeder") != null) {
+                mapping.setFeeder(propsFeeder.getProperty("feeder"));
+            }
+            if (propsFeeder.getProperty("lastSeen") != null) {
+                mapping.setLastSeen(propsFeeder.getProperty("lastSeen"));
+            }
+            if (propsFeeder.getProperty("source") != null) {
+                mapping.setSource(propsFeeder.getProperty("source"));
             }
         }
         return mapping;
