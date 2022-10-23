@@ -6,7 +6,7 @@ set -euo pipefail
 # Global variables
 container_name_db=postgresdb
 path_postgresql=/var/lib/postgresql
-path_db_content=$path_postgresql/DbContent
+path_db_content=$path_postgresql/dbContent
 
 aircraft_database_filename=aircraftDatabase.csv
 airport_database_filename=airports.csv
@@ -39,14 +39,14 @@ _docker_build() {
 }
 
 _copy_db_content_to_container() {
-  echo "Create DbContent directory in $path_db_content ..."
+  echo "Create dbContent directory in $path_db_content ..."
   docker exec -ti $container_name_db bash -c "mkdir $path_db_content"
-  echo "-> Create DbContent directory in $path_db_content. Done."
+  echo "-> Create dbContent directory in $path_db_content. Done."
 
-  # copy content from DbContent to container
-  echo "Copy content from assets/DbContent to $path_db_content ..."
-  docker cp assets/DbContent $container_name_db:$path_postgresql
-  echo "-> Copy content from assets/DbContent to $path_db_content. Done."
+  # copy content from dbContent to container
+  echo "Copy content from assets/dbContent to $path_db_content ..."
+  docker cp assets/dbContent $container_name_db:$path_postgresql
+  echo "-> Copy content from assets/dbContent to $path_db_content. Done."
 }
 
 _download_aircraft_database() {
@@ -89,7 +89,7 @@ _load_db_content() {
     exit
   fi
 
-  echo "Create DbContent directory in $path_db_content ..."
+  echo "Create dbContent directory in $path_db_content ..."
   if [[ -z $(docker exec -ti $container_name_db bash -c "if [ -d $path_db_content ]; then echo does exist; fi") ]]; then
     _copy_db_content_to_container
   else

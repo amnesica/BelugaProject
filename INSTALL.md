@@ -441,25 +441,25 @@ The provided csv file `operator_data.csv` is based on [https://en.wikipedia.org/
   - `map_type_to_shape`
   - `shape_data`
 
-    use the provided csv files in `assets/DbContent`.
+    use the provided csv files in `assets/dbContent`.
 
 - For the tables
 
   - `aircraft_data`
   - `airport_data`
 
-    copy the downloaded files to `.../assets/DbContent`.
+    copy the downloaded files to `.../assets/dbContent`.
 
-  To load the csv-files it is necessary that the files can be accessed by postgres. Therefore create a folder `DbContent` inside the postgres folder.
+  To load the csv-files it is necessary that the files can be accessed by postgres. Therefore create a folder `dbContent` inside the postgres folder.
 
   ```
   $ cd /var/lib/postgresql/
-  $ sudo mkdir DbContent
+  $ sudo mkdir dbContent
   ```
 
-- Copy all csv-files to the newly created directory `/var/lib/postgresql/DbContent`
+- Copy all csv-files to the newly created directory `/var/lib/postgresql/dbContent`
 
-- In the script `loadBelugaDb.sh` set the path in `pathToDirectoryWithCsv` to the directory with the csv-files (e.g. `/var/lib/postgresql/DbContent`)
+- In the script `loadBelugaDb.sh` set the path in `pathToDirectoryWithCsv` to the directory with the csv-files (e.g. `/var/lib/postgresql/dbContent`)
 
 - Make the script `loadBelugaDb.sh` executable
 

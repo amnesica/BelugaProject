@@ -2,7 +2,7 @@
 
 # Define path to directory with databases
 # e.g. '/var/lib/postgres'
-pathToDirectoryWithCsv="/var/lib/postgresql/DbContent"
+pathToDirectoryWithCsv="/var/lib/postgresql/dbContent"
 
 echo -----------------------------------------
 echo loading table aircraft_data ...
