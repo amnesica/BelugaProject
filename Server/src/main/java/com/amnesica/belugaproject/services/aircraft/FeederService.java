@@ -195,7 +195,7 @@ public class FeederService {
 
         // Entferne IP-Adresse der Feeder
         for (Feeder feeder : configuration.getListFeeder()) {
-            Feeder feederToAdd = new Feeder(feeder.getName(), feeder.getType(), null, feeder.getColor());
+            Feeder feederToAdd = new Feeder(feeder.getName(), null, feeder.getType(), feeder.getColor());
             listFeederEdited.add(feederToAdd);
         }
         configMap.put("listFeeder", listFeederEdited);
