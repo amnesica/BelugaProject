@@ -8,7 +8,7 @@ services:
     image: server
     container_name: server
     depends_on:
-      - postgresdb
+      - postgres
     environment:
       - LOCATION_LATITUDE=${LOCATION_LATITUDE}
       - LOCATION_LONGITUDE=${LOCATION_LONGITUDE}
