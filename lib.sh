@@ -111,7 +111,7 @@ _docker_rm_image() {
     echo "Remove image $1 ..."
     local image_id=$(docker images -q $1)
     if [[ $image_id ]]; then
-      docker image rm $image_id
+      docker image rm -f $image_id
       echo "-> Removed image for $1. Done."
     else
       echo "-> No image $1 to remove. Done."
