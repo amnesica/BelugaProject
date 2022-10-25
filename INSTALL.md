@@ -110,4 +110,4 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
     You can ignore the error if you don't have a flightroute.csv file.
 
-4. When Beluga Project is installed and is running go to `<system-prod-ip>:80` in your browser. If you' just want to test the project enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed)
+4. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you' just want to test the project enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed)

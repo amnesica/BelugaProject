@@ -34,21 +34,21 @@ services:
       - "8080:8080"
     restart: always
 
-  frontend:
+  webapp:
     build:
       context: .
       dockerfile: webapp/Dockerfile
-    image: frontend
-    container_name: frontend
+    image: webapp
+    container_name: webapp
     environment:
       - PROD_BASE_URL_WEBAPP=${PROD_BASE_URL_WEBAPP}
     ports:
-      - '80:80'
+      - '8090:80'
     restart: always
 
-  postgresdb:
+  postgres:
     image: 'postgres:13.1-alpine'
-    container_name: postgresdb
+    container_name: postgres
     environment:
       - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
       - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
