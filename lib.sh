@@ -4,7 +4,9 @@
 set -euo pipefail
 
 # Global variables
-container_name_db=postgresdb
+container_name_db=postgres
+container_name_webapp=webapp
+container_name_server=server
 path_postgresql=/var/lib/postgresql
 path_db_content=$path_postgresql/dbContent
 
@@ -18,6 +20,21 @@ load_beluga_db_filename=$load_beluga_db.sh
 path_load_beluga_db=assets/scripts/$load_beluga_db_filename
 load_beluga_db_output_file=$load_beluga_db-output.txt
 
+_ask_user_with_message() {
+  read -p "$1" choice
+  case "$choice" in
+  y | Y) echo "-> Yes, let's continue ..." ;;
+  n | N)
+    echo "-> No, let's stop here."
+    exit
+    ;;
+  *)
+    echo "-> Invalid, let's stop here."
+    exit
+    ;;
+  esac
+}
+
 _docker_run() {
   echo "Run the containers ..."
   docker compose up
@@ -29,13 +46,92 @@ _docker_run_background() {
 }
 
 _docker_build() {
-  if [ -z $1 ]; then
+  if [[ $# -eq 0 ]]; then
     echo "Build all images (force rebuild of existing images) ..."
     docker compose build --progress=plain --no-cache
   else
     echo "Build the image for $1 (force rebuild of existing image) ..."
     docker compose build --progress=plain --no-cache $1
   fi
+}
+
+_docker_stop_container() {
+  if [[ $# -eq 0 ]]; then
+    _ask_user_with_message "Do you really want to stop all containers for the Beluga Project (y/n)?"
+    _docker_stop_all_containers
+  else
+    echo "Stop container $1 ..."
+    local container_id=$(docker ps -aqf "name=$1")
+    if [[ $container_id ]]; then
+      docker stop $container_id
+      echo "-> Stopped container for $1. Done."
+    else
+      echo "-> No container $1 to stop. Done."
+    fi
+  fi
+}
+
+_docker_stop_all_containers() {
+  echo "Stop all containers for Beluga Project ..."
+  _docker_stop_container $container_name_webapp
+  _docker_stop_container $container_name_server
+  _docker_stop_container $container_name_db
+  echo "-> Stopped all containers for Beluga Project. Done."
+}
+
+_docker_rm_container() {
+  if [[ $# -eq 0 ]]; then
+    _ask_user_with_message "Do you really want to remove all containers for the Beluga Project (y/n)?"
+    _docker_rm_all_containers
+  else
+    echo "Remove container $1 ..."
+    local container_id=$(docker ps -aqf "name=$1")
+    if [[ $container_id ]]; then
+      docker rm $container_id
+      echo "-> Removed container for $1. Done."
+    else
+      echo "-> No container $1 to remove. Done."
+    fi
+  fi
+}
+
+_docker_rm_all_containers() {
+  echo "Remove all containers for Beluga Project ..."
+  _docker_rm_container $container_name_webapp
+  _docker_rm_container $container_name_server
+  _docker_rm_container $container_name_db
+  echo "-> All containers for Beluga Project removed. Done."
+}
+
+_docker_rm_image() {
+  if [[ $# -eq 0 ]]; then
+    _ask_user_with_message "Do you really want to remove all images for the Beluga Project (y/n)?"
+    _docker_rm_all_images
+  else
+    echo "Remove image $1 ..."
+    local image_id=$(docker images -q $1)
+    if [[ $image_id ]]; then
+      docker image rm $image_id
+      echo "-> Removed image for $1. Done."
+    else
+      echo "-> No image $1 to remove. Done."
+    fi
+  fi
+}
+
+_docker_rm_all_images() {
+  echo "Remove all images for Beluga Project ..."
+  _docker_rm_image $container_name_webapp
+  _docker_rm_image $container_name_server
+  _docker_rm_image $container_name_db
+  echo "-> Removed all images for Beluga Project. Done."
+}
+
+_docker_rm_project() {
+  _ask_user_with_message "Do you really want to remove all containers and images for the Beluga Project (y/n)?"
+  _docker_stop_all_containers
+  _docker_rm_all_containers
+  _docker_rm_all_images
 }
 
 _copy_db_content_to_container() {
@@ -144,18 +240,7 @@ _install() {
   echo "Install the Beluga Project ..."
 
   # Remind user to check if version should be updated
-  read -p "Gentle reminder: Have you configured the values in the .env file (y/n)?" choice
-  case "$choice" in
-  y | Y) echo "-> Yes, let's continue ..." ;;
-  n | N)
-    echo "-> No, let's stop here. Please set the values in the .env file. Installation aborted."
-    exit
-    ;;
-  *)
-    echo "-> Invalid, let's stop here. Installation aborted."
-    exit
-    ;;
-  esac
+  _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
 
   _docker_run_background
 
