@@ -12,8 +12,9 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     $ unzip BelugaProject.zip
     ```
 
-2. Configure the environment variables in the `.env` file. You can use `nano` for editing the config file. 
+2. Rename the environment variables template file `.env.template` in `.env` and configure the environment variables in the `.env` file. You can use `nano` for editing the config file. 
     ```
+    $ cp .env.template .env
     $ nano .env
     ```
     For further information on how to configure the `.env` file expand the following section
