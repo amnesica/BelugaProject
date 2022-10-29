@@ -74,4 +74,4 @@ The application runs on a Raspberry Pi 4B in the local network. We can access th
 
 ## Install and run
 
-To install and run the application please see the [INSTALL.md](/INSTALL.md) file.
+To install and run the application please see the [INSTALL.md](/doc/INSTALL.md) file.
