@@ -203,7 +203,7 @@ export class MapComponent implements OnInit {
     private toolbarService: ToolbarService,
     private aircraftTableService: AircraftTableService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   /**
    * Einstiegspunkt
@@ -529,17 +529,17 @@ export class MapComponent implements OnInit {
           // Überprüfe gesetzte Werte und starte Programm
           if (
             (Globals.latFeeder,
-            Globals.lonFeeder,
-            Globals.scaleIcons,
-            Globals.SitePosition,
-            Globals.appName,
-            Globals.appVersion,
-            this.circleDistancesInNm.length != 0,
-            this.listFeeder.length != 0,
-            Globals.shapesMap,
-            Globals.catMap,
-            Globals.typesMap,
-            Globals.clientIp)
+              Globals.lonFeeder,
+              Globals.scaleIcons,
+              Globals.SitePosition,
+              Globals.appName,
+              Globals.appVersion,
+              this.circleDistancesInNm.length != 0,
+              this.listFeeder.length != 0,
+              Globals.shapesMap,
+              Globals.catMap,
+              Globals.typesMap,
+              Globals.clientIp)
           ) {
             this.startProgram();
           } else {
@@ -2765,12 +2765,16 @@ export class MapComponent implements OnInit {
 
     // Custom filter, damit osmLayer dunkler wird
     // (ehem. in CSS filter: brightness(55%))
-    if (this.osmLayer.getFilters().length > 0) {
+    if (this.osmLayer.getFilters().length == 3) {
       if (this.darkMode) {
         this.enableDisableCurrentFilters(currentFilters, true);
       } else {
-        // enable only luminosity filter for light mode
-        this.osmLayer.getFilters()[2].setActive(true);
+        if (this.osmLayer.getFilters()[2]) {
+          // enable only luminosity filter for light mode
+          this.osmLayer.getFilters()[2].setActive(true);
+        } else {
+          console.log("No need for resetting filters. osmLayer.getFilters()[2] does not exist");
+        }
       }
     } else {
       if (this.darkMode) {
