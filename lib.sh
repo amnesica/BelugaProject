@@ -139,14 +139,12 @@ _copy_db_content_to_container() {
   docker exec -ti $container_name_db bash -c "mkdir $path_db_content"
   echo "-> Create dbContent directory in $path_db_content. Done."
 
-  # copy content from dbContent to container
   echo "Copy content from assets/dbContent to $path_db_content ..."
   docker cp assets/dbContent $container_name_db:$path_postgresql
   echo "-> Copy content from assets/dbContent to $path_db_content. Done."
 }
 
 _download_aircraft_database() {
-  # download aircraft database file in postgres container
   echo "Download $aircraft_database_filename from Opensky-Network ..."
   docker exec -ti $container_name_db bash -c "wget $aircraft_database_url -O $aircraft_database_filename"
   echo "-> Download $aircraft_database_filename from Opensky-Network. Done."
@@ -157,7 +155,6 @@ _download_aircraft_database() {
 }
 
 _download_airport_database() {
-  # download airport database file in postgres container
   echo "Download $airport_database_filename from OurAirports ..."
   docker exec -ti $container_name_db bash -c "wget $airport_database_url -O $airport_database_filename"
   echo "-> Download $airport_database_filename from OurAirports. Done."
@@ -205,10 +202,8 @@ _load_db_content() {
     echo "-> File $airport_database_filename already exists. Done."
   fi
 
-  # copy load database script to container
   _copy_load_db_script_to_container
 
-  # execute load beluga db script on db container
   _exec_load_db_script
 }
 
@@ -239,7 +234,6 @@ _check_tables_exist() {
 _install() {
   echo "Install the Beluga Project ..."
 
-  # Remind user to check if version should be updated
   _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
 
   _docker_run_background
