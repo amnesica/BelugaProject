@@ -1,4 +1,4 @@
-## Install
+## Install (Legacy)
 
 This manual will give you instructions to run the Beluga Project on a Debian based system like RasbianOS or Ubuntu.
 
