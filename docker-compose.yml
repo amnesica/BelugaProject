@@ -1,0 +1,58 @@
+version: '2'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: server
+    container_name: server
+    depends_on:
+      - postgres
+    environment:
+      - LOCATION_LATITUDE=${LOCATION_LATITUDE}
+      - LOCATION_LONGITUDE=${LOCATION_LONGITUDE}
+      - FEEDER_IP=${FEEDER_IP}
+      - FEEDER_TYPE=${FEEDER_TYPE}
+      - FEEDER_NAME=${FEEDER_NAME}
+      - FEEDER_COLOR=${FEEDER_COLOR}
+      - FEEDER_AMOUNT=${FEEDER_AMOUNT}
+      - SCALE_ICONS=${SCALE_ICONS}
+      - CIRCLE_DISTANCE_OF_RINGS=${CIRCLE_DISTANCE_OF_RINGS}
+      - SEARCH_ENGINE_URL=${SEARCH_ENGINE_URL}
+      - LOGGING_FILE_NAME=${LOGGING_FILE_NAME}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=${SPRING_JPA_HIBERNATE_DDL_AUTO}
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - OPENSKY_NETWORK_USERNAME=${OPENSKY_NETWORK_USERNAME}
+      - OPENSKY_NETWORK_PASSWORD=${OPENSKY_NETWORK_PASSWORD}
+    ports:
+      - "8080:8080"
+    restart: always
+
+  webapp:
+    build:
+      context: .
+      dockerfile: webapp/Dockerfile
+    image: webapp
+    container_name: webapp
+    environment:
+      - PROD_BASE_URL_WEBAPP=${PROD_BASE_URL_WEBAPP}
+    ports:
+      - '8090:80'
+    restart: always
+
+  postgres:
+    image: 'postgres:13.1-alpine'
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    restart: always
