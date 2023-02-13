@@ -5,41 +5,6 @@
 pathToDirectoryWithCsv="/var/lib/postgresql/dbContent"
 
 echo -----------------------------------------
-echo loading table aircraft_data ...
-echo -----------------------------------------
-psql -c "TRUNCATE TABLE aircraft_data;" -U beluga -d belugaDb
-psql -c "COPY aircraft_data (
-	hex,
-	registration,
-	manufacturer_icao,
-	manufacturer_name,
-	model,
-	typecode,
-	serial_number,
-	line_number,
-	icao_aircraft_type,
-	operator_name,
-	operator_callsign,
-	operator_icao,
-	operator_iata,
-	owner_name,
-	test_reg,
-	registered,
-	reg_until,
-	status,
-	built,
-	first_flight_date,
-	seat_configuration,
-	engines,
-	modes,
-	adsb,
-	acars,
-	notes,
-	category_description)
-FROM '$pathToDirectoryWithCsv/aircraftDatabase.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
-echo Done.
-
-echo -----------------------------------------
 echo loading table airport_Data ...
 echo -----------------------------------------
 psql -c "TRUNCATE TABLE airport_Data;" -U beluga -d belugaDb
