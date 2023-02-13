@@ -2,24 +2,28 @@
 
 With this manual you can install the Beluga Project in a docker container on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems.
 
+For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because BelugaProject is running significantly faster than on 32 bit OS version.
+
 If you don't have a ADS-B receiver you can use the [Opensky-Network](https://opensky-network.org/). Create an account there first.
 
 0. Install docker and docker compose (at least version 2) from [here](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi. Check the version of docker compose with `docker compose version` (needs to be >=2)
 
-1. Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP and extract it
+1. If you have installed BelugaProject before, backup your `.env` file before proceeding.
+2. Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP and extract it
 
    ```
    $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/master.zip -O BelugaProject.zip
    $ unzip BelugaProject.zip
    ```
 
-2. Rename the environment variables template file `.env.template` in `.env` and configure the environment variables in the `.env` file. You can use `nano` for editing the config file.
+3. Rename the environment variables template file `.env.template` in `.env` and configure the environment variables in the `.env` file. You can use `nano` for editing the config file.
 
    ```
    $ cp .env.template .env
    $ nano .env
    ```
-
+   If you have a backup of your previous `.env` file (see above), you can copy the values from it now. Be aware that current template file `.env.template` may have been changed since last version.
+   
    For further information on how to configure the `.env` file expand the following section
    <details>
    <summary>Click to expand</summary>
@@ -28,7 +32,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    To configure the file use following instructions to replace the `TODO`s.
 
-   When configuring multiple feeders the order of the entries in the following instructions are important. The first entries in `ipFeeder`, `typeFeeder`, `nameFeeder` and `colorFeeder` belong to the same feeder as well as the second and so on.
+   When configuring multiple feeders the order of the entries in the following instructions is important. The first entries in `ipFeeder`, `typeFeeder`, `nameFeeder` and `colorFeeder` belong to the same feeder as well as the second and so on.
 
    ***
 
@@ -92,7 +96,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    </details>
 
-3. Build the docker images and execute the containers (frontend, server, database) in the base path of Beluga Project. Note: If you installed docker only for root user, you need to execute the command below with `sudo` privilege
+4. Build the docker images and execute the containers (frontend, server, database) in the base path of Beluga Project. `Important:` If you installed docker only for root user, you need to execute the command below with `sudo` privilege
 
    ```
    $ ./run.sh install
@@ -114,4 +118,11 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    You can ignore the error if you don't have a flightroute.csv file.
 
-4. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed)
+5. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed).
+6. Operation and Maintenance
+
+   Executing 
+   ```
+   $ ./run.sh
+   ```
+   will show some options for troubleshooting, operation and maintanance. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.
