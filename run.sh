@@ -22,6 +22,7 @@ commands:
   docker-rm-image <image_name>          Remove image (all when empty or specific container)
   docker-rm                             Remove all containers and images of Beluga Project
   load-db                               Fill database in postgres container if tables were created
+  update-db                             Update database in postgres container (db maintenance)
   tables-exist                          Check if tables in postgres container were created by spring
   env                                   Show current environment variables in .env file
   install                               Install project (build docker images and populate database)
@@ -40,6 +41,7 @@ case ${CMD} in
   docker-rm-image) _docker_rm_image $@ ;;
   docker-rm) _docker_rm_project ;;
   load-db) _load_db_content ;;
+  update-db) _update_db_content ;;
   tables-exist) _check_tables_exist ;;
   env) _env ;;
   install) _install ;;

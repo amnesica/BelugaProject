@@ -4,7 +4,7 @@
 
 <h1 align="center">The Beluga Project</h1>
 
-![GitHub version](https://d25lcipzij17d.cloudfront.net/badge.svg?id=gh&type=6&v=3.1.0&x2=0)
+![GitHub version](https://img.shields.io/badge/version-v3.1.1-brightgreen)
 
 Spring Boot Angular web application that displays one or multiple, local ADS-B feeders along with additional information on a map interface in the browser.
 
