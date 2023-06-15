@@ -152,9 +152,13 @@ _docker_rm_project() {
 }
 
 _copy_db_content_to_container() {
-  echo "Create dbContent directory in $path_db_content ..."
-  docker exec -ti $container_name_db bash -c "mkdir $path_db_content"
-  echo "-> Create dbContent directory in $path_db_content. Done."
+  if [[ -z $(docker exec -ti $container_name_db bash -c "if [ -d $path_db_content ]; then echo does exist; fi") ]]; then
+    echo "-> Directory $path_db_content does not exist."
+    docker exec -ti $container_name_db bash -c "mkdir $path_db_content"
+    echo "-> Create dbContent directory in $path_db_content. Done."
+  else
+    echo "-> Directory $path_db_content already exists. Skipped."
+  fi
 
   echo "Copy content from assets/dbContent to $path_db_content ..."
   docker cp assets/dbContent $container_name_db:$path_postgresql
@@ -217,6 +221,7 @@ _load_db_content() {
     _copy_db_content_to_container
   else
     echo "-> Directory $path_db_content already exists. Done."
+    echo "-> Use command option -update-db to update database with content from assets/dbContent."
   fi
 
   echo "Download $aircraft_database_filename and $airport_database_filename ... "
@@ -287,7 +292,8 @@ echo "Download $airport_database_filename ... "
   fi
 
   echo "update ... Loading csv files into postgres database ..."
- 
+  
+  _copy_db_content_to_container
   _copy_load_aircraftdata_script_to_container
   _copy_load_db_script_to_container
 
