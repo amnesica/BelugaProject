@@ -90,6 +90,7 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 2817	BREEZY 		United States 	us		BZY	Fresh Air Aviation 
 2015	CHESAPEAKE AIR 		United States 	us		CAB	Chesapeake Air Service 
 2146	CONQUEST AIR 		United States 	us		CAC	Conquest Airlines 
+1205			Mexico 	mx		NTD	Aero Norte 
 1873	AIR CAMAI 		United States 	us	R9	CAM	Camai Air 
 2070	CAP 		United States 	us		CAP	Civil Air Patrol 
 2046	CHRISTMAN 		United States 	us		CAS	Christman Air System 
@@ -180,7 +181,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 2287	CLOVERLEAF 		United States 	us		CVF	Dassault Falcon Jet Corporation 
 2016	CHEVRON 		United States 	us		CVR	Chevron U.S.A 
 2985	CANYON VIEW 		United States 	us		CVU	Grand Canyon Airlines 
-1205			Mexico 	mx		NTD	Aero Norte 
 1983	CHALLENGE CARGO 		United States 	us	WE	CWC	Centurion Air Cargo 
 5658	TEXAS AIRWAYS 		United States 	us		CWT	Texas Airways 
 2202	CROW EXPRESS 		United States 	us		CWX	Crow Executive Air 
@@ -1444,7 +1444,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 691			Libya 	ly		AYS	Awsaj Aviation Services 
 692	AYEET 		Israel 	il		AYT	Ayeet Aviation & Tourism 
 6072			Japan 	jp		AYU	Yuhi Air Lines 
-694	ALITALIA 		Italy 	it	AZ	AZA	Alitalia 
 6078	ZAAB AIR 		Ghana 	gh		AZB	Zaab Air 
 696	ARCUS AIR 		Germany 	de	ZE	AZE	Arcus-Air Logistic 
 262	AIR ZERMATT 		Switzerland 	ch		AZF	Air Zermatt AG 
@@ -1974,6 +1973,7 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 877	AIR MARSHALLS 		Marshall Islands 	mh	CW	CWM	Air Marshall Islands 
 878	COASTWATCH 		Australia 	au		CWP	Australian Customs Service 
 1545	CITY WORLD 		China 	cn		CWR	Beijing City International Jet 
+1022	AIRHAITI 		Haiti 	ht		HJA	Air Haiti 
 1907	CAMBRIAN 		United Kingdom 	gb		CWN	Cardiff Wales Flying Club 
 6032	WUHAN AIR 		China 	cn		CWU	Wuhan Airlines 
 1892	CANAIR 		China 	cn		CWW	Canair 
@@ -2361,6 +2361,7 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 2658	FAIROAKS 		United Kingdom 	gb		FFC	Fairoaks Flight Centre 
 3609	FEDERALES 		Argentina 	ar		FED	Líneas Aéreas Federales 
 2842	SKY EGYPT 		Egypt 	eg	FT	FEG	FlyEgypt 
+4927			Japan 	jp		SIJ	Seco International 
 2409	ARCTIC EAGLE 		Iceland 	is		FEI	Eagle Air 
 590	FERINCO 		Mexico 	mx		FEO	Aeroferinco 
 2689	FERIA 		Spain 	es		FER	Feria Aviación 
@@ -2491,7 +2492,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 2448	FLYME 		Nigeria 	ng		FYE	Easy Link Aviation Services 
 2783	FLYING GROUP 		Belgium 	be		FYG	Flying Service 
 2714	FLAMINGO AIR 		United States 	us		FMR	Flamingo Air 
-971	AFRICOMPANY 		Democratic Republic of the Congo 	cd		FPY	African Company Airlines 
 2832	FUNTSHI 		Democratic Republic of the Congo 	cd		FUN	Funtshi Aviation Service 
 2691	FINALAIR CONGO 		Republic of the Congo 	cg	4S	FNC	Finalair Congo 
 1756			Russia 	ru		FOS	Bel Limited 
@@ -2519,7 +2519,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 981	AEROGAUCHO 		Uruguay 	uy		GAU	Aerogaucho 
 2982	GRANAVI 		Spain 	es		GAV	Granada Aviación 
 2869			United Kingdom 	gb		GHI	GH Stansted Limited 
-2944	GLOBE 		South Africa 	za		GBB	Global Aviation Operations 
 2846	SPRAY 		China 	cn	GX	GBC	Guangxi Beibu Gulf Airlines 
 2877	GABEX 		Gabon 	ga		GBE	Gabon Express 
 982	GLOBAL JET 		Germany 	de		GBJ	Aero Business Charter 
@@ -2555,6 +2554,7 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 2867			Australia 	au		GFW	GFW Aviation 
 2959			Equatorial Guinea 	gq		GGE	Gobierno De Guinea Ecuatorial 
 2916	GEORGIAN AFRICA 		Senegal 	sn		GGF	Georgian Cargo Airlines Africa 
+2664			Sweden 	se	IH		Falcon Aviation 
 986	GIRA GLOBO 		Angola 	ao		GGL	Aeronáutica 
 987	GEORGIAN 		Canada 	ca	ZX	GGN	Air Georgian 
 2858	GATSA 		Mexico 	mx		GGS	GATSA 
@@ -2751,7 +2751,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 5129	STARSA 		Mexico 	mx		HIP	Starship 
 3160	HISPANIOLA 		Dominican Republic 	do		HIS	Hispaniola Airways 
 3137	HELITALIA 		Italy 	it		HIT	Helitalia 
-1022	AIRHAITI 		Haiti 	ht		HJA	Air Haiti 
 5130	GOSA 		Mexico 	mx		HJE	Servicios Ejecutivos Gosa 
 1024	AL-RAIS CARGO 		United Arab Emirates 	ae		HJT	Al Rais Cargo 
 3045	HEAVYLIFT 		United Kingdom 	gb		HLA	HC Airlines 
@@ -4439,7 +4438,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 4854	BLUE NILE 		Sudan 	sd		SDN	Spirit of Africa Airlines 
 1339	AERO DOMINGO 		Dominican Republic 	do	EX	SDO	Air Santo Domingo 
 1340	SUDPACIFICO 		Mexico 	mx		SDP	Aero Sudpacifico 
-2060	SWEDESTAR 		Sweden 	se		SDR	City Airline 
 4855	SUD LINES 		France 	fr		SDU	Sud Airlines 
 4856	SELVA 		Colombia 	co		SDV	Servicios Aéreos Del Vaupes 
 4857	SERVICIO TECNICO 		Mexico 	mx		SDX	Servicio Tecnico Aero De Mexico 
@@ -4513,7 +4511,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 1782	SHUTTLE 		United Kingdom 	gb		SHT	British Airways Shuttle 
 4926	BLUEJET 		Ireland 	ie	SI	SIH	Skynet Airlines 
 99	ASEISA 		Mexico 	mx		SII	Aero Servicios Ejecutivos Internacionales 
-4927			Japan 	jp		SIJ	Seco International 
 4928	SERVICIOS INTEGRALES 		Mexico 	mx		SIL	Servicios Aeronáuticos Integrales 
 4929			Sierra Leone 	sl		SIM	Star Air 
 4930	SIRIO 		Italy 	it		SIO	Sirio 
@@ -4750,7 +4747,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 5049	SWISS 		Switzerland 	ch	LX	SWR	Swiss International Air Lines 
 5023	DANCEAIR 		Venezuela 	ve		SUV	Sundance Air 
 5053	SWIFT 		Spain 	es		SWT	Swiftair 
-5054	EUROSWISS 		Switzerland 	ch	LZ	SWU	Swiss Global Air Lines 
 5055	FLYING SWEDE 		Sweden 	se	WV	SWV	Swe Fly 
 5056	WAY AERO 		Ukraine 	ua	S8	SWW	Shovkoviy Shlyah 
 5059	SWISSLINK 		Switzerland 	ch		SWY	Sky Jet 
@@ -5312,7 +5308,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 5834	VALAIRJET 		Portugal 	pt		VVV	Valair Aviação Lda 
 809	AVIREX-GABON 		Gabon 	ga	G2	VXG	Avirex 
 2517	VENEZOLANA 		Venezuela 	ve		VNE	Empresa Venezolana 
-3734	AVION EXPRESS 		Mali 	ml		VXP	Mali Air Express 
 810	EXPRESSAVIA 		Ukraine 	ua		VXX	Aviaexpress Aircompany 
 807	IAZUR 		France 	fr		VZR	Aviazur 
 5971	WESTAIR WINGS 		Namibia 	na		WAA	Westair Aviation 
@@ -5482,7 +5477,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 1820	TIGER 		United Kingdom 	gb			Challenges Aviation 
 2410			Indonesia 	id			Eagle Air 
 2551			Sweden 	se	RZ		Euro Exec Express 
-2664			Sweden 	se	IH		Falcon Aviation 
 2669	FLYDOC 		Australia 	au	FD		Royal Flying Doctor Service 
 1821	HERITAGE 		United Kingdom 	gb			Challenges Limited 
 1822	ASTON 		United Kingdom 	gb			Cheqair 
@@ -5538,3 +5532,29 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 4430			Russia 	ru	1U		Polyot Sirena 
 5170			Russia 	ru	1H		Siren-Travel 
 5171			Russia 	ru	1Q		Sirena 
+6117	MOXY		United States	us	MX	MXY	Breeze Airways
+6118	AVELO		United States	us	XP	VXP	Avelo Airlines
+6119	JETBUS		Canada	ca	AU	CJL	Canada Jetlines
+6120	DOMINICAN		Dominican Republic	do	DM	DWI	Arajet
+6121	AIR ULTRA		Colombia	co	U0	ULS	Ultra Air
+6122	RED SMART		Peru	pe	JZ	JAP	JetSmart Peru
+6123	PLAYER		Iceland	is	OG	FPY	Play
+6124	ITARROW		Italy	it	AZ	ITY	ITA Airways
+6125	AEROITALIA		Italy	it	XZ	AEZ	AeroItalia
+6126	SKYALPS		Italy	it	BQ	SWU	Sky Alps
+6127	LONGSHIP		Norway	no	N0	NBT	Norse Atlantic Airways
+6128	LONGBOAT		United Kingdom	gb	Z0	UBT	Norse Atlantic UK
+6129	ARMRIDER		Armenia	am	3F	FIE	FlyOne Armenia
+6130	ARNA		Armenia	am	G6	ACY	Fly Arna
+6131	WIZZ AIR MALTA		Malta	mt	W4	WMT	Wizz Air Malta
+6132	FRENCH BEE		France	fr	BF	FBU	Franch Bee
+6133	AKASA AIR		India	in	QP	AKJ	Akasa Air
+6135	FLY JINNAH		Pakistan	pk	9P	FJL	Fly Jinnah
+6136	WIZZ SKY		United Arab Emirates	ae	5W	WAZ	Wizz Air Abu Dhabi
+6137	MOON STAR		Turkey	tr	2S	STW	Southwind Airlines
+6138	GLOBE		South Africa	za	GE	GBB	Lift
+6139	GREEN AFRICA		Nigeria	ng	Q9	GWG	Green Africa Airways
+6140	VALUEJET		Nigeria	ng	VK	FVJ	ValueJet (Nigeria)
+6141	AIR ZAMBIA		Zambia	zm	ZN	AZB	Zambia Airways
+6142	SUNDAIR		Germany	ge	SR	SDR	Sundair
+6134	VIETRAVEL AIR		Vietnam	vn	VU	VAG	Vietravel Airlines

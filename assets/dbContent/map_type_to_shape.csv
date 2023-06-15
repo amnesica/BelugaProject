@@ -344,6 +344,7 @@ H25B	RexKramer1	11t  	JET_nonswept	0.65	2.0
 H25C	RexKramer1	11t  	JET_nonswept	0.65	2.0
 PRM1	RexKramer1	  	JET_nonswept	0.65	2.0
 E55P	RexKramer1	  	JET_nonswept	0.65	2.0
+MM24	RexKramer1		GYRO	0.75	2.0
 E50P	RexKramer1	  	JET_nonswept	0.65	2.0
 EA50	RexKramer1	  	JET_nonswept	0.65	2.0
 HDJT	RexKramer1	  	JET_nonswept	0.65	2.0
@@ -525,6 +526,7 @@ C340	RexKramer1	Cessna 340	F406	0.7	2.0
 C82R	RexKramer1	Cessna R182 Skylane RG	C172	0.75	2.0
 CL61	RexKramer1	Bombardier Challenger 601 (invalid ICAO Type Designator)	JET_swept	0.35	2.0
 CL64	RexKramer1	Bombardier Challenger 604 (invalid ICAO Type Designator)	JET_swept	0.35	2.0
+NIMB	RexKramer1	""	AS21	0.7	2.0
 CL65	RexKramer1	Bombardier Challenger 605 (invalid ICAO Type Designator)	JET_swept	0.35	2.0
 CP30	RexKramer1	Piel CP-30 Emeraude	SR22	0.65	2.0
 D11	RexKramer1	Jodel D.11	SR22	0.65	2.0
@@ -586,3 +588,49 @@ AT73	RexKramer1	""	AT75	0.5	2.0
 AT75	RexKramer1	""	AT75	0.5	2.0
 AT76	RexKramer1	""	AT75	0.5	2.0
 LJ36	RexKramer1		LJ35	0.7	2.0
+E737	RexKramer1	""	E737	0.5	2.0
+B1F	RexKramer1	""	B1_fast	0.5	2.0
+P8	RexKramer1	""	P8	0.5	2.0
+KC46	RexKramer1	""	KC46	0.5	2.0
+CDUS	RexKramer1		GYRO	0.75	2.0
+CLON	RexKramer1		GYRO	0.75	2.0
+D150	RexKramer1	""	PA28	0.7	2.0
+B1	RexKramer1	""	B1_slow	0.5	2.0
+A109	RexKramer1	""	H60	0.65	2.0
+AS31	RexKramer1	""	AS21	0.7	2.0
+B407	RexKramer1	""	EC35	0.9	2.0
+B505	RexKramer1	""	R44	0.9	2.0
+B58T	RexKramer1	""	F406	0.65	2.0
+BE9T	RexKramer1	""	B350	0.65	2.0
+BK17	RexKramer1	""	EC45	0.9	2.0
+BN2T	RexKramer1	""	BN2P	0.65	2.0
+BT36	RexKramer1	""	PC12	0.65	2.0
+BU31	RexKramer1	""	ST75	0.7	2.0
+BU81	RexKramer1	""	PA28	0.7	2.0
+BW60	RexKramer1	""	SR22	0.7	2.0
+C170	RexKramer1	""	C172	0.75	2.0
+C180	RexKramer1	""	C172	0.75	2.0
+C27J	RexKramer1	""	C295	0.5	2.0
+C82S	RexKramer1	""	C172	0.75	2.0
+D28D	RexKramer1	""	DO28	0.65	2.0
+DA50	RexKramer1	""	SR22	0.7	2.0
+DC3T	RexKramer1	""	DC3	0.5	2.0
+DG40	RexKramer1	""	AS21	0.7	2.0
+DG60	RexKramer1	""	AS21	0.7	2.0
+DISC	RexKramer1	""	AS21	0.7	2.0
+DR30	RexKramer1	""	SR22	0.7	2.0
+DV1	RexKramer1	""	SR22	0.7	2.0
+E120	RexKramer1	""	SF34	0.5	2.0
+E400	RexKramer1	""	F406	0.65	2.0
+EH10	RexKramer1	""	S61	0.8	2.0
+FA6X	RexKramer1	""	Jet_swept	0.4	2.0
+H53	RexKramer1	""	S61	0.8	2.0
+PA31	RexKramer1	""	F406	0.65	2.0
+R66	RexKramer1	""	R44	0.9	2.0
+T206	RexKramer1	""	C172	0.75	2.0
+T210	RexKramer1	""	C172	0.75	2.0
+DHC2	RexKramer1	DHC-2 Beaver	DO27	0.8	2.0
+DHC7	RexKramer1	DHC-7	AN12	0.35	2.0
+DHC6	RexKramer1	DHC-6 Twin Otter	DO28	0.6	2.0
+DHC3	RexKramer1	DHC-3 Otter	DO27	0.7	2.0
+VTOR	RexKramer1	PARTENAVIA AP-68TP-600 Viator	F406	0.65	2.0
