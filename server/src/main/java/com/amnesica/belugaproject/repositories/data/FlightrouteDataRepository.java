@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FlightrouteDataRepository extends CrudRepository<FlightrouteData, String> {
-    FlightrouteData findByFlightId(String flightId);
+  FlightrouteData findByFlightId(String flightId);
 }

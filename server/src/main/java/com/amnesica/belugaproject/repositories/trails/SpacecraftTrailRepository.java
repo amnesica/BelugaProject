@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface SpacecraftTrailRepository extends CrudRepository<SpacecraftTrail, String> {
 
-    List<SpacecraftTrail> findAllByTimestampLessThanEqual(long startTime);
+  List<SpacecraftTrail> findAllByTimestampLessThanEqual(long startTime);
 
-    List<SpacecraftTrail> findAllByHexOrderByTimestampAsc(String hex);
+  List<SpacecraftTrail> findAllByHexOrderByTimestampAsc(String hex);
 
 }

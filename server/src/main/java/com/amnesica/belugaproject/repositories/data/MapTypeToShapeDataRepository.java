@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MapTypeToShapeDataRepository extends CrudRepository<MapTypeToShapeData, String> {
-    MapTypeToShapeData findByTypeDesignator(String typeDesignator);
+  MapTypeToShapeData findByTypeDesignator(String typeDesignator);
 }

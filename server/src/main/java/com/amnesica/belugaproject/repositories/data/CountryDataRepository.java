@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CountryDataRepository extends CrudRepository<CountryData, String> {
-    CountryData findByCountryIso2letter(String countryIso2letter);
+  CountryData findByCountryIso2letter(String countryIso2letter);
 }

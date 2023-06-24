@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OperatorDataRepository extends CrudRepository<OperatorData, String> {
-    OperatorData findByOperatorIcao(String operatorIcao);
+  OperatorData findByOperatorIcao(String operatorIcao);
 }

@@ -14,55 +14,55 @@ import java.util.Map;
 @Service
 public class ShapeDataService {
 
-    @Autowired
-    private ShapeDataRepository shapeDataRepository;
+  @Autowired
+  private ShapeDataRepository shapeDataRepository;
 
-    /**
-     * Gibt alle Informationen über ein Shape mit Angabe des designators aus der
-     * Datenbank zurück
-     *
-     * @param designator String
-     * @return shapeData
-     */
-    public ShapeData getShapeData(String designator) {
-        ShapeData shapeData = null;
+  /**
+   * Gibt alle Informationen über ein Shape mit Angabe des designators aus der
+   * Datenbank zurück
+   *
+   * @param designator String
+   * @return shapeData
+   */
+  public ShapeData getShapeData(String designator) {
+    ShapeData shapeData = null;
 
-        if (designator != null && !designator.isEmpty() && !designator.equals("null")) {
+    if (designator != null && !designator.isEmpty() && !designator.equals("null")) {
 
-            try {
-                shapeData = shapeDataRepository.findByDesignator(designator);
-            } catch (Exception e) {
-                log.error("Server - DB error reading ShapeData for designator " + designator + ": Exception = " + e);
-            }
+      try {
+        shapeData = shapeDataRepository.findByDesignator(designator);
+      } catch (Exception e) {
+        log.error("Server - DB error reading ShapeData for designator " + designator + ": Exception = " + e);
+      }
 
-        }
-
-        return shapeData;
     }
 
-    /**
-     * Gibt eine Map mit den Shapes zurück, wobei der Key der jeweilige TypeDesignator
-     * und der Value das zugehörige ShapeData-Objekt ist. Die Datenstruktur ist dieselbe,
-     * die in der Markers-Datei im Frontend benutzt wird
-     *
-     * @return Map<String, Object>
-     */
-    public Map<String, Object[]> getShapes() {
-        try {
-            HashMap<String, Object[]> shapesMap = new HashMap<>();
+    return shapeData;
+  }
 
-            // Hole Liste an ShapeData
-            List<ShapeData> shapeDataList = (List<ShapeData>) shapeDataRepository.findAll();
+  /**
+   * Gibt eine Map mit den Shapes zurück, wobei der Key der jeweilige TypeDesignator
+   * und der Value das zugehörige ShapeData-Objekt ist. Die Datenstruktur ist dieselbe,
+   * die in der Markers-Datei im Frontend benutzt wird
+   *
+   * @return Map<String, Object>
+   */
+  public Map<String, Object[]> getShapes() {
+    try {
+      HashMap<String, Object[]> shapesMap = new HashMap<>();
 
-            // Packe Inhalte in shapesMap
-            for (ShapeData shapeData : shapeDataList) {
-                shapesMap.put(shapeData.getDesignator(), new Object[]{shapeData.getShapeData(), shapeData.getPngId(), shapeData.getPngScale()});
-            }
+      // Hole Liste an ShapeData
+      List<ShapeData> shapeDataList = (List<ShapeData>) shapeDataRepository.findAll();
 
-            return shapesMap;
-        } catch (Exception e) {
-            log.error("Server - DB error reading all ShapeData : Exception = " + e);
-        }
-        return null;
+      // Packe Inhalte in shapesMap
+      for (ShapeData shapeData : shapeDataList) {
+        shapesMap.put(shapeData.getDesignator(), new Object[]{shapeData.getShapeData(), shapeData.getPngId(), shapeData.getPngScale()});
+      }
+
+      return shapesMap;
+    } catch (Exception e) {
+      log.error("Server - DB error reading all ShapeData : Exception = " + e);
     }
+    return null;
+  }
 }

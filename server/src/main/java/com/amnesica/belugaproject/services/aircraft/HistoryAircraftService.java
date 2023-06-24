@@ -17,75 +17,75 @@ import java.util.List;
 @Service
 public class HistoryAircraftService {
 
-    @Autowired
-    private HistoryAircraftRepository historyAircraftRepository;
+  @Autowired
+  private HistoryAircraftRepository historyAircraftRepository;
 
-    /**
-     * Speichert eine Liste an Flugzeuge in der History-Tabelle
-     *
-     * @param listPlanesToInsert List<Aircraft>
-     */
-    public boolean putListPlanesInHistoryTable(List<Aircraft> listPlanesToInsert) {
-        // Konvertiere Aircraft zu HistoryAircraft
-        List<HistoryAircraft> listPlanesForHistory = convertPlanesListToHistoryAircraftList(
-                listPlanesToInsert);
+  /**
+   * Speichert eine Liste an Flugzeuge in der History-Tabelle
+   *
+   * @param listPlanesToInsert List<Aircraft>
+   */
+  public boolean putListPlanesInHistoryTable(List<Aircraft> listPlanesToInsert) {
+    // Konvertiere Aircraft zu HistoryAircraft
+    List<HistoryAircraft> listPlanesForHistory = convertPlanesListToHistoryAircraftList(
+        listPlanesToInsert);
 
-        // Speichere HistoryAircraft in Datenbank
-        try {
-            historyAircraftRepository.saveAll(listPlanesForHistory);
-            return true;
-        } catch (Exception e) {
-            log.error(
-                    "Server - DB error when trying to save all converted planes into HistoryAircraft table : Exception = "
-                            + e);
-            return false;
-        }
+    // Speichere HistoryAircraft in Datenbank
+    try {
+      historyAircraftRepository.saveAll(listPlanesForHistory);
+      return true;
+    } catch (Exception e) {
+      log.error(
+          "Server - DB error when trying to save all converted planes into HistoryAircraft table : Exception = "
+              + e);
+      return false;
+    }
+  }
+
+  /**
+   * Konvertiert eine Liste an Flugzeugen (Aircraft) zu einer Liste an
+   * HistoryAircraft
+   *
+   * @param listPlanesToConvert List<Aircraft>
+   * @return List<HistoryAircraft>
+   */
+  private List<HistoryAircraft> convertPlanesListToHistoryAircraftList(List<Aircraft> listPlanesToConvert) {
+    List<HistoryAircraft> listPlanesForHistory = new ArrayList<>();
+
+    for (Aircraft aircraft : listPlanesToConvert) {
+      try {
+        // Konvertiere Flugzeug
+        HistoryAircraft historyAircraft = HistoryAircraft.makeCopy(aircraft);
+
+        // Füge konvertiertes Flugzeug in Liste ein
+        listPlanesForHistory.add(historyAircraft);
+      } catch (Exception e) {
+        log.error("Server - DB error when converting planes into HistoryAircraft at hex "
+            + aircraft.getHex() + " : Exception = " + e);
+      }
     }
 
-    /**
-     * Konvertiert eine Liste an Flugzeugen (Aircraft) zu einer Liste an
-     * HistoryAircraft
-     *
-     * @param listPlanesToConvert List<Aircraft>
-     * @return List<HistoryAircraft>
-     */
-    private List<HistoryAircraft> convertPlanesListToHistoryAircraftList(List<Aircraft> listPlanesToConvert) {
-        List<HistoryAircraft> listPlanesForHistory = new ArrayList<>();
+    return listPlanesForHistory;
+  }
 
-        for (Aircraft aircraft : listPlanesToConvert) {
-            try {
-                // Konvertiere Flugzeug
-                HistoryAircraft historyAircraft = HistoryAircraft.makeCopy(aircraft);
+  /**
+   * Löscht alle History-Aircraft endgültig, welche älter sind als RETENTION_DAYS_AIRCRAFT_IN_HISTORY.
+   * Methode wird als cron-job mit Parameter aus INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY aufgerufen
+   */
+  @Transactional
+  @Scheduled(cron = StaticValues.INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY)
+  public void deleteOldAircraftFromHistory() {
+    int retention_days = StaticValues.RETENTION_DAYS_AIRCRAFT_IN_HISTORY;
 
-                // Füge konvertiertes Flugzeug in Liste ein
-                listPlanesForHistory.add(historyAircraft);
-            } catch (Exception e) {
-                log.error("Server - DB error when converting planes into HistoryAircraft at hex "
-                        + aircraft.getHex() + " : Exception = " + e);
-            }
-        }
-
-        return listPlanesForHistory;
+    // Lösche History-Aircraft, welche älter sind als retention_days
+    try {
+      log.info("Job deleteOldAircraftFromHistory scheduled with Parameters: [cron = " +
+          StaticValues.INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY +
+          "] [retention_days = " + StaticValues.RETENTION_DAYS_AIRCRAFT_IN_HISTORY + "]");
+      historyAircraftRepository.deleteAllByLastUpdateLessThanEqual(retention_days + " days");
+    } catch (Exception e) {
+      log.error("Server - DB error when removing planes from HistoryAircraft older than "
+          + retention_days + " days : Exception = " + e);
     }
-
-    /**
-     * Löscht alle History-Aircraft endgültig, welche älter sind als RETENTION_DAYS_AIRCRAFT_IN_HISTORY.
-     * Methode wird als cron-job mit Parameter aus INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY aufgerufen
-     */
-    @Transactional
-    @Scheduled(cron = StaticValues.INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY)
-    private void deleteOldAircraftFromHistory() {
-        int retention_days = StaticValues.RETENTION_DAYS_AIRCRAFT_IN_HISTORY;
-
-        // Lösche History-Aircraft, welche älter sind als retention_days
-        try {
-            log.info("Job deleteOldAircraftFromHistory scheduled with Parameters: [cron = " +
-                    StaticValues.INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY +
-                    "] [retention_days = " + StaticValues.RETENTION_DAYS_AIRCRAFT_IN_HISTORY + "]");
-            historyAircraftRepository.deleteAllByLastUpdateLessThanEqual(retention_days + " days");
-        } catch (Exception e) {
-            log.error("Server - DB error when removing planes from HistoryAircraft older than "
-                    + retention_days + " days : Exception = " + e);
-        }
-    }
+  }
 }

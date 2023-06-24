@@ -8,11 +8,11 @@ import java.util.List;
 
 @Repository
 public interface AircraftTrailRepository extends CrudRepository<AircraftTrail, String> {
-    List<AircraftTrail> findAllByHexOrderByTimestampAsc(String hex);
+  List<AircraftTrail> findAllByHexOrderByTimestampAsc(String hex);
 
-    List<AircraftTrail> findAllByTimestampLessThanEqual(long time);
+  List<AircraftTrail> findAllByTimestampLessThanEqual(long time);
 
-    List<AircraftTrail> findAllByHexAndFeederOrderByTimestampAsc(String hex, String feeder);
+  List<AircraftTrail> findAllByHexAndFeederOrderByTimestampAsc(String hex, String feeder);
 
-    AircraftTrail findFirstByHexAndFeederOrderByTimestampDesc(String hex, String feeder);
+  AircraftTrail findFirstByHexAndFeederOrderByTimestampDesc(String hex, String feeder);
 }

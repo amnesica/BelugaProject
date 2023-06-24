@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface HistoryAircraftTrailRepository extends CrudRepository<HistoryAircraftTrail, String> {
 
-    @Transactional
-    @Modifying
-    @Query(value = "delete from history_aircraft_trail hat where hat.timestamp <= cast((extract('epoch' from (current_timestamp  - ( ?1 )\\:\\:interval)) * 1000) as bigint)", nativeQuery = true)
-    void deleteAllByTimestampLessThanEqual(String retention_days);
+  @Transactional
+  @Modifying
+  @Query(value = "delete from history_aircraft_trail hat where hat.timestamp <= cast((extract('epoch' from (current_timestamp  - ( ?1 )\\:\\:interval)) * 1000) as bigint)", nativeQuery = true)
+  void deleteAllByTimestampLessThanEqual(String retention_days);
 }
