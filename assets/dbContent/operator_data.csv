@@ -3650,7 +3650,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 3935	ENAC SCHOOL 		France 	fr		NAK	École Nationale de l'Aviation Civile 
 4110	NORTHWAY 		Canada 	ca		NAL	Northway Aviation Ltd 
 4117	MANITOBA 		Canada 	ca		NAM	Nortland Air Manitoba 
-4123	NORSHIP 		Norway 	no	DH	NAN	Norwegian Air Norway 
 4064	COUNTY 		United Kingdom 	gb		NCF	Norfolk County Flight College 
 4103	NEATAX 		United Kingdom 	gb		NEX	Northern Executive Aviation 
 3964	NASAIRWAYS 		Eritrea 	er	UE	NAS	Nasair 
@@ -5558,3 +5557,6 @@ operator_id	operator_callsign	operator_comment	operator_country	operator_country
 6141	AIR ZAMBIA		Zambia	zm	ZN	AZB	Zambia Airways
 6142	SUNDAIR		Germany	ge	SR	SDR	Sundair
 6134	VIETRAVEL AIR		Vietnam	vn	VU	VAG	Vietravel Airlines
+6143	REDNOSE		Sweden	se	D8	NSZ	Nowegian Air Sweden
+6144	NORSHIP		Norway	no	DH	NAN	Nowegian Air Norway AS
+6145	NORDIC		Norway	no	DY	NOZ	Nowegian Air Shuttle ASA
