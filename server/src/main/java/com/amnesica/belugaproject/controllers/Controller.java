@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8090")
+@CrossOrigin(origins = "http://localhost:4200, http://localhost:8090")
 public class Controller {
 
   @Autowired
