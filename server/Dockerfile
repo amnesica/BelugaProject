@@ -1,7 +1,7 @@
-FROM maven:3.8.6-eclipse-temurin-17-focal AS builder
+FROM gradle:8.1.1-jdk17-focal AS builder
 WORKDIR /server
 COPY . /server
-RUN cd server && mvn clean install -DskipTests
+RUN cd server && ./gradlew clean bootJar -x test
 
 FROM eclipse-temurin:17-jre
 WORKDIR /server
