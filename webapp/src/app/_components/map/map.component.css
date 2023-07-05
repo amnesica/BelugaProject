@@ -14,6 +14,9 @@
   padding: 0%;
   background-color: #efeff4;
   width: 10rem;
+  border-radius: 10px;
+  overflow: hidden;
+  background: transparent;
 }
 
 /** Wichtig, damit Schrift richtig angezeigt wird! */

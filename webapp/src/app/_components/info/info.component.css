@@ -6,6 +6,12 @@
   flex-direction: column;
   margin: 0;
   padding: 0;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  overflow: hidden;
+  background: transparent;
 }
 
 #closeButton {
@@ -20,7 +26,6 @@
 
 #smallInfo {
   position: fixed;
-  border-radius: 0rem;
   width: 100%;
   bottom: 0%;
   padding: 0%;
@@ -28,6 +33,12 @@
   display: flex;
   flex-direction: column;
   z-index: 10;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 0;
+  overflow: hidden;
+  background: transparent;
 }
 
 .buttonFooter {
