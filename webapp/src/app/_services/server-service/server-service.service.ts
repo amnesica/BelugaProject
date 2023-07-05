@@ -109,15 +109,17 @@ export class ServerService {
    * (Server-Aufruf)
    * @param hex string
    * @param selectedFeeder selectedFeeder
+   * @param isFromOpensky boolean
    * @returns Observable<any>
    */
-  getTrail(hex: string, selectedFeeder: any): Observable<any> {
+  getTrail(hex: string, selectedFeeder: any, isFromOpensky: boolean): Observable<any> {
     // Initialiere Params-Objekt
     let params = new HttpParams();
 
     // Weise Parameter zu
     params = params.append('hex', hex);
     params = params.append('selectedFeeder', selectedFeeder.toString());
+    params = params.append('isFromOpensky', String(isFromOpensky));
 
     return this.httpClient.get(Globals.urlGetTrailData, {
       params: params,

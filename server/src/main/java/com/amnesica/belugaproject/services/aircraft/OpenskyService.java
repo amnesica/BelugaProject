@@ -6,6 +6,7 @@ import com.amnesica.belugaproject.config.FeederMapping;
 import com.amnesica.belugaproject.config.StaticValues;
 import com.amnesica.belugaproject.entities.aircraft.OpenskyAircraft;
 import com.amnesica.belugaproject.entities.data.AirportData;
+import com.amnesica.belugaproject.entities.trails.AircraftTrail;
 import com.amnesica.belugaproject.repositories.aircraft.OpenskyAircraftRepository;
 import com.amnesica.belugaproject.services.data.AircraftDataService;
 import com.amnesica.belugaproject.services.data.AirportDataService;
@@ -21,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +55,9 @@ public class OpenskyService {
   // Url zum Fetchen der Daten von Opensky
   private static final String URL_OPENSKY_LIVE_API = "https://opensky-network.org/api/states/all?";
 
+  // Url zum Fetchen der Track-Daten von Opensky
+  private static final String URL_OPENSKY_LIVE_TRACK_API = "https://opensky-network.org/api/tracks/all?";
+
   /**
    * Ruft die Rohdaten als JSONArray vom Opensky-Network ab
    *
@@ -80,7 +85,7 @@ public class OpenskyService {
         // und muss daher für weitere Bearbeitung konvertiert werden
         JSONArray jsonArrayStates = jsonObject.getJSONArray("states");
         if (jsonArrayStates != null) {
-          jsonArray = convertJsonArrayToArrayOfObjects(jsonArrayStates);
+          jsonArray = convertOpenskyDataJsonArrayToArrayOfObjects(jsonArrayStates);
         } else {
           throw new Exception();
         }
@@ -95,12 +100,12 @@ public class OpenskyService {
   }
 
   /**
-   * Konvertiert ein JSONArray aus Arrays in ein JSONArray aus JSONObjects
+   * Konvertiert ein JSONArray aus Arrays in ein JSONArray aus JSONObjects (für allgemeine Flugzeug-Daten)
    *
    * @param jsonArray JSONArray
    * @return JSONArray
    */
-  private JSONArray convertJsonArrayToArrayOfObjects(JSONArray jsonArray) {
+  private JSONArray convertOpenskyDataJsonArrayToArrayOfObjects(JSONArray jsonArray) {
     JSONArray arrayWithObjects = new JSONArray();
     Double conversionValueDouble;
 
@@ -425,5 +430,69 @@ public class OpenskyService {
    */
   public void addRequest(Request request) {
     requestQueueOpensky.add(request);
+  }
+
+  /**
+   * Ruft die Trackdaten als JSONArray vom Opensky-Network ab
+   *
+   * @param hex String
+   * @return JSONArray
+   */
+  public JSONArray getTrackDataFromOpensky(String hex) {
+    // Array mit Track-Daten von Opensky
+    JSONArray jsonArrayTrackStates = null;
+
+    // Genriere URL mit Daten der Bounding-Box vom Frontend
+    final String url = URL_OPENSKY_LIVE_TRACK_API + "icao24=" + hex + "&time=0";
+
+    // Anfrage an Opensky mit url und Credentials
+    String jsonStr = networkHandler.makeOpenskyServiceCall(url, configuration.getOpenskyUsername(), configuration.getOpenskyPassword());
+
+    try {
+      if (jsonStr != null) {
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        jsonArrayTrackStates = jsonObject.getJSONArray("path");
+      }
+    } catch (Exception e) {
+      log.error(
+          "Server: Track-Data from Opensky-Network could not get fetched or there are no planes in this area. Url: "
+              + url);
+    }
+
+    return jsonArrayTrackStates;
+  }
+
+  /**
+   * Gibt alle Trails zu einem Flugzeug mit hex zurück
+   *
+   * @param hex String
+   * @return List<AircraftTrail>
+   */
+  public List<AircraftTrail> getTrail(String hex) {
+    List<AircraftTrail> trails = null;
+    if (hex != null && !hex.isEmpty()) {
+      trails = new ArrayList<>();
+      try {
+        JSONArray jsonArrayTrackStates = getTrackDataFromOpensky(hex);
+        for (int i = 0; i < jsonArrayTrackStates.length(); i++) {
+          JSONArray innerArray = jsonArrayTrackStates.getJSONArray(i);
+
+          if (innerArray != null) {
+            final Long timestamp = innerArray.getLong(0);
+            final Double latitude = innerArray.getDouble(1);
+            final Double longitude = innerArray.getDouble(2);
+            final Double baroAltitude = innerArray.getDouble(3);
+            final int altitudeInFeet = (int) HelperService.convertMeter2Foot(baroAltitude);
+            final AircraftTrail openskyTrail = new AircraftTrail(hex, longitude, latitude, altitudeInFeet, false,
+                timestamp, "Opensky", null);
+            trails.add(openskyTrail);
+          }
+        }
+      } catch (Exception e) {
+        log.error("Server - DB error when retrieving all trails for aircraft from Opensky-Network with hex " + hex
+            + ": Exception = " + e);
+      }
+    }
+    return trails;
   }
 }

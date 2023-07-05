@@ -135,23 +135,29 @@ public class Controller {
 
   /**
    * Holt die Trails zu einem Flugzeug mit einer hex aus der Datenbank. Aus
-   * Kompatibilitätsgründen wird hier die Liste an Trails in ein Object[] gepackt
+   * Kompatibilitätsgründen wird hier die Liste an Trails in ein Object[] gepackt.
+   * Wenn isFromOpensky wird nicht die Datenbank abgefragt, sondern die Opensky-API angefragt
    *
    * @param hex            String
    * @param selectedFeeder String
+   * @param isFromOpensky  boolean
    * @return Object[]
    */
   @GetMapping(value = "/getTrail", produces = "application/json")
   public @ResponseBody
   Object[] getTrail(@RequestParam(value = "hex") String hex,
-                    @RequestParam(value = "selectedFeeder") String selectedFeeder) {
+                    @RequestParam(value = "selectedFeeder") String selectedFeeder,
+                    @RequestParam(value = "isFromOpensky") boolean isFromOpensky) {
 
     // Baue jeweils Array als Rückgabewert
     if (hex.equals("ISS")) {
       List<SpacecraftTrail> trails = spacecraftTrailService.getAllTrails();
       return new Object[]{trails};
-    } else {
+    } else if (!isFromOpensky) {
       List<AircraftTrail> trails = aircraftTrailService.getAllTrailsToHexAndFeeder(hex, selectedFeeder);
+      return new Object[]{trails};
+    } else {
+      List<AircraftTrail> trails = openskyService.getTrail(hex);
       return new Object[]{trails};
     }
   }

@@ -1378,9 +1378,7 @@ export class MapComponent implements OnInit {
     if (this.aircraft && aircraft.hex == this.aircraft.hex) {
       // Aktualisiere Trail mit momentaner Position, nur wenn alle Feeder
       // ausgewählt sind und bereits Trails vom Server bezogen wurden
-      if (!this.aircraft.isFromOpensky) {
-        this.aircraft.updateTrail(this.selectedFeederUpdate);
-      }
+     this.aircraft.updateTrail(this.selectedFeederUpdate);
 
       // Update Route, da sich Flugzeug bewegt hat
       this.updateShowRoute();
@@ -1496,9 +1494,9 @@ export class MapComponent implements OnInit {
    * @param selectedFeeder Ausgewählter Feeder
    */
   getTrailToAircraft(aircraft: Aircraft, selectedFeeder: any) {
-    if (aircraft && !aircraft.isFromOpensky) {
+    if (aircraft) {
       this.serverService
-        .getTrail(aircraft.hex, selectedFeeder)
+        .getTrail(aircraft.hex, selectedFeeder, aircraft.isFromOpensky)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           (trailDataJSONObject) => {
@@ -1511,7 +1509,7 @@ export class MapComponent implements OnInit {
               this.aircraft.hex == aircraft.hex
             ) {
               // Weise Trail-Liste zu, erstelle Trails und mache diese sichtbar
-              if (!this.aircraft.isFromOpensky && trailData[0]) {
+              if (trailData[0]) {
                 this.aircraft.aircraftTrailList = trailData[0];
                 this.aircraft.makeTrail();
                 this.aircraft.makeTrailVisible();
