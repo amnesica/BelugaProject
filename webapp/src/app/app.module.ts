@@ -33,12 +33,6 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
-import {
-  NgxMatDatetimePickerModule,
-  NgxMatTimepickerModule,
-  NgxMatNativeDateModule,
-} from '@angular-material-components/datetime-picker';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,12 +60,9 @@ import {
     MatSlideToggleModule,
     MatDatepickerModule,
     MatInputModule,
-    NgxMatDatetimePickerModule,
-    NgxMatTimepickerModule,
     FormsModule,
     ReactiveFormsModule,
     MatButtonModule,
-    NgxMatNativeDateModule,
     MatDialogModule,
     MatTabsModule,
     MatButtonToggleModule,
