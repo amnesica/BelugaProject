@@ -1,4 +1,3 @@
-import { CompileShallowModuleMetadata } from '@angular/compiler';
 import LineString from 'ol/geom/LineString';
 
 /**

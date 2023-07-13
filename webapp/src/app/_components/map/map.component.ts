@@ -37,11 +37,12 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
-import { SymbolType } from 'ol/style/LiteralStyle';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
-import GeometryType from 'ol/geom/GeometryType';
 import { asString } from 'ol/color';
+import VectorSource from 'ol/source/Vector';
+import { Geometry } from 'ol/geom';
+import WebGLPointsLayer from 'ol/layer/WebGLPoints';
 
 @Component({
   selector: 'app-map',
@@ -60,10 +61,10 @@ export class MapComponent implements OnInit {
   osmLayer: any;
 
   // Layer für Range Data
-  rangeDataLayer!: VectorLayer;
+  rangeDataLayer!: VectorLayer<VectorSource<Geometry>>;
 
   // Layer für Flugzeuge (kein WebGL)
-  planesLayer!: VectorLayer;
+  planesLayer!: VectorLayer<VectorSource<Geometry>>;
 
   // Entfernungs-Ringe und Feeder-Position als Features
   StaticFeatures = new Vector();
@@ -168,7 +169,7 @@ export class MapComponent implements OnInit {
   selectedFeederRangeData: any;
 
   // Layer für WebGL-Features
-  webglLayer: WebGLPoints | undefined;
+  webglLayer: WebGLPoints<VectorSource<Point>> | undefined;
 
   private ngUnsubscribe = new Subject();
 
@@ -578,8 +579,7 @@ export class MapComponent implements OnInit {
 
     this.osmLayer = new TileLayer({
       source: new OSM({
-        url: url,
-        imageSmoothing: false,
+        url: url
       }),
       preload: Infinity,
       useInterimTilesOnError: true,
@@ -776,7 +776,7 @@ export class MapComponent implements OnInit {
     this.layers.push(trailLayers);
 
     // Fuege Layer fuer POMDs hinzu
-    let pomdLayer: VectorLayer = new VectorLayer({
+    let pomdLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
       source: Globals.POMDFeatures,
       zIndex: 130,
     });
@@ -788,7 +788,7 @@ export class MapComponent implements OnInit {
     // Fuege Layer fuer Linie vom Zielort
     // zum Flugzeug und vom Flugzeug zum
     // Herkunftsort hinzu
-    let routeLayer: VectorLayer = new VectorLayer({
+    let routeLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
       source: this.RouteFeatures,
       renderOrder: undefined,
       style: new Style({
@@ -818,7 +818,7 @@ export class MapComponent implements OnInit {
 
     // Fuege Layer fuer Range-Ringe
     // und Feeder-Position hinzu
-    let staticFeaturesLayer: VectorLayer = new VectorLayer({
+    let staticFeaturesLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
       source: this.StaticFeatures,
       zIndex: 100,
       renderBuffer: renderBuffer,
@@ -842,7 +842,7 @@ export class MapComponent implements OnInit {
 
     // Fuege Layer fuer Icons
     // der Flughäfen hinzu
-    let airportLayer: VectorLayer = new VectorLayer({
+    let airportLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
       source: this.AirportFeatures,
       renderOrder: undefined,
       zIndex: 10,
@@ -916,9 +916,9 @@ export class MapComponent implements OnInit {
       // Definiere WebGL-Style
       let glStyle = {
         symbol: {
-          symbolType: SymbolType.IMAGE,
+          symbolType: 'image',
           src: '../../../assets/beluga_sprites.png',
-          size: ['get', 'size'],
+          size: ['get', 'size', 'number'],
           offset: [0, 0],
           textureCoord: [
             'array',
@@ -934,7 +934,7 @@ export class MapComponent implements OnInit {
       };
 
       // Erstelle WebGL-Layer
-      this.webglLayer = new WebGLPoints({
+      this.webglLayer = new WebGLPointsLayer({
         source: Globals.WebglFeatures,
         zIndex: 200,
         style: glStyle,
@@ -1966,10 +1966,13 @@ export class MapComponent implements OnInit {
   extentMapViewToFitCoordiates(positionOrg: [], positionDest: []) {
     // Setze neuen Center der Karte
     let boundingExtent = olExtent.boundingExtent([positionOrg, positionDest]);
+    let source : any = olProj.get('EPSG:4326');
+    let destination : any = olProj.get('EPSG:3857');
+
     boundingExtent = olProj.transformExtent(
       boundingExtent,
-      olProj.get('EPSG:4326'),
-      olProj.get('EPSG:3857')
+      source,
+      destination
     );
     this.OLMap.getView().fit(boundingExtent, this.OLMap.getSize());
 
@@ -2275,7 +2278,7 @@ export class MapComponent implements OnInit {
   markRangeDataByFeeder() {
     // Setze neue Stylings, wenn toggleFilterRangeDataByFeeder true ist
     if (this.bMarkRangeDataByFeeder && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
 
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
@@ -2300,7 +2303,7 @@ export class MapComponent implements OnInit {
 
     // Setze default-Styling, wenn toggleFilterRangeDataByFeeder false ist
     if (!this.bMarkRangeDataByFeeder && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
 
@@ -2319,7 +2322,7 @@ export class MapComponent implements OnInit {
   markRangeDataByHeight() {
     // Setze neue Stylings, wenn bfilterRangeDataByHeight true ist
     if (this.bMarkRangeDataByHeight && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
 
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
@@ -2356,7 +2359,7 @@ export class MapComponent implements OnInit {
 
     // Setze default-Styling, wenn bfilterRangeDataByHeight false ist
     if (!this.bMarkRangeDataByHeight && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
 
@@ -2659,7 +2662,7 @@ export class MapComponent implements OnInit {
     // Erstelle Interaktion, um einen Point zu zeichnen
     let draw = new Draw({
       source: this.DrawFeature,
-      type: GeometryType.POINT,
+      type: 'Point',
       style: Styles.DevicePositionStyle,
     });
     this.OLMap.addInteraction(draw);

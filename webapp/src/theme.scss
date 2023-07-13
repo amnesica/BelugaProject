@@ -7,6 +7,7 @@
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
+@use '@ng-matero/extensions' as mtx;
 @include mat.all-legacy-component-typographies();
 @include mat.legacy-core();
 
@@ -80,4 +81,6 @@ $my-app-primary: mat.define-palette($custom-blue);
 $my-app-accent: mat.define-palette($custom-yellow);
 $my-app-theme: mat.define-light-theme($my-app-primary, $my-app-accent);
 
+@include mtx.all-component-themes($my-app-theme);
 @include mat.all-legacy-component-themes($my-app-theme);
+

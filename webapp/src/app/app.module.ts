@@ -33,6 +33,10 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatSortModule } from '@angular/material/sort';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
 
+import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,6 +74,28 @@ import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/
     MatTableModule,
     MatSortModule,
     MatCheckboxModule,
+    MtxDatetimepickerModule
+  ],
+  providers: [
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE],
+    },
+    {
+      provide: MAT_DATE_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: 'YYYY-MM-DD',
+        },
+        display: {
+          dateInput: 'YYYY-MM-DD',
+          monthYearLabel: 'YYYY MMM',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'YYYY MMM',
+        },
+      },
+    },
   ],
   bootstrap: [AppComponent],
 })

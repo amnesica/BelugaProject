@@ -282,7 +282,74 @@
         </h4>
 
         <!-- Picker, um Start- und Endzeit für die Zeitspanne der
-          anzuzeigenden Range Data auszuwählen TODO -->
+          anzuzeigenden Range Data auszuwählen -->
+        <div class="time-picker">
+          <!-- Starttime -->
+          <mat-form-field>
+            <mat-label>Starttime</mat-label>
+            <mtx-datetimepicker
+              #datetimeStart
+              [type]="type"
+              [mode]="mode"
+              [multiYearSelector]="multiYearSelector"
+              [startView]="startView"
+              [twelvehour]="twelvehour"
+              [timeInterval]="timeInterval"
+              [touchUi]="touchUi"
+              [timeInput]="timeInput"
+              (selectedChanged)="selectedStarttime = $event"
+            ></mtx-datetimepicker>
+            <input
+              [mtxDatetimepicker]="datetimeStart"
+              matInput
+              required
+            />
+            <mtx-datetimepicker-toggle
+              [for]="datetimeStart"
+              matSuffix
+            ></mtx-datetimepicker-toggle>
+          </mat-form-field>
+        </div>
+
+        <div class="time-picker">
+          <!-- Endtime -->
+          <mat-form-field>
+            <mat-label>Endtime</mat-label>
+            <mtx-datetimepicker
+              #datetimeEnd
+              [type]="type"
+              [mode]="mode"
+              [multiYearSelector]="multiYearSelector"
+              [startView]="startView"
+              [twelvehour]="twelvehour"
+              [timeInterval]="timeInterval"
+              [touchUi]="touchUi"
+              [timeInput]="timeInput"
+              (selectedChanged)="selectedEndtime = $event"
+            ></mtx-datetimepicker>
+            <input
+              [mtxDatetimepicker]="datetimeEnd"
+              matInput
+              required
+            />
+            <mtx-datetimepicker-toggle
+              [for]="datetimeEnd"
+              matSuffix
+            ></mtx-datetimepicker-toggle>
+          </mat-form-field>
+        </div>
+
+        <!-- Submit chosen date and time -->
+        <div mat-dialog-actions>
+          <button
+            mat-button
+            style="background-color: gray; color: white"
+            (click)="showRangeDataBetweenCustomTimestamps()"
+          >
+            Show data
+          </button>
+        </div>
+      </div>
     </mat-tab>
 
     <!-- Tab About -->

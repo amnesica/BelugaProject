@@ -17,6 +17,13 @@ import { ServerService } from 'src/app/_services/server-service/server-service.s
 import { environment } from 'src/environments/environment';
 import { Globals } from 'src/app/_common/globals';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import {
+  MtxCalendarView,
+  MtxDatetimepickerMode,
+  MtxDatetimepickerType,
+} from '@ng-matero/extensions/datetimepicker';
+import { DatetimeAdapter, MTX_DATETIME_FORMATS } from '@ng-matero/extensions/core';
+import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 
 export interface DialogData {
   times: string[];
@@ -27,6 +34,35 @@ export interface DialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
+  providers: [
+    {
+      provide: DatetimeAdapter,
+      useClass: MomentDatetimeAdapter,
+    },
+    {
+      provide: MTX_DATETIME_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: 'YYYY-MM-DD',
+          monthInput: 'MMMM',
+          yearInput: 'YYYY',
+          timeInput: 'HH:mm',
+          datetimeInput: 'YYYY-MM-DD HH:mm',
+        },
+        display: {
+          dateInput: 'YYYY-MM-DD',
+          monthInput: 'MMMM',
+          yearInput: 'YYYY',
+          timeInput: 'HH:mm',
+          datetimeInput: 'YYYY-MM-DD HH:mm',
+          monthYearLabel: 'YYYY MMMM',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'MMMM YYYY',
+          popupHeaderDateLabel: 'MMM DD, ddd',
+        },
+      },
+    },
+  ],
 })
 export class SettingsComponent implements OnInit {
   // Boolean, ob System im DarkMode ist
@@ -59,13 +95,27 @@ export class SettingsComponent implements OnInit {
   // String-Array für Ergebnis aus DateTimePickern
   times: Date[] = [];
 
-  // Referenz zu DialogCustomRangeDataComponent TODO
+  // Referenz zu DialogCustomRangeDataComponent
+  dialogRef;
 
-  // Datetime-Picker TODO
+  // STartzeit vom Datetimepicker
+  @Input() selectedStarttime: Date | null | undefined;
 
-  // Einstellungen für Datetime-Picker TODO
+  // STartzeit vom Datetimepicker
+  @Input() selectedEndtime: Date | null | undefined;
 
-  // Picker wird als Modal-Dialog angezeigt TODO
+  // Einstellungen für Datetime-Picker
+  type: MtxDatetimepickerType = 'datetime';
+  mode: MtxDatetimepickerMode = 'auto';
+  startView: MtxCalendarView = 'month';
+  multiYearSelector = false;
+  touchUi = false;
+  twelvehour = false;
+  timeInterval = 1;
+  timeInput = true;
+
+  datetimeStart = new UntypedFormControl();
+  datetimeEnd = new UntypedFormControl();
  
   // Ausgewählte Start- und Endzeit als DateString zur Anzeige im FrontEnd
   timesAsDateStrings: String[] | undefined;
@@ -225,11 +275,12 @@ export class SettingsComponent implements OnInit {
    * aufgerufen
    */
   showRangeDataBetweenCustomTimestamps() {
-    if (this.times[0] && this.times[1]) {
+    if (this.selectedStarttime && this.selectedEndtime) {
+
       // Wandle Dates in timestamps um
       let timesAsTimestamps = [
-        new Date(this.times[0]).getTime(),
-        new Date(this.times[1]).getTime(),
+        new Date(this.selectedStarttime).getTime(),
+        new Date(this.selectedEndtime).getTime(),
       ];
 
       this.showRangeDataBetweenTimestamps(timesAsTimestamps);
