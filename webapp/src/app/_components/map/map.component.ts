@@ -918,7 +918,7 @@ export class MapComponent implements OnInit {
         symbol: {
           symbolType: 'image',
           src: '../../../assets/beluga_sprites.png',
-          size: ['get', 'size', 'number'],
+          size: ['get', 'size'],
           offset: [0, 0],
           textureCoord: [
             'array',

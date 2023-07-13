@@ -24,7 +24,7 @@
     "@angular/router": "^16.1.4",
     "@ng-matero/extensions": "^16.0.3",
     "@ng-matero/extensions-moment-adapter": "^16.0.0",
-    "@types/ol": "^6.4.2",
+    "@types/ol": "^6.4.3",
     "arc": "^0.1.1",
     "ol": "^6.4.3",
     "ol-ext": "^3.1.16",
