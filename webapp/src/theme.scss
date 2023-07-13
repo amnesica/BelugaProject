@@ -1,5 +1,5 @@
-@import "~@angular/material/theming";
-@include mat-core();
+@use '~@angular/material' as mat;
+@include mat.core();
 
 $custom-blue: (
   50: #e4e6ee,
@@ -67,8 +67,8 @@ $custom-yellow: (
   ),
 );
 
-$my-app-primary: mat-palette($custom-blue);
-$my-app-accent: mat-palette($custom-yellow);
-$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent);
+$my-app-primary: mat.define-palette($custom-blue);
+$my-app-accent: mat.define-palette($custom-yellow);
+$my-app-theme: mat.define-light-theme($my-app-primary, $my-app-accent);
 
-@include angular-material-theme($my-app-theme);
+@include mat.all-component-themes($my-app-theme);
