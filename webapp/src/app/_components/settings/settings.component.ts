@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
@@ -16,7 +16,7 @@ import { Helper } from 'src/app/_classes/helper';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { environment } from 'src/environments/environment';
 import { Globals } from 'src/app/_common/globals';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 
 export interface DialogData {
   times: string[];

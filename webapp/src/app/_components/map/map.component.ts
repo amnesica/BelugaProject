@@ -33,7 +33,7 @@ import {
   Attribution,
 } from 'ol/control';
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
