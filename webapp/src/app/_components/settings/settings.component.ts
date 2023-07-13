@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
 import { ThemePalette } from '@angular/material/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
@@ -83,7 +83,7 @@ export class SettingsComponent implements OnInit {
   listFeeder: any;
 
   // Ausgewählte Feeder in Multi-Select
-  selectedFeederArray = new FormControl();
+  selectedFeederArray = new UntypedFormControl();
 
   // App-Name
   appName: any;
