@@ -1070,7 +1070,7 @@ export class MapComponent implements OnInit {
     // console.log('y1: ' + y1);
     // console.log('x2: ' + x2);
     // console.log('y2: ' + y2);
-
+    Globals.currentZoomLevel = this.OLMap.getView().getZoom();
     return extent;
   }
 

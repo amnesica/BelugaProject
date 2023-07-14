@@ -360,6 +360,8 @@ export class Aircraft {
       this.markerSvgKey = svgKey;
     }
 
+    console.log('updateIcon: shapeScale = ' + this.shapeScale);
+    
     if (!this.markerIcon && !Globals.webgl) return;
 
     // Initialisiere styleKey zum Wiederfinden des gecachten Styles
@@ -608,6 +610,17 @@ export class Aircraft {
 
     this.getShapeData();
 
+    // Test RexKramer1
+    // Magnify icons if zoom-level is high enough (should be configurable)
+    // Note: magnification level depends on size of plane, 
+    //       e.g. small planes are more increased than big planes 
+    let scaleFactorCorr = 1.0;
+    console.log('updateMarker: ZoomLevel = ' +  Globals.currentZoomLevel);
+    if (Globals.currentZoomLevel > Globals.magnifyThreshold) {
+       scaleFactorCorr = 1 + Globals.currentZoomLevel / 8 / this.pngScale;
+     }
+     // end test
+        
     if (!this.marker && (!Globals.webgl || Globals.showAircraftLabel)) {
       // Erstelle Feature für PlaneIconFeatures
       this.createMarker();
@@ -629,7 +642,6 @@ export class Aircraft {
       if (!this.glMarker) {
         this.createWebGlMarker();
       }
-
       this.setWebglMarkerRgb();
       const iconRotation = this.shapeData.noRotate ? 0 : this.track;
       this.glMarker.set('rotation', (iconRotation * Math.PI) / 180.0);
@@ -638,6 +650,7 @@ export class Aircraft {
         this.shapeScale *
           Math.max(this.shapeData.w, this.shapeData.h) *
           this.pngScale *
+          scaleFactorCorr * // Test RexKramer1
           (Globals.scaleIcons / 1.3)
       );
       this.glMarker.set(
