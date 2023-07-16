@@ -15,7 +15,7 @@ public class StaticValues {
   public static final String INTERVAL_REMOVE_OLD_TRAILS_FROM_HISTORY = "0 0 2 * * ?"; // cron expression: every day at 02:00 a.m.
   public static final int RETENTION_DAYS_TRAILS_IN_HISTORY = 2; // 2 Tage
   public static final String INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY = "0 0 1 * * ?"; // cron expression: every day at 01:00 a.m.
-  public static final int RETENTION_DAYS_AIRCRAFT_IN_HISTORY = 30; // 30 Tage
+  public static final int RETENTION_DAYS_AIRCRAFT_IN_HISTORY = 30; // 360 Tage
 
   // Opensky-Network - Scheduler
   public static final int INTERVAL_UPDATE_OPENSKY = 5000; // 5 Sekunden
