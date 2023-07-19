@@ -18,8 +18,6 @@ export class Globals {
   static latFeeder: number;
   static lonFeeder: number;
   static zoomLevel = 7;
-  static currentZoomLevel: number;
-  static magnifyThreshold = 14;
 
   // Feeder-Position als Array mit [lonFeeder, latFeeder]
   // (Hinweis: In EPSG:3857 gespeichert!)
