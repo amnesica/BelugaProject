@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Feeder } from '../../_classes/feeder';
 
 @Injectable({
@@ -27,6 +27,7 @@ export class SettingsService {
   private setCurrentDevicePositionSource = new Subject<boolean>();
   private devicePositionAsBasisSource = new Subject<boolean>();
   private openskyCredentialsExistSource = new Subject<boolean>();
+  aircraftTrailAltitudeData$ = new BehaviorSubject({});
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -156,5 +157,9 @@ export class SettingsService {
   sendReceiveOpenskyCredentialsExist(openskyCredentialsExist: boolean) {
     this.openskyCredentialsExistSource.next(openskyCredentialsExist);
     return this.openskyCredentialsExistSource;
+  }
+
+  sendAircraftAltitudeData(aircraftTrailAltitudeData: Object) {
+    this.aircraftTrailAltitudeData$.next(aircraftTrailAltitudeData);
   }
 }

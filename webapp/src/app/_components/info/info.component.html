@@ -403,6 +403,35 @@
       </mat-grid-tile>
     </mat-grid-list>
 
+    <!-- altitude chart -->
+    <mat-expansion-panel class="my-expansion-class-1">
+      <mat-expansion-panel-header 
+      style="
+        background: #303030;
+        font-size: large;
+        font-weight: bold;
+        border-radius: 0;
+      "
+      [ngClass]="darkMode ? 'background-color-dark' : 'background-color-light'">
+        <mat-panel-description>
+          Altitude chart
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <apx-chart
+      #chart
+      [ngClass]="darkMode ? 'chart-dark' : 'chart-light'"
+      [series]="chartOptions.series!"
+      [chart]="chartOptions.chart!"
+      [xaxis]="chartOptions.xaxis!"
+      [dataLabels]="chartOptions.dataLabels!"
+      [grid]="chartOptions.grid!"
+      [stroke]="chartOptions.stroke!"
+      [title]="chartOptions.title!"
+      [labels]="chartOptions.labels!"
+      [annotations]="chartOptions.annotations!"
+    ></apx-chart>
+    </mat-expansion-panel>
+
     <mat-grid-list
       cols="9"
       rowHeight="1.75rem"
@@ -2569,7 +2598,12 @@
             {{ aircraft.sourceList }}
           </p>
           <p
-            *ngIf="(aircraft && !aircraft.sourceList) || (aircraft && aircraft.sourceList && aircraft.sourceList.length == 0)"
+            *ngIf="
+              (aircraft && !aircraft.sourceList) ||
+              (aircraft &&
+                aircraft.sourceList &&
+                aircraft.sourceList.length == 0)
+            "
             style="font-size: larger; font-weight: bold"
           >
             N/A

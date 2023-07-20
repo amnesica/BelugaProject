@@ -28,7 +28,7 @@
               "src/styles.css",
               "src/theme.scss"
             ],
-            "scripts": [],
+            "scripts": ["node_modules/apexcharts/dist/apexcharts.min.js"],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -70,8 +70,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-          },
+          "options": {},
           "configurations": {
             "production": {
               "browserTarget": "webapp:build:production"

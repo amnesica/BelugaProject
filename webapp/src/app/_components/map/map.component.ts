@@ -1382,6 +1382,9 @@ export class MapComponent implements OnInit {
 
       // Update Route, da sich Flugzeug bewegt hat
       this.updateShowRoute();
+
+      // Update Daten des Altitude Charts mit aktueller Altitude
+      this.updateAltitudeChart();
     }
   }
 
@@ -1513,6 +1516,7 @@ export class MapComponent implements OnInit {
                 this.aircraft.aircraftTrailList = trailData[0];
                 this.aircraft.makeTrail();
                 this.aircraft.makeTrailVisible();
+                this.updateAltitudeChart();
               }
             }
           },
@@ -1526,6 +1530,15 @@ export class MapComponent implements OnInit {
             );
           }
         );
+    }
+  }
+
+  /**
+   * Update Daten des Altitude Charts mit Daten des aktuell markierten Flugzeugs
+   */
+  updateAltitudeChart() {
+    if(this.aircraft){
+      this.settingsService.sendAircraftAltitudeData(this.aircraft.aircraftTrailAltitudes)
     }
   }
 

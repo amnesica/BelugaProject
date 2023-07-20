@@ -175,6 +175,9 @@ export class Aircraft {
   // Distanz zum Device (Device-Position)
   distanceDevicePos: any = null;
 
+  // Altitude-List für Chart
+  aircraftTrailAltitudes!: [{ data: [{ x: number; y: number }] }];
+
   // Konstruktor mit Minimaldaten
   constructor(
     hex: string,
@@ -856,10 +859,13 @@ export class Aircraft {
       let latitude = this.aircraftTrailList[i].latitude;
       let altitude = this.aircraftTrailList[i].altitude;
       let reenteredAircraft = this.aircraftTrailList[i].reenteredAircraft;
+      let timestamp = this.aircraftTrailList[i].timestamp;
 
       this.trackLinePoints.push(
         olProj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857')
       );
+
+      this.updateAltitudeData(timestamp, reenteredAircraft, altitude);
 
       if (this.trackLinePoints.length > 1) {
         let featureLine = new Feature({
@@ -900,6 +906,25 @@ export class Aircraft {
         // Linien hinzu
         this.trail_features.addFeature(featureLine);
       }
+    }
+  }
+
+  /**
+   * Update Datenstruktur für Altitude Chart mit Altitude
+   * @param timestamp any
+   * @param reenteredAircraft any
+   * @param altitude any
+   */
+  updateAltitudeData(timestamp: any, reenteredAircraft: any, altitude: any) {
+    let chartDataPoint = {
+      x: timestamp,
+      y: reenteredAircraft ? null : altitude,
+    };
+
+    if(this.aircraftTrailAltitudes == undefined){
+      this.aircraftTrailAltitudes = [{ data: [{ x: timestamp, y: reenteredAircraft ? null : altitude }] }]
+    }else{
+      this.aircraftTrailAltitudes[0].data.push(chartDataPoint);
     }
   }
 
@@ -956,6 +981,9 @@ export class Aircraft {
         // Fuege erstellte Linie zu allen
         // Linien hinzu
         this.trail_features.addFeature(featureLine);
+
+        // Aktualisiere Daten für Altitude Chart mit aktueller Höhe
+        this.updateAltitudeData(Math.round(Date.now() / 1000), false, this.altitude);
       }
     }
   }

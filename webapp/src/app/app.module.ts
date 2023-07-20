@@ -37,6 +37,9 @@ import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 
+import { NgApexchartsModule } from "ng-apexcharts";
+import {MatExpansionModule} from '@angular/material/expansion'; 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -74,7 +77,9 @@ import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/materia
     MatTableModule,
     MatSortModule,
     MatCheckboxModule,
-    MtxDatetimepickerModule
+    MtxDatetimepickerModule,
+    NgApexchartsModule,
+    MatExpansionModule
   ],
   providers: [
     {

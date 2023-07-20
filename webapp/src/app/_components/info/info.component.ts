@@ -5,6 +5,10 @@ import {
   EventEmitter,
   OnInit,
   ChangeDetectionStrategy,
+  ViewChild,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Aircraft } from '../../_classes/aircraft';
@@ -12,6 +16,30 @@ import { Globals } from 'src/app/_common/globals';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {
+  ChartComponent,
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexDataLabels,
+  ApexTitleSubtitle,
+  ApexStroke,
+  ApexGrid,
+  ApexAnnotations,
+} from 'ng-apexcharts';
+import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  annotations: ApexAnnotations;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  dataLabels: ApexDataLabels;
+  grid: ApexGrid;
+  labels: string[];
+  stroke: ApexStroke;
+  title: ApexTitleSubtitle;
+};
 
 @Component({
   selector: 'app-info',
@@ -19,7 +47,7 @@ import { takeUntil } from 'rxjs/operators';
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.css'],
 })
-export class InfoComponent implements OnInit {
+export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   // Flugzeug, wofür die Info angezeigt wird als Eingabeparameter
   @Input() aircraft: Aircraft | null = null;
 
@@ -47,12 +75,63 @@ export class InfoComponent implements OnInit {
   // Boolean, ob Route erstellt und gezeigt werden soll in Map-Component
   showRoute: boolean = false;
 
+  // Altitude Chart
+  @ViewChild('chart') chart!: ChartComponent;
+  public chartOptions: Partial<ChartOptions>;
+
+  // Daten für das Altitude Chart
+  altitudeData: any;
+
   private ngUnsubscribe = new Subject();
 
   constructor(
     public breakpointObserver: BreakpointObserver,
-    public snackBar: MatSnackBar
-  ) {}
+    public snackBar: MatSnackBar,
+    private settingsService: SettingsService
+  ) {
+    this.chartOptions = {
+      series: [
+        {
+          name: 'Altitude',
+          data: [],
+        },
+      ],
+      chart: {
+        id: 'mychart',
+        type: 'area',
+        height: "150",
+        parentHeightOffset: 0,
+        toolbar: {
+          show: false,
+          autoSelected: "selection"
+        }
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'straight',
+        width: 3,
+      },
+      labels: [],
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          show: true,
+          minHeight: 0,
+          formatter: function(value: any, timestamp: number){
+            return new Date(timestamp * 1000).toLocaleTimeString("de-DE")
+          }
+        }
+      },
+    };
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.darkMode.previousValue != changes.darkMode.currentValue){
+      this.updateThemeColorsInOptions();
+    }
+  }
 
   ngOnInit() {
     // Initiiere Abonnements
@@ -65,6 +144,18 @@ export class InfoComponent implements OnInit {
   }
 
   initSubscriptions() {
+    this.settingsService.aircraftTrailAltitudeData$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((altitudeData) => {
+        if (altitudeData) {
+          this.altitudeData = altitudeData;
+          this.updateAltitudeData();
+
+          // Update auch text color, wenn view noch nicht initialisiert wurde
+          this.updateThemeColorsInOptions();
+        }
+      });
+
     this.breakpointObserver
       .observe(['(max-width: 599px)'])
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -192,5 +283,33 @@ export class InfoComponent implements OnInit {
 
   roundValue(altitude: number) {
     return Math.round(altitude);
+  }
+
+  /**
+   * Updated die Daten (x und y) des Altitude Charts
+   */
+  updateAltitudeData() {
+    if(this.altitudeData == undefined || this.chart == undefined) return;
+    this.chart.updateSeries(this.altitudeData)
+  }
+
+  /**
+   * Updated die Farben des Altitude Charts nach Dark-Mode
+   */
+  updateThemeColorsInOptions() : void {
+    if(this.chart == undefined) return;
+
+    const newTextColor = this.darkMode ? '#fff' : '#000'
+    const newBackgroundColor = this.darkMode ? '#383838' : '#efeff4';
+
+    let newOptions = {
+      chart: {
+        foreColor: newTextColor,
+        background: newBackgroundColor,
+        id: 'mychart',
+      }
+    }
+
+    this.chart.updateOptions(newOptions)
   }
 }
