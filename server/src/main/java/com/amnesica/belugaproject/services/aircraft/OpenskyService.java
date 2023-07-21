@@ -484,7 +484,7 @@ public class OpenskyService {
             final Double baroAltitude = innerArray.getDouble(3);
             final int altitudeInFeet = (int) HelperService.convertMeter2Foot(baroAltitude);
             final AircraftTrail openskyTrail = new AircraftTrail(hex, longitude, latitude, altitudeInFeet, false,
-                timestamp, "Opensky", null);
+                timestamp * 1000, "Opensky", null); // convert timestamp to be in milli seconds
             trails.add(openskyTrail);
           }
         }

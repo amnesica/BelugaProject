@@ -983,7 +983,7 @@ export class Aircraft {
         this.trail_features.addFeature(featureLine);
 
         // Aktualisiere Daten für Altitude Chart mit aktueller Höhe
-        this.updateAltitudeData(Math.round(Date.now() / 1000), false, this.altitude);
+        this.updateAltitudeData(Math.round(Date.now()), false, this.altitude);
       }
     }
   }

@@ -120,7 +120,7 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
           show: true,
           minHeight: 0,
           formatter: function(value: any, timestamp: number){
-            return new Date(timestamp * 1000).toLocaleTimeString("de-DE")
+            return new Date(timestamp).toLocaleTimeString("de-DE")
           }
         }
       },
