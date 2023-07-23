@@ -146,6 +146,7 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+    if(this.chart != undefined) this.chart.destroy();
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
