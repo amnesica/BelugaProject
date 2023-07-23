@@ -133,7 +133,9 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.darkMode.previousValue != changes.darkMode.currentValue){
+    if(changes.darkMode != undefined && 
+      changes.darkMode.previousValue != undefined && 
+      changes.darkMode.previousValue != changes.darkMode.currentValue){
       this.updateThemeColorsInOptions();
     }
   }
