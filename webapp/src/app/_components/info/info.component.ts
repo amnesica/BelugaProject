@@ -26,6 +26,7 @@ import {
   ApexStroke,
   ApexGrid,
   ApexAnnotations,
+  ApexYAxis,
 } from 'ng-apexcharts';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 
@@ -39,6 +40,7 @@ export type ChartOptions = {
   labels: string[];
   stroke: ApexStroke;
   title: ApexTitleSubtitle;
+  yaxis : ApexYAxis
 };
 
 @Component({
@@ -124,6 +126,9 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
           }
         }
       },
+      yaxis: {
+        min: 0
+      }
     };
   }
 
