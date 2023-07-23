@@ -221,8 +221,6 @@ E3TF	RexKramer1	  	E3TF	0.5	2.0
 F18H	RexKramer1	  	F18H	0.7	2.0
 EC35	RexKramer1		EC35	0.9	2.0
 F18S	RexKramer1	  	F18S	0.7	2.0
-VF35	RexKramer1	  	F35	0.7	2.0
-F35	RexKramer1	  	F35	0.7	2.0
 GLID	RexKramer1	  	AS21	0.7	2.0
 IL76	RexKramer1	  	IL76	0.5	2.0
 R44	RexKramer1	  	R44	0.9	2.0
@@ -638,3 +636,6 @@ E390	RexKramer1	Embraer C-390	E390	0.5	2.0
 S108	RexKramer1	Stinson 108 (Piper Station Wagon) 	C172	0.7	2.0
 P1	RexKramer1	Kawasaki P-1	P1	0.5	2.0
 KC2	RexKramer1	Kawasaki C-2	KC2	0.5	2.0
+CVN-65	RexKramer1	CVN-65 USS Enterprise	CVN-65	0.7	2.0
+VF35	RexKramer1	  	VF35	0.7	2.0
+F35	RexKramer1	  	F35	0.7	2.0
