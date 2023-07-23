@@ -176,7 +176,7 @@ export class Aircraft {
   distanceDevicePos: any = null;
 
   // Altitude-List für Chart
-  aircraftTrailAltitudes!: [{ data: [{ x: number; y: number }] }];
+  aircraftTrailAltitudes: any;
 
   // Konstruktor mit Minimaldaten
   constructor(
@@ -853,6 +853,7 @@ export class Aircraft {
     // Setze Trail-Variablen zurück
     this.trail_features.clear();
     this.trackLinePoints = [];
+    this.aircraftTrailAltitudes = undefined;
 
     for (let i = 0; i < this.aircraftTrailList.length; i++) {
       let longitude = this.aircraftTrailList[i].longitude;
