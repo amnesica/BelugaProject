@@ -170,6 +170,28 @@
             >WebGL</mat-slide-toggle
           >
         </div>
+
+        <h3 style="padding-top: 1rem">Weather</h3>
+
+        <!-- Rainviewer (Rain) -->
+        <div>
+          <mat-slide-toggle
+            [checked]="rainViewerRain"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRainViewerRain($event)"
+            >Radar (Rainviewer)</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Rainviewer (Clouds) -->
+        <div>
+          <mat-slide-toggle
+            [checked]="rainViewerClouds"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRainViewerClouds($event)"
+            >Clouds (Rainviewer)</mat-slide-toggle
+          >
+        </div>
       </div>
     </mat-tab>
 
@@ -299,11 +321,7 @@
               [timeInput]="timeInput"
               (selectedChanged)="selectedStarttime = $event"
             ></mtx-datetimepicker>
-            <input
-              [mtxDatetimepicker]="datetimeStart"
-              matInput
-              required
-            />
+            <input [mtxDatetimepicker]="datetimeStart" matInput required />
             <mtx-datetimepicker-toggle
               [for]="datetimeStart"
               matSuffix
@@ -327,11 +345,7 @@
               [timeInput]="timeInput"
               (selectedChanged)="selectedEndtime = $event"
             ></mtx-datetimepicker>
-            <input
-              [mtxDatetimepicker]="datetimeEnd"
-              matInput
-              required
-            />
+            <input [mtxDatetimepicker]="datetimeEnd" matInput required />
             <mtx-datetimepicker-toggle
               [for]="datetimeEnd"
               matSuffix

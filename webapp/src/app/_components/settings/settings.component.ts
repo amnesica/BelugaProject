@@ -22,7 +22,10 @@ import {
   MtxDatetimepickerMode,
   MtxDatetimepickerType,
 } from '@ng-matero/extensions/datetimepicker';
-import { DatetimeAdapter, MTX_DATETIME_FORMATS } from '@ng-matero/extensions/core';
+import {
+  DatetimeAdapter,
+  MTX_DATETIME_FORMATS,
+} from '@ng-matero/extensions/core';
 import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 
 export interface DialogData {
@@ -116,7 +119,7 @@ export class SettingsComponent implements OnInit {
 
   datetimeStart = new UntypedFormControl();
   datetimeEnd = new UntypedFormControl();
- 
+
   // Ausgewählte Start- und Endzeit als DateString zur Anzeige im FrontEnd
   timesAsDateStrings: String[] | undefined;
 
@@ -167,6 +170,12 @@ export class SettingsComponent implements OnInit {
   openskyCredentialsExist: boolean = false;
 
   private ngUnsubscribe = new Subject();
+
+  // Boolean, ob Rainviewer (Rain) Daten angezeigt werden sollen
+  rainViewerRain: boolean = false;
+
+  // Boolean, ob Rainviewer (Cloud) Daten angezeigt werden sollen
+  rainViewerClouds: boolean = false;
 
   constructor(
     public settingsService: SettingsService,
@@ -276,7 +285,6 @@ export class SettingsComponent implements OnInit {
    */
   showRangeDataBetweenCustomTimestamps() {
     if (this.selectedStarttime && this.selectedEndtime) {
-
       // Wandle Dates in timestamps um
       let timesAsTimestamps = [
         new Date(this.selectedStarttime).getTime(),
@@ -583,5 +591,27 @@ export class SettingsComponent implements OnInit {
     this.snackBar.open(message, 'OK', {
       duration: 2000,
     });
+  }
+
+  /**
+   * Toggle Rainviewer (Rain)
+   * @param event MatSlideToggleChange
+   */
+  toggleRainViewerRain(event: MatSlideToggleChange) {
+    this.rainViewerRain = event.checked;
+
+    // Kontaktiere Map-Component und übergebe Rainviewer (Rain) Boolean
+    this.settingsService.toggleRainViewerRain(this.rainViewerRain);
+  }
+
+  /**
+   * Toggle Rainviewer (Clouds)
+   * @param event MatSlideToggleChange
+   */
+  toggleRainViewerClouds(event: MatSlideToggleChange) {
+    this.rainViewerClouds = event.checked;
+
+    // Kontaktiere Map-Component und übergebe Rainviewer (Clouds) Boolean
+    this.settingsService.toggleRainViewerClouds(this.rainViewerClouds);
   }
 }

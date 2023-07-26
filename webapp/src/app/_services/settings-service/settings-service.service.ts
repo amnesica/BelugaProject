@@ -28,6 +28,8 @@ export class SettingsService {
   private devicePositionAsBasisSource = new Subject<boolean>();
   private openskyCredentialsExistSource = new Subject<boolean>();
   aircraftTrailAltitudeData$ = new BehaviorSubject({});
+  private rainViewerRainSource = new Subject<boolean>();
+  private rainViewerCloudsSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -56,6 +58,8 @@ export class SettingsService {
     this.devicePositionAsBasisSource.asObservable();
   openskyCredentialsExistSource$ =
     this.openskyCredentialsExistSource.asObservable();
+  rainViewerRain$ = this.rainViewerRainSource.asObservable();
+  rainViewerClouds$ = this.rainViewerCloudsSource.asObservable();
 
   constructor() {}
 
@@ -161,5 +165,15 @@ export class SettingsService {
 
   sendAircraftAltitudeData(aircraftTrailAltitudeData: Object) {
     this.aircraftTrailAltitudeData$.next(aircraftTrailAltitudeData);
+  }
+
+  toggleRainViewerRain(rainViewerRain: boolean) {
+    this.rainViewerRainSource.next(rainViewerRain);
+    return this.rainViewerRainSource;
+  }
+
+  toggleRainViewerClouds(rainViewerClouds: boolean) {
+    this.rainViewerCloudsSource.next(rainViewerClouds);
+    return this.rainViewerCloudsSource;
   }
 }

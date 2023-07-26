@@ -43,6 +43,8 @@ import { asString } from 'ol/color';
 import VectorSource from 'ol/source/Vector';
 import { Geometry } from 'ol/geom';
 import WebGLPointsLayer from 'ol/layer/WebGLPoints';
+import XYZ from 'ol/source/XYZ';
+import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
 
 @Component({
   selector: 'app-map',
@@ -189,6 +191,21 @@ export class MapComponent implements OnInit {
   // Aktuelle Geräte-Position als Feature
   DrawFeature = new Vector();
 
+  // Boolean, ob RainViewer (Rain) Data sichtbar ist
+  showRainViewerRain: boolean = false;
+
+  // Boolean, ob RainViewer (Clouds) Data sichtbar ist
+  showRainViewerClouds: boolean = false;
+
+  // Layer für die Rainviewer Daten (Regen)
+  rainviewerRainLayer: TileLayer<XYZ> = new TileLayer();
+
+  // Layer für die Rainviewer Daten (Clouds)
+  rainviewerCloudsLayer: TileLayer<XYZ> = new TileLayer();
+
+  // Id des Refresh-Intervals für Rainviewer-Daten
+  refreshIntervalIdRainviewer: any;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -203,8 +220,9 @@ export class MapComponent implements OnInit {
     private settingsService: SettingsService,
     private toolbarService: ToolbarService,
     private aircraftTableService: AircraftTableService,
-    private snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar,
+    private rainviewerService: RainviewerService
+  ) {}
 
   /**
    * Einstiegspunkt
@@ -419,6 +437,28 @@ export class MapComponent implements OnInit {
         // Setze Zentrum der Range-Ringe
         this.setCenterOfRangeRings(devicePositionAsBasis);
       });
+
+    // Toggle Rainviewer (Rain)
+    this.settingsService.rainViewerRain$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((rainViewerRain) => {
+        // Setze showRainViewerRain-Boolean
+        this.showRainViewerRain = rainViewerRain;
+
+        // Zeigt oder versteckt RainViewer (Rain)
+        this.createOrHideRainViewerRain();
+      });
+
+    // Toggle Rainviewer (Clouds)
+    this.settingsService.rainViewerClouds$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((rainViewerClouds) => {
+        // Setze showRainViewerClouds-Boolean
+        this.showRainViewerClouds = rainViewerClouds;
+
+        // Zeigt oder versteckt RainViewer (Clouds)
+        this.createOrHideRainViewerClouds();
+      });
   }
 
   ngOnDestroy() {
@@ -530,17 +570,17 @@ export class MapComponent implements OnInit {
           // Überprüfe gesetzte Werte und starte Programm
           if (
             (Globals.latFeeder,
-              Globals.lonFeeder,
-              Globals.scaleIcons,
-              Globals.SitePosition,
-              Globals.appName,
-              Globals.appVersion,
-              this.circleDistancesInNm.length != 0,
-              this.listFeeder.length != 0,
-              Globals.shapesMap,
-              Globals.catMap,
-              Globals.typesMap,
-              Globals.clientIp)
+            Globals.lonFeeder,
+            Globals.scaleIcons,
+            Globals.SitePosition,
+            Globals.appName,
+            Globals.appVersion,
+            this.circleDistancesInNm.length != 0,
+            this.listFeeder.length != 0,
+            Globals.shapesMap,
+            Globals.catMap,
+            Globals.typesMap,
+            Globals.clientIp)
           ) {
             this.startProgram();
           } else {
@@ -579,7 +619,7 @@ export class MapComponent implements OnInit {
 
     this.osmLayer = new TileLayer({
       source: new OSM({
-        url: url
+        url: url,
       }),
       preload: Infinity,
       useInterimTilesOnError: true,
@@ -818,12 +858,13 @@ export class MapComponent implements OnInit {
 
     // Fuege Layer fuer Range-Ringe
     // und Feeder-Position hinzu
-    let staticFeaturesLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
-      source: this.StaticFeatures,
-      zIndex: 100,
-      renderBuffer: renderBuffer,
-      renderOrder: undefined,
-    });
+    let staticFeaturesLayer: VectorLayer<VectorSource<Geometry>> =
+      new VectorLayer({
+        source: this.StaticFeatures,
+        zIndex: 100,
+        renderBuffer: renderBuffer,
+        renderOrder: undefined,
+      });
     staticFeaturesLayer.set('name', 'site_pos');
     staticFeaturesLayer.set('type', 'overlay');
     staticFeaturesLayer.set('title', 'site position and range rings');
@@ -1378,7 +1419,7 @@ export class MapComponent implements OnInit {
     if (this.aircraft && aircraft.hex == this.aircraft.hex) {
       // Aktualisiere Trail mit momentaner Position, nur wenn alle Feeder
       // ausgewählt sind und bereits Trails vom Server bezogen wurden
-     this.aircraft.updateTrail(this.selectedFeederUpdate);
+      this.aircraft.updateTrail(this.selectedFeederUpdate);
 
       // Update Route, da sich Flugzeug bewegt hat
       this.updateShowRoute();
@@ -1537,8 +1578,10 @@ export class MapComponent implements OnInit {
    * Update Daten des Altitude Charts mit Daten des aktuell markierten Flugzeugs
    */
   updateAltitudeChart() {
-    if(this.aircraft){
-      this.settingsService.sendAircraftAltitudeData(this.aircraft.aircraftTrailAltitudes)
+    if (this.aircraft) {
+      this.settingsService.sendAircraftAltitudeData(
+        this.aircraft.aircraftTrailAltitudes
+      );
     }
   }
 
@@ -1979,8 +2022,8 @@ export class MapComponent implements OnInit {
   extentMapViewToFitCoordiates(positionOrg: [], positionDest: []) {
     // Setze neuen Center der Karte
     let boundingExtent = olExtent.boundingExtent([positionOrg, positionDest]);
-    let source : any = olProj.get('EPSG:4326');
-    let destination : any = olProj.get('EPSG:3857');
+    let source: any = olProj.get('EPSG:4326');
+    let destination: any = olProj.get('EPSG:3857');
 
     boundingExtent = olProj.transformExtent(
       boundingExtent,
@@ -2787,7 +2830,9 @@ export class MapComponent implements OnInit {
           // enable only luminosity filter for light mode
           this.osmLayer.getFilters()[2].setActive(true);
         } else {
-          console.log("No need for resetting filters. osmLayer.getFilters()[2] does not exist");
+          console.log(
+            'No need for resetting filters. osmLayer.getFilters()[2] does not exist'
+          );
         }
       }
     } else {
@@ -2826,5 +2871,149 @@ export class MapComponent implements OnInit {
     for (let i = 0; i < filters.length; i++) {
       this.osmLayer.getFilters()[i].setActive(enable);
     }
+  }
+
+  createOrHideRainViewerRain() {
+    if (this.showRainViewerRain) {
+      this.createRainViewerRainLayer();
+
+      if (this.refreshIntervalIdRainviewer == undefined) {
+        this.initUpdateRainViewerData();
+      }
+
+      // initial data request
+      this.makeRequestRainviewerApi();
+    } else {
+      this.removeRainViewerRainLayer();
+    }
+
+    // Stoppe requests nach rainviewer, wenn weder rain noch clouds angezeigt werden sollen
+    if (!this.showRainViewerRain && !this.showRainViewerClouds) {
+      this.stopRequestsToRainviewer();
+    }
+
+    this.rainviewerRainLayer?.set('visible', this.showRainViewerRain);
+  }
+
+  createOrHideRainViewerClouds() {
+    if (this.showRainViewerClouds) {
+      this.createRainViewerCloudsLayer();
+
+      if (this.refreshIntervalIdRainviewer == undefined) {
+        this.initUpdateRainViewerData();
+      }
+
+      // initial data request
+      this.makeRequestRainviewerApi();
+    } else {
+      this.removeRainViewerCloudsLayer();
+    }
+
+    // Stoppe requests nach rainviewer, wenn weder rain noch clouds angezeigt werden sollen
+    if (!this.showRainViewerRain && !this.showRainViewerClouds) {
+      this.stopRequestsToRainviewer();
+    }
+
+    this.rainviewerCloudsLayer?.set('visible', this.showRainViewerClouds);
+  }
+
+  removeRainViewerCloudsLayer() {
+    this.layers?.remove(this.rainviewerCloudsLayer);
+  }
+
+  createRainViewerCloudsLayer() {
+    if (this.layers == undefined) return;
+
+    this.rainviewerCloudsLayer = new TileLayer({
+      source: new XYZ({
+        url: '',
+      }),
+      opacity: 0.4,
+    });
+
+    this.layers.push(this.rainviewerCloudsLayer);
+  }
+
+  initUpdateRainViewerData() {
+    // Update der Rainviewer-Daten alle zehn Sekunden automatisch,
+    // auch wenn sich Map nicht bewegt
+    this.refreshIntervalIdRainviewer = setInterval(() => {
+      this.makeRequestRainviewerApi();
+    }, 10000);
+  }
+
+  stopRequestsToRainviewer() {
+    clearInterval(this.refreshIntervalIdRainviewer);
+    this.refreshIntervalIdRainviewer = undefined;
+  }
+
+  createRainViewerRainLayer() {
+    if (this.layers == undefined) return;
+
+    this.rainviewerRainLayer = new TileLayer({
+      source: new XYZ({
+        url: '',
+      }),
+      opacity: 0.4,
+    });
+
+    this.layers.push(this.rainviewerRainLayer);
+  }
+
+  removeRainViewerRainLayer() {
+    this.layers?.remove(this.rainviewerRainLayer);
+  }
+
+  makeRequestRainviewerApi() {
+    this.rainviewerService
+      .getRainviewerUrlData()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (rainviewerUrlData) => {
+          if (rainviewerUrlData == null) {
+            return;
+          }
+
+          let generatedTimestamp = rainviewerUrlData.generated;
+
+          // rain
+          let pastRadar: Array<any> = rainviewerUrlData.radar.past;
+
+          if (pastRadar) {
+            // rain
+            let lastIndex = pastRadar.length - 1;
+            let newestTimestampRainUrl = pastRadar[lastIndex].path;
+
+            const updatedUrlRain =
+              'https://tilecache.rainviewer.com' +
+              newestTimestampRainUrl +
+              '/512/{z}/{x}/{y}/4/1_1.png';
+            this.rainviewerRainLayer.getSource()?.setUrl(updatedUrlRain);
+          }
+
+          // clouds
+          let infraredSatellite: Array<any> =
+            rainviewerUrlData.satellite.infrared;
+
+          console.log(rainviewerUrlData.satellite.infrared);
+
+          if (infraredSatellite) {
+            // clouds
+            let lastIndex = infraredSatellite.length - 1;
+            let newestTimestampCloudsUrl = infraredSatellite[lastIndex].path;
+
+            const updatedUrlClouds =
+              'https://tilecache.rainviewer.com' +
+              newestTimestampCloudsUrl +
+              '/512/{z}/{x}/{y}/0/0_0.png';
+            this.rainviewerCloudsLayer.getSource()?.setUrl(updatedUrlClouds);
+          }
+        },
+        (error) => {
+          console.log('Error loading rainviewer data');
+
+          this.openSnackbar('Error loading rainviewer data');
+        }
+      );
   }
 }
