@@ -177,6 +177,9 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Rainviewer (Cloud) Daten angezeigt werden sollen
   rainViewerClouds: boolean = false;
 
+  // Boolean, ob Rainviewer Forecast (Rain) Daten angezeigt werden sollen
+  rainViewerRainForecast: boolean = false;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -613,5 +616,18 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component und übergebe Rainviewer (Clouds) Boolean
     this.settingsService.toggleRainViewerClouds(this.rainViewerClouds);
+  }
+
+  /**
+   * Toggle Rainviewer Forecast(Rain)
+   * @param event MatSlideToggleChange
+   */
+  toggleRainViewerRainForecast(event: MatSlideToggleChange) {
+    this.rainViewerRainForecast = event.checked;
+
+    // Kontaktiere Map-Component und übergebe Rainviewer Forecast (Rain) Boolean
+    this.settingsService.toggleRainViewerRainForecast(
+      this.rainViewerRainForecast
+    );
   }
 }

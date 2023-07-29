@@ -197,14 +197,23 @@ export class MapComponent implements OnInit {
   // Boolean, ob RainViewer (Clouds) Data sichtbar ist
   showRainViewerClouds: boolean = false;
 
+  // Boolean, ob RainViewer Forecast (Rain) Data sichtbar ist
+  showRainViewerRainForecast: boolean = false;
+
   // Layer für die Rainviewer Daten (Regen)
   rainviewerRainLayer: TileLayer<XYZ> = new TileLayer();
 
   // Layer für die Rainviewer Daten (Clouds)
   rainviewerCloudsLayer: TileLayer<XYZ> = new TileLayer();
 
+  // Urls für RainViewer Forecast
+  forecastRainPathAndTime: any[] = [];
+
   // Id des Refresh-Intervals für Rainviewer-Daten
   refreshIntervalIdRainviewer: any;
+
+  // Id des Refresh-Intervals für Rainviewer-Daten (Forecast Animation)
+  refreshIntervalIdRainviewerForecast: any;
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
@@ -458,6 +467,17 @@ export class MapComponent implements OnInit {
 
         // Zeigt oder versteckt RainViewer (Clouds)
         this.createOrHideRainViewerClouds();
+      });
+
+    // Toggle Rainviewer Forecast (Rain)
+    this.settingsService.rainViewerRainForecast$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((rainViewerRainForecast) => {
+        // Setze showRainViewerRainForecast-Boolean
+        this.showRainViewerRainForecast = rainViewerRainForecast;
+
+        // Zeigt oder versteckt RainViewer Forecast (Rain)
+        this.createOrHideRainViewerRain();
       });
   }
 
@@ -2874,7 +2894,7 @@ export class MapComponent implements OnInit {
   }
 
   createOrHideRainViewerRain() {
-    if (this.showRainViewerRain) {
+    if (this.showRainViewerRain || this.showRainViewerRainForecast) {
       this.createRainViewerRainLayer();
 
       if (this.refreshIntervalIdRainviewer == undefined) {
@@ -2887,12 +2907,24 @@ export class MapComponent implements OnInit {
       this.removeRainViewerRainLayer();
     }
 
+    // Stoppe forecast animation
+    if (!this.showRainViewerRainForecast) {
+      this.stopRainForecastAnimation();
+    }
+
     // Stoppe requests nach rainviewer, wenn weder rain noch clouds angezeigt werden sollen
-    if (!this.showRainViewerRain && !this.showRainViewerClouds) {
+    if (
+      !this.showRainViewerRain &&
+      !this.showRainViewerClouds &&
+      !this.showRainViewerRainForecast
+    ) {
       this.stopRequestsToRainviewer();
     }
 
-    this.rainviewerRainLayer?.set('visible', this.showRainViewerRain);
+    this.rainviewerRainLayer?.set(
+      'visible',
+      this.showRainViewerRain || this.showRainViewerRainForecast
+    );
   }
 
   createOrHideRainViewerClouds() {
@@ -2978,42 +3010,141 @@ export class MapComponent implements OnInit {
 
           // rain
           let pastRadar: Array<any> = rainviewerUrlData.radar.past;
+          // rain (forecast)
+          let nowcastRadar: Array<any> = rainviewerUrlData.radar.nowcast;
 
+          let nowRain;
           if (pastRadar) {
             // rain
             let lastIndex = pastRadar.length - 1;
-            let newestTimestampRainUrl = pastRadar[lastIndex].path;
+            nowRain = pastRadar[lastIndex];
+            const updatedUrlRainNow = this.buildRainViewerUrlRain(nowRain.path);
 
-            const updatedUrlRain =
-              'https://tilecache.rainviewer.com' +
-              newestTimestampRainUrl +
-              '/512/{z}/{x}/{y}/4/1_1.png';
-            this.rainviewerRainLayer.getSource()?.setUrl(updatedUrlRain);
+            if (this.showRainViewerRain) {
+              this.rainviewerRainLayer.getSource()?.setUrl(updatedUrlRainNow);
+            }
+          }
+
+          if (nowcastRadar) {
+            // rain (forecast)
+            let forecast10MinRain = nowcastRadar[0];
+            let forecast20MinRain = nowcastRadar[1];
+            let forecast30MinRain = nowcastRadar[2];
+
+            const updatedUrlRainIn10Minutes = this.buildRainViewerUrlRain(
+              forecast10MinRain.path
+            );
+            const updatedUrlRainIn20Minutes = this.buildRainViewerUrlRain(
+              forecast20MinRain.path
+            );
+            const updatedUrlRainIn30Minutes = this.buildRainViewerUrlRain(
+              forecast30MinRain.path
+            );
+
+            this.forecastRainPathAndTime = [
+              nowRain,
+              forecast10MinRain,
+              forecast20MinRain,
+              forecast30MinRain,
+            ];
+
+            if (this.showRainViewerRainForecast) {
+              this.stopRainForecastAnimation();
+              this.updateRainViewerRainForecastLayerUrl();
+            }
           }
 
           // clouds
           let infraredSatellite: Array<any> =
             rainviewerUrlData.satellite.infrared;
 
-          console.log(rainviewerUrlData.satellite.infrared);
-
           if (infraredSatellite) {
             // clouds
             let lastIndex = infraredSatellite.length - 1;
             let newestTimestampCloudsUrl = infraredSatellite[lastIndex].path;
 
-            const updatedUrlClouds =
-              'https://tilecache.rainviewer.com' +
-              newestTimestampCloudsUrl +
-              '/512/{z}/{x}/{y}/0/0_0.png';
+            const updatedUrlClouds = this.buildRainViewerUrlClouds(
+              newestTimestampCloudsUrl
+            );
             this.rainviewerCloudsLayer.getSource()?.setUrl(updatedUrlClouds);
           }
         },
         (error) => {
           console.log('Error loading rainviewer data');
-
           this.openSnackbar('Error loading rainviewer data');
         }
       );
+  }
+
+  buildRainViewerUrlRain(pathFromApi: string) {
+    return (
+      'https://tilecache.rainviewer.com' +
+      pathFromApi +
+      '/512/{z}/{x}/{y}/4/1_1.png'
+    );
+  }
+
+  buildRainViewerUrlClouds(pathFromApi: string) {
+    return (
+      'https://tilecache.rainviewer.com' +
+      pathFromApi +
+      '/512/{z}/{x}/{y}/0/0_0.png'
+    );
+  }
+
+  updateRainViewerRainForecastLayerUrl() {
+    if (this.showRainViewerRainForecast && this.forecastRainPathAndTime) {
+      // initial
+      this.playRainViewerForecastAnimation();
+
+      this.refreshIntervalIdRainviewerForecast = setInterval(() => {
+        this.playRainViewerForecastAnimation();
+      }, 5000);
+    }
+  }
+
+  async playRainViewerForecastAnimation() {
+    this.rainviewerRainLayer
+      .getSource()
+      ?.setUrl(
+        this.buildRainViewerUrlRain(this.forecastRainPathAndTime[0].path)
+      );
+    this.showForecastHintSnackbar(this.forecastRainPathAndTime[0].time);
+
+    setTimeout(() => {
+      this.rainviewerRainLayer
+        .getSource()
+        ?.setUrl(
+          this.buildRainViewerUrlRain(this.forecastRainPathAndTime[1].path)
+        );
+      this.showForecastHintSnackbar(this.forecastRainPathAndTime[1].time);
+    }, 1000);
+
+    setTimeout(() => {
+      this.rainviewerRainLayer
+        .getSource()
+        ?.setUrl(
+          this.buildRainViewerUrlRain(this.forecastRainPathAndTime[2].path)
+        );
+      this.showForecastHintSnackbar(this.forecastRainPathAndTime[2].time);
+    }, 2000);
+
+    setTimeout(() => {
+      this.rainviewerRainLayer
+        .getSource()
+        ?.setUrl(
+          this.buildRainViewerUrlRain(this.forecastRainPathAndTime[3].path)
+        );
+      this.showForecastHintSnackbar(this.forecastRainPathAndTime[3].time);
+    }, 3000);
+  }
+
+  showForecastHintSnackbar(timestampUTC: any) {
+    this.openSnackbar(new Date(timestampUTC * 1000).toLocaleTimeString());
+  }
+
+  stopRainForecastAnimation() {
+    clearInterval(this.refreshIntervalIdRainviewerForecast);
+    this.refreshIntervalIdRainviewerForecast = undefined;
   }
 }

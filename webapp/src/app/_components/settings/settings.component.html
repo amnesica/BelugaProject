@@ -177,9 +177,21 @@
         <div>
           <mat-slide-toggle
             [checked]="rainViewerRain"
+            [disabled]="rainViewerRainForecast"
             (click)="$event.stopPropagation()"
             (change)="toggleRainViewerRain($event)"
             >Radar (Rainviewer)</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Rainviewer (Rain forecast) -->
+        <div>
+          <mat-slide-toggle
+            [checked]="rainViewerRainForecast"
+            [disabled]="rainViewerRain"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRainViewerRainForecast($event)"
+            >Radar Forecast (Rainviewer)</mat-slide-toggle
           >
         </div>
 
