@@ -215,6 +215,24 @@ export class MapComponent implements OnInit {
   // Id des Refresh-Intervals für Rainviewer-Daten (Forecast Animation)
   refreshIntervalIdRainviewerForecast: any;
 
+  // Aktuell angeklickter AirportDataPoint (Feature)
+  airportDataPoint: any;
+
+  // Positionswerte für das Popup zum Anzeigen der
+  // AirportData-Informationen
+  leftValueAirporteData!: number;
+  topValueAirportData!: number;
+
+  // Popup für AirportData-Punkte
+  airportDataPopup: any;
+
+  // Bottom-Wert für AirportDataPopup
+  // (wenn dieser angezeigt wird, soll dieser auf 10px gesetzt werden)
+  airportDataPopupBottomValue: any = 0;
+
+  // Layer für Airports
+  airportLayer!: VectorLayer<VectorSource<Geometry>>;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -901,17 +919,16 @@ export class MapComponent implements OnInit {
     routeLayer.set('type', 'overlay');
     this.layers.push(this.rangeDataLayer);
 
-    // Fuege Layer fuer Icons
-    // der Flughäfen hinzu
-    let airportLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
+    // Fuege Layer fuer Icons der Flughäfen hinzu
+    this.airportLayer = new VectorLayer({
       source: this.AirportFeatures,
       renderOrder: undefined,
       zIndex: 10,
     });
-    airportLayer.set('name', 'ap_positions');
-    airportLayer.set('type', 'overlay');
-    airportLayer.set('title', 'airport positions');
-    this.layers.push(airportLayer);
+    this.airportLayer.set('name', 'ap_positions');
+    this.airportLayer.set('type', 'overlay');
+    this.airportLayer.set('title', 'airport positions');
+    this.layers.push(this.airportLayer);
   }
 
   /**
@@ -1190,6 +1207,7 @@ export class MapComponent implements OnInit {
                 airportFeature.name = airport.name;
                 airportFeature.city = airport.municipality;
                 airportFeature.type = airport.type;
+                airportFeature.featureName = 'AirportDataPoint';
 
                 // Setze Style des Features
                 if (airport.type) {
@@ -1650,6 +1668,19 @@ export class MapComponent implements OnInit {
         );
       }
 
+      // Hole Feature zur Bestimmung eines AirportPoints
+      let airportPoint;
+      airportPoint = evt.map.forEachFeatureAtPixel(
+        evt.pixel,
+        function (feature: any) {
+          return feature;
+        },
+        {
+          layerFilter: (layer) => layer == this.airportLayer,
+          hitTolerance: 5,
+        }
+      );
+
       // Setze Boolean 'showRoute' auf false zurück
       this.showRoute = false;
 
@@ -1657,6 +1688,11 @@ export class MapComponent implements OnInit {
         this.markOrUnmarkAircraft(hex, false);
       } else if (rangePoint && rangePoint.name == 'RangeDataPoint') {
         this.createAndShowRangeDataPopup(rangePoint);
+      } else if (
+        airportPoint &&
+        airportPoint.featureName == 'AirportDataPoint'
+      ) {
+        this.createAndShowAirportDataPopup(airportPoint);
       } else {
         this.resetAllMarkedPlanes();
         this.resetAllTrails();
@@ -1665,6 +1701,7 @@ export class MapComponent implements OnInit {
         this.resetRangeDataPopup();
         this.unselectAllPlanesInTable();
         this.resetAllDrawnPOMDPoints();
+        this.resetAirportDataPopup();
       }
     });
   }
@@ -1806,6 +1843,53 @@ export class MapComponent implements OnInit {
 
     // Zeige RangeData-Popup an
     this.showPopupRangeDataPoint = true;
+  }
+
+  createAndShowAirportDataPopup(airportPoint: any) {
+    if (airportPoint == undefined) return;
+
+    console.log(airportPoint);
+
+    // Erstelle aktuell angeklicktes AirportDataPoint aus Feature
+    this.airportDataPoint = {
+      icao: airportPoint.icao,
+      featureName: airportPoint.featureName,
+      attributes: [
+        { key: 'Altitude', value: airportPoint.altitude },
+        { key: 'Iata', value: airportPoint.iata },
+        { key: 'City', value: airportPoint.city },
+        { key: 'Type', value: airportPoint.type },
+        { key: 'Name', value: airportPoint.name },
+      ],
+    };
+
+    console.log(this.airportDataPoint);
+
+    // Weise popup als overlay zu (Hinweis: Hier ist 'document.getElementById'
+    // nötig, da mit OpenLayers Overlays gearbeitet werden muss, damit Popup
+    // an einer Koordinaten-Position bleibt)
+    this.airportDataPopup = new Overlay({
+      element: document.getElementById('airportDataPopup')!,
+    });
+
+    // Setze Position des Popups und füge Overlay zur Karte hinzu
+    let coordinate = airportPoint.getGeometry().getCoordinates();
+    this.airportDataPopup.setPosition(coordinate);
+    this.OLMap.addOverlay(this.airportDataPopup);
+
+    // Verändere Bottom-Wert für Popup,
+    // damit dieser richtig angezeigt wird
+    this.airportDataPopupBottomValue = '10px';
+  }
+
+  resetAirportDataPopup() {
+    if (this.airportDataPopup) {
+      this.airportDataPopup.setPosition(undefined);
+    }
+
+    // Verändere Bottom-Wert für Popup,
+    // damit dieser wieder ausgeblendet wird
+    this.airportDataPopupBottomValue = '0px';
   }
 
   /**

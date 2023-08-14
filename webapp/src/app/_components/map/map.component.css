@@ -65,6 +65,35 @@ mat-card-header {
   z-index: 5;
 }
 
+::ng-deep .mat-card-header-text{
+  margin: 0 8px !important;
+}
+
+#airportDataPopup {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  padding: 0%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
+}
+
+#airportDataPopupHeader {
+  height: 1.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  display: inline-block;
+}
+
+ table, th, td {
+  /* border: 0.5px solid #96D4D4; */
+  border-collapse: collapse;
+  line-height: 0.8rem;
+} 
+
 ::ng-deep .ol-zoom {
   top: 4rem !important;
   background: rgba(0, 0, 0, 0.4) !important;

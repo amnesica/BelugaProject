@@ -1007,6 +1007,68 @@
     </div>
   </div>
 
+  <!-- Popup für AirportData -->
+  <div
+    id="airportDataPopup"
+    [style.bottom]="airportDataPopupBottomValue"
+    [ngClass]="
+      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+    "
+  >
+    <div *ngIf="airportDataPoint">
+    <mat-card-header id="airportDataPopupHeader">
+      <!-- flightId -->
+      <mat-card-title *ngIf="airportDataPoint.icao" style="color: #3762ff">
+        {{ airportDataPoint.icao }}
+      </mat-card-title>
+    </mat-card-header>
+
+      <table>
+        <ng-container *ngFor="let item of airportDataPoint.attributes">
+          <tr
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark airportDataPopup-tr-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            <td [ngClass]="
+            darkMode
+              ? 'background-and-color-dark airportDataPopup-td-dark'
+              : 'background-and-color-light color-grey'
+          ">
+              <div>
+                <p style="font-size: small; padding-inline: 0.5rem">
+                  {{ item.key }}
+                </p>
+              </div>
+            </td>
+
+            <td
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
+                  : 'background-and-color-light color-grey'
+              "
+            >
+              <div>
+                <p
+                  style="
+                    font-size: small;
+                    font-weight: bold;
+                    padding-inline: 0.5rem;
+                  "
+                >
+                  {{ item.value }}
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </div>
+
   <!-- Info-Box -->
   <app-info
     (showRouteEvent)="receiveToggleShowAircraftRoute($event)"
