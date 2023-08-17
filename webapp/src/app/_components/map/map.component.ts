@@ -1201,7 +1201,7 @@ export class MapComponent implements OnInit {
                 let airportFeature: any = new Feature(airportPoint);
                 airportFeature.longitude = airport.longitude_deg;
                 airportFeature.latitude = airport.latitude_deg;
-                airportFeature.altitude = airport.elevation_ft;
+                airportFeature.elevation_ft = airport.elevation_ft;
                 airportFeature.icao = airport.ident;
                 airportFeature.iata = airport.iata_code;
                 airportFeature.name = airport.name;
@@ -1851,12 +1851,14 @@ export class MapComponent implements OnInit {
     console.log(airportPoint);
 
     // Erstelle aktuell angeklicktes AirportDataPoint aus Feature
+    let elevation = airportPoint.elevation_ft + ' ft / ' + (airportPoint.elevation_ft * 0.328084).toFixed(0) + ' m';
+
     this.airportDataPoint = {
       icao: airportPoint.icao,
       featureName: airportPoint.featureName,
       attributes: [
-        { key: 'Altitude', value: airportPoint.altitude },
-        { key: 'Iata', value: airportPoint.iata },
+        { key: 'Elevation', value: elevation},
+        { key: 'IATA', value: airportPoint.iata },
         { key: 'City', value: airportPoint.city },
         { key: 'Type', value: airportPoint.type },
         { key: 'Name', value: airportPoint.name },

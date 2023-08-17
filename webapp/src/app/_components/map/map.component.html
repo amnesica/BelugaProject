@@ -1018,7 +1018,7 @@
     <div *ngIf="airportDataPoint">
     <mat-card-header id="airportDataPopupHeader">
       <!-- flightId -->
-      <mat-card-title *ngIf="airportDataPoint.icao" style="color: #3762ff">
+      <mat-card-title *ngIf="airportDataPoint.icao" style="color: #f8c023">
         {{ airportDataPoint.icao }}
       </mat-card-title>
     </mat-card-header>
@@ -1048,7 +1048,7 @@
               [ngClass]="
                 darkMode
                   ? 'background-and-color-dark airportDataPopup-td-dark'
-                  : 'background-and-color-light color-grey'
+                  : 'background-and-color-light'
               "
             >
               <div>
