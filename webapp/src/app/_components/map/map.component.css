@@ -12,11 +12,17 @@
   cursor: pointer;
   border-radius: 0rem;
   padding: 0%;
-  background-color: #efeff4;
-  width: 10rem;
+  min-width: 10rem;
   border-radius: 10px;
   overflow: hidden;
-  background: transparent;
+}
+
+#hoveredAircraftPopupHeader {
+  height: 3rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
 }
 
 /** Wichtig, damit Schrift richtig angezeigt wird! */
@@ -85,11 +91,13 @@ mat-card-header {
   background-color: #303030;
   width: 100%;
   text-align: left;
-  display: inline-block;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: auto;
+  flex-direction: column;
 }
 
  table, th, td {
-  /* border: 0.5px solid #96D4D4; */
   border-collapse: collapse;
   line-height: 0.8rem;
 } 

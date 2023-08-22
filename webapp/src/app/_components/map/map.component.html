@@ -17,487 +17,68 @@
     *ngIf="showSmallInfo && hoveredAircraft"
     [style.top.px]="topValue"
     [style.left.px]="leftValue"
+    [ngClass]="
+      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+    "
   >
-    <mat-card-header>
-      <!-- flightId -->
-      <mat-card-title *ngIf="hoveredAircraft.flightId" style="color: #f8c023">
-        {{ hoveredAircraft.flightId }}
-      </mat-card-title>
-      <mat-card-title *ngIf="!hoveredAircraft.flightId" style="color: #f8c023">
-        N/A
-      </mat-card-title>
-      <!-- hex -->
-      <mat-card-subtitle *ngIf="hoveredAircraft.hex" style="color: #d5d5d5">{{
-        hoveredAircraft.hex
-      }}</mat-card-subtitle>
-      <mat-card-subtitle *ngIf="!hoveredAircraft.hex" style="color: #d5d5d5">
-        N/A
-      </mat-card-subtitle>
-    </mat-card-header>
+    <div *ngIf="hoveredAircraft">
+      <mat-card-header id="hoveredAircraftPopupHeader">
+        <!-- flightId -->
+        <mat-card-title *ngIf="hoveredAircraft.flightId" style="color: #f8c023">
+          {{ hoveredAircraft.flightId }}
+        </mat-card-title>
+        <!-- hex -->
+        <mat-card-subtitle *ngIf="hoveredAircraft.hex" style="color: #d5d5d5">{{
+          hoveredAircraft.hex
+        }}</mat-card-subtitle>
+      </mat-card-header>
 
-    <mat-card-content>
-      <mat-grid-list
-        cols="2"
-        rowHeight="1rem"
-        [ngClass]="
-          darkMode ? 'background-color-dark' : 'background-color-light'
-        "
-      >
-        <!-- altitude label -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
+      <table>
+        <ng-container *ngFor="let item of hoveredAircraft.attributes">
+          <tr
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark airportDataPopup-tr-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            <td
               [ngClass]="
                 darkMode
-                  ? 'background-and-color-dark'
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
-              style="font-size: small"
             >
-              Altitude
-            </p>
-          </div>
-        </mat-grid-tile>
+              <div>
+                <p style="font-size: small; padding-inline: 0.5rem">
+                  {{ item.key }}
+                </p>
+              </div>
+            </td>
 
-        <!-- altitude -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.altitude"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.altitude }} ft
-            </p>
-            <p
-              *ngIf="!hoveredAircraft.altitude"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- speed label -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
+            <td
               [ngClass]="
                 darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
+                  : 'background-and-color-light'
               "
-              style="font-size: small"
             >
-              Speed
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- speed -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.speed"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.speed }} kn
-            </p>
-            <p
-              *ngIf="!hoveredAircraft.speed"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- type label -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              [ngClass]="
-                darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
-              "
-              style="font-size: small"
-            >
-              Type
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- type -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.type"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.type }}
-            </p>
-            <p
-              *ngIf="!hoveredAircraft.type"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- registration label -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              [ngClass]="
-                darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
-              "
-              style="font-size: small"
-            >
-              Registration
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- registration -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.registration"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.registration }}
-            </p>
-            <p
-              *ngIf="!hoveredAircraft.registration"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- track label -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              [ngClass]="
-                darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
-              "
-              style="font-size: small"
-            >
-              Track
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- track -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.track != null"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.track }}°
-            </p>
-            <p
-              *ngIf="hoveredAircraft.track == null"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- last seen label -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              [ngClass]="
-                darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
-              "
-              style="font-size: small"
-            >
-              Last seen
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- last seen -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.lastSeen != null"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.lastSeen }} s
-            </p>
-            <p
-              *ngIf="hoveredAircraft.lastSeen == null"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- distance label zur Antennen-Position (Site-position) -->
-        <mat-grid-tile
-          *ngIf="hoveredAircraft && !hoveredAircraft.distanceDevicePos"
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              [ngClass]="
-                darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
-              "
-              style="font-size: small"
-            >
-              Dist. (Ant)
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- distance zur Antennen-Position (Site-position) -->
-        <mat-grid-tile
-          *ngIf="hoveredAircraft && !hoveredAircraft.distanceDevicePos"
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.distance"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.distance }} km
-            </p>
-            <p
-              *ngIf="!hoveredAircraft.distance"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- distance label zur Geräte-Position -->
-        <mat-grid-tile
-          *ngIf="hoveredAircraft && hoveredAircraft.distanceDevicePos"
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              [ngClass]="
-                darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
-              "
-              style="font-size: small"
-            >
-              Dist. (Dev)
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- distance zur Geräte-Position -->
-        <mat-grid-tile
-          *ngIf="hoveredAircraft && hoveredAircraft.distanceDevicePos"
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.distanceDevicePos"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.distanceDevicePos }} km
-            </p>
-            <p
-              *ngIf="!hoveredAircraft.distanceDevicePos"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- feeder label -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              [ngClass]="
-                darkMode
-                  ? 'background-and-color-dark'
-                  : 'background-and-color-light color-grey'
-              "
-              style="font-size: small"
-            >
-              Feeder
-            </p>
-          </div>
-        </mat-grid-tile>
-
-        <!-- feeder -->
-        <mat-grid-tile
-          colspan="1"
-          rowspan="1"
-          [ngClass]="
-            darkMode
-              ? 'background-and-color-dark'
-              : 'background-and-color-light'
-          "
-        >
-          <div>
-            <p
-              *ngIf="hoveredAircraft.feederList"
-              style="font-size: small; font-weight: bold"
-            >
-              {{ hoveredAircraft.feederList }}
-            </p>
-            <p
-              *ngIf="!hoveredAircraft.feederList"
-              style="font-size: small; font-weight: bold"
-            >
-              N/A
-            </p>
-          </div>
-        </mat-grid-tile>
-      </mat-grid-list>
-    </mat-card-content>
+              <div>
+                <p
+                  style="
+                    font-size: small;
+                    font-weight: bold;
+                    padding-inline: 0.5rem;
+                  "
+                >
+                  {{ item.value }}
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
   </mat-card>
 
   <!-- Popup für RangeData -->
@@ -1008,7 +589,7 @@
   </div>
 
   <!-- Popup für AirportData -->
-  <div
+  <mat-card
     id="airportDataPopup"
     [style.bottom]="airportDataPopupBottomValue"
     [ngClass]="
@@ -1016,12 +597,12 @@
     "
   >
     <div *ngIf="airportDataPoint">
-    <mat-card-header id="airportDataPopupHeader">
-      <!-- flightId -->
-      <mat-card-title *ngIf="airportDataPoint.icao" style="color: #f8c023">
-        {{ airportDataPoint.icao }}
-      </mat-card-title>
-    </mat-card-header>
+      <mat-card-header id="airportDataPopupHeader">
+        <!-- flightId -->
+        <mat-card-title *ngIf="airportDataPoint.icao" style="color: #f8c023">
+          {{ airportDataPoint.icao }}
+        </mat-card-title>
+      </mat-card-header>
 
       <table>
         <ng-container *ngFor="let item of airportDataPoint.attributes">
@@ -1032,11 +613,13 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            <td [ngClass]="
-            darkMode
-              ? 'background-and-color-dark airportDataPopup-td-dark'
-              : 'background-and-color-light color-grey'
-          ">
+            <td
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
+                  : 'background-and-color-light color-grey'
+              "
+            >
               <div>
                 <p style="font-size: small; padding-inline: 0.5rem">
                   {{ item.key }}
@@ -1067,7 +650,7 @@
         </ng-container>
       </table>
     </div>
-  </div>
+  </mat-card>
 
   <!-- Info-Box -->
   <app-info

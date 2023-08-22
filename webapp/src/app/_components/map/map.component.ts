@@ -87,7 +87,7 @@ export class MapComponent implements OnInit {
   aircraft: Aircraft | null = null;
 
   // Aktuell gehovertes Aircraft
-  hoveredAircraft!: Aircraft;
+  hoveredAircraft: any;
 
   // Distanzen fuer darzustellende Ringe (in nm)
   circleDistancesInNm: number[] = [];
@@ -1465,6 +1465,11 @@ export class MapComponent implements OnInit {
       // Update Daten des Altitude Charts mit aktueller Altitude
       this.updateAltitudeChart();
     }
+
+    // Wenn Flugzeug das ist, worüber die Mouse hovert
+    if (this.hoveredAircraft && aircraft.hex == this.hoveredAircraft.hex) {
+      this.createHoveredAircraft(aircraft);
+    }
   }
 
   /**
@@ -1848,24 +1853,24 @@ export class MapComponent implements OnInit {
   createAndShowAirportDataPopup(airportPoint: any) {
     if (airportPoint == undefined) return;
 
-    console.log(airportPoint);
-
     // Erstelle aktuell angeklicktes AirportDataPoint aus Feature
-    let elevation = airportPoint.elevation_ft + ' ft / ' + (airportPoint.elevation_ft * 0.328084).toFixed(0) + ' m';
+    let elevation =
+      airportPoint.elevation_ft +
+      ' ft / ' +
+      (airportPoint.elevation_ft * 0.328084).toFixed(0) +
+      ' m';
 
     this.airportDataPoint = {
       icao: airportPoint.icao,
       featureName: airportPoint.featureName,
       attributes: [
-        { key: 'Elevation', value: elevation},
+        { key: 'Elevation', value: elevation },
         { key: 'IATA', value: airportPoint.iata },
         { key: 'City', value: airportPoint.city },
         { key: 'Type', value: airportPoint.type },
         { key: 'Name', value: airportPoint.name },
       ],
     };
-
-    console.log(this.airportDataPoint);
 
     // Weise popup als overlay zu (Hinweis: Hier ist 'document.getElementById'
     // nötig, da mit OpenLayers Overlays gearbeitet werden muss, damit Popup
@@ -1968,7 +1973,7 @@ export class MapComponent implements OnInit {
         // Zeige Daten des aktuellen Flugzeugs in Small Info-Box
         if (aircraft) {
           // Setze Flugzeug als das aktuell gehoverte
-          this.hoveredAircraft = aircraft;
+          this.createHoveredAircraft(aircraft);
 
           let markerCoordinates;
           markerCoordinates = Globals.webgl
@@ -1995,10 +2000,76 @@ export class MapComponent implements OnInit {
         // Setze Cursor auf 'normal' zurück
         this.OLMap.getTargetElement().style.cursor = '';
 
+        this.hoveredAircraft = undefined;
+
         // Verstecke kleine Info-Box
         this.showSmallInfo = false;
       }
     });
+  }
+
+  createHoveredAircraft(aircraft: Aircraft) {
+    this.hoveredAircraft = {
+      flightId:
+        typeof aircraft.flightId !== 'undefined' ? aircraft.flightId : 'N/A',
+      hex: typeof aircraft.hex !== 'undefined' ? aircraft.hex : 'N/A',
+      attributes: [
+        {
+          key: 'Altitude',
+          value:
+            typeof aircraft.altitude !== 'undefined'
+              ? aircraft.altitude + ' ft'
+              : 'N/A',
+        },
+        {
+          key: 'Speed',
+          value:
+            typeof aircraft.speed !== 'undefined'
+              ? aircraft.speed + ' kn'
+              : 'N/A',
+        },
+        { key: 'Type', value: aircraft.type ? aircraft.type : 'N/A' },
+        {
+          key: 'Registration',
+          value: aircraft.registration ? aircraft.registration : 'N/A',
+        },
+        {
+          key: 'Track',
+          value:
+            typeof aircraft.track !== 'undefined'
+              ? aircraft.track + '°'
+              : 'N/A',
+        },
+        {
+          key: 'Last Seen',
+          value:
+            typeof aircraft.lastSeen !== 'undefined'
+              ? aircraft.lastSeen + ' s'
+              : 'N/A',
+        },
+        {
+          key: 'Feeder',
+          value: aircraft.feederList ? aircraft.feederList : 'N/A',
+        },
+      ],
+    };
+
+    if (Globals.useDevicePositionForDistance && Globals.DevicePosition) {
+      this.hoveredAircraft.attributes.push({
+        key: 'Dist. (Dev)',
+        value: aircraft.distanceDevicePos
+          ? aircraft.distanceDevicePos + ' km'
+          : 'N/A',
+      });
+    } else {
+      this.hoveredAircraft.attributes.push({
+        key: 'Dist. (Ant)',
+        value:
+          typeof aircraft.distance !== 'undefined'
+            ? aircraft.distance + ' km'
+            : 'N/A',
+      });
+    }
   }
 
   /**
