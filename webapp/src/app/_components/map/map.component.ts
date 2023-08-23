@@ -122,6 +122,9 @@ export class MapComponent implements OnInit {
   // Boolean, ob Flugzeug-Label angezeigt werden sollen
   toggleShowAircraftLabels: boolean = false;
 
+  // Boolean, ob Flugzeug-Positionen angezeigt werden sollen
+  toggleShowAircraftPositions: boolean = true;
+
   // Zeige Route zwischen Start-Flugzeug-Ziel an
   showRoute: any;
 
@@ -499,6 +502,14 @@ export class MapComponent implements OnInit {
 
         // Zeigt oder versteckt RainViewer Forecast (Rain)
         this.createOrHideRainViewerRain();
+      });
+
+    // Toggle zeige/verstecke Flugzeug-Positionen
+    this.settingsService.toggleShowAircraftPositions$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((toggleShowAircraftPositions) => {
+        this.toggleShowAircraftPositions = toggleShowAircraftPositions;
+        this.receiveToggleShowAircraftPositions();
       });
   }
 
@@ -3312,6 +3323,15 @@ export class MapComponent implements OnInit {
         clearInterval(this.timeoutHandlerForecastAnimation[i]);
       }
       this.timeoutHandlerForecastAnimation = [];
+    }
+  }
+
+  receiveToggleShowAircraftPositions() {
+    if (this.OLMap && this.layers && (this.planesLayer || this.webglLayer)) {
+      if (this.planesLayer)
+        this.planesLayer.setVisible(!this.planesLayer.getVisible());
+      if (this.webglLayer)
+        this.webglLayer.setVisible(!this.webglLayer.getVisible());
     }
   }
 }

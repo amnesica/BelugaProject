@@ -30,6 +30,13 @@
         <h3>Planes</h3>
 
         <mat-slide-toggle
+          [checked]="showAircraftPositions"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAircraftPositions($event)"
+          >Aircraft Positions</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
           [checked]="showAircraftLabels"
           (click)="$event.stopPropagation()"
           (change)="toggleAircraftLabels($event)"

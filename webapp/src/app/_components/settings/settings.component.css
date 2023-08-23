@@ -39,6 +39,11 @@
   background-color: var(--primary-color, #f8c023) !important;
 }
 
+::ng-deep .mat-slide-toggle {
+  margin: 0.2rem !important;
+  display: block !important;
+}
+
 ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
   background-color: #f8c023;
 }

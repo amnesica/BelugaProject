@@ -128,6 +128,7 @@ export class SettingsComponent implements OnInit {
   showAirports: boolean = true;
   showOpenskyPlanes: boolean | undefined;
   showIss: boolean = true;
+  showAircraftPositions: boolean | undefined = true;
 
   // Boolean, ob Range Data verbunden angezeigt werden soll
   showFilteredRangeDatabyFeeder: boolean | undefined;
@@ -629,5 +630,16 @@ export class SettingsComponent implements OnInit {
     this.settingsService.toggleRainViewerRainForecast(
       this.rainViewerRainForecast
     );
+  }
+
+  /**
+   * Methode zeigt oder versteckt die Flugzeuge
+   * @param event MatSlideToggleChange
+   */
+  toggleAircraftPositions(event: MatSlideToggleChange) {
+    this.showAircraftPositions = event.checked;
+
+    // Kontaktiere Map-Component und übergebe showAircraftPositions-Boolean
+    this.settingsService.toggleAircraftPositions(this.showAircraftPositions);
   }
 }

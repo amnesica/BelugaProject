@@ -31,6 +31,7 @@ export class SettingsService {
   private rainViewerRainSource = new Subject<boolean>();
   private rainViewerCloudsSource = new Subject<boolean>();
   private rainViewerRainForecastSource = new Subject<boolean>();
+  private toggleShowAircraftPositionsSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -62,6 +63,8 @@ export class SettingsService {
   rainViewerRain$ = this.rainViewerRainSource.asObservable();
   rainViewerClouds$ = this.rainViewerCloudsSource.asObservable();
   rainViewerRainForecast$ = this.rainViewerRainForecastSource.asObservable();
+  toggleShowAircraftPositions$ =
+    this.toggleShowAircraftPositionsSource.asObservable();
 
   constructor() {}
 
@@ -182,5 +185,10 @@ export class SettingsService {
   toggleRainViewerRainForecast(rainViewerRainForecast: boolean) {
     this.rainViewerRainForecastSource.next(rainViewerRainForecast);
     return this.rainViewerRainForecastSource;
+  }
+
+  toggleAircraftPositions(showAircraftPositions: boolean) {
+    this.toggleShowAircraftPositionsSource.next(showAircraftPositions);
+    return this.toggleShowAircraftPositionsSource;
   }
 }
