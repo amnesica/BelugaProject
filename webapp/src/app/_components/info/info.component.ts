@@ -40,7 +40,7 @@ export type ChartOptions = {
   labels: string[];
   stroke: ApexStroke;
   title: ApexTitleSubtitle;
-  yaxis : ApexYAxis
+  yaxis: ApexYAxis;
 };
 
 @Component({
@@ -101,12 +101,12 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
       chart: {
         id: 'mychart',
         type: 'area',
-        height: "150",
+        height: '150',
         parentHeightOffset: 0,
         toolbar: {
           show: false,
-          autoSelected: "selection"
-        }
+          autoSelected: 'selection',
+        },
       },
       dataLabels: {
         enabled: false,
@@ -121,21 +121,23 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
         labels: {
           show: true,
           minHeight: 0,
-          formatter: function(value: any, timestamp: number){
-            return new Date(timestamp).toLocaleTimeString("de-DE")
-          }
-        }
+          formatter: function (value: any, timestamp: number) {
+            return new Date(timestamp).toLocaleTimeString('de-DE');
+          },
+        },
       },
       yaxis: {
-        min: 0
-      }
+        min: 0,
+      },
     };
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes.darkMode != undefined && 
-      changes.darkMode.previousValue != undefined && 
-      changes.darkMode.previousValue != changes.darkMode.currentValue){
+    if (
+      changes.darkMode != undefined &&
+      changes.darkMode.previousValue != undefined &&
+      changes.darkMode.previousValue != changes.darkMode.currentValue
+    ) {
       this.updateThemeColorsInOptions();
     }
   }
@@ -146,7 +148,7 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
-    if(this.chart != undefined) this.chart.destroy();
+    if (this.chart != undefined) this.chart.destroy();
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
@@ -262,6 +264,8 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
         this.aircraft.positionDest
       ) {
         this.showRoute = true;
+      } else {
+        this.openSnackBar('No route info available', 'OK');
       }
     }
 
@@ -297,17 +301,17 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
    * Updated die Daten (x und y) des Altitude Charts
    */
   updateAltitudeData() {
-    if(this.altitudeData == undefined || this.chart == undefined) return;
-    this.chart.updateSeries(this.altitudeData)
+    if (this.altitudeData == undefined || this.chart == undefined) return;
+    this.chart.updateSeries(this.altitudeData);
   }
 
   /**
    * Updated die Farben des Altitude Charts nach Dark-Mode
    */
-  updateThemeColorsInOptions() : void {
-    if(this.chart == undefined) return;
+  updateThemeColorsInOptions(): void {
+    if (this.chart == undefined) return;
 
-    const newTextColor = this.darkMode ? '#fff' : '#000'
+    const newTextColor = this.darkMode ? '#fff' : '#000';
     const newBackgroundColor = this.darkMode ? '#383838' : '#efeff4';
 
     let newOptions = {
@@ -315,9 +319,9 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
         foreColor: newTextColor,
         background: newBackgroundColor,
         id: 'mychart',
-      }
-    }
+      },
+    };
 
-    this.chart.updateOptions(newOptions)
+    this.chart.updateOptions(newOptions);
   }
 }
