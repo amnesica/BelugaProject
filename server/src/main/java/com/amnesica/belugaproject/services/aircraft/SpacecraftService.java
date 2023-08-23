@@ -44,10 +44,10 @@ public class SpacecraftService {
   private Configuration configuration;
 
   // Url zum Fetchen der Position der ISS
-  final static String URL_ISS_POSITION_API = "http://api.open-notify.org/iss-now.json";
+  final static String URL_ISS_POSITION_API = "https://api.wheretheiss.at/v1/satellites/25544";
 
   // Name des Feeders (API) der ISS
-  final static String FEEDER_NAME_ISS = "Open-Notify";
+  final static String FEEDER_NAME_ISS = "WTIA";
 
   // ISS als besonderes Flugzeug
   private Spacecraft iss;
@@ -101,14 +101,19 @@ public class SpacecraftService {
 
     try {
       JSONObject jsonObject = new JSONObject(jsonStr);
-      jsonObject = jsonObject.getJSONObject("iss_position");
 
       // Extrahiere Koordinaten der ISS aus JSON-Daten
       iss.setLongitude(jsonObject.getDouble("longitude"));
       iss.setLatitude(jsonObject.getDouble("latitude"));
 
       // Setze aktuelle Zeit als LastUpdate
-      iss.setLastUpdate(System.currentTimeMillis());
+      iss.setLastUpdate(jsonObject.getLong("timestamp"));
+
+      // Setze aktuelle Höhe (km -> ft)
+      iss.setAltitude((int) HelperService.convertKilometer2Foot(jsonObject.getDouble("altitude")));
+
+      // Setze velocity
+      iss.setSpeed((int) HelperService.convertKilometerPerHour2Knots(jsonObject.getDouble("velocity")));
 
       // Aktualisiere Trail des Flugzeugs mit neuer Position und Höhe
       spacecraftTrailService.addTrail(iss, FEEDER_NAME_ISS);
@@ -137,7 +142,6 @@ public class SpacecraftService {
     iss = new Spacecraft("ISS", 0.0, 0.0);
 
     // Setze weitere Infos über die ISS
-    iss.setAltitude(1312336);
     iss.setOperatorCountry("Intl");
     iss.setCategory("B7");
     iss.setFeederList(new ArrayList<>(Collections.singletonList(FEEDER_NAME_ISS)));
@@ -147,7 +151,6 @@ public class SpacecraftService {
     iss.setOperatorName("NASA, Roskosmos, ESA, CSA, JAXA");
     iss.setType("ISS");
     iss.setFullType("International Space Station");
-    iss.setSpeed(14903);
     iss.setFlightId("Alpha, Station");
     iss.setVerticalRate(0);
     iss.setWindSpeed(0);

@@ -117,4 +117,12 @@ public class HelperService {
     double footPerMin = Double.parseDouble(df.format(fpm).replace(",", "."));
     return footPerMin;
   }
+
+  public static double convertKilometer2Foot(double km) {
+    return km * 3280.84;
+  }
+
+  public static double convertKilometerPerHour2Knots(double kph) {
+    return kph / 1.852;
+  }
 }
