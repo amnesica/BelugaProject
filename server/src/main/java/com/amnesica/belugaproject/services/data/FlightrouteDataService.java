@@ -1,9 +1,12 @@
 package com.amnesica.belugaproject.services.data;
 
+import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.data.FlightrouteData;
 import com.amnesica.belugaproject.repositories.data.FlightrouteDataRepository;
+import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +16,17 @@ public class FlightrouteDataService {
 
   @Autowired
   private FlightrouteDataRepository flightrouteDataRepository;
+  @Autowired
+  private NetworkHandlerService networkHandler;
+  @Autowired
+  private Configuration configuration;
+
+  // Url zum Fetchen der Route-Daten von Opensky
+  private static final String URL_OPENSKY_ROUTE_API = "https://opensky-network.org/api/routes?";
 
   /**
    * Gibt alle Informationen über eine Flightroute mit Angabe des flightID aus der
-   * Datenbank zurück
+   * Datenbank zurück. Wenn die Datenbank nicht existiert oder keinen Eintrag hat wird Opensky angefragt
    *
    * @param flightId String
    * @return flightrouteData
@@ -35,6 +45,35 @@ public class FlightrouteDataService {
             + e);
       }
 
+      // Hole Daten von Opensky-Unoffical API, wenn Route-Datenbank nicht existiert oder keinen Eintrag hat
+      if (flightrouteData == null) {
+        flightrouteData = getFlightRouteDataFromOpensky(flightId);
+      }
+    }
+
+    return flightrouteData;
+  }
+
+  private FlightrouteData getFlightRouteDataFromOpensky(String flightId) {
+    FlightrouteData flightrouteData = null;
+
+    // Genriere URL
+    final String url = URL_OPENSKY_ROUTE_API + "callsign=" + flightId;
+
+    // Anfrage an Opensky mit url und Credentials
+    String jsonStr = networkHandler.makeOpenskyServiceCall(url, configuration.getOpenskyUsername(), configuration.getOpenskyPassword());
+
+    try {
+      if (jsonStr != null) {
+        final JSONObject jsonObject = new JSONObject(jsonStr);
+        final String origin = jsonObject.getJSONArray("route").get(0).toString();
+        final String destination = jsonObject.getJSONArray("route").get(1).toString();
+        final long timestamp = jsonObject.getLong("updateTime");
+        flightrouteData = new FlightrouteData(flightId, origin + "-" + destination, String.valueOf(timestamp));
+      }
+    } catch (Exception e) {
+      log.error(
+          "Server: Route-Data from Opensky-Network could not get fetched. Url: " + url);
     }
 
     return flightrouteData;
