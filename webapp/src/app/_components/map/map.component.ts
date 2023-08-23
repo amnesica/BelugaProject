@@ -1083,10 +1083,10 @@ export class MapComponent implements OnInit {
    */
   initAircraftFetching() {
     // Entfernen aller nicht geupdateten Flugzeuge alle 30 Sekunden
-    setInterval(this.removeNotUpdatedPlanes, 30000, this);
+    window.setInterval(this.removeNotUpdatedPlanes, 30000, this);
 
     // Aufruf der Update-Methode für Flugzeuge alle zwei Sekunden
-    setInterval(() => {
+    window.setInterval(() => {
       this.updatePlanesFromServer(
         this.selectedFeederUpdate,
         this.showOpenskyPlanes,
@@ -1095,7 +1095,7 @@ export class MapComponent implements OnInit {
     }, 2000);
 
     // Update des Icon-Caches alle 850 ms
-    setInterval(this.updateIconCache, 850);
+    window.setInterval(this.updateIconCache, 850);
   }
 
   /**
@@ -3139,7 +3139,7 @@ export class MapComponent implements OnInit {
   initUpdateRainViewerData() {
     // Update der Rainviewer-Daten alle zehn Sekunden automatisch,
     // auch wenn sich Map nicht bewegt
-    this.refreshIntervalIdRainviewer = setInterval(() => {
+    this.refreshIntervalIdRainviewer = window.setInterval(() => {
       this.makeRequestRainviewerApi();
     }, 10000);
   }
@@ -3267,7 +3267,7 @@ export class MapComponent implements OnInit {
       // initial
       this.playRainViewerForecastAnimation();
 
-      this.refreshIntervalIdRainviewerForecast = setInterval(() => {
+      this.refreshIntervalIdRainviewerForecast = window.setInterval(() => {
         this.playRainViewerForecastAnimation();
       }, 20000);
     }
@@ -3278,7 +3278,7 @@ export class MapComponent implements OnInit {
     const intervalMs = 500;
 
     for (let i = 0; i < this.forecastRainPathAndTime.length; i++) {
-      let timeoutHandler = setTimeout(
+      let timeoutHandler = window.setTimeout(
         () =>
           this.showRainViewerForecastAnimationFrame(
             this.forecastRainPathAndTime[i]
