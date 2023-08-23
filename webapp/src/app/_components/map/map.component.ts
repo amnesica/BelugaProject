@@ -215,6 +215,9 @@ export class MapComponent implements OnInit {
   // Id des Refresh-Intervals für Rainviewer-Daten (Forecast Animation)
   refreshIntervalIdRainviewerForecast: any;
 
+  // Ids für timeouts zum Anzeigen der Forecast-Animation-Frames
+  timeoutHandlerForecastAnimation: any;
+
   // Aktuell angeklickter AirportDataPoint (Feature)
   airportDataPoint: any;
 
@@ -1137,7 +1140,8 @@ export class MapComponent implements OnInit {
     // Prüfe, ob Werte zu groß sind und die initiale Karte somit verlassen wurde
     if (x1 < -179 || x2 > 190) {
       this.openSnackbar(
-        'You leaved the initial map. Aircraft and points are not shown at all or only partially on the map.'
+        'You leaved the initial map. Aircraft and points are not shown at all or only partially on the map.',
+        2000
       );
     }
 
@@ -1228,7 +1232,8 @@ export class MapComponent implements OnInit {
             'Error updating the airports from the server. Is the server running?'
           );
           this.openSnackbar(
-            'Error updating the airports from the server. Is the server running?'
+            'Error updating the airports from the server. Is the server running?',
+            2000
           );
 
           // Fetch wurde erfolgreich durchgeführt und ist nicht mehr 'pending'
@@ -1241,9 +1246,9 @@ export class MapComponent implements OnInit {
    * Öffnet eine Snackbar mit einem Text für zwei Sekunden
    * @param message Text, der als Titel angezeigt werden soll
    */
-  openSnackbar(message: string) {
+  openSnackbar(message: string, duration: number) {
     this.snackBar.open(message, 'OK', {
-      duration: 2000,
+      duration: duration,
     });
   }
 
@@ -1376,7 +1381,8 @@ export class MapComponent implements OnInit {
             'Error updating the planes from the server. Is the server running?'
           );
           this.openSnackbar(
-            'Error updating the planes from the server. Is the server running?'
+            'Error updating the planes from the server. Is the server running?',
+            2000
           );
 
           // Aktualisiere angezeigte Flugzeug-Zähler
@@ -1567,7 +1573,8 @@ export class MapComponent implements OnInit {
               'Error fetching further aircraft information from the server. Is the server running?'
             );
             this.openSnackbar(
-              'Error fetching further aircraft information from the server. Is the server running?'
+              'Error fetching further aircraft information from the server. Is the server running?',
+              2000
             );
           }
         );
@@ -1610,7 +1617,8 @@ export class MapComponent implements OnInit {
             );
 
             this.openSnackbar(
-              'Error fetching trail of aircraft from the server. Is the server running?'
+              'Error fetching trail of aircraft from the server. Is the server running?',
+              2000
             );
           }
         );
@@ -2476,7 +2484,8 @@ export class MapComponent implements OnInit {
               'Error fetching custom Range-Data from the server. Is the server running?'
             );
             this.openSnackbar(
-              'Error fetching custom Range-Data from the server. Is the server running?'
+              'Error fetching custom Range-Data from the server. Is the server running?',
+              2000
             );
           },
           () => {
@@ -2880,7 +2889,8 @@ export class MapComponent implements OnInit {
             'Error updating the iss without extent from the server. Is the server running?'
           );
           this.openSnackbar(
-            'Error updating the iss without extent from the server. Is the server running?'
+            'Error updating the iss without extent from the server. Is the server running?',
+            2000
           );
         }
       );
@@ -3159,16 +3169,18 @@ export class MapComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (rainviewerUrlData) => {
-          if (rainviewerUrlData == null) {
-            return;
-          }
-
-          let generatedTimestamp = rainviewerUrlData.generated;
+          if (rainviewerUrlData === undefined) return;
 
           // rain
           let pastRadar: Array<any> = rainviewerUrlData.radar.past;
           // rain (forecast)
           let nowcastRadar: Array<any> = rainviewerUrlData.radar.nowcast;
+          // clouds
+          let infraredSatellite: Array<any> =
+            rainviewerUrlData.satellite.infrared;
+
+          // reset array
+          this.forecastRainPathAndTime = [];
 
           let nowRain;
           if (pastRadar) {
@@ -3182,38 +3194,21 @@ export class MapComponent implements OnInit {
             }
           }
 
-          if (nowcastRadar) {
-            // rain (forecast)
-            let forecast10MinRain = nowcastRadar[0];
-            let forecast20MinRain = nowcastRadar[1];
-            let forecast30MinRain = nowcastRadar[2];
+          if (pastRadar && nowcastRadar) {
+            // rain (past + forecast)
+            for (let i = 0; i < pastRadar.length; i++) {
+              this.forecastRainPathAndTime.push(pastRadar[i]);
+            }
 
-            const updatedUrlRainIn10Minutes = this.buildRainViewerUrlRain(
-              forecast10MinRain.path
-            );
-            const updatedUrlRainIn20Minutes = this.buildRainViewerUrlRain(
-              forecast20MinRain.path
-            );
-            const updatedUrlRainIn30Minutes = this.buildRainViewerUrlRain(
-              forecast30MinRain.path
-            );
-
-            this.forecastRainPathAndTime = [
-              nowRain,
-              forecast10MinRain,
-              forecast20MinRain,
-              forecast30MinRain,
-            ];
+            for (let j = 0; j < nowcastRadar.length; j++) {
+              this.forecastRainPathAndTime.push(nowcastRadar[j]);
+            }
 
             if (this.showRainViewerRainForecast) {
               this.stopRainForecastAnimation();
               this.updateRainViewerRainForecastLayerUrl();
             }
           }
-
-          // clouds
-          let infraredSatellite: Array<any> =
-            rainviewerUrlData.satellite.infrared;
 
           if (infraredSatellite) {
             // clouds
@@ -3228,24 +3223,39 @@ export class MapComponent implements OnInit {
         },
         (error) => {
           console.log('Error loading rainviewer data');
-          this.openSnackbar('Error loading rainviewer data');
+          this.openSnackbar('Error loading rainviewer data', 2000);
         }
       );
   }
 
   buildRainViewerUrlRain(pathFromApi: string) {
-    return (
-      'https://tilecache.rainviewer.com' +
-      pathFromApi +
-      '/512/{z}/{x}/{y}/4/1_1.png'
-    );
+    return this.buildRainViewerUrl(pathFromApi, 512, 4, 1, 1);
   }
 
   buildRainViewerUrlClouds(pathFromApi: string) {
+    return this.buildRainViewerUrl(pathFromApi, 512, 0, 0, 0);
+  }
+
+  buildRainViewerUrl(
+    pathFromApi: string,
+    size: number,
+    color: number,
+    smoothImage: number,
+    displaySnowInSeperateColor: number
+  ) {
+    const baseUrl = 'https://tilecache.rainviewer.com';
     return (
-      'https://tilecache.rainviewer.com' +
+      baseUrl +
       pathFromApi +
-      '/512/{z}/{x}/{y}/0/0_0.png'
+      '/' +
+      size +
+      '/{z}/{x}/{y}/' +
+      color +
+      '/' +
+      smoothImage +
+      '_' +
+      displaySnowInSeperateColor +
+      '.png'
     );
   }
 
@@ -3256,52 +3266,49 @@ export class MapComponent implements OnInit {
 
       this.refreshIntervalIdRainviewerForecast = setInterval(() => {
         this.playRainViewerForecastAnimation();
-      }, 5000);
+      }, 20000);
     }
   }
 
   async playRainViewerForecastAnimation() {
-    this.rainviewerRainLayer
-      .getSource()
-      ?.setUrl(
-        this.buildRainViewerUrlRain(this.forecastRainPathAndTime[0].path)
+    this.timeoutHandlerForecastAnimation = [];
+    const intervalMs = 500;
+
+    for (let i = 0; i < this.forecastRainPathAndTime.length; i++) {
+      let timeoutHandler = setTimeout(
+        () =>
+          this.showRainViewerForecastAnimationFrame(
+            this.forecastRainPathAndTime[i]
+          ),
+        i * intervalMs
       );
-    this.showForecastHintSnackbar(this.forecastRainPathAndTime[0].time);
+      this.timeoutHandlerForecastAnimation.push(timeoutHandler);
+    }
+  }
 
-    setTimeout(() => {
+  showRainViewerForecastAnimationFrame(forecastRainPathAndTimeFrame) {
+    if (this.showRainViewerRainForecast && this.forecastRainPathAndTime) {
       this.rainviewerRainLayer
         .getSource()
         ?.setUrl(
-          this.buildRainViewerUrlRain(this.forecastRainPathAndTime[1].path)
+          this.buildRainViewerUrlRain(forecastRainPathAndTimeFrame.path)
         );
-      this.showForecastHintSnackbar(this.forecastRainPathAndTime[1].time);
-    }, 1000);
-
-    setTimeout(() => {
-      this.rainviewerRainLayer
-        .getSource()
-        ?.setUrl(
-          this.buildRainViewerUrlRain(this.forecastRainPathAndTime[2].path)
-        );
-      this.showForecastHintSnackbar(this.forecastRainPathAndTime[2].time);
-    }, 2000);
-
-    setTimeout(() => {
-      this.rainviewerRainLayer
-        .getSource()
-        ?.setUrl(
-          this.buildRainViewerUrlRain(this.forecastRainPathAndTime[3].path)
-        );
-      this.showForecastHintSnackbar(this.forecastRainPathAndTime[3].time);
-    }, 3000);
+      this.showForecastHintSnackbar(forecastRainPathAndTimeFrame.time);
+    }
   }
 
   showForecastHintSnackbar(timestampUTC: any) {
-    this.openSnackbar(new Date(timestampUTC * 1000).toLocaleTimeString());
+    this.openSnackbar(new Date(timestampUTC * 1000).toLocaleTimeString(), 1000);
   }
 
   stopRainForecastAnimation() {
     clearInterval(this.refreshIntervalIdRainviewerForecast);
     this.refreshIntervalIdRainviewerForecast = undefined;
+    if (this.timeoutHandlerForecastAnimation) {
+      for (let i = 0; i < this.timeoutHandlerForecastAnimation.length; i++) {
+        clearInterval(this.timeoutHandlerForecastAnimation[i]);
+      }
+      this.timeoutHandlerForecastAnimation = [];
+    }
   }
 }
