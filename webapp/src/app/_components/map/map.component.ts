@@ -2883,6 +2883,9 @@ export class MapComponent implements OnInit {
 
           // Zentriere Karte auf ISS
           this.centerMap(issPosition[0], issPosition[1], Globals.zoomLevel);
+
+          // Merke am Flugzeug, dass Aufruf bereits getätigt wurde (ISS ist Sonderfall)
+          iss.allDataWasRequested = true;
         },
         (error) => {
           console.log(

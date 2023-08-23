@@ -922,9 +922,11 @@ export class Aircraft {
       y: reenteredAircraft ? null : altitude,
     };
 
-    if(this.aircraftTrailAltitudes == undefined){
-      this.aircraftTrailAltitudes = [{ data: [{ x: timestamp, y: reenteredAircraft ? null : altitude }] }]
-    }else{
+    if (this.aircraftTrailAltitudes == undefined) {
+      this.aircraftTrailAltitudes = [
+        { data: [{ x: timestamp, y: reenteredAircraft ? null : altitude }] },
+      ];
+    } else {
       this.aircraftTrailAltitudes[0].data.push(chartDataPoint);
     }
   }
