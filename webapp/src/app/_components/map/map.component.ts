@@ -816,7 +816,7 @@ export class MapComponent implements OnInit {
       ]),
       target: 'map_canvas',
       layers: this.layers,
-      maxTilesLoading: Infinity,
+      maxTilesLoading: 16,
       view: new View({
         center: olProj.fromLonLat(Globals.SitePosition),
         zoom: Globals.zoomLevel,
