@@ -31,7 +31,7 @@ public class FlightrouteDataService {
    * @param flightId String
    * @return flightrouteData
    */
-  public FlightrouteData getFlightrouteData(String flightId) {
+  public FlightrouteData getFlightrouteData(String flightId, final boolean isFrontendRequest) {
     FlightrouteData flightrouteData = null;
 
     if (flightId != null && !flightId.isEmpty() && !flightId.equals("null")) {
@@ -46,7 +46,8 @@ public class FlightrouteDataService {
       }
 
       // Hole Daten von Opensky-Unoffical API, wenn Route-Datenbank nicht existiert oder keinen Eintrag hat
-      if (flightrouteData == null) {
+      // (Request soll nur gestellt werden, wenn das Frontend explizit Daten anfordert, bspw. bei Klick auf Flugzeug)
+      if (flightrouteData == null && isFrontendRequest) {
         flightrouteData = getFlightRouteDataFromOpensky(flightId);
       }
     }
@@ -84,11 +85,11 @@ public class FlightrouteDataService {
    *
    * @param aircraft AircraftSuperclass
    */
-  public void addFlightrouteData(AircraftSuperclass aircraft) {
+  public void addFlightrouteData(AircraftSuperclass aircraft, boolean isFrontendRequest) {
 
     // Lese Flugrouten-Information für flightId hinzu
     if (aircraft.getFlightId() != null && !aircraft.getFlightId().isEmpty()) {
-      FlightrouteData flightrouteData = getFlightrouteData(aircraft.getFlightId());
+      FlightrouteData flightrouteData = getFlightrouteData(aircraft.getFlightId(), isFrontendRequest);
       if (flightrouteData != null && flightrouteData.getFlightRoute().length() == 9) {
         aircraft.setOrigin(flightrouteData.getFlightRoute().substring(0, 4));
         aircraft.setDestination(flightrouteData.getFlightRoute().substring(5, 9));

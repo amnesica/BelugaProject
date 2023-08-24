@@ -86,7 +86,7 @@ public class AircraftService {
   public void addInformationToAircraft(AircraftSuperclass aircraft) {
     operatorDataService.addOperatorData(aircraft);
     regcodeDataService.addRegcodeData(aircraft);
-    flightrouteDataService.addFlightrouteData(aircraft);
+    flightrouteDataService.addFlightrouteData(aircraft, true);
   }
 
   /**
@@ -156,7 +156,7 @@ public class AircraftService {
       aircraftToUpdate.setFlightId(aircraftNew.getFlightId().trim());
 
       if (isLocalFeederService) {
-        flightrouteDataService.addFlightrouteData(aircraftToUpdate);
+        flightrouteDataService.addFlightrouteData(aircraftToUpdate, false);
         operatorDataService.addOperatorData(aircraftToUpdate);
       }
     }
