@@ -173,7 +173,13 @@ export class Markers {
     r = r * 2.55;
     g = g * 2.55;
     b = b * 2.55;
-    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    return (
+      '#' +
+      ((1 << 24) + (r << 16) + (g << 8) + b)
+        .toString(16)
+        .slice(1)
+        .substring(0, 6)
+    );
   }
 
   /**
