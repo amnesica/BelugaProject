@@ -75,6 +75,10 @@ public class Configuration {
   @Value("${search.engine.url}")
   private String searchEngineUrl;
 
+  // IP-Adresse des produktiven Systems (test: localhost)
+  @Value("${prod.base.url.webapp}")
+  private String prodBaseUrl;
+
   // Liste mit Feedern aus der Konfigurationsdatei
   private List<Feeder> listFeeder;
 
@@ -295,11 +299,24 @@ public class Configuration {
   }
 
   /**
+   * Methode prüft, ob die IP-Adresse des produktiven Systems gesetzt wurde (oder 'localhost' gesetzt wurde)
+   *
+   * @return true, wenn IP-Adresse gesetzt wurde
+   */
+  public boolean prodBaseUrlIsValid() {
+    if (prodBaseUrl == null || prodBaseUrl.isBlank()
+        || prodBaseUrl.equals("TODO")) {
+      exitProgram("ProdBaseUrl: IP-address for productive system has not been set in application.properties. For testing purpose 'localhost' can be used. Program will exit!");
+      return false;
+    } else return prodBaseUrl.matches("([0-9]+.[0-9]+.[0-9]+.[0-9]+)") || prodBaseUrl.equals("localhost");
+  }
+
+  /**
    * Programm wird nach Anzeige einer Meldung terminiert
    *
    * @param message String
    */
-  private void exitProgram(String message) {
+  private void exitProgram(final String message) {
     log.error(message);
     System.exit(0);
   }
