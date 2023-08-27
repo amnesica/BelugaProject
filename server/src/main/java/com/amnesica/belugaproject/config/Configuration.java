@@ -76,7 +76,7 @@ public class Configuration {
   private String searchEngineUrl;
 
   // IP-Adresse des produktiven Systems (test: localhost)
-  @Value("${prod.base.url.webapp}")
+  @Value("#{'${prod.base.url.webapp}'}")
   private String prodBaseUrl;
 
   // Liste mit Feedern aus der Konfigurationsdatei
