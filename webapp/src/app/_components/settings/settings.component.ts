@@ -181,6 +181,18 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Rainviewer Forecast (Rain) Daten angezeigt werden sollen
   rainViewerRainForecast: boolean = false;
 
+  // Liste an Maps (Verlinkung zu Map-Komponente)
+  listAvailableMaps: any;
+
+  // Default-Map-Stil value
+  selectedMapStyleValue: any;
+
+  // Ausgewählte Feeder in Multi-Select
+  selectedMapsArray = new UntypedFormControl();
+
+  // Dimmen der Map
+  dimMap: boolean = true;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -278,6 +290,14 @@ export class SettingsComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((openskyCredentialsExist) => {
         this.openskyCredentialsExist = openskyCredentialsExist;
+      });
+
+    // Weise Liste an verfügbaren Map-Stilen zu
+    this.settingsService.listAvailableMapsSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((listAvailableMaps) => {
+        this.listAvailableMaps = listAvailableMaps;
+        this.selectCurrentlySelectedMapStyle();
       });
   }
 
@@ -641,5 +661,32 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component und übergebe showAircraftPositions-Boolean
     this.settingsService.toggleAircraftPositions(this.showAircraftPositions);
+  }
+
+  changeMapStyle() {
+    if (this.selectedMapsArray.value) {
+      // Kontaktiere Map-Component und übergebe
+      // selectedMapsArray-Name
+      this.settingsService.selectMapStyle(this.selectedMapsArray.value);
+    }
+  }
+
+  selectCurrentlySelectedMapStyle() {
+    for (let i = 0; i < this.listAvailableMaps.length; i++) {
+      if (this.listAvailableMaps[i].isSelected) {
+        this.selectedMapStyleValue = this.listAvailableMaps[i].name;
+      }
+    }
+  }
+
+  /**
+   * Toggle Dimming der Map
+   * @param event MatSlideToggleChange
+   */
+  toggleDimMap(event: MatSlideToggleChange) {
+    this.dimMap = event.checked;
+
+    // Kontaktiere Map-Component und übergebe DimMap-Boolean
+    this.settingsService.toggleDimMap(this.dimMap);
   }
 }

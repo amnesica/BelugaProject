@@ -125,6 +125,58 @@
 
         <h3 style="padding-top: 1rem">General</h3>
 
+        <!-- Select, um Map-Stil auszuwählen (default: OSM) -->
+        <div style="display: flex; justify-content: center">
+          <mat-form-field appearance="fill">
+            <mat-label>Map style</mat-label>
+            <mat-select
+              multiple
+              [formControl]="selectedMapsArray"
+              [disableRipple]="true"
+              (selectionChange)="changeMapStyle()"
+              [multiple]="false"
+              [(ngModel)]="selectedMapStyleValue"
+            >
+              <mat-option
+                *ngFor="let map of listAvailableMaps"
+                [value]="map.name"
+                >{{ map.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Dim map -->
+        <div>
+          <mat-slide-toggle
+            [checked]="dimMap"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDimMap($event)"
+            >Dim Map</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Dark mode -->
+        <div>
+          <mat-slide-toggle
+            [checked]="darkMode"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDarkMode($event)"
+            >Dark Mode</mat-slide-toggle
+          >
+        </div>
+
+        <!-- WebGL -->
+        <div>
+          <mat-slide-toggle
+            [checked]="webgl"
+            [disabled]="webglNotSupported"
+            (click)="$event.stopPropagation()"
+            (change)="toggleWebgl($event)"
+            >WebGL</mat-slide-toggle
+          >
+        </div>
+
         <!-- Aktuelle Geräte-Position -->
         <p class="info-text">
           Click on the button to set the current device position to use it for
@@ -154,27 +206,6 @@
             (click)="$event.stopPropagation()"
             (change)="toggleDevicePositionAsBasis($event)"
             >Device Position as basis for calculations</mat-slide-toggle
-          >
-        </div>
-
-        <!-- Dark mode -->
-        <div>
-          <mat-slide-toggle
-            [checked]="darkMode"
-            (click)="$event.stopPropagation()"
-            (change)="toggleDarkMode($event)"
-            >Dark Mode</mat-slide-toggle
-          >
-        </div>
-
-        <!-- WebGL -->
-        <div>
-          <mat-slide-toggle
-            [checked]="webgl"
-            [disabled]="webglNotSupported"
-            (click)="$event.stopPropagation()"
-            (change)="toggleWebgl($event)"
-            >WebGL</mat-slide-toggle
           >
         </div>
 

@@ -45,6 +45,7 @@ import { Geometry } from 'ol/geom';
 import WebGLPointsLayer from 'ol/layer/WebGLPoints';
 import XYZ from 'ol/source/XYZ';
 import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
+import { Maps } from 'src/app/_classes/maps';
 
 @Component({
   selector: 'app-map',
@@ -239,6 +240,18 @@ export class MapComponent implements OnInit {
   // Layer für Airports
   airportLayer!: VectorLayer<VectorSource<Geometry>>;
 
+  // Liste an verfügbaren Map-Stilen
+  listAvailableMaps: any;
+
+  // API-Key für Geoapify
+  geoapifyApiKey: any;
+
+  // Aktuell ausgewählter Map-Stil
+  currentSelectedMapStyle: any;
+
+  // Boolean, ob Map gedimmt werden soll
+  dimMap: boolean = true;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -419,7 +432,6 @@ export class MapComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showDarkMode) => {
         this.darkMode = showDarkMode;
-        this.setLightDarkModeInMap();
         this.setCenterOfRangeRings(Globals.useDevicePositionForDistance);
         this.toggleDarkModeInRangeData();
       });
@@ -510,6 +522,22 @@ export class MapComponent implements OnInit {
       .subscribe((toggleShowAircraftPositions) => {
         this.toggleShowAircraftPositions = toggleShowAircraftPositions;
         this.receiveToggleShowAircraftPositions();
+      });
+
+    // Callback für anderen Map-Stil
+    this.settingsService.selectMapStyleSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((selectedMapStyle) => {
+        this.saveMapStyleInLocalStorage(selectedMapStyle);
+        this.createBaseLayer();
+      });
+
+    // Toggle dimme Map
+    this.settingsService.dimMapSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((dimMap) => {
+        this.dimMap = dimMap;
+        this.dimMapOrRemoveFilter();
       });
   }
 
@@ -610,6 +638,11 @@ export class MapComponent implements OnInit {
               );
             }
           }
+
+          // Setze Geoapify-API-Key (nicht mandatory)
+          if (configuration.geoapifyApiKey) {
+            this.geoapifyApiKey = configuration.geoapifyApiKey;
+          }
         },
         (error) => {
           console.log(
@@ -655,7 +688,7 @@ export class MapComponent implements OnInit {
     this.createLayer();
 
     // Erstelle Map
-    this.createMap();
+    this.createBaseMap();
 
     // Erstelle Entfernungs-Ringe und Feeder-Position
     // (Default-Zentrum: Site-Position)
@@ -666,18 +699,22 @@ export class MapComponent implements OnInit {
    * Erstellt den Basis OSM-Layer
    */
   createBaseLayer() {
-    this.layers = new Collection();
-    let url = 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    this.currentSelectedMapStyle = this.getMapStyleFromLocalStorage();
+
+    if (this.layers == undefined) {
+      this.layers = new Collection();
+    }
 
     this.osmLayer = new TileLayer({
       source: new OSM({
-        url: url,
+        url: this.currentSelectedMapStyle.url,
+        attributions: this.currentSelectedMapStyle.attribution,
       }),
       preload: Infinity,
       useInterimTilesOnError: true,
     });
 
-    this.setLightDarkModeInMap();
+    this.dimMapOrRemoveFilter();
 
     this.layers.push(this.osmLayer);
   }
@@ -798,7 +835,7 @@ export class MapComponent implements OnInit {
    * Erstellt die Map mit der aktuellen Feeder-Position
    * als Mittelpunkt
    */
-  createMap() {
+  createBaseMap() {
     // Verhindere Rotation beim Pinch to Zoom-Gesten
     let interactions = olInteraction.defaults({
       altShiftDragRotate: false,
@@ -2713,6 +2750,34 @@ export class MapComponent implements OnInit {
     this.settingsService.sendReceiveOpenskyCredentialsExist(
       Globals.openskyCredentials
     );
+    this.sendAvailableMapsToSettings();
+  }
+
+  /**
+   * Prüfe auf Geoapify-API-Key und gebe Liste an verfügbaren Maps
+   * an Settings weiter
+   */
+  sendAvailableMapsToSettings() {
+    this.listAvailableMaps = Maps.listAvailableFreeMaps;
+    if (this.geoapifyApiKey) {
+      let listGeoapifyWithApiKey: any[] = [];
+      for (let i = 0; i < Maps.listAvailableGeoapifyMaps.length; i++) {
+        let element = Maps.listAvailableGeoapifyMaps[i];
+        element.url = element.url.concat(this.geoapifyApiKey);
+        listGeoapifyWithApiKey.push(element);
+      }
+      this.listAvailableMaps.push(...listGeoapifyWithApiKey);
+    }
+    this.markSelectedMapInAvailableMaps(this.listAvailableMaps);
+    this.settingsService.sendReceiveListAvailableMaps(this.listAvailableMaps);
+  }
+
+  markSelectedMapInAvailableMaps(listMaps: any) {
+    for (let i = 0; i < listMaps.length; i++) {
+      let element = listMaps[i];
+      if (this.currentSelectedMapStyle.name == element.name)
+        element.isSelected = true;
+    }
   }
 
   /**
@@ -3017,34 +3082,8 @@ export class MapComponent implements OnInit {
    */
   setLightDarkModeInMap() {
     if (!this.osmLayer) return;
-
-    var currentFilters = this.osmLayer.getFilters();
-    this.enableDisableCurrentFilters(currentFilters, false);
-
-    // Custom filter, damit osmLayer dunkler wird
-    // (ehem. in CSS filter: brightness(55%))
-    if (this.osmLayer.getFilters().length == 3) {
-      if (this.darkMode) {
-        this.enableDisableCurrentFilters(currentFilters, true);
-      } else {
-        if (this.osmLayer.getFilters()[2]) {
-          // enable only luminosity filter for light mode
-          this.osmLayer.getFilters()[2].setActive(true);
-        } else {
-          console.log(
-            'No need for resetting filters. osmLayer.getFilters()[2] does not exist'
-          );
-        }
-      }
-    } else {
-      if (this.darkMode) {
-        this.createNewSepiaFilter();
-        this.createNewInvertFilter();
-        this.createNewLuminosityFilter('0.25');
-      } else {
-        this.createNewLuminosityFilter(Globals.luminosityValueMap.toString());
-      }
-    }
+    this.resetCurrentCSSFilter();
+    this.createNewLuminosityFilter(Globals.luminosityValueMap.toString());
   }
 
   private createNewLuminosityFilter(brightnessValue: string) {
@@ -3053,18 +3092,6 @@ export class MapComponent implements OnInit {
       operation: 'luminosity',
       value: brightnessValue,
     });
-    this.osmLayer.addFilter(filter);
-  }
-
-  private createNewInvertFilter() {
-    var filter = new Colorize();
-    filter.setFilter('invert');
-    this.osmLayer.addFilter(filter);
-  }
-
-  private createNewSepiaFilter() {
-    var filter = new Colorize();
-    filter.setFilter('sepia');
     this.osmLayer.addFilter(filter);
   }
 
@@ -3332,6 +3359,40 @@ export class MapComponent implements OnInit {
         this.planesLayer.setVisible(!this.planesLayer.getVisible());
       if (this.webglLayer)
         this.webglLayer.setVisible(!this.webglLayer.getVisible());
+    }
+  }
+
+  /**
+   * Hole gewünschte Karte aus LocalStorage, ansonsten nehme default
+   * @returns object mit MapStyle
+   */
+  getMapStyleFromLocalStorage() {
+    let mapStyle = localStorage.getItem('mapStyle');
+    return mapStyle !== null
+      ? JSON.parse(mapStyle)[0] // ist object in array
+      : Maps.listAvailableFreeMaps[0];
+  }
+
+  /**
+   * Speichere gewünschte Karte in LocalStorage
+   */
+  saveMapStyleInLocalStorage(selectedMapStyle: any) {
+    let mapStyle = this.listAvailableMaps.filter(
+      (mapStyle) => mapStyle.name == selectedMapStyle
+    );
+    localStorage.setItem('mapStyle', JSON.stringify(mapStyle));
+  }
+
+  resetCurrentCSSFilter() {
+    var currentFilters = this.osmLayer.getFilters();
+    this.enableDisableCurrentFilters(currentFilters, false);
+  }
+
+  dimMapOrRemoveFilter() {
+    if (this.dimMap) {
+      this.setLightDarkModeInMap();
+    } else {
+      this.resetCurrentCSSFilter();
     }
   }
 }

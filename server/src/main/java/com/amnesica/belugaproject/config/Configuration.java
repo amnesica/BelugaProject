@@ -79,6 +79,10 @@ public class Configuration {
   @Value("#{'${prod.base.url.webapp}'}")
   private String prodBaseUrl;
 
+  // API-Key für geoapify Karten
+  @Value("#{'${geoapify.api-key:}'}")
+  private String geoapifyApiKey;
+
   // Liste mit Feedern aus der Konfigurationsdatei
   private List<Feeder> listFeeder;
 
@@ -319,5 +323,20 @@ public class Configuration {
   private void exitProgram(final String message) {
     log.error(message);
     System.exit(0);
+  }
+
+  /**
+   * Methode prüft, ob die Zugangsdaten für Opensky gesetzt wurden
+   *
+   * @return true, wenn Zugangsdaten gesetzt wurden
+   */
+  public boolean geoapifyApiKeyIsValid() {
+    if (geoapifyApiKey == null || geoapifyApiKey.isBlank()
+        || geoapifyApiKey.equals("TODO")) {
+      log.info("Geoapify: API-Key is not present in application.properties and maps will not be available!");
+      return false;
+    } else {
+      return true;
+    }
   }
 }

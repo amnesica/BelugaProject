@@ -32,6 +32,9 @@ export class SettingsService {
   private rainViewerCloudsSource = new Subject<boolean>();
   private rainViewerRainForecastSource = new Subject<boolean>();
   private toggleShowAircraftPositionsSource = new Subject<boolean>();
+  private selectMapStyleSource = new Subject<string>();
+  private listAvailableMapsSource = new Subject<object[]>();
+  private dimMapSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -65,6 +68,9 @@ export class SettingsService {
   rainViewerRainForecast$ = this.rainViewerRainForecastSource.asObservable();
   toggleShowAircraftPositions$ =
     this.toggleShowAircraftPositionsSource.asObservable();
+  selectMapStyleSource$ = this.selectMapStyleSource.asObservable();
+  listAvailableMapsSource$ = this.listAvailableMapsSource.asObservable();
+  dimMapSource$ = this.dimMapSource.asObservable();
 
   constructor() {}
 
@@ -190,5 +196,20 @@ export class SettingsService {
   toggleAircraftPositions(showAircraftPositions: boolean) {
     this.toggleShowAircraftPositionsSource.next(showAircraftPositions);
     return this.toggleShowAircraftPositionsSource;
+  }
+
+  selectMapStyle(mapStyle: any) {
+    this.selectMapStyleSource.next(mapStyle);
+    return this.selectMapStyleSource;
+  }
+
+  sendReceiveListAvailableMaps(listAvailableMaps: object[]) {
+    this.listAvailableMapsSource.next(listAvailableMaps);
+    return this.listAvailableMapsSource;
+  }
+
+  toggleDimMap(dimMap: boolean) {
+    this.dimMapSource.next(dimMap);
+    return this.dimMapSource;
   }
 }

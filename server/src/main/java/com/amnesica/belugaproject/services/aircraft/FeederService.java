@@ -210,6 +210,11 @@ public class FeederService {
       configMap.put("openskyCredentials", false);
     }
 
+    // Prüfe, ob Geoapify-API-Key gesetzt wurde, damit Karten im Frontend verfügbar gemacht werden können
+    if (configuration.geoapifyApiKeyIsValid()) {
+      configMap.put("geoapifyApiKey", configuration.getGeoapifyApiKey());
+    }
+
     return configMap;
   }
 }
