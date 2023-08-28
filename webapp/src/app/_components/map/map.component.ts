@@ -252,6 +252,9 @@ export class MapComponent implements OnInit {
   // Boolean, ob Map gedimmt werden soll
   dimMap: boolean = true;
 
+  // Boolean, ob dunkle Range Ringe und dunkles Antenna-Icon gezeigt werden soll
+  darkRangeRings: boolean = true;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -543,6 +546,16 @@ export class MapComponent implements OnInit {
         this.dimMap = dimMap;
         this.dimMapOrRemoveFilter();
       });
+
+    // Toggle dunkle Range Ringe und dunkles Antenna-Icon
+    this.settingsService.darkRangeRingsSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((darkRangeRings) => {
+        this.darkRangeRings = darkRangeRings;
+        this.createRangeRingsAndSitePos(
+          Globals.DevicePosition ? Globals.DevicePosition : Globals.SitePosition
+        );
+      });
   }
 
   ngOnDestroy() {
@@ -802,8 +815,8 @@ export class MapComponent implements OnInit {
       // Style des Rings
       let circleStyle = new Style({
         stroke: new Stroke({
-          color: this.darkMode ? 'white' : 'black',
-          width: this.darkMode ? 0.4 : 1,
+          color: this.darkRangeRings ? 'black' : 'white',
+          width: this.darkRangeRings ? 1 : 0.4,
         }),
       });
 
@@ -816,9 +829,9 @@ export class MapComponent implements OnInit {
     // fuege Marker zu StaticFeatures hinzu
     const antennaStyle = new Style({
       image: new Icon({
-        src: this.darkMode
-          ? '../../assets/antenna_dark.svg'
-          : '../../assets/antenna.svg',
+        src: this.darkRangeRings
+          ? '../../assets/antenna.svg'
+          : '../../assets/antenna_dark.svg',
         offset: [0, 0],
         opacity: 1,
         scale: 0.7,

@@ -35,6 +35,7 @@ export class SettingsService {
   private selectMapStyleSource = new Subject<string>();
   private listAvailableMapsSource = new Subject<object[]>();
   private dimMapSource = new Subject<boolean>();
+  private darkRangeRingsSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -71,6 +72,7 @@ export class SettingsService {
   selectMapStyleSource$ = this.selectMapStyleSource.asObservable();
   listAvailableMapsSource$ = this.listAvailableMapsSource.asObservable();
   dimMapSource$ = this.dimMapSource.asObservable();
+  darkRangeRingsSource$ = this.darkRangeRingsSource.asObservable();
 
   constructor() {}
 
@@ -211,5 +213,10 @@ export class SettingsService {
   toggleDimMap(dimMap: boolean) {
     this.dimMapSource.next(dimMap);
     return this.dimMapSource;
+  }
+
+  toggleDarkRangeRings(darkRangeRings: boolean) {
+    this.darkRangeRingsSource.next(darkRangeRings);
+    return this.darkRangeRingsSource;
   }
 }

@@ -153,6 +153,16 @@
           >
         </div>
 
+        <!-- Dark range rings and symbols -->
+        <div>
+          <mat-slide-toggle
+            [checked]="darkRangeRings"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDarkRangeRings($event)"
+            >Dark Range Rings</mat-slide-toggle
+          >
+        </div>
+
         <!-- Dark mode -->
         <div>
           <mat-slide-toggle

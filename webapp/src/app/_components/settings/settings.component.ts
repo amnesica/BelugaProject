@@ -196,6 +196,9 @@ export class SettingsComponent implements OnInit {
   // Dimmen der Map
   dimMap: boolean = true;
 
+  // dunkle Range Ringe und dunkles Antenna-Icon
+  darkRangeRings: boolean = true;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -699,5 +702,16 @@ export class SettingsComponent implements OnInit {
   deleteCurrentDevicePosition() {
     // Kontaktiere Map-Component
     this.settingsService.setCurrentDevicePosition(false);
+  }
+
+  /**
+   * Toggle dunkle Range Ringe und dunkles Antenna-Icon
+   * @param event MatSlideToggleChange
+   */
+  toggleDarkRangeRings(event: MatSlideToggleChange) {
+    this.darkRangeRings = event.checked;
+
+    // Kontaktiere Map-Component und übergebe darkRangeRings-Boolean
+    this.settingsService.toggleDarkRangeRings(this.darkRangeRings);
   }
 }
