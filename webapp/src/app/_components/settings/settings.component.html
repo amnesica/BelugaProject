@@ -53,19 +53,16 @@
         </div>
 
         <!-- Select, um Flugzeuge nach Feeder zu selektieren (default: Alle Feeder) -->
-        <p class="info-text">
-          Select planes by feeder: (By default all feeders are displayed)
-        </p>
         <div style="display: flex; justify-content: center">
           <mat-form-field appearance="fill">
-            <mat-label>Feeder</mat-label>
+            <mat-label>Select planes by feeder</mat-label>
             <mat-select
               multiple
               [formControl]="selectedFeederArray"
               [disableRipple]="true"
               (selectionChange)="selectPlanesByFeeder()"
               [multiple]="false"
-              [value]="0"
+              [(ngModel)]="selectedFeederValue"
             >
               <mat-option value="AllFeeder">All feeder</mat-option>
               <mat-option

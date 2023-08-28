@@ -139,6 +139,9 @@ export class SettingsComponent implements OnInit {
   // Ausgewählte Feeder in Multi-Select
   selectedFeederArray = new UntypedFormControl();
 
+  // Default-Wert für Feeder
+  selectedFeederValue = 'AllFeeder';
+
   // App-Name
   appName: any;
 
