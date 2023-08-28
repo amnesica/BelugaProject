@@ -467,8 +467,12 @@ export class MapComponent implements OnInit {
     // Bestimme aktuellen Geräte-Standort
     this.settingsService.setCurrentDevicePositionSource$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => {
-        this.setCurrentDevicePosition();
+      .subscribe((setDevicePosition) => {
+        if (setDevicePosition) {
+          this.setCurrentDevicePosition();
+        } else {
+          this.deleteDevicePosition();
+        }
       });
 
     // Toggle Geräte-Standort als Basis für versch. Berechnungen (Zentrum für Range-Ringe,
@@ -937,6 +941,7 @@ export class MapComponent implements OnInit {
     // Geräte-Position hinzu
     this.drawLayer = new VectorLayer({
       source: this.DrawFeature,
+      style: new Style({}),
       renderOrder: undefined,
       zIndex: 110,
     });
@@ -3040,6 +3045,36 @@ export class MapComponent implements OnInit {
       if (coordinates === undefined) return;
 
       // Lösche bisherige Geräte-Position, wenn diese existiert
+      this.removeDevicePositionFromStaticFeatures();
+
+      let feature = new Feature(new Point(olProj.fromLonLat(coordinates)));
+      feature.setStyle(Styles.DevicePositionStyle);
+      feature.set('name', 'devicePosition');
+      this.StaticFeatures.addFeature(feature);
+    }
+  }
+
+  deleteDevicePosition() {
+    if (
+      Globals.DevicePosition !== null ||
+      localStorage.getItem('coordinatesDevicePosition') !== null
+    ) {
+      // Lösche bisherige Geräte-Position, wenn diese existiert
+      this.removeDevicePositionFromStaticFeatures();
+
+      localStorage.removeItem('coordinatesDevicePosition');
+
+      // reset
+      Globals.DevicePosition = null;
+    }
+  }
+
+  removeDevicePositionFromStaticFeatures() {
+    if (
+      Globals.DevicePosition !== null ||
+      localStorage.getItem('coordinatesDevicePosition') !== null
+    ) {
+      // Lösche bisherige Geräte-Position, wenn diese existiert
       let staticFeatures = this.StaticFeatures.getFeatures();
       for (let i in staticFeatures) {
         let feature: any = staticFeatures[i];
@@ -3052,11 +3087,6 @@ export class MapComponent implements OnInit {
           this.StaticFeatures.removeFeature(feature);
         }
       }
-
-      let feature = new Feature(new Point(olProj.fromLonLat(coordinates)));
-      feature.setStyle(Styles.DevicePositionStyle);
-      feature.set('name', 'devicePosition');
-      this.StaticFeatures.addFeature(feature);
     }
   }
 

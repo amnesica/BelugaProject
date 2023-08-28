@@ -692,4 +692,12 @@ export class SettingsComponent implements OnInit {
     // Kontaktiere Map-Component und übergebe DimMap-Boolean
     this.settingsService.toggleDimMap(this.dimMap);
   }
+
+  /**
+   * Löscht die aktuelle Geräte-Position auf der Map
+   */
+  deleteCurrentDevicePosition() {
+    // Kontaktiere Map-Component
+    this.settingsService.setCurrentDevicePosition(false);
+  }
 }

@@ -190,20 +190,27 @@
           >
             Set Device Position
           </button>
+          <button
+            mat-button
+            style="background-color: gray; color: white"
+            (click)="deleteCurrentDevicePosition()"
+          >
+            Delete Device Position
+          </button>
         </div>
 
         <!-- Toggle Geräte-Position als Basis für Berechnungen -->
         <div>
-          <p class="info-text">
-            Set device position as basis for range rings, distance calculation
-            and POMD-feature
-          </p>
           <mat-slide-toggle
             [checked]="devicePositionAsBasis"
             (click)="$event.stopPropagation()"
             (change)="toggleDevicePositionAsBasis($event)"
-            >Device Position as basis for calculations</mat-slide-toggle
           >
+            <p class="info-text">
+              Device Position as basis for range rings, distance calculation and
+              POMD-feature
+            </p>
+          </mat-slide-toggle>
         </div>
 
         <h3 style="padding-top: 1rem">Weather</h3>
