@@ -197,7 +197,7 @@ export class SettingsComponent implements OnInit {
   dimMap: boolean = true;
 
   // dunkle Range Ringe und dunkles Antenna-Icon
-  darkRangeRings: boolean = true;
+  darkStaticFeatures: boolean = true;
 
   // Icon size multiplier für Plane-Icons
   sliderIconSizeValue: any = [1.3];
@@ -711,11 +711,11 @@ export class SettingsComponent implements OnInit {
    * Toggle dunkle Range Ringe und dunkles Antenna-Icon
    * @param event MatSlideToggleChange
    */
-  toggleDarkRangeRings(event: MatSlideToggleChange) {
-    this.darkRangeRings = event.checked;
+  toggleDarkStaticFeatures(event: MatSlideToggleChange) {
+    this.darkStaticFeatures = event.checked;
 
-    // Kontaktiere Map-Component und übergebe darkRangeRings-Boolean
-    this.settingsService.toggleDarkRangeRings(this.darkRangeRings);
+    // Kontaktiere Map-Component und übergebe darkStaticFeatures-Boolean
+    this.settingsService.toggleDarkStaticFeatures(this.darkStaticFeatures);
   }
 
   onInputChangeIconSize(event: Event) {

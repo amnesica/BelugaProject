@@ -35,7 +35,7 @@ export class SettingsService {
   private selectMapStyleSource = new Subject<string>();
   private listAvailableMapsSource = new Subject<object[]>();
   private dimMapSource = new Subject<boolean>();
-  private darkRangeRingsSource = new Subject<boolean>();
+  private darkStaticFeaturesSource = new Subject<boolean>();
   private setIconSizeSource = new Subject<number>();
 
   // Observable streams
@@ -73,7 +73,7 @@ export class SettingsService {
   selectMapStyleSource$ = this.selectMapStyleSource.asObservable();
   listAvailableMapsSource$ = this.listAvailableMapsSource.asObservable();
   dimMapSource$ = this.dimMapSource.asObservable();
-  darkRangeRingsSource$ = this.darkRangeRingsSource.asObservable();
+  darkStaticFeaturesSource$ = this.darkStaticFeaturesSource.asObservable();
   setIconSizeSource$ = this.setIconSizeSource.asObservable();
 
   constructor() {}
@@ -217,9 +217,9 @@ export class SettingsService {
     return this.dimMapSource;
   }
 
-  toggleDarkRangeRings(darkRangeRings: boolean) {
-    this.darkRangeRingsSource.next(darkRangeRings);
-    return this.darkRangeRingsSource;
+  toggleDarkStaticFeatures(darkStaticFeatures: boolean) {
+    this.darkStaticFeaturesSource.next(darkStaticFeatures);
+    return this.darkStaticFeaturesSource;
   }
 
   setIconSize(value: number) {

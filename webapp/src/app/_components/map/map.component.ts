@@ -253,7 +253,7 @@ export class MapComponent implements OnInit {
   dimMap: boolean = true;
 
   // Boolean, ob dunkle Range Ringe und dunkles Antenna-Icon gezeigt werden soll
-  darkRangeRings: boolean = true;
+  darkStaticFeatures: boolean = true;
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
@@ -530,10 +530,10 @@ export class MapComponent implements OnInit {
       });
 
     // Toggle dunkle Range Ringe und dunkles Antenna-Icon
-    this.settingsService.darkRangeRingsSource$
+    this.settingsService.darkStaticFeaturesSource$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((darkRangeRings) => {
-        this.darkRangeRings = darkRangeRings;
+      .subscribe((darkStaticFeatures) => {
+        this.darkStaticFeatures = darkStaticFeatures;
         this.createRangeRingsAndSitePos(
           Globals.DevicePosition ? Globals.DevicePosition : Globals.SitePosition
         );
@@ -805,8 +805,8 @@ export class MapComponent implements OnInit {
       // Style des Rings
       let circleStyle = new Style({
         stroke: new Stroke({
-          color: this.darkRangeRings ? 'black' : 'white',
-          width: this.darkRangeRings ? 1 : 0.4,
+          color: this.darkStaticFeatures ? 'black' : 'white',
+          width: this.darkStaticFeatures ? 1 : 0.4,
         }),
       });
 
@@ -819,7 +819,7 @@ export class MapComponent implements OnInit {
     // fuege Marker zu StaticFeatures hinzu
     const antennaStyle = new Style({
       image: new Icon({
-        src: this.darkRangeRings
+        src: this.darkStaticFeatures
           ? '../../assets/antenna.svg'
           : '../../assets/antenna_dark.svg',
         offset: [0, 0],
@@ -2554,7 +2554,7 @@ export class MapComponent implements OnInit {
     let feature = new Feature(polygon);
     feature.set('name', 'RangeDataPolygon');
     feature.setStyle(
-      this.darkRangeRings
+      this.darkStaticFeatures
         ? Styles.RangeDataPolygonStyle
         : Styles.RangeDataPolygonStyleWhite
     );
@@ -2584,7 +2584,7 @@ export class MapComponent implements OnInit {
 
         // Setze Style RangeDataPointStyle
         feature.setStyle(
-          this.darkRangeRings
+          this.darkStaticFeatures
             ? Styles.RangeDataPointStyle
             : Styles.RangeDataPointStyleWhite
         );
@@ -2770,13 +2770,13 @@ export class MapComponent implements OnInit {
       this.RangeDataFeatures.getFeatures().forEach((feature) => {
         if (feature.get('name') != 'RangeDataPolygon') {
           feature.setStyle(
-            this.darkRangeRings
+            this.darkStaticFeatures
               ? Styles.RangeDataPointStyle
               : Styles.RangeDataPointStyleWhite
           );
         } else if (feature.get('name') == 'RangeDataPolygon') {
           feature.setStyle(
-            this.darkRangeRings
+            this.darkStaticFeatures
               ? Styles.RangeDataPolygonStyle
               : Styles.RangeDataPolygonStyleWhite
           );
