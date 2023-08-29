@@ -717,8 +717,8 @@ export class MapComponent implements OnInit {
         url: this.currentSelectedMapStyle.url,
         attributions: this.currentSelectedMapStyle.attribution,
       }),
-      preload: Infinity,
-      useInterimTilesOnError: true,
+      preload: 0,
+      useInterimTilesOnError: false,
     });
 
     this.dimMapOrRemoveFilter();
