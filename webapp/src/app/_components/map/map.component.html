@@ -82,511 +82,72 @@
   </mat-card>
 
   <!-- Popup für RangeData -->
-  <div id="rangeDataPopup" [style.bottom]="rangeDataPopupBottomValue">
+  <mat-card
+    id="rangeDataPopup"
+    [style.bottom]="rangeDataPopupBottomValue"
+    [ngClass]="
+      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+    "
+  >
     <div *ngIf="showPopupRangeDataPoint && rangeDataPoint">
-      <mat-card-content>
-        <mat-grid-list
-          cols="2"
-          rowHeight="1rem"
-          [ngClass]="
-            darkMode ? 'background-color-dark' : 'background-color-light'
-          "
-        >
-          <!-- hex label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Hex</p>
-            </div>
-          </mat-grid-tile>
+      <mat-card-header id="rangeDatPopupHeader">
+        <!-- flightId -->
+        <mat-card-title *ngIf="rangeDataPoint.flightId" style="color: #f8c023">
+          {{ rangeDataPoint.flightId }}
+        </mat-card-title>
+        <!-- hex -->
+        <mat-card-subtitle *ngIf="rangeDataPoint.hex" style="color: #d5d5d5">{{
+          rangeDataPoint.hex
+        }}</mat-card-subtitle>
+      </mat-card-header>
 
-          <!-- hex value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
+      <table>
+        <ng-container *ngFor="let item of rangeDataPoint.attributes">
+          <tr
             [ngClass]="
               darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
+                ? 'background-and-color-dark airportDataPopup-tr-dark'
+                : 'background-and-color-light color-grey'
             "
           >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.hex"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.hex }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.hex"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
+            <td
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
+                  : 'background-and-color-light color-grey'
+              "
+            >
+              <div>
+                <p style="font-size: small; padding-inline: 0.5rem">
+                  {{ item.key }}
+                </p>
+              </div>
+            </td>
 
-          <!-- latitude label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Latitude</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- latitude value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.x"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.x }}°
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.x"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- longitude label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Longitude</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- longitude value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.y"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.y }}°
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.y"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- type label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Type</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- type value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.type"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.type }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.type"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- category label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Category</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- category value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.category"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.category }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.category"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- registration label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Registration</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- registration value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.registration"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.registration }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.registration"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- flightId label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">FlightId</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- flightId value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.flightId"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.flightId }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.flightId"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- altitude label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Altitude</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- altitude value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.altitude"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.altitude }} ft
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.altitude"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- distance label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Distance</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- distance value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.distance"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.distance }} km
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.distance"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- feederList label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Feeder</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- feederList value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.feederList"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.feederList }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.feederList"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- sourceList label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Source</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- sourceList value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.sourceList"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.sourceList }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.sourceList"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- timestamp label -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p style="font-size: small">Timestamp</p>
-            </div>
-          </mat-grid-tile>
-
-          <!-- timestamp value -->
-          <mat-grid-tile
-            colspan="1"
-            rowspan="1"
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light'
-            "
-          >
-            <div>
-              <p
-                *ngIf="rangeDataPoint.timestamp"
-                style="font-size: small; font-weight: bold"
-              >
-                {{ rangeDataPoint.timestamp }}
-              </p>
-              <p
-                *ngIf="!rangeDataPoint.timestamp"
-                style="font-size: small; font-weight: bold"
-              >
-                N/A
-              </p>
-            </div>
-          </mat-grid-tile>
-        </mat-grid-list>
-      </mat-card-content>
+            <td
+              [ngClass]="
+                darkMode
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
+                  : 'background-and-color-light'
+              "
+            >
+              <div>
+                <p
+                  style="
+                    font-size: small;
+                    font-weight: bold;
+                    padding-inline: 0.5rem;
+                  "
+                >
+                  {{ item.value }}
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
     </div>
-  </div>
+  </mat-card>
 
   <!-- Popup für AirportData -->
   <mat-card

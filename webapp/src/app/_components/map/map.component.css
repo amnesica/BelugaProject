@@ -44,31 +44,26 @@ mat-card-header {
   text-align: left;
 }
 
+#rangeDatPopupHeader{
+  height: 3rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+}
+
 #rangeDataPopup {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
   padding: 0%;
-  position: absolute;
-  left: -49px;
-  min-width: 16rem;
-  z-index: 5;
-}
-
-#rangeDataPopup:after {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-  z-index: 5;
-}
-
-#rangeDataPopup:after {
-  border-top-color: #efeff4;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
-  z-index: 5;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
 }
 
 ::ng-deep .mat-card-header-text{

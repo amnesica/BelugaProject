@@ -1880,18 +1880,78 @@ export class MapComponent implements OnInit {
 
     // Erstelle aktuell angeklicktes RangeDataPoint aus Feature
     this.rangeDataPoint = {
-      x: rangePoint.x,
-      y: rangePoint.y,
-      timestamp: dateToShow,
-      distance: rangePoint.distance,
-      feederList: rangePoint.feederList,
-      sourceList: rangePoint.sourceList,
-      altitude: rangePoint.altitude,
-      hex: rangePoint.hexAircraft,
-      flightId: rangePoint.flightId,
-      registration: rangePoint.registration,
-      type: rangePoint.type,
-      category: rangePoint.category,
+      flightId:
+        typeof rangePoint.flightId !== 'undefined'
+          ? rangePoint.flightId
+          : 'N/A',
+      hex:
+        typeof rangePoint.hexAircraft !== 'undefined'
+          ? rangePoint.hexAircraft
+          : 'N/A',
+      attributes: [
+        {
+          key: 'Latitude',
+          value:
+            typeof rangePoint.x !== 'undefined' ? rangePoint.x + '°' : 'N/A',
+        },
+        {
+          key: 'Longitude',
+          value:
+            typeof rangePoint.y !== 'undefined' ? rangePoint.y + '°' : 'N/A',
+        },
+        {
+          key: 'Type',
+          value:
+            typeof rangePoint.type !== 'undefined' ? rangePoint.type : 'N/A',
+        },
+        {
+          key: 'Category',
+          value:
+            typeof rangePoint.category !== 'undefined'
+              ? rangePoint.category
+              : 'N/A',
+        },
+        {
+          key: 'Registration',
+          value:
+            typeof rangePoint.xregistration !== 'undefined'
+              ? rangePoint.registration
+              : 'N/A',
+        },
+        {
+          key: 'Altitude',
+          value:
+            typeof rangePoint.altitude !== 'undefined'
+              ? rangePoint.altitude + ' ft'
+              : 'N/A',
+        },
+        {
+          key: 'Distance',
+          value:
+            typeof rangePoint.distance !== 'undefined'
+              ? rangePoint.distance + ' km'
+              : 'N/A',
+        },
+        {
+          key: 'Feeder',
+          value:
+            typeof rangePoint.feederList !== 'undefined'
+              ? rangePoint.feederList
+              : 'N/A',
+        },
+        {
+          key: 'Source',
+          value:
+            typeof rangePoint.sourceList !== 'undefined'
+              ? rangePoint.sourceList
+              : 'N/A',
+        },
+        {
+          key: 'Timestamp',
+          value:
+            typeof rangePoint.timestamp !== 'undefined' ? dateToShow : 'N/A',
+        },
+      ],
     };
 
     // Weise popup als overlay zu (Hinweis: Hier ist 'document.getElementById'
