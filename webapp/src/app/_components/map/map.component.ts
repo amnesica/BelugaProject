@@ -1978,21 +1978,53 @@ export class MapComponent implements OnInit {
     if (airportPoint == undefined) return;
 
     // Erstelle aktuell angeklicktes AirportDataPoint aus Feature
-    let elevation =
-      airportPoint.elevation_ft +
-      ' ft / ' +
-      (airportPoint.elevation_ft * 0.328084).toFixed(0) +
-      ' m';
+    let elevation;
+
+    if (typeof airportPoint.elevation_ft !== 'undefined') {
+      elevation =
+        airportPoint.elevation_ft +
+        ' ft / ' +
+        (airportPoint.elevation_ft * 0.328084).toFixed(0) +
+        ' m';
+    }
 
     this.airportDataPoint = {
-      icao: airportPoint.icao,
+      icao:
+        typeof airportPoint.icao !== 'undefined' ? airportPoint.icao : 'N/A',
       featureName: airportPoint.featureName,
       attributes: [
-        { key: 'Elevation', value: elevation },
-        { key: 'IATA', value: airportPoint.iata },
-        { key: 'City', value: airportPoint.city },
-        { key: 'Type', value: airportPoint.type },
-        { key: 'Name', value: airportPoint.name },
+        {
+          key: 'Elevation',
+          value: typeof elevation !== 'undefined' ? elevation : 'N/A',
+        },
+        {
+          key: 'IATA',
+          value:
+            typeof airportPoint.iata !== 'undefined'
+              ? airportPoint.iata
+              : 'N/A',
+        },
+        {
+          key: 'City',
+          value:
+            typeof airportPoint.city !== 'undefined'
+              ? airportPoint.city
+              : 'N/A',
+        },
+        {
+          key: 'Type',
+          value:
+            typeof airportPoint.type !== 'undefined'
+              ? airportPoint.type
+              : 'N/A',
+        },
+        {
+          key: 'Name',
+          value:
+            typeof airportPoint.name !== 'undefined'
+              ? airportPoint.name
+              : 'N/A',
+        },
       ],
     };
 
