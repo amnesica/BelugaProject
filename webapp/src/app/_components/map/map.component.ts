@@ -419,7 +419,6 @@ export class MapComponent implements OnInit {
       .subscribe((showDarkMode) => {
         this.darkMode = showDarkMode;
         this.setCenterOfRangeRings(Globals.useDevicePositionForDistance);
-        this.toggleDarkModeInRangeData();
       });
 
     // Toggle POMD-Point
@@ -538,6 +537,7 @@ export class MapComponent implements OnInit {
         this.createRangeRingsAndSitePos(
           Globals.DevicePosition ? Globals.DevicePosition : Globals.SitePosition
         );
+        this.toggleDarkModeInRangeData();
       });
 
     // Setze icon size der Planes
@@ -2554,9 +2554,9 @@ export class MapComponent implements OnInit {
     let feature = new Feature(polygon);
     feature.set('name', 'RangeDataPolygon');
     feature.setStyle(
-      this.darkMode
-        ? Styles.RangeDataPolygonStyleDark
-        : Styles.RangeDataPolygonStyle
+      this.darkRangeRings
+        ? Styles.RangeDataPolygonStyle
+        : Styles.RangeDataPolygonStyleWhite
     );
     this.RangeDataFeatures.addFeature(feature);
 
@@ -2584,9 +2584,9 @@ export class MapComponent implements OnInit {
 
         // Setze Style RangeDataPointStyle
         feature.setStyle(
-          this.darkMode
-            ? Styles.RangeDataPointStyleDark
-            : Styles.RangeDataPointStyle
+          this.darkRangeRings
+            ? Styles.RangeDataPointStyle
+            : Styles.RangeDataPointStyleWhite
         );
 
         // Füge Feature zu RangeDataFeatures hinzu
@@ -2770,15 +2770,15 @@ export class MapComponent implements OnInit {
       this.RangeDataFeatures.getFeatures().forEach((feature) => {
         if (feature.get('name') != 'RangeDataPolygon') {
           feature.setStyle(
-            this.darkMode
-              ? Styles.RangeDataPointStyleDark
-              : Styles.RangeDataPointStyle
+            this.darkRangeRings
+              ? Styles.RangeDataPointStyle
+              : Styles.RangeDataPointStyleWhite
           );
         } else if (feature.get('name') == 'RangeDataPolygon') {
           feature.setStyle(
-            this.darkMode
-              ? Styles.RangeDataPolygonStyleDark
-              : Styles.RangeDataPolygonStyle
+            this.darkRangeRings
+              ? Styles.RangeDataPolygonStyle
+              : Styles.RangeDataPolygonStyleWhite
           );
         }
       });

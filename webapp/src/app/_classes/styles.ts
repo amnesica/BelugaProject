@@ -111,7 +111,7 @@ export class Styles {
   });
 
   // Dark-Style für Range-Data Polygon
-  static RangeDataPolygonStyleDark: Style = new Style({
+  static RangeDataPolygonStyleWhite: Style = new Style({
     fill: new Fill({
       color: 'rgba(100, 100, 100, 0.5)',
     }),
@@ -132,7 +132,7 @@ export class Styles {
   });
 
   // Dark-Style für Range-Data Points
-  static RangeDataPointStyleDark: Style = new Style({
+  static RangeDataPointStyleWhite: Style = new Style({
     image: new Circle({
       fill: new Fill({
         color: 'rgba(100, 100, 100, 1)',
