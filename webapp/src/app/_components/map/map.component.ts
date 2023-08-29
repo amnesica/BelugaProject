@@ -347,24 +347,7 @@ export class MapComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((selectedFeederUpdate) => {
         this.selectedFeederUpdate = selectedFeederUpdate;
-
-        // Entferne alle Flugzeuge, die nicht vom ausgewählten Feeder kommen
-        if (this.selectedFeederUpdate != 'AllFeeder') {
-          this.removeAllNotSelectedFeederPlanes(selectedFeederUpdate);
-        }
-
-        // Aktualisiere Flugzeuge vom Server
-        this.updatePlanesFromServer(
-          this.selectedFeederUpdate,
-          this.showOpenskyPlanes,
-          this.showIss
-        );
-
-        // Aktualisiere Daten des markierten Flugzeugs
-        if (this.aircraft) {
-          this.getAllAircraftData(this.aircraft);
-          this.getTrailToAircraft(this.aircraft, this.selectedFeederUpdate);
-        }
+        this.showAircraftFromFeeder(selectedFeederUpdate);
       });
 
     // Toggle Flughäfen auf der Karte
@@ -555,6 +538,13 @@ export class MapComponent implements OnInit {
         this.createRangeRingsAndSitePos(
           Globals.DevicePosition ? Globals.DevicePosition : Globals.SitePosition
         );
+      });
+
+    // Setze icon size der Planes
+    this.settingsService.setIconSizeSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((iconSizeFactor) => {
+        this.setNewScaleAndRedrawPlanes(iconSizeFactor);
       });
   }
 
@@ -3436,6 +3426,43 @@ export class MapComponent implements OnInit {
       this.setLightDarkModeInMap();
     } else {
       this.resetCurrentCSSFilter();
+    }
+  }
+
+  showAircraftFromFeeder(selectedFeederUpdate: string) {
+    // Entferne alle Flugzeuge, die nicht vom ausgewählten Feeder kommen
+    if (this.selectedFeederUpdate != 'AllFeeder') {
+      this.removeAllNotSelectedFeederPlanes(selectedFeederUpdate);
+    }
+
+    // Aktualisiere Flugzeuge vom Server
+    this.updatePlanesFromServer(
+      this.selectedFeederUpdate,
+      this.showOpenskyPlanes,
+      this.showIss
+    );
+
+    // Aktualisiere Daten des markierten Flugzeugs
+    if (this.aircraft) {
+      this.getAllAircraftData(this.aircraft);
+      this.getTrailToAircraft(this.aircraft, this.selectedFeederUpdate);
+    }
+  }
+
+  // TODO test method for changing icon scale dynamically
+  setNewScaleAndRedrawPlanes(iconSizeFactor: number) {
+    Globals.scaleIcons = iconSizeFactor;
+
+    // Leere webglFeatures
+    if (Globals.webgl) {
+      Globals.WebglFeatures.clear();
+    }
+
+    // Erstelle Marker neu von jedem Flugzeug
+    for (let i in Globals.PlanesOrdered) {
+      const aircraft = Globals.PlanesOrdered[i];
+      aircraft.clearMarker();
+      aircraft.updateMarker(false);
     }
   }
 }

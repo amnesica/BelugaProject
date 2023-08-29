@@ -27,7 +27,7 @@ export class Globals {
   static PlaneIconFeatures = new Vector();
 
   // Flugzeug-Icons als Features (WebGL)
-  static WebglFeatures = new Vector<Point>()
+  static WebglFeatures = new Vector<Point>();
 
   // Liste mit Flugzeugen (sollte immer mit Planes synchron gehalten werden)
   static PlanesOrdered: Aircraft[] = [];
@@ -49,7 +49,7 @@ export class Globals {
   // Hinweis: "kleines" Info-Fenster ist noch die Hover-Info-Box
   static displayAircraftInfoLarge = false;
 
-  // Skalierung der Flugzeug-Icons
+  // Skalierung der Flugzeug-Icons (WebGL & Non-WebGL)
   static scaleIcons;
 
   // Boolean, ob Flugzeug-Labels angezeigt werden sollen

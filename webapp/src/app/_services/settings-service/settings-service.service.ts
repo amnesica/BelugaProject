@@ -36,6 +36,7 @@ export class SettingsService {
   private listAvailableMapsSource = new Subject<object[]>();
   private dimMapSource = new Subject<boolean>();
   private darkRangeRingsSource = new Subject<boolean>();
+  private setIconSizeSource = new Subject<number>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -73,6 +74,7 @@ export class SettingsService {
   listAvailableMapsSource$ = this.listAvailableMapsSource.asObservable();
   dimMapSource$ = this.dimMapSource.asObservable();
   darkRangeRingsSource$ = this.darkRangeRingsSource.asObservable();
+  setIconSizeSource$ = this.setIconSizeSource.asObservable();
 
   constructor() {}
 
@@ -218,5 +220,10 @@ export class SettingsService {
   toggleDarkRangeRings(darkRangeRings: boolean) {
     this.darkRangeRingsSource.next(darkRangeRings);
     return this.darkRangeRingsSource;
+  }
+
+  setIconSize(value: number) {
+    this.setIconSizeSource.next(value);
+    return this.setIconSizeSource;
   }
 }

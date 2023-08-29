@@ -1105,6 +1105,12 @@ export class Aircraft {
       Globals.WebglFeatures.removeFeature(this.glMarker);
       this.glMarker.visible = false;
     }
+
+    delete this.glMarker;
+    delete this.marker;
+    delete this.olPoint;
+    delete this.markerSvgKey;
+    delete this.styleKey;
   }
 
   /**

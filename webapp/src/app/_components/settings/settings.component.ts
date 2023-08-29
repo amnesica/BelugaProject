@@ -199,6 +199,9 @@ export class SettingsComponent implements OnInit {
   // dunkle Range Ringe und dunkles Antenna-Icon
   darkRangeRings: boolean = true;
 
+  // Icon size multiplier für Plane-Icons
+  sliderIconSizeValue: any = [1.3];
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -713,5 +716,12 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component und übergebe darkRangeRings-Boolean
     this.settingsService.toggleDarkRangeRings(this.darkRangeRings);
+  }
+
+  onInputChangeIconSize(event: Event) {
+    let value = (event.target as HTMLInputElement).value;
+
+    // Kontaktiere Map-Component
+    this.settingsService.setIconSize(+value);
   }
 }

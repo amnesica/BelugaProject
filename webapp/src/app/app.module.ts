@@ -32,13 +32,18 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatSliderModule } from '@angular/material/slider';
 
 import { MtxDatetimepickerModule } from '@ng-matero/extensions/datetimepicker';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
+import {
+  DateAdapter,
+  MAT_DATE_LOCALE,
+  MAT_DATE_FORMATS,
+} from '@angular/material/core';
 
-import { NgApexchartsModule } from "ng-apexcharts";
-import {MatExpansionModule} from '@angular/material/expansion'; 
+import { NgApexchartsModule } from 'ng-apexcharts';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -79,7 +84,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatCheckboxModule,
     MtxDatetimepickerModule,
     NgApexchartsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSliderModule,
   ],
   providers: [
     {

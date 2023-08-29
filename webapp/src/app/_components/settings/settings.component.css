@@ -73,3 +73,20 @@
   background-color: #383838;
   color: white;
 }
+
+.mat-mdc-slider {
+  margin: 0.7rem !important;
+
+  --mdc-slider-handle-color: #f8c023;
+  --mdc-slider-focus-handle-color: #f8c023;
+  --mdc-slider-hover-handle-color: #f8c02333;
+  --mdc-slider-active-track-color: #f8c023;
+  --mdc-slider-inactive-track-color: #232323;
+  --mat-mdc-slider-ripple-color: #f8c023;
+  --mat-mdc-slider-hover-ripple-color: #c7cedc0d;
+  --mat-mdc-slider-focus-ripple-color: #c7cedc33;
+
+  --mdc-slider-label-container-color: #949498;
+  --mdc-slider-label-label-text-color: white;
+  --mat-mdc-slider-value-indicator-opacity: 1;
+}
