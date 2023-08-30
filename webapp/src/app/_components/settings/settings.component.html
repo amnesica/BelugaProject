@@ -87,9 +87,9 @@
 
         <div style="display: flex; justify-content: start">
           <mat-slider min="0.5" max="5" step="0.1" discrete>
-            <input matSliderThumb [(ngModel)]="sliderIconSizeValue" (input)="onInputChangeIconSize($event)">
+            <input matSliderThumb [(ngModel)]="sliderGlobalIconSizeValue" (input)="onInputChangeGlobalIconSize($event)">
           </mat-slider>   
-          <p style="display: flex; justify-content: center; align-items: center;">Icon Size Factor ({{sliderIconSizeValue}})</p>
+          <p style="display: flex; justify-content: center; align-items: center;">Global Icon Size ({{sliderGlobalIconSizeValue}})</p>
         </div>
 
         <h3 style="padding-top: 0rem">Airports</h3>

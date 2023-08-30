@@ -541,10 +541,10 @@ export class MapComponent implements OnInit {
       });
 
     // Setze icon size der Planes
-    this.settingsService.setIconSizeSource$
+    this.settingsService.setIconGlobalSizeSource$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((iconSizeFactor) => {
-        this.setNewScaleAndRedrawPlanes(iconSizeFactor);
+      .subscribe((globalIconSizeFactor) => {
+        this.setNewScaleAndRedrawPlanes(globalIconSizeFactor);
       });
   }
 
@@ -3547,8 +3547,8 @@ export class MapComponent implements OnInit {
   }
 
   // TODO test method for changing icon scale dynamically
-  setNewScaleAndRedrawPlanes(iconSizeFactor: number) {
-    Globals.scaleIcons = iconSizeFactor;
+  setNewScaleAndRedrawPlanes(globalIconSizeFactor: number) {
+    Globals.scaleIcons = globalIconSizeFactor;
 
     // Leere webglFeatures
     if (Globals.webgl) {

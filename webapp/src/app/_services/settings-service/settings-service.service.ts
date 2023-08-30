@@ -36,7 +36,7 @@ export class SettingsService {
   private listAvailableMapsSource = new Subject<object[]>();
   private dimMapSource = new Subject<boolean>();
   private darkStaticFeaturesSource = new Subject<boolean>();
-  private setIconSizeSource = new Subject<number>();
+  private setIconGlobalSizeSource = new Subject<number>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -74,7 +74,7 @@ export class SettingsService {
   listAvailableMapsSource$ = this.listAvailableMapsSource.asObservable();
   dimMapSource$ = this.dimMapSource.asObservable();
   darkStaticFeaturesSource$ = this.darkStaticFeaturesSource.asObservable();
-  setIconSizeSource$ = this.setIconSizeSource.asObservable();
+  setIconGlobalSizeSource$ = this.setIconGlobalSizeSource.asObservable();
 
   constructor() {}
 
@@ -222,8 +222,8 @@ export class SettingsService {
     return this.darkStaticFeaturesSource;
   }
 
-  setIconSize(value: number) {
-    this.setIconSizeSource.next(value);
-    return this.setIconSizeSource;
+  setGlobalIconSize(value: number) {
+    this.setIconGlobalSizeSource.next(value);
+    return this.setIconGlobalSizeSource;
   }
 }

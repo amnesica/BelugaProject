@@ -199,8 +199,8 @@ export class SettingsComponent implements OnInit {
   // dunkle Range Ringe und dunkles Antenna-Icon
   darkStaticFeatures: boolean = true;
 
-  // Icon size multiplier für Plane-Icons
-  sliderIconSizeValue: any = [1.3];
+  // Global icon size multiplier für Plane-Icons
+  sliderGlobalIconSizeValue: any = [1.3];
 
   constructor(
     public settingsService: SettingsService,
@@ -718,10 +718,10 @@ export class SettingsComponent implements OnInit {
     this.settingsService.toggleDarkStaticFeatures(this.darkStaticFeatures);
   }
 
-  onInputChangeIconSize(event: Event) {
+  onInputChangeGlobalIconSize(event: Event) {
     let value = (event.target as HTMLInputElement).value;
 
     // Kontaktiere Map-Component
-    this.settingsService.setIconSize(+value);
+    this.settingsService.setGlobalIconSize(+value);
   }
 }
