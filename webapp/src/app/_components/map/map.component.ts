@@ -712,6 +712,11 @@ export class MapComponent implements OnInit {
       this.layers = new Collection();
     }
 
+    if (this.layers.getLength() > 0) {
+      // Remove old osmLayer to improve performance when changing maps
+      this.layers.removeAt(0);
+    }
+
     this.osmLayer = new TileLayer({
       source: new OSM({
         url: this.currentSelectedMapStyle.url,
@@ -723,7 +728,7 @@ export class MapComponent implements OnInit {
 
     this.dimMapOrRemoveFilter();
 
-    this.layers.push(this.osmLayer);
+    this.layers.insertAt(0, this.osmLayer);
   }
 
   /**
