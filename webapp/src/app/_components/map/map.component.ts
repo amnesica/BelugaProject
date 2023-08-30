@@ -3320,11 +3320,11 @@ export class MapComponent implements OnInit {
   }
 
   initUpdateRainViewerData() {
-    // Update der Rainviewer-Daten alle zehn Sekunden automatisch,
+    // Update der Rainviewer-Daten alle zwanzig Sekunden automatisch,
     // auch wenn sich Map nicht bewegt
     this.refreshIntervalIdRainviewer = window.setInterval(() => {
       this.makeRequestRainviewerApi();
-    }, 10000);
+    }, 20000);
   }
 
   stopRequestsToRainviewer() {
@@ -3452,13 +3452,13 @@ export class MapComponent implements OnInit {
 
       this.refreshIntervalIdRainviewerForecast = window.setInterval(() => {
         this.playRainViewerForecastAnimation();
-      }, 20000);
+      }, 18000);
     }
   }
 
   async playRainViewerForecastAnimation() {
     this.timeoutHandlerForecastAnimation = [];
-    const intervalMs = 500;
+    const intervalMs = 1000;
 
     for (let i = 0; i < this.forecastRainPathAndTime.length; i++) {
       let timeoutHandler = window.setTimeout(
