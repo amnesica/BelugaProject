@@ -64,7 +64,7 @@ td.mat-footer-cell {
   justify-content: center;
   background-color: #303030;
   color: white;
-  padding-top: 0.5rem;
+  padding-top: 0.7rem;
 }
 
 ::ng-deep .mat-sort-header-arrow {
