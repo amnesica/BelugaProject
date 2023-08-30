@@ -27,30 +27,8 @@
     <!-- Tab Map-Eintellungen -->
     <mat-tab label="Map">
       <div style="padding: 0.5rem">
+
         <h3>Planes</h3>
-
-        <mat-slide-toggle
-          [checked]="showAircraftPositions"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAircraftPositions($event)"
-          >Aircraft Positions</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAircraftLabels"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAircraftLabels($event)"
-          >Aircraft Labels</mat-slide-toggle
-        >
-
-        <div>
-          <mat-slide-toggle
-            [checked]="showPOMDPoint"
-            (click)="$event.stopPropagation()"
-            (change)="togglePOMDPoint($event)"
-            >Toggle POMD-Feature</mat-slide-toggle
-          >
-        </div>
 
         <!-- Select, um Flugzeuge nach Feeder zu selektieren (default: Alle Feeder) -->
         <div style="display: flex; justify-content: center">
@@ -74,7 +52,9 @@
             </mat-select>
           </mat-form-field>
 
-          <div style="display: flex; justify-content: center; margin-top: 0.3rem;">
+          <div
+            style="display: flex; justify-content: center; margin-top: 0.3rem"
+          >
             <button
               mat-icon-button
               (click)="refreshSelectedFeeder()"
@@ -85,21 +65,20 @@
           </div>
         </div>
 
-        <div style="display: flex; justify-content: start; max-height: 2rem;">
-          <mat-slider min="0.5" max="10" step="0.1" discrete>
-            <input matSliderThumb [(ngModel)]="sliderGlobalIconSizeValue" (input)="onInputChangeGlobalIconSize($event)">
-          </mat-slider>   
-          <p style="display: flex; justify-content: center; align-items: center;  max-height: 2rem;">Global Icon Size ({{sliderGlobalIconSizeValue}})</p>
-        </div>
+        <mat-slide-toggle
+          [checked]="showAircraftPositions"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAircraftPositions($event)"
+          >Aircraft Positions</mat-slide-toggle
+        >
 
-        <div style="display: flex; justify-content: start; max-height: 2rem;">
-          <mat-slider min="0.1" max="10" step="0.1" discrete>
-            <input matSliderThumb [(ngModel)]="sliderSmallIconSizeValue" (input)="onInputChangeSmallIconSize($event)">
-          </mat-slider>
-          <p style="display: flex; justify-content: center; align-items: center;  max-height: 2rem;">Small Icon Size ({{sliderSmallIconSizeValue}})</p>
-        </div>
+        <mat-slide-toggle
+          [checked]="showAircraftLabels"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAircraftLabels($event)"
+          >Aircraft Labels</mat-slide-toggle
+        >
 
-        <h3 style="padding-top: 0rem">Airports</h3>
         <mat-slide-toggle
           [checked]="showAirports"
           (click)="$event.stopPropagation()"
@@ -107,7 +86,6 @@
           >Airport Labels</mat-slide-toggle
         >
 
-        <h3 style="padding-top: 1rem">Opensky-Network</h3>
         <mat-slide-toggle
           [checked]="showOpenskyPlanes"
           [disabled]="!openskyCredentialsExist"
@@ -116,25 +94,42 @@
           >Fetch from Opensky-Network</mat-slide-toggle
         >
 
-        <h3 style="padding-top: 1rem">ISS</h3>
-        <mat-slide-toggle
-          [checked]="showIss"
-          (click)="$event.stopPropagation()"
-          (change)="toggleIss($event)"
-          >ISS</mat-slide-toggle
-        >
-        <div mat-dialog-actions>
-          <button
-            mat-button
-            [disabled]="!showIss"
-            style="background-color: gray; color: white"
-            (click)="toggleCenterMapOnIss()"
+        <div style="display: flex; justify-content: start; align-items: center">
+          <mat-slide-toggle
+            [checked]="showIss"
+            (click)="$event.stopPropagation()"
+            (change)="toggleIss($event)"
+            >ISS</mat-slide-toggle
           >
-            Show ISS
-          </button>
+          <div mat-dialog-actions style="margin-left: 8.5rem;">
+            <button
+              mat-button
+              [disabled]="!showIss"
+              style="background-color: gray; color: white"
+              (click)="toggleCenterMapOnIss()"
+            >
+              Show ISS
+            </button>
+          </div>
         </div>
 
-        <h3 style="padding-top: 1rem">General</h3>
+        <mat-slide-toggle
+          [checked]="showPOMDPoint"
+          (click)="$event.stopPropagation()"
+          (change)="togglePOMDPoint($event)"
+          >Toggle POMD-Feature</mat-slide-toggle
+        >
+
+        <!-- WebGL -->
+        <mat-slide-toggle
+          [checked]="webgl"
+          [disabled]="webglNotSupported"
+          (click)="$event.stopPropagation()"
+          (change)="toggleWebgl($event)"
+          >WebGL</mat-slide-toggle
+        >
+
+        <h3 style="margin-top: 1rem;">General</h3>
 
         <!-- Select, um Map-Stil auszuwählen (default: OSM) -->
         <div style="display: flex; justify-content: center">
@@ -157,6 +152,16 @@
           </mat-form-field>
         </div>
 
+        <!-- Dark mode -->
+        <div>
+          <mat-slide-toggle
+            [checked]="darkMode"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDarkMode($event)"
+            >Dark Mode</mat-slide-toggle
+          >
+        </div>
+
         <!-- Dim map -->
         <div>
           <mat-slide-toggle
@@ -177,35 +182,17 @@
           >
         </div>
 
-        <!-- Dark mode -->
-        <div>
-          <mat-slide-toggle
-            [checked]="darkMode"
-            (click)="$event.stopPropagation()"
-            (change)="toggleDarkMode($event)"
-            >Dark Mode</mat-slide-toggle
-          >
-        </div>
-
-        <!-- WebGL -->
-        <div>
-          <mat-slide-toggle
-            [checked]="webgl"
-            [disabled]="webglNotSupported"
-            (click)="$event.stopPropagation()"
-            (change)="toggleWebgl($event)"
-            >WebGL</mat-slide-toggle
-          >
-        </div>
+        <mat-divider></mat-divider>
 
         <!-- Aktuelle Geräte-Position -->
-        <p class="info-text">
-          Click on the button to set the current device position to use it for
-          distance and POMD results
-        </p>
         <div
           mat-dialog-actions
-          style="display: flex; justify-content: space-around; margin-top: 0.5rem; margin-bottom: 0.5rem"
+          style="
+            display: flex;
+            justify-content: space-around;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+          "
         >
           <button
             mat-button
@@ -237,7 +224,49 @@
           </mat-slide-toggle>
         </div>
 
-        <h3 style="padding-top: 1rem">Weather</h3>
+        <mat-divider></mat-divider>
+
+        <div style="display: flex; justify-content: start; max-height: 2rem">
+          <mat-slider min="0.5" max="10" step="0.1" discrete>
+            <input
+              matSliderThumb
+              [(ngModel)]="sliderGlobalIconSizeValue"
+              (input)="onInputChangeGlobalIconSize($event)"
+            />
+          </mat-slider>
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              max-height: 2rem;
+            "
+          >
+            Global Icon Size ({{ sliderGlobalIconSizeValue }})
+          </p>
+        </div>
+
+        <div style="display: flex; justify-content: start; max-height: 2rem">
+          <mat-slider min="0.1" max="10" step="0.1" discrete>
+            <input
+              matSliderThumb
+              [(ngModel)]="sliderSmallIconSizeValue"
+              (input)="onInputChangeSmallIconSize($event)"
+            />
+          </mat-slider>
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              max-height: 2rem;
+            "
+          >
+            Small Icon Size ({{ sliderSmallIconSizeValue }})
+          </p>
+        </div>
+
+        <h3 style="margin-top: 1rem;">Weather</h3>
 
         <!-- Rainviewer (Rain) -->
         <div>

@@ -99,3 +99,8 @@
 ::ng-deep .mat-form-field-wrapper {
   margin-bottom: -0.7rem !important;
 }
+
+mat-divider {
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
