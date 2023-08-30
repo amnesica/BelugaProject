@@ -734,4 +734,13 @@ export class SettingsComponent implements OnInit {
     // Kontaktiere Map-Component
     this.settingsService.setSmallIconSize(+value);
   }
+
+  resetIconSizeSlider() {
+    this.sliderGlobalIconSizeValue = [1.3];
+    this.sliderSmallIconSizeValue = [1];
+
+    // Kontaktiere Map-Component
+    this.settingsService.setGlobalIconSize(this.sliderGlobalIconSizeValue);
+    this.settingsService.setSmallIconSize(this.sliderSmallIconSizeValue);
+  }
 }
