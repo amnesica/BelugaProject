@@ -95,3 +95,7 @@
 ::ng-deep mat-slider-visual-thumb {
   height: 1rem !important;
 }
+
+::ng-deep .mat-form-field-wrapper {
+  margin-bottom: -0.7rem !important;
+}
