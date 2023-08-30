@@ -1447,7 +1447,7 @@ export class MapComponent implements OnInit {
           }
 
           // Aktualisiere angezeigte Flugzeug-Zähler
-          this.updatePlanesCounter(planesJSONArray.length);
+          this.updatePlanesCounter(Globals.PlanesOrdered.length);
 
           // Fetch wurde erfolgreich durchgeführt und ist nicht mehr 'pending'
           this.pendingFetchesPlanes--;

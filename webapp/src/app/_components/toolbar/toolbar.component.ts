@@ -10,7 +10,7 @@ import { ToolbarService } from 'src/app/_services/toolbar-service/toolbar-servic
 
 @Component({
   selector: 'app-toolbar',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css'],
 })
