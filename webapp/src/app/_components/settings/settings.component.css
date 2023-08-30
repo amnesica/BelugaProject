@@ -76,6 +76,7 @@
 
 .mat-mdc-slider {
   margin: 0.7rem !important;
+  height: 1rem !important;
 
   --mdc-slider-handle-color: #f8c023;
   --mdc-slider-focus-handle-color: #f8c023;
@@ -89,4 +90,8 @@
   --mdc-slider-label-container-color: #949498;
   --mdc-slider-label-label-text-color: white;
   --mat-mdc-slider-value-indicator-opacity: 1;
+}
+
+::ng-deep mat-slider-visual-thumb {
+  height: 1rem !important;
 }

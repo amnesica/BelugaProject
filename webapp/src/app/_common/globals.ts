@@ -49,8 +49,11 @@ export class Globals {
   // Hinweis: "kleines" Info-Fenster ist noch die Hover-Info-Box
   static displayAircraftInfoLarge = false;
 
-  // Skalierung der Flugzeug-Icons (WebGL & Non-WebGL)
-  static scaleIcons;
+  // Globale Skalierung der Flugzeug-Icons (WebGL & Non-WebGL)
+  static globalScaleFactorIcons;
+
+  // Skalierung der kleinen Flugzeug-Icons (WebGL & Non-WebGL)
+  static smallScaleFactorIcons;
 
   // Boolean, ob Flugzeug-Labels angezeigt werden sollen
   static showAircraftLabel: boolean = false;

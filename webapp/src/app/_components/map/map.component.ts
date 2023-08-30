@@ -540,11 +540,26 @@ export class MapComponent implements OnInit {
         this.toggleDarkModeInRangeData();
       });
 
-    // Setze icon size der Planes
+    // Setze Global icon size der Planes
     this.settingsService.setIconGlobalSizeSource$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((globalIconSizeFactor) => {
-        this.setNewScaleAndRedrawPlanes(globalIconSizeFactor);
+        Globals.globalScaleFactorIcons = globalIconSizeFactor;
+        this.setNewIconSizeScaleAndRedrawPlanes(
+          Globals.globalScaleFactorIcons,
+          Globals.smallScaleFactorIcons
+        );
+      });
+
+    // Setze icon size für small Planes
+    this.settingsService.setIconSmallSizeSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((smallIconSizeFactor) => {
+        Globals.smallScaleFactorIcons = smallIconSizeFactor;
+        this.setNewIconSizeScaleAndRedrawPlanes(
+          Globals.globalScaleFactorIcons,
+          Globals.smallScaleFactorIcons
+        );
       });
   }
 
@@ -602,7 +617,7 @@ export class MapComponent implements OnInit {
           // Setze Werte aus Konfiguration
           Globals.latFeeder = configuration.latFeeder;
           Globals.lonFeeder = configuration.lonFeeder;
-          Globals.scaleIcons = configuration.scaleIcons;
+          Globals.globalScaleFactorIcons = configuration.scaleIcons;
 
           // Setze App-Name und App-Version
           Globals.appName = configuration.appName;
@@ -663,7 +678,7 @@ export class MapComponent implements OnInit {
           if (
             (Globals.latFeeder,
             Globals.lonFeeder,
-            Globals.scaleIcons,
+            Globals.globalScaleFactorIcons,
             Globals.SitePosition,
             Globals.appName,
             Globals.appVersion,
@@ -3547,9 +3562,10 @@ export class MapComponent implements OnInit {
   }
 
   // TODO test method for changing icon scale dynamically
-  setNewScaleAndRedrawPlanes(globalIconSizeFactor: number) {
-    Globals.scaleIcons = globalIconSizeFactor;
-
+  setNewIconSizeScaleAndRedrawPlanes(
+    globalIconSizeFactor: number,
+    smallIconScaleFactor: number
+  ) {
     // Leere webglFeatures
     if (Globals.webgl) {
       Globals.WebglFeatures.clear();

@@ -202,6 +202,9 @@ export class SettingsComponent implements OnInit {
   // Global icon size multiplier für Plane-Icons
   sliderGlobalIconSizeValue: any = [1.3];
 
+  // Small icon size multiplier für Plane-Icons
+  sliderSmallIconSizeValue: any = [1];
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -723,5 +726,12 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component
     this.settingsService.setGlobalIconSize(+value);
+  }
+
+  onInputChangeSmallIconSize(event: Event) {
+    let value = (event.target as HTMLInputElement).value;
+
+    // Kontaktiere Map-Component
+    this.settingsService.setSmallIconSize(+value);
   }
 }

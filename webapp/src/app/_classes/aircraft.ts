@@ -340,7 +340,7 @@ export class Aircraft {
 
         if (Globals.amountDisplayedAircraft < 200) {
           this.markerIcon = new Icon({
-            scale: this.shapeScale * Globals.scaleIcons,
+            scale: this.shapeScale * Globals.globalScaleFactorIcons,
             imgSize: [this.shapeData.w, this.shapeData.h],
             src: svgURI,
             rotation: this.shapeData.noRotate
@@ -352,7 +352,7 @@ export class Aircraft {
         }
       } else {
         this.markerIcon = new Icon({
-          scale: this.shapeScale * Globals.scaleIcons,
+          scale: this.shapeScale * Globals.globalScaleFactorIcons,
           imgSize: [this.shapeData.w, this.shapeData.h],
           img: Globals.iconCache[svgKey],
           rotation: this.shapeData.noRotate
@@ -640,8 +640,10 @@ export class Aircraft {
         'size',
         this.shapeScale *
           Math.max(this.shapeData.w, this.shapeData.h) *
-          this.pngScale *
-          (Globals.scaleIcons / 1.3)
+          (this.pngScale < 0.39
+            ? this.pngScale * Globals.smallScaleFactorIcons
+            : this.pngScale) *
+          (Globals.globalScaleFactorIcons / 1.3)
       );
       this.glMarker.set(
         'cx',
