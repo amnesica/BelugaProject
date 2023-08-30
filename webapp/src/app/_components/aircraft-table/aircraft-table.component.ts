@@ -48,7 +48,8 @@ export class AircraftTableComponent implements OnInit {
     'track',
     'lastSeen',
     'feeder',
-    'distance   ',
+    'distance',
+    'dummy',
   ];
 
   // Parameter für Checkboxen zur Auswahl einzelner Zeilen
