@@ -84,8 +84,8 @@
   --mdc-slider-active-track-color: #f8c023;
   --mdc-slider-inactive-track-color: #232323;
   --mat-mdc-slider-ripple-color: #f8c023;
-  --mat-mdc-slider-hover-ripple-color: #c7cedc0d;
-  --mat-mdc-slider-focus-ripple-color: #c7cedc33;
+  --mat-mdc-slider-hover-ripple-color: #ffffff00;
+  --mat-mdc-slider-focus-ripple-color: #ffffff00;
 
   --mdc-slider-label-container-color: #949498;
   --mdc-slider-label-label-text-color: white;
