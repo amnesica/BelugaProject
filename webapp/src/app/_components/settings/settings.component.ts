@@ -205,6 +205,9 @@ export class SettingsComponent implements OnInit {
   // Small icon size multiplier für Plane-Icons
   sliderSmallIconSizeValue: any = [1];
 
+  // Boolean, ob Altitude Chart angezeigt werden soll
+  showAltitudeChart: boolean = true;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -742,5 +745,12 @@ export class SettingsComponent implements OnInit {
     // Kontaktiere Map-Component
     this.settingsService.setGlobalIconSize(this.sliderGlobalIconSizeValue);
     this.settingsService.setSmallIconSize(this.sliderSmallIconSizeValue);
+  }
+
+  toggleAltitudeChart(event: MatSlideToggleChange) {
+    this.showAltitudeChart = event.checked;
+
+    // Kontaktiere Map-Component und übergebe showAltitudeChart-Boolean
+    this.settingsService.toggleAltitudeChart(this.showAltitudeChart);
   }
 }

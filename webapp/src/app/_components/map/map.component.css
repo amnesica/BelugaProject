@@ -145,3 +145,18 @@ mat-card-header {
 .mat-card-content {
   margin-bottom: 0px;
 }
+
+#altitude_chart {
+  position: absolute;
+  z-index: 1000;
+  background-color: transparent;
+  bottom: 0;
+  left: 0;
+  margin-bottom: 3rem;
+  margin-left: 0.6rem;
+  display: flex;
+  align-content: center;
+  justify-content: flex-start;
+  width: 100%;
+  pointer-events: none;
+}

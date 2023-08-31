@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="35.018314mm"
+   height="25.846937mm"
+   viewBox="-23 -28 35.018314 25.846937"
+   version="1.1"
+   id="svg1542"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title12269">Altitude Chart (vertical)</title>
+  <defs
+     id="defs1536" />
+  <metadata
+     id="metadata1539">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>RexKramer1</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>GNU General Public License v3.0</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:title>Altitude Chart (vertical)</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer7"
+     transform="translate(-23.853718,-27.232573)">
+    <rect
+       style="fill:#ff8000;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302"
+       width="8.4116087"
+       height="2.8293593"
+       x="0.98771739"
+       y="2.1959331" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="13.061163"
+       y="7.7607427"
+       id="text358"><tspan
+         id="tspan11749"
+         x="13.061163"
+         y="7.7607427">1.001</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="13.061163"
+       y="10.61837"
+       id="text358-1"><tspan
+         id="tspan11780"
+         x="13.061163"
+         y="10.61837">5.001</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="11.265581"
+       y="13.393658"
+       id="text358-6"><tspan
+         id="tspan11799"
+         x="11.265581"
+         y="13.393658">10.001</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="11.265581"
+       y="16.178223"
+       id="text358-5"><tspan
+         id="tspan11818"
+         x="11.265581"
+         y="16.178223">20.001</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="11.265581"
+       y="19.084051"
+       id="text358-5-0"><tspan
+         id="tspan11847"
+         x="11.265581"
+         y="19.084051">30.001</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="11.265581"
+       y="22.066351"
+       id="text358-5-0-4"><tspan
+         id="tspan11876"
+         x="11.265581"
+         y="22.066351">40.001</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="11.020386"
+       y="24.787565"
+       id="text358-5-0-4-2"><tspan
+         id="tspan11905"
+         x="11.020386"
+         y="24.787565">&gt; 100.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="27.846014"
+       y="4.6221013"
+       id="text358-33"><tspan
+         id="tspan11708"
+         x="27.846014"
+         y="4.6221013">1.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="19.271976"
+       y="4.9474397"
+       id="text358-8"><tspan
+         id="tspan11679-8"
+         x="19.271976"
+         y="4.9474397">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="27.846014"
+       y="7.8143468"
+       id="text358-33-7"><tspan
+         id="tspan11751"
+         x="27.846014"
+         y="7.8143468">5.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="26.050432"
+       y="10.816107"
+       id="text358-33-7-9"><tspan
+         id="tspan11934"
+         x="26.050432"
+         y="10.816107">10.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="26.050432"
+       y="13.568995"
+       id="text358-33-7-9-1"><tspan
+         id="tspan11963"
+         x="26.050432"
+         y="13.568995">20.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="26.050432"
+       y="16.321884"
+       id="text358-33-7-9-1-4"><tspan
+         id="tspan11992"
+         x="26.050432"
+         y="16.321884">30.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="26.050432"
+       y="19.074776"
+       id="text358-33-7-9-1-4-3"><tspan
+         id="tspan12021"
+         x="26.050432"
+         y="19.074776">40.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="24.254848"
+       y="21.980604"
+       id="text358-33-7-9-1-4-3-5"><tspan
+         id="tspan12050"
+         x="24.254848"
+         y="21.980604">100.000</tspan></text>
+    <rect
+       style="fill:#808080;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-6"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.0011747"
+       y="-0.63342649" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="11.292386"
+       y="1.5705835"
+       id="text358-3"><tspan
+         id="tspan654"
+         x="11.292386"
+         y="1.5705835">on ground</tspan></text>
+    <rect
+       style="fill:#ffff00;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-3"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.0129659"
+       y="4.9944043" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="22.26112"
+       y="4.913609"
+       id="text358-9"><tspan
+         id="tspan12052"
+         x="22.26112"
+         y="4.913609">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="22.26112"
+       y="7.4806924"
+       id="text358-9-3"><tspan
+         id="tspan12052-9"
+         x="22.26112"
+         y="7.4806924">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="22.26112"
+       y="10.157114"
+       id="text358-9-35"><tspan
+         id="tspan12052-8"
+         x="22.26112"
+         y="10.157114">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="22.26112"
+       y="13.101177"
+       id="text358-9-35-4"><tspan
+         id="tspan12052-8-4"
+         x="22.26112"
+         y="13.101177">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="22.26112"
+       y="15.892302"
+       id="text358-9-35-4-8"><tspan
+         id="tspan12052-8-4-0"
+         x="22.26112"
+         y="15.892302">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="22.26112"
+       y="18.568722"
+       id="text358-9-35-4-8-4"><tspan
+         id="tspan12052-8-4-0-9"
+         x="22.26112"
+         y="18.568722">-</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:#000000;stroke-width:0.267999"
+       x="22.26112"
+       y="21.684843"
+       id="text358-9-35-4-8-4-9"><tspan
+         id="tspan12052-8-4-0-9-3"
+         x="22.26112"
+         y="21.684843">-</tspan></text>
+    <rect
+       style="fill:#00ff00;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-3-9"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.0373428"
+       y="7.854651" />
+    <rect
+       style="fill:#00bfff;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-3-9-3"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.0571821"
+       y="10.728363" />
+    <rect
+       style="fill:#0080ff;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-3-9-3-3"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.056493"
+       y="13.589838" />
+    <rect
+       style="fill:#8000ff;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-3-9-3-3-1"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.0564926"
+       y="16.419199" />
+    <rect
+       style="fill:#ff0000;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-3-9-3-3-1-7"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.0564926"
+       y="19.286793" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.267999"
+       id="rect302-3-9-3-3-1-7-1"
+       width="8.4116087"
+       height="2.8293593"
+       x="1.0763309"
+       y="22.116152" />
+  </g>
+</svg>

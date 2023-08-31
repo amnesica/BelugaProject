@@ -38,6 +38,7 @@ export class SettingsService {
   private darkStaticFeaturesSource = new Subject<boolean>();
   private setIconGlobalSizeSource = new Subject<number>();
   private setIconSmallSizeSource = new Subject<number>();
+  private showAltitudeChartSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -77,6 +78,7 @@ export class SettingsService {
   darkStaticFeaturesSource$ = this.darkStaticFeaturesSource.asObservable();
   setIconGlobalSizeSource$ = this.setIconGlobalSizeSource.asObservable();
   setIconSmallSizeSource$ = this.setIconSmallSizeSource.asObservable();
+  showAltitudeChartSource$ = this.showAltitudeChartSource.asObservable();
 
   constructor() {}
 
@@ -232,5 +234,10 @@ export class SettingsService {
   setSmallIconSize(value: number) {
     this.setIconSmallSizeSource.next(value);
     return this.setIconSmallSizeSource;
+  }
+
+  toggleAltitudeChart(showAltitudeChart: boolean) {
+    this.showAltitudeChartSource.next(showAltitudeChart);
+    return this.showAltitudeChartSource;
   }
 }

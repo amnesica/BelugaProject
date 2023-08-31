@@ -561,6 +561,14 @@ export class MapComponent implements OnInit {
           Globals.smallScaleFactorIcons
         );
       });
+
+    // Zeige oder verstecke Altitude-Chart
+    this.settingsService.showAltitudeChartSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showAltitudeChart) => {
+        document.getElementById('altitude_chart')!.style.visibility =
+          showAltitudeChart ? 'visible' : 'hidden';
+      });
   }
 
   ngOnDestroy() {

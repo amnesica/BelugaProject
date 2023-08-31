@@ -242,6 +242,13 @@
         </div>
 
         <mat-slide-toggle
+          [checked]="showAltitudeChart"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAltitudeChart($event)"
+          >Show Altitude Chart</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
           [checked]="showAirports"
           (click)="$event.stopPropagation()"
           (change)="toggleAirports($event)"
