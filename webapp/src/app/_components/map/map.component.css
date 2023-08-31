@@ -151,9 +151,7 @@ mat-card-header {
   z-index: 1000;
   background-color: transparent;
   bottom: 0;
-  left: 0;
-  margin-bottom: 0.7rem;
-  margin-left: 0.6rem;
+  margin-bottom: 1rem;
   display: flex;
   align-content: center;
   justify-content: center;
