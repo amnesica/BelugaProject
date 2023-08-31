@@ -152,11 +152,12 @@ mat-card-header {
   background-color: transparent;
   bottom: 0;
   left: 0;
-  margin-bottom: 3rem;
+  margin-bottom: 0.7rem;
   margin-left: 0.6rem;
   display: flex;
   align-content: center;
-  justify-content: flex-start;
-  width: 100%;
+  justify-content: center;
+  width: 100vw;
   pointer-events: none;
+  transform: scale(2);
 }
