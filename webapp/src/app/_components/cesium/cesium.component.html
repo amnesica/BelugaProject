@@ -1,0 +1,254 @@
+<!-- Verbieten des Zooms auf Cesium-Element -->
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+/>
+
+<div style="height: 100%" id="map_canvas_3d" [style.width]="widthMap3d">
+  <button
+    mat-button
+    class="button-3d-map"
+    id="closeButton3dMap"
+    (click)="close3dMap()"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window">close</mat-icon>
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="resetToNorthButton3dMap"
+    (click)="resetToNorth3dMap()"
+    title="Reset map to North"
+  >
+    <mat-icon
+      style="rotate: -45deg"
+      aria-hidden="false"
+      aria-label="close window"
+      >explore</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="tiltLessOnGlobe3dMap"
+    (click)="tiltLessOnGlobe3dMap()"
+    title="Tilt map less"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window">undo</mat-icon>
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="tiltMoreOnGlobe3dMap"
+    (click)="tiltMoreOnGlobe3dMap()"
+    title="Tilt map more"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window">redo</mat-icon>
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="rotateMapLeftButton3dMap"
+    (click)="rotateMapLeft3dMap()"
+    title="Rotate map left"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window"
+      >rotate_left</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="rotateMapRightButton3dMap"
+    (click)="rotateMapRight3dMap()"
+    title="Rotate map right"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window"
+      >rotate_right</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="show3dBuildings"
+    (click)="show3dBuildings()"
+  >
+    <mat-icon
+      *ngIf="!display3dBuildings"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable OSM 3D buildings"
+      >domain</mat-icon
+    >
+    <mat-icon
+      *ngIf="display3dBuildings"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Disable OSM 3D buildings"
+      >domain_disabled</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="showGooglePhotorealistic3D"
+    (click)="showGooglePhotorealistic3D()"
+  >
+    <mat-icon
+      *ngIf="!displayGooglePhotorealistic3D"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable Google Maps Photogrammatry"
+      >photo_camera</mat-icon
+    >
+    <mat-icon
+      *ngIf="displayGooglePhotorealistic3D"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Disable Google Maps Photogrammatry"
+      >no_photography</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="showTrailLine3d"
+    (click)="showTrailLine3d()"
+    title="Show trail as line"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window"
+      >show_chart</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="showTrailBar3d"
+    (click)="showTrailBar3d()"
+    title="Show trail as bars"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window">bar_chart</mat-icon>
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="showTrailBarLine3d"
+    (click)="showTrailBarLine3d()"
+    title="Show trail as line and bars"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window"
+      >monitoring</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="showCockpitView3d"
+    (click)="showCockpitView3d()"
+    title="Enable cockpit mode"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window"
+      >flight_class</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="show3dMapFullscreen"
+    (click)="show3dMapFullscreen()"
+    [style.visibility]="!isDesktop ? 'hidden' : 'visible'"
+  >
+    <mat-icon
+      *ngIf="!display3dMapFullscreen"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable fullscreen mode"
+      >fullscreen</mat-icon
+    >
+    <mat-icon
+      *ngIf="display3dMapFullscreen"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Disable fullscreen mode"
+      >fullscreen_exit</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="enableHdr3dMap"
+    (click)="enableHdr3dOnMap()"
+  >
+    <mat-icon
+      *ngIf="!enableHdr3dMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable HDR, allow anisotropic filter, max msaaSample value (requires high performance!)"
+      >hdr_on</mat-icon
+    >
+    <mat-icon
+      *ngIf="enableHdr3dMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Disable HDR, disallow anisotropic filter, min msaaSample value"
+      >hdr_off</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="enableMoonSunMap"
+    (click)="enableMoonSunOnMap()"
+  >
+    <mat-icon
+      *ngIf="!enableMoonSunMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable sun, moon, sky"
+      >bedtime</mat-icon
+    >
+    <mat-icon
+      *ngIf="enableMoonSunMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Disable sun, moon, sky"
+      >bedtime_off</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="enableShadowsMap"
+    (click)="enableShadowsOnMap()"
+  >
+    <mat-icon
+      *ngIf="!enableShadowsMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable shadows, lighting"
+      >ev_shadow_add</mat-icon
+    >
+    <mat-icon
+      *ngIf="enableShadowsMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Disable shadows, lighting"
+      >ev_shadow_minus</mat-icon
+    >
+  </button>
+</div>

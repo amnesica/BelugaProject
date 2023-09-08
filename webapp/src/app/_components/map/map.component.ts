@@ -46,6 +46,7 @@ import WebGLPointsLayer from 'ol/layer/WebGLPoints';
 import XYZ from 'ol/source/XYZ';
 import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
 import { Maps } from 'src/app/_classes/maps';
+import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
 
 @Component({
   selector: 'app-map',
@@ -255,11 +256,24 @@ export class MapComponent implements OnInit {
   // Boolean, ob dunkle Range Ringe und dunkles Antenna-Icon gezeigt werden soll
   darkStaticFeatures: boolean = true;
 
+  // Access Token für Cesium Ion für 3d-Komponente
+  cesiumIonDefaultAccessToken: any;
+
+  // API-Key für Google Maps
+  cesiumGoogleMapsApiKey: any;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
   get displayAircraftInfo() {
     return Globals.displayAircraftInfoLarge;
+  }
+
+  // Boolean, um 3d-Map anzuzeigen (in Globals, da ein
+  // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
+  // werden soll und der Aufruf aus der 3d-Map-Komponente geschehen soll)
+  get display3dMap() {
+    return Globals.display3dMap;
   }
 
   constructor(
@@ -270,7 +284,8 @@ export class MapComponent implements OnInit {
     private toolbarService: ToolbarService,
     private aircraftTableService: AircraftTableService,
     private snackBar: MatSnackBar,
-    private rainviewerService: RainviewerService
+    private rainviewerService: RainviewerService,
+    private cesiumService: CesiumService
   ) {}
 
   /**
@@ -672,6 +687,17 @@ export class MapComponent implements OnInit {
           // Setze Geoapify-API-Key (nicht mandatory)
           if (configuration.geoapifyApiKey) {
             this.geoapifyApiKey = configuration.geoapifyApiKey;
+          }
+
+          // Setze Cesium Ion-Default Access Token (nicht mandatory)
+          if (configuration.cesiumIonDefaultAccessToken) {
+            this.cesiumIonDefaultAccessToken =
+              configuration.cesiumIonDefaultAccessToken;
+          }
+
+          // Setze Cesium.GoogleMaps-API-Key (nicht mandatory)
+          if (configuration.cesiumGoogleMapsApiKey) {
+            this.cesiumGoogleMapsApiKey = configuration.cesiumGoogleMapsApiKey;
           }
         },
         (error) => {
@@ -1327,7 +1353,7 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Öffnet eine Snackbar mit einem Text für zwei Sekunden
+   * Öffnet eine Snackbar mit einem Text
    * @param message Text, der als Titel angezeigt werden soll
    */
   openSnackbar(message: string, duration: number) {
@@ -1554,6 +1580,9 @@ export class MapComponent implements OnInit {
 
       // Update Daten des Altitude Charts mit aktueller Altitude
       this.updateAltitudeChart();
+
+      // Kontaktiere Cesium für Update der Camera, wenn nötig
+      this.updateCameraInCesium();
     }
 
     // Wenn Flugzeug das ist, worüber die Mouse hovert
@@ -1690,8 +1719,9 @@ export class MapComponent implements OnInit {
               if (trailData[0]) {
                 this.aircraft.aircraftTrailList = trailData[0];
                 this.aircraft.makeTrail();
-                this.aircraft.makeTrailVisible();
+                this.aircraft.setTrailVisibility2d(true);
                 this.updateAltitudeChart();
+                this.updateCesiumComponentWithAircraft();
               }
             }
           },
@@ -1799,6 +1829,7 @@ export class MapComponent implements OnInit {
         this.unselectAllPlanesInTable();
         this.resetAllDrawnPOMDPoints();
         this.resetAirportDataPopup();
+        this.show3dMap(false);
       }
     });
   }
@@ -1859,13 +1890,13 @@ export class MapComponent implements OnInit {
           // Mache Server-Aufruf um alle Flugzeug-Informationen zu erhalten
           this.getAllAircraftData(aircraft);
 
-          // Hole Trail
+          // Hole Trail und update 3d-Komponente
           this.getTrailToAircraft(aircraft, this.selectedFeederUpdate);
 
           // Merke am Flugzeug, dass Aufruf bereits getätigt wurde
           this.aircraft.allDataWasRequested = true;
         } else {
-          // Hole nur Trail
+          // Hole nur Trail und update 3d-Komponente
           this.getTrailToAircraft(aircraft, this.selectedFeederUpdate);
         }
 
@@ -3584,6 +3615,44 @@ export class MapComponent implements OnInit {
       const aircraft = Globals.PlanesOrdered[i];
       aircraft.clearMarker();
       aircraft.updateMarker(false);
+    }
+  }
+
+  /**
+   * Triggert das Zeigen oder Verstecken der 3d-Map aus der Info-Komponente heraus
+   */
+  receiveToggleShow3dMap() {
+    let show3dMap = !this.display3dMap;
+    if (show3dMap && !this.cesiumIonDefaultAccessToken) {
+      this.openSnackbar(
+        `Cesium Ion Default Access Token is not available. 3D-Map cannot be used!`,
+        3000
+      );
+      show3dMap = !this.display3dMap;
+      return;
+    }
+    this.show3dMap(show3dMap);
+  }
+
+  /**
+   * Zeigt oder versteckt die 3d-Map, indem globaler Boolean gesetzt wird
+   */
+  show3dMap(show: boolean) {
+    Globals.display3dMap = show;
+  }
+
+  /**
+   * Update Aircraft in der Cesium-Component, nachdem der Trail geholt wurde
+   */
+  updateCesiumComponentWithAircraft() {
+    if (this.aircraft && Globals.display3dMap) {
+      this.cesiumService.updateAircraft(this.aircraft);
+    }
+  }
+
+  updateCameraInCesium() {
+    if (this.aircraft && Globals.display3dMap) {
+      this.cesiumService.updateView(this.aircraft);
     }
   }
 }

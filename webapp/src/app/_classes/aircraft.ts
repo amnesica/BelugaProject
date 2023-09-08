@@ -97,16 +97,26 @@ export class Aircraft {
   iconStyle: any = null;
 
   //Trail des Flugzeugs als Punkte
-  trackLinePoints: any;
+  trackLinePoints: any; // 2D-Karte
+  trackLinePoints3dLine: any; //3D-Karte (Line)
+  trackLinePoints3dBar: any; //3D-Karte (Bar)
 
   // Position des Herkunfts-Flughafens
   // und des Zielflughafens
   positionOrg: any;
   positionDest: any;
 
-  // Trail des Flugzeugs als Feature
+  // Trail des Flugzeugs als Feature (2D)
   trail_features: any = null;
   layer: any = null;
+
+  // Trail des Flugzeugs als Feature (Line)
+  trail_features3d_line: any = null;
+  layer3dLine: any = null;
+
+  // Trail des Flugzeugs als Feature (Bar)
+  trail_features3d_bar: any = null;
+  layer3dBar: any = null;
 
   // Url für Flugzeug-Foto
   urlPhotoDirect: any = null;
@@ -822,6 +832,8 @@ export class Aircraft {
    */
   createFeatures() {
     this.trail_features = new Vector();
+    this.trail_features3d_line = new Vector();
+    this.trail_features3d_bar = new Vector();
 
     this.layer = new VectorLayer({
       source: this.trail_features,
@@ -832,10 +844,32 @@ export class Aircraft {
     this.layer.set('hex', this.hex);
     this.layer.set('isTrail', true);
 
+    this.layer3dLine = new VectorLayer({
+      source: this.trail_features3d_line,
+      declutter: false,
+      zIndex: 151,
+      visible: false,
+    });
+    this.layer3dLine.set('hex', this.hex);
+    this.layer3dLine.set('isTrail', true);
+
+    this.layer3dBar = new VectorLayer({
+      source: this.trail_features3d_bar,
+      declutter: false,
+      zIndex: 151,
+      visible: false,
+    });
+    this.layer3dBar.set('hex', this.hex);
+    this.layer3dBar.set('isTrail', true);
+
     Globals.trailGroup.push(this.layer);
+    Globals.trailGroup.push(this.layer3dLine);
+    Globals.trailGroup.push(this.layer3dBar);
 
     // initialisiere das Array für die LinienSegmente
     this.trackLinePoints = [];
+    this.trackLinePoints3dLine = [];
+    this.trackLinePoints3dBar = [];
   }
 
   /**
@@ -854,7 +888,11 @@ export class Aircraft {
 
     // Setze Trail-Variablen zurück
     this.trail_features.clear();
+    this.trail_features3d_line.clear();
+    this.trail_features3d_bar.clear();
     this.trackLinePoints = [];
+    this.trackLinePoints3dLine = [];
+    this.trackLinePoints3dBar = [];
     this.aircraftTrailAltitudes = undefined;
 
     for (let i = 0; i < this.aircraftTrailList.length; i++) {
@@ -864,50 +902,14 @@ export class Aircraft {
       let reenteredAircraft = this.aircraftTrailList[i].reenteredAircraft;
       let timestamp = this.aircraftTrailList[i].timestamp;
 
-      this.trackLinePoints.push(
-        olProj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857')
-      );
+      this.addTrackLinePoint2D(longitude, latitude, altitude);
+
+      this.addTrackLinePoints3d(longitude, latitude, altitude);
 
       this.updateAltitudeData(timestamp, reenteredAircraft, altitude);
 
       if (this.trackLinePoints.length > 1) {
-        let featureLine = new Feature({
-          geometry: new LineString([
-            this.trackLinePoints[this.trackLinePoints.length - 1],
-            this.trackLinePoints[this.trackLinePoints.length - 2],
-          ]),
-        });
-
-        let style;
-
-        // Setze Style des LineStrings
-        if (reenteredAircraft) {
-          // Setze gestrichelte Linie als Style des LineString,
-          // sollte Flugzeug ein reeteredAircraft sein
-          style = Styles.DashedLineStyle;
-        } else {
-          // Berechne Farbwert des Trailabschnittes
-          let trailColor = Markers.getColorFromAltitude(
-            altitude,
-            this.onGround,
-            true,
-            false
-          );
-
-          // Erstelle Style des Trailabschnittes
-          let color = trailColor;
-          style = new Style({
-            fill: new Fill({ color: color }),
-            stroke: new Stroke({ color: color, width: 4 }),
-          });
-        }
-
-        // Setze Style
-        featureLine.setStyle(style);
-
-        // Fuege erstellte Linie zu allen
-        // Linien hinzu
-        this.trail_features.addFeature(featureLine);
+        this.addLineFeatureToLayer(reenteredAircraft, altitude);
       }
     }
   }
@@ -949,43 +951,12 @@ export class Aircraft {
       this.trackLinePoints
     ) {
       // Füge neuen Trailpunkt hinzu
-      this.trackLinePoints.push(
-        olProj.transform(
-          [this.longitude, this.latitude],
-          'EPSG:4326',
-          'EPSG:3857'
-        )
-      );
+      this.addTrackLinePoint2D(this.longitude, this.latitude, this.altitude);
+
+      this.addTrackLinePoints3d(this.longitude, this.latitude, this.altitude);
 
       if (this.trackLinePoints.length > 1) {
-        let featureLine = new Feature({
-          geometry: new LineString([
-            this.trackLinePoints[this.trackLinePoints.length - 1],
-            this.trackLinePoints[this.trackLinePoints.length - 2],
-          ]),
-        });
-
-        // Berechne Farbwert des Trailabschnittes
-        let trailColor = Markers.getColorFromAltitude(
-          this.altitude,
-          this.onGround,
-          true,
-          false
-        );
-
-        // Erstelle Style des Trailabschnittes
-        let color = trailColor;
-        let style = new Style({
-          fill: new Fill({ color: color }),
-          stroke: new Stroke({ color: color, width: 4 }),
-        });
-
-        // Setze Style
-        featureLine.setStyle(style);
-
-        // Fuege erstellte Linie zu allen
-        // Linien hinzu
-        this.trail_features.addFeature(featureLine);
+        this.addLineFeatureToLayer(false, this.altitude);
 
         // Aktualisiere Daten für Altitude Chart mit aktueller Höhe
         this.updateAltitudeData(Math.round(Date.now()), false, this.altitude);
@@ -996,9 +967,27 @@ export class Aircraft {
   /**
    * Macht den Trail des Flugzeugs sichtbar
    */
-  makeTrailVisible() {
+  setTrailVisibility2d(visible: boolean) {
     if (this.layer) {
-      this.layer.set('visible', true);
+      this.layer.set('visible', visible);
+    }
+  }
+
+  /**
+   * Macht den 3d-Trail (Line) des Flugzeugs sichtbar
+   */
+  setTrailVisibility3dLine(visible: boolean) {
+    if (this.layer3dLine) {
+      this.layer3dLine.set('visible', visible);
+    }
+  }
+
+  /**
+   * Macht den 3d-Trail (Bar) des Flugzeugs sichtbar
+   */
+  setTrailVisibility3dBar(visible: boolean) {
+    if (this.layer3dBar) {
+      this.layer3dBar.set('visible', visible);
     }
   }
 
@@ -1089,6 +1078,18 @@ export class Aircraft {
       this.layer = null;
     }
 
+    if (this.layer3dLine) {
+      Globals.trailGroup.remove(this.layer3dLine);
+      this.trail_features3d_line.clear();
+      this.layer3dLine = null;
+    }
+
+    if (this.layer3dBar) {
+      Globals.trailGroup.remove(this.layer3dBar);
+      this.trail_features3d_bar.clear();
+      this.layer3dBar = null;
+    }
+
     for (let key in Object.keys(this)) {
       delete this[key];
     }
@@ -1125,5 +1126,115 @@ export class Aircraft {
       Globals.POMDFeatures.removeFeature(this.pomdMarker);
       this.pomdMarker = undefined;
     }
+  }
+
+  addTrackLinePoint2D(longitude, latitude, altitude) {
+    this.trackLinePoints.push({
+      coordinate: olProj.transform(
+        [longitude, latitude],
+        'EPSG:4326',
+        'EPSG:3857'
+      ),
+    });
+  }
+
+  addTrackLinePoints3d(longitude, latitude, altitude) {
+    this.addTrackLinePoint3dLine(longitude, latitude, altitude);
+    this.addTrackLinePoint3dBar(longitude, latitude, altitude);
+  }
+
+  addTrackLinePoint3dLine(longitude, latitude, altitude) {
+    this.trackLinePoints3dLine.push({
+      coordinate: olProj.transform(
+        [longitude, latitude, altitude * 0.3048], // OL-Cesium braucht Meter
+        'EPSG:4326',
+        'EPSG:3857'
+      ),
+      altitude: altitude * 0.3048, // Für Kamerahöhe nicht 0
+    });
+  }
+
+  addTrackLinePoint3dBar(longitude: any, latitude: any, altitude: any) {
+    this.trackLinePoints3dBar.push({
+      coordinate: olProj.transform(
+        [longitude, latitude, 0], // Um Balken zu bekommen
+        'EPSG:4326',
+        'EPSG:3857'
+      ),
+      altitude: altitude * 0.3048, // Für Kamerahöhe nicht 0
+    });
+
+    this.trackLinePoints3dBar.push({
+      coordinate: olProj.transform(
+        [longitude, latitude, altitude * 0.3048], // OL-Cesium braucht Meter
+        'EPSG:4326',
+        'EPSG:3857'
+      ),
+      altitude: altitude * 0.3048,
+    });
+  }
+
+  addLineFeatureToLayer(reenteredAircraft: boolean, altitude: number) {
+    let featureLine = new Feature({
+      geometry: new LineString([
+        this.trackLinePoints[this.trackLinePoints.length - 1].coordinate,
+        this.trackLinePoints[this.trackLinePoints.length - 2].coordinate,
+      ]),
+    });
+
+    let featureLine3d = new Feature({
+      geometry: new LineString([
+        this.trackLinePoints3dLine[this.trackLinePoints3dLine.length - 1]
+          .coordinate,
+        this.trackLinePoints3dLine[this.trackLinePoints3dLine.length - 2]
+          .coordinate,
+      ]),
+    });
+
+    let featureBar3d = new Feature({
+      geometry: new LineString([
+        this.trackLinePoints3dBar[this.trackLinePoints3dBar.length - 1]
+          .coordinate,
+        this.trackLinePoints3dBar[this.trackLinePoints3dBar.length - 2]
+          .coordinate,
+      ]),
+    });
+
+    let style;
+
+    // Setze Style des LineStrings
+    if (reenteredAircraft) {
+      // Setze gestrichelte Linie als Style des LineString,
+      // sollte Flugzeug ein reeteredAircraft sein
+      style = Styles.DashedLineStyle;
+    } else {
+      let onGround = this.onGround || altitude <= 0;
+
+      // Berechne Farbwert des Trailabschnittes
+      let trailColor = Markers.getColorFromAltitude(
+        altitude,
+        onGround,
+        true,
+        false
+      );
+
+      // Erstelle Style des Trailabschnittes
+      let color = trailColor;
+      style = new Style({
+        fill: new Fill({ color: color }),
+        stroke: new Stroke({ color: color, width: 4 }),
+      });
+    }
+
+    // Setze Style
+    featureLine.setStyle(style);
+    featureLine3d.setStyle(style);
+    featureBar3d.setStyle(style);
+
+    // Fuege erstellte Linie zu allen
+    // Linien hinzu
+    this.trail_features.addFeature(featureLine);
+    this.trail_features3d_line.addFeature(featureLine3d);
+    this.trail_features3d_bar.addFeature(featureBar3d);
   }
 }

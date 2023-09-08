@@ -208,6 +208,9 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Altitude Chart angezeigt werden soll
   showAltitudeChart: boolean = true;
 
+  // Resolution für OL-Cesium Map
+  sliderCesiumResolutionValue: any = [0.5];
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -752,5 +755,13 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component und übergebe showAltitudeChart-Boolean
     this.settingsService.toggleAltitudeChart(this.showAltitudeChart);
+  }
+
+  onInputChangeCesiumResolutionValue(event: Event) {
+    let value = (event.target as HTMLInputElement).value;
+
+    // Kontaktiere Cesium-Component
+    Globals.resolution3dMapValue = +value;
+    this.settingsService.setCesiumResolution(+value);
   }
 }

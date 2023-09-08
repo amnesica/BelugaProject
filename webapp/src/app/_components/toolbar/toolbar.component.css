@@ -3,7 +3,7 @@
   right: 0;
   left: 0;
   top: 0;
-  z-index: 1030;
+  z-index: 100;
   background-color: black;
   color: white;
   height: 3.5rem;
@@ -29,7 +29,7 @@
 
 #counter-aircraft {
   position: absolute;
-  z-index: 1000;
+  z-index: 101;
   font-size: 0.8rem;
   font-weight: bold;
   width: 2.5em;

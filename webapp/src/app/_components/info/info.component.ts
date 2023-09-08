@@ -81,6 +81,9 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptions: Partial<ChartOptions>;
 
+  // Output-Variable, um Map-Component zu kontaktieren
+  @Output() show3dMapEvent = new EventEmitter<boolean>();
+
   // Daten für das Altitude Chart
   altitudeData: any;
 
@@ -323,5 +326,15 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
     };
 
     this.chart.updateOptions(newOptions);
+  }
+
+  /**
+   * Methode, die Map-Component kontaktiert
+   * und anweist die 3d-Map anzuzeigen oder
+   * nicht
+   */
+  toggleShow3dMap() {
+    // Kontaktiere Map-Component
+    this.show3dMapEvent.emit();
   }
 }

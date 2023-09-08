@@ -215,6 +215,16 @@ public class FeederService {
       configMap.put("geoapifyApiKey", configuration.getGeoapifyApiKey());
     }
 
+    // Prüfe, ob Cesium Ion Default Access Token gesetzt wurde, damit Cesium-Komponenten im Frontend genutzt werden kann
+    if (configuration.cesiumIonDefaultAccessTokenIsValid()) {
+      configMap.put("cesiumIonDefaultAccessToken", configuration.getCesiumIonDefaultAccessToken());
+    }
+
+    // Prüfe, ob Cesium Google Maps API-Key gesetzt wurde, damit Google Maps für Cesium im Frontend verfügbar gemacht werden kann
+    if (configuration.cesiumGoogleMapsApiKeyIsValid()) {
+      configMap.put("cesiumGoogleMapsApiKey", configuration.getCesiumGoogleMapsApiKey());
+    }
+
     return configMap;
   }
 }

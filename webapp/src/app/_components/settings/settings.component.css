@@ -15,7 +15,7 @@
 }
 
 ::ng-deep .cdk-overlay-container {
-  z-index: 1500 !important;
+  z-index: 100 !important;
 }
 
 ::ng-deep .mat-tab-list {

@@ -1,0 +1,91 @@
+.button-3d-map {
+  position: absolute;
+  color: white;
+  margin: 0.5rem;
+  padding: 10px;
+  line-height: 14px;
+  min-width: auto;
+  z-index: 21;
+  background-color: black;
+  border-radius: 50%;
+}
+
+#closeButton3dMap {
+  top: 0;
+  right: 0;
+}
+
+#resetToNorthButton3dMap {
+  top: 0;
+  left: 1.5rem;
+}
+
+#tiltLessOnGlobe3dMap {
+  top: 6rem;
+  left: 0;
+}
+
+#tiltMoreOnGlobe3dMap {
+  top: 6rem;
+  left: 3rem;
+}
+
+#rotateMapLeftButton3dMap {
+  top: 3rem;
+  left: 3rem;
+}
+
+#rotateMapRightButton3dMap {
+  top: 3rem;
+  left: 0;
+}
+
+#show3dBuildings {
+  top: 12rem;
+  left: 1.5rem;
+}
+
+#showGooglePhotorealistic3D {
+  top: 15rem;
+  left: 1.5rem;
+}
+
+#showTrailLine3d{
+  top: 21rem;
+  left: 1.5rem;
+}
+
+#showTrailBar3d{
+  top: 24rem;
+  left: 1.5rem;
+}
+
+#showTrailBarLine3d{
+  top: 27rem;
+  left: 1.5rem;
+}
+
+#showCockpitView3d{
+  top: 33rem;
+  left: 1.5rem;
+}
+
+#show3dMapFullscreen {
+  bottom: 6rem;
+  left: 1.5rem;
+}
+
+#enableHdr3dMap {
+  top: 12rem;
+  right: 0;
+}
+
+#enableMoonSunMap {
+  top: 15rem;
+  right: 0;
+}
+
+#enableShadowsMap {
+  top: 18rem;
+  right: 0;
+}

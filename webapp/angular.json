@@ -15,18 +15,27 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
             "outputPath": "dist/webapp",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/cesium/Build/Cesium",
+                "output": "/assets/cesium"
+              }
+            ],
             "styles": [
               "node_modules/ol/ol.css",
               "src/styles.css",
-              "src/theme.scss"
+              "src/theme.scss",
+              "node_modules/cesium/Build/Cesium/Widgets/widgets.css"
             ],
             "scripts": ["node_modules/apexcharts/dist/apexcharts.min.js"],
             "vendorChunk": true,
@@ -34,7 +43,10 @@
             "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            }
           },
           "configurations": {
             "production": {
@@ -69,7 +81,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {},
           "configurations": {
             "production": {
@@ -94,11 +106,20 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "node_modules/cesium/Build/Cesium",
+                "output": "/assets/cesium"
+              }
+            ],
             "styles": [
               "node_modules/ol/ol.css",
               "src/styles.css",
-              "src/theme.scss"
+              "src/theme.scss",
+              "node_modules/cesium/Build/Cesium/Widgets/widgets.css"
             ],
             "scripts": []
           }

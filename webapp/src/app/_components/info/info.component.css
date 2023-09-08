@@ -1,7 +1,7 @@
 #largeInfo {
   position: fixed;
   display: flex;
-  z-index: 2000;
+  z-index: 15;
   bottom: 0;
   flex-direction: column;
   margin: 0;

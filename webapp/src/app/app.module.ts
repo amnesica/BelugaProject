@@ -7,6 +7,7 @@ import { InfoComponent } from './_components/info/info.component';
 import { ToolbarComponent } from './_components/toolbar/toolbar.component';
 import { SettingsComponent } from './_components/settings/settings.component';
 import { AircraftTableComponent } from './_components/aircraft-table/aircraft-table.component';
+import { CesiumComponent } from './_components/cesium/cesium.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from '@angular/cdk/layout';
@@ -53,6 +54,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
     ToolbarComponent,
     SettingsComponent,
     AircraftTableComponent,
+    CesiumComponent,
   ],
   imports: [
     BrowserModule,

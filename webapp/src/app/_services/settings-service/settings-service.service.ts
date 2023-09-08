@@ -39,6 +39,7 @@ export class SettingsService {
   private setIconGlobalSizeSource = new Subject<number>();
   private setIconSmallSizeSource = new Subject<number>();
   private showAltitudeChartSource = new Subject<boolean>();
+  private cesiumResolutionValueSource = new Subject<number>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -79,6 +80,8 @@ export class SettingsService {
   setIconGlobalSizeSource$ = this.setIconGlobalSizeSource.asObservable();
   setIconSmallSizeSource$ = this.setIconSmallSizeSource.asObservable();
   showAltitudeChartSource$ = this.showAltitudeChartSource.asObservable();
+  cesiumResolutionValueSource$ =
+    this.cesiumResolutionValueSource.asObservable();
 
   constructor() {}
 
@@ -239,5 +242,10 @@ export class SettingsService {
   toggleAltitudeChart(showAltitudeChart: boolean) {
     this.showAltitudeChartSource.next(showAltitudeChart);
     return this.showAltitudeChartSource;
+  }
+
+  setCesiumResolution(cesiumResolutionValue: number) {
+    this.cesiumResolutionValueSource.next(cesiumResolutionValue);
+    return this.cesiumResolutionValueSource;
   }
 }

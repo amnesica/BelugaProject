@@ -148,7 +148,7 @@ mat-card-header {
 
 #altitude_chart {
   position: absolute;
-  z-index: 1000;
+  z-index: 1;
   background-color: transparent;
   bottom: 0;
   margin-bottom: 1rem;
@@ -158,4 +158,17 @@ mat-card-header {
   width: 100vw;
   pointer-events: none;
   transform: scale(2);
+}
+
+#cesium-map {
+  position: absolute;
+  margin-top: 3.5rem; 
+  image-rendering: pixelated; 
+  z-index: 20;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 0px;
+  font-size: 14px;
+  overflow: auto;
 }

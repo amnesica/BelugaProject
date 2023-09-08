@@ -83,6 +83,14 @@ public class Configuration {
   @Value("#{'${geoapify.api-key:}'}")
   private String geoapifyApiKey;
 
+  // Access Token für Cesium Ion
+  @Value("#{'${cesium.ion.defaultAccessToken:}'}")
+  private String cesiumIonDefaultAccessToken;
+
+  // API-Key für Google Maps (Cesium 3d-Map)
+  @Value("#{'${cesium.googleMaps.api-key:}'}")
+  private String cesiumGoogleMapsApiKey;
+
   // Liste mit Feedern aus der Konfigurationsdatei
   private List<Feeder> listFeeder;
 
@@ -334,6 +342,36 @@ public class Configuration {
     if (geoapifyApiKey == null || geoapifyApiKey.isBlank()
         || geoapifyApiKey.equals("TODO")) {
       log.info("Geoapify: API-Key is not present in application.properties and maps will not be available!");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * Methode prüft, ob der Access Token für Cesium Ion für Cesium-Komponente gesetzt wurde
+   *
+   * @return true, wenn Access Token gesetzt wurde
+   */
+  public boolean cesiumIonDefaultAccessTokenIsValid() {
+    if (cesiumIonDefaultAccessToken == null || cesiumIonDefaultAccessToken.isBlank()
+        || cesiumIonDefaultAccessToken.equals("TODO")) {
+      log.info("Cesium Ion: Access Token is not present in application.properties and Cesium Ion 3D feature will not be available!");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * Methode prüft, ob die API-Key für Google Maps für Cesium-Komponente gesetzt wurde
+   *
+   * @return true, wenn API-Key gesetzt wurde
+   */
+  public boolean cesiumGoogleMapsApiKeyIsValid() {
+    if (cesiumGoogleMapsApiKey == null || cesiumGoogleMapsApiKey.isBlank()
+        || cesiumGoogleMapsApiKey.equals("TODO")) {
+      log.info("Cesium Google Maps: API-Key is not present in application.properties and Google maps feature will not be available!");
       return false;
     } else {
       return true;

@@ -6,7 +6,7 @@
   <!-- Info, wenn Server nicht erreichbar ist und die Konfiguration fehlschlägt -->
   <p
     *ngIf="infoConfigurationFailureMessage"
-    style="position: absolute; top: 4rem; left: 0.5rem; z-index: 2000"
+    style="position: absolute; top: 4rem; left: 0.5rem; z-index: 50"
   >
     {{ infoConfigurationFailureMessage }}
   </p>
@@ -216,6 +216,7 @@
   <!-- Info-Box -->
   <app-info
     (showRouteEvent)="receiveToggleShowAircraftRoute($event)"
+    (show3dMapEvent)="receiveToggleShow3dMap()"
     id="aircraft-info"
     *ngIf="displayAircraftInfo"
     [aircraft]="aircraft"
@@ -224,6 +225,16 @@
 
   <!-- Altitude-Chart -->
   <div id="altitude_chart" class="ol-unselectable ol-control">
-    <img src = "../../../assets/altitude_chart.svg" alt="altitude chart"/>
+    <img src="../../../assets/altitude_chart.svg" alt="altitude chart" />
   </div>
+
+  <!-- Cesium-3d-Map -->
+  <app-cesium
+    id="cesium-map"
+    *ngIf="display3dMap && cesiumIonDefaultAccessToken"
+    [aircraft]="aircraft"
+    [cesiumIonDefaultAccessToken]="cesiumIonDefaultAccessToken"
+    [cesiumGoogleMapsApiKey]="cesiumGoogleMapsApiKey"
+  >
+  </app-cesium>
 </div>

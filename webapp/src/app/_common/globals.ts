@@ -98,6 +98,12 @@ export class Globals {
   // Boolean, ob Opensky-Credentials gesetzt wurden
   static openskyCredentials: boolean = false;
 
+  // Boolean, ob 3d-Map angezeigt werden soll (OL-Cesium)
+  static display3dMap: Boolean = false;
+
+  // Resolution für 3d-Map
+  static resolution3dMapValue: number = 0.5;
+
   // Server-Adresse
   static serverUrl = environment.baseUrl;
 
