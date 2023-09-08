@@ -608,12 +608,12 @@ export class CesiumComponent implements OnInit {
       scene.sun = new Cesium.Sun();
       scene.skyBox = new Cesium.SkyBox({
         sources: {
-          positiveX: '../../../assets/tycho2t3_80_px.jpg',
-          negativeX: '../../../assets/tycho2t3_80_mx.jpg',
-          positiveY: '../../../assets/tycho2t3_80_py.jpg',
-          negativeY: '../../../assets/tycho2t3_80_my.jpg',
-          positiveZ: '../../../assets/tycho2t3_80_pz.jpg',
-          negativeZ: '../../../assets/tycho2t3_80_mz.jpg',
+          positiveX: '../../../assets/skybox_px.jpg',
+          negativeX: '../../../assets/skybox_mx.jpg',
+          positiveY: '../../../assets/skybox_py.jpg',
+          negativeY: '../../../assets/skybox_my.jpg',
+          positiveZ: '../../../assets/skybox_pz.jpg',
+          negativeZ: '../../../assets/skybox_mz.jpg',
         },
         show: true,
       });
