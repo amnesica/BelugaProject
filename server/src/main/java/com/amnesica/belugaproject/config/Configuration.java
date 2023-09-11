@@ -80,15 +80,15 @@ public class Configuration {
   private String prodBaseUrl;
 
   // API-Key für geoapify Karten
-  @Value("#{'${geoapify.api-key:}'}")
+  @Value("${geoapify.api.key:}")
   private String geoapifyApiKey;
 
   // Access Token für Cesium Ion
-  @Value("#{'${cesium.ion.defaultAccessToken:}'}")
+  @Value("${cesium.ion.defaultAccessToken:}")
   private String cesiumIonDefaultAccessToken;
 
   // API-Key für Google Maps (Cesium 3d-Map)
-  @Value("#{'${cesium.googleMaps.api-key:}'}")
+  @Value("${cesium.googleMaps.api.key:}")
   private String cesiumGoogleMapsApiKey;
 
   // Liste mit Feedern aus der Konfigurationsdatei
