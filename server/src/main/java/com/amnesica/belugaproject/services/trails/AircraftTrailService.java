@@ -116,15 +116,9 @@ public class AircraftTrailService {
 
     // Kopiere und lösche alle alten Trails
     if (listOldTrails != null) {
-
-      // Packe alte Trails in History-Trails-Tabelle
-      boolean successful = historyAircraftTrailService.putListTrailsInTrailsHistoryTable(listOldTrails);
-
-      // Wenn Speicherung in TrailsHistory-Tabelle erfolgreich war, lösche alle betroffenen
-      // Flugzeuge aus der AircraftTrails-Tabelle
-      if (successful) {
-        aircraftTrailRepository.deleteAll(listOldTrails);
-      }
+      // Lösche alle betroffenen Flugzeuge aus der AircraftTrails-Tabelle
+      // TODO: Einstiegspunkt zum Speichern der Trail History
+      aircraftTrailRepository.deleteAll(listOldTrails);
     }
   }
 }

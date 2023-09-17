@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
     @Index(name = "idx_hac_trail_hex_feeder_timestampAsc", columnList = "hex, feeder, timestamp ASC")})
 public class HistoryAircraftTrail extends TrailSuperclass {
 
+  // TODO: Implementierung der Speicherung der Trail History
   public HistoryAircraftTrail() {
     // Benötiger, leerer Konstruktor
   }

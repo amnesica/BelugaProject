@@ -13,7 +13,6 @@ public class StaticValues {
   public static final int INTERVAL_REMOVE_OLD_TRAILS_LOCAL = 600000; // 10 Minuten
   public static final long INTERVAL_REMOVE_OLD_DATA = 2592000000L; // 30 Tage
   public static final String INTERVAL_REMOVE_OLD_TRAILS_FROM_HISTORY = "0 0 2 * * ?"; // cron expression: every day at 02:00 a.m.
-  public static final int RETENTION_DAYS_TRAILS_IN_HISTORY = 2; // 2 Tage
   public static final String INTERVAL_REMOVE_OLD_AIRCRAFT_FROM_HISTORY = "0 0 1 * * ?"; // cron expression: every day at 01:00 a.m.
   public static final int RETENTION_DAYS_AIRCRAFT_IN_HISTORY = 30; // 360 Tage
 
