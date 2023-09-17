@@ -13,6 +13,7 @@ import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Globals } from 'src/app/_common/globals';
 
 @Component({
   selector: 'app-aircraft-table',
@@ -57,7 +58,7 @@ export class AircraftTableComponent implements OnInit {
   allowMultiSelect = false;
   selection = new SelectionModel<Aircraft>(this.allowMultiSelect, []);
 
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatSort, { static: true }) sort!: MatSort;
 
   private ngUnsubscribe = new Subject();
 
@@ -66,15 +67,15 @@ export class AircraftTableComponent implements OnInit {
     private changeDetectorRefs: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    // Initiiere Abonnements
-    this.initSubscriptions();
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
     // Sortiere Liste an Flugzeugen entsprechend
     // der aktuellen Sortier-Vorgabe
     this.aircraftList.sort = this.sort;
+
+    // Initiiere Abonnements
+    this.initSubscriptions();
   }
 
   ngOnDestroy() {
@@ -172,5 +173,10 @@ export class AircraftTableComponent implements OnInit {
       // Markiere Flugzeug auf Karte
       this.aircraftTableService.markOrUnmarkAircraftOnMap(aircraft.hex);
     }
+  }
+
+  toggleShowAircraftTableDiv() {
+    this.showAircraftTableDiv = !this.showAircraftTableDiv;
+    Globals.aircraftTableIsVisible = this.showAircraftTableDiv;
   }
 }

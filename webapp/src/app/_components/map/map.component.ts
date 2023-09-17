@@ -262,6 +262,9 @@ export class MapComponent implements OnInit {
   // API-Key für Google Maps
   cesiumGoogleMapsApiKey: any;
 
+  // Boolean, ob Map gerade bewegt wird
+  mapIsBeingMoved: boolean = false;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -1213,7 +1216,19 @@ export class MapComponent implements OnInit {
    */
   fetchAircraftAfterMapMove() {
     if (this.OLMap) {
+      this.OLMap.on('movestart', () => {
+        this.mapIsBeingMoved = true;
+
+        Globals.webgl &&
+          Globals.amountDisplayedAircraft > 2000 &&
+          this.webglLayer?.setOpacity(0.25);
+      });
+
       this.OLMap.on('moveend', () => {
+        this.mapIsBeingMoved = false;
+
+        Globals.webgl && this.webglLayer?.setOpacity(1);
+
         // Aktualisiere Flugzeuge auf der Karte
         this.updatePlanesFromServer(
           this.selectedFeederUpdate,
@@ -1271,7 +1286,7 @@ export class MapComponent implements OnInit {
    */
   updateAirportsFromServer() {
     // Wenn noch auf Fetches gewartet wird, breche ab
-    if (this.pendingFetchesAirports > 0) return;
+    if (this.pendingFetchesAirports > 0 || this.mapIsBeingMoved) return;
 
     // Berechne extent und zoomLevel
     let extent = this.calcCurrentMapExtent();
@@ -1396,6 +1411,8 @@ export class MapComponent implements OnInit {
    * verschiedenen Listen und Datenstrukturen
    */
   removeNotUpdatedPlanes(that: any) {
+    if (this.mapIsBeingMoved) return;
+
     let timeNow = new Date().getTime();
     let aircraft: Aircraft | undefined;
     let length = Globals.PlanesOrdered.length;
@@ -1426,7 +1443,7 @@ export class MapComponent implements OnInit {
     showIss: boolean
   ) {
     // Wenn noch auf Fetches gewartet wird, breche ab
-    if (this.pendingFetchesPlanes > 0) return;
+    if (this.pendingFetchesPlanes > 0 || this.mapIsBeingMoved) return;
 
     // Berechne extent
     let extent = this.calcCurrentMapExtent();
@@ -1473,7 +1490,8 @@ export class MapComponent implements OnInit {
           this.processPlanesUpdate(planesJSONArray);
 
           // Aktualisiere Flugzeug-Tabelle mit der globalen Flugzeug-Liste
-          this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
+          if (Globals.aircraftTableIsVisible)
+            this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
 
           // Entferne alle nicht ausgewählten Flugzeuge, wenn eine Route angezeigt wird
           if (this.showRoute) {

@@ -104,6 +104,9 @@ export class Globals {
   // Resolution für 3d-Map
   static resolution3dMapValue: number = 0.5;
 
+  // Boolean, ob aircraft table sichtbar ist
+  static aircraftTableIsVisible: boolean;
+
   // Server-Adresse
   static serverUrl = environment.baseUrl;
 
