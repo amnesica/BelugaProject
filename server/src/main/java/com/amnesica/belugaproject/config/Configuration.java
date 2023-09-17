@@ -45,6 +45,10 @@ public class Configuration {
   @Value("${scale.icons}")
   private Double scaleIcons;
 
+  // Skalierung der kleinen Icons
+  @Value("${scale.small.icons}")
+  private Double smallScaleIcons;
+
   // Ip-Adressen der Feeder
   @Value("#{'${feeder.ip}'.split(',\\s*')}")
   private List<String> listIpFeeder;

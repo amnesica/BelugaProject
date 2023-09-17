@@ -186,6 +186,7 @@ public class FeederService {
     configMap.put("latFeeder", configuration.getLatFeeder());
     configMap.put("lonFeeder", configuration.getLonFeeder());
     configMap.put("scaleIcons", configuration.getScaleIcons());
+    configMap.put("smallScaleIcons", configuration.getSmallScaleIcons());
     configMap.put("appName", configuration.getAppName());
     configMap.put("appVersion", configuration.getAppVersion());
     configMap.put("circleDistancesInNm", configuration.getListCircleDistancesInNm());

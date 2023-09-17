@@ -644,6 +644,7 @@ export class MapComponent implements OnInit {
           Globals.latFeeder = configuration.latFeeder;
           Globals.lonFeeder = configuration.lonFeeder;
           Globals.globalScaleFactorIcons = configuration.scaleIcons;
+          Globals.smallScaleFactorIcons = configuration.smallScaleIcons;
 
           // Setze App-Name und App-Version
           Globals.appName = configuration.appName;
