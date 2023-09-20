@@ -403,33 +403,145 @@
       </mat-grid-tile>
     </mat-grid-list>
 
+    <!-- Traveled distance -->
+    <mat-grid-list
+      cols="9"
+      rowHeight="3.5rem"
+      [ngClass]="darkMode ? 'background-color-dark' : 'background-color-light'"
+    >
+      <mat-grid-tile
+        colspan="9"
+        rowspan="1"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div
+          *ngIf="
+            aircraft &&
+            aircraft.positionOrg &&
+            aircraft.positionDest &&
+            aircraft.latitude &&
+            aircraft.longitude
+          "
+          style="
+            width: 100%;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            margin-left: 0.5rem;
+            margin-right: 1.5rem;
+          "
+          [ngClass]="
+            darkMode
+              ? 'background-and-color-dark'
+              : 'background-and-color-light color-grey'
+          "
+        >
+          <!-- Distance path -->
+          <div
+            id="distance-path"
+            style="
+              height: 0.23rem;
+              position: relative;
+              background: #c3c3c3;
+              margin-left: 1rem;
+              margin-right: 1rem;
+              border-radius: 4px;
+              padding: 0;
+              margin-top: 0.8rem;
+            "
+          >
+            <!-- Traveled distance path: width in % -->
+            <div
+              id="distance-flown-path"
+              style="
+                height: 0.23rem;
+                background: #707070;
+                border-radius: 4px;
+                padding: 0;
+              "
+              [style.width]="aircraft.flightProgressFlownPath"
+            >
+              <!-- Traveled distance plane: left in % (see calculations!) -->
+              <mat-icon
+                id="distance-plane"
+                style="
+                  position: absolute;
+                  scale: 1.3;
+                  color: #f8c023;
+                  top: -10px;
+                  transform: rotate(90deg) translateY(20px);
+                  left: 8%;
+                "
+                [style.left]="aircraft.flightProgressPlaneIconLeft"
+                >flight</mat-icon
+              >
+            </div>
+          </div>
+
+          <div
+            style="
+              margin-right: 0.8rem;
+              margin-top: 0.5rem;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span>{{ aircraft.travelledDistanceInKm }} km</span>
+            <span>{{ aircraft.travelDistanceRemainingInKm }} km</span>
+          </div>
+        </div>
+
+        <div
+          *ngIf="
+            aircraft &&
+            (!aircraft.positionOrg ||
+              !aircraft.positionDest ||
+              !aircraft.latitude ||
+              !aircraft.longitude)
+          "
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 0.8rem;
+          "
+        >
+          <span>No flight progress available</span>
+        </div>
+      </mat-grid-tile>
+    </mat-grid-list>
+
     <!-- altitude chart -->
     <mat-expansion-panel class="my-expansion-class-1">
-      <mat-expansion-panel-header 
-      style="
-        background: #303030;
-        font-size: large;
-        font-weight: bold;
-        border-radius: 0;
-      "
-      [ngClass]="darkMode ? 'background-color-dark' : 'background-color-light'">
-        <mat-panel-description>
-          Altitude chart
-        </mat-panel-description>
+      <mat-expansion-panel-header
+        style="
+          background: #303030;
+          font-size: large;
+          font-weight: bold;
+          border-radius: 0;
+        "
+        [ngClass]="
+          darkMode ? 'background-color-dark' : 'background-color-light'
+        "
+      >
+        <mat-panel-description> Altitude chart </mat-panel-description>
       </mat-expansion-panel-header>
       <apx-chart
-      #chart
-      [ngClass]="darkMode ? 'chart-dark' : 'chart-light'"
-      [series]="chartOptions.series!"
-      [chart]="chartOptions.chart!"
-      [xaxis]="chartOptions.xaxis!"
-      [dataLabels]="chartOptions.dataLabels!"
-      [grid]="chartOptions.grid!"
-      [stroke]="chartOptions.stroke!"
-      [title]="chartOptions.title!"
-      [labels]="chartOptions.labels!"
-      [annotations]="chartOptions.annotations!"
-    ></apx-chart>
+        #chart
+        [ngClass]="darkMode ? 'chart-dark' : 'chart-light'"
+        [series]="chartOptions.series!"
+        [chart]="chartOptions.chart!"
+        [xaxis]="chartOptions.xaxis!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [grid]="chartOptions.grid!"
+        [stroke]="chartOptions.stroke!"
+        [title]="chartOptions.title!"
+        [labels]="chartOptions.labels!"
+        [annotations]="chartOptions.annotations!"
+      ></apx-chart>
     </mat-expansion-panel>
 
     <mat-grid-list

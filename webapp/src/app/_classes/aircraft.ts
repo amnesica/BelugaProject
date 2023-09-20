@@ -188,6 +188,16 @@ export class Aircraft {
   // Altitude-List für Chart
   aircraftTrailAltitudes: any;
 
+  // Distanzen zum Anzeigen des Flight-Progress
+  totalFlightPathInKm: any;
+  travelledDistanceInKm: any;
+  travelledDistanceInPercent: any;
+
+  // Flight-Progress für 'left' und 'width' css attributes
+  flightProgressFlownPath: any;
+  flightProgressPlaneIconLeft: any;
+  travelDistanceRemainingInKm: any;
+
   // Konstruktor mit Minimaldaten
   constructor(
     hex: string,
@@ -602,6 +612,12 @@ export class Aircraft {
       );
     } else {
       this.distanceDevicePos = null;
+    }
+
+    // Berechne Flight-Progress, wenn markiert
+    if (this.isMarked) {
+      this.updateTravelledDistanceInKm();
+      this.updateTravelledDistanceInPercent();
     }
   }
 
@@ -1236,5 +1252,93 @@ export class Aircraft {
     this.trail_features.addFeature(featureLine);
     this.trail_features3d_line.addFeature(featureLine3d);
     this.trail_features3d_bar.addFeature(featureBar3d);
+  }
+
+  calcFlightPathLength() {
+    if (!this.positionOrg || !this.positionDest) return;
+
+    this.totalFlightPathInKm = Helper.getDistanceBetweenPositions(
+      this.positionOrg[1],
+      this.positionOrg[0],
+      this.positionDest[1],
+      this.positionDest[0]
+    );
+
+    this.updateTravelledDistanceInKm();
+    this.updateTravelledDistanceInPercent();
+
+    // debug
+    // console.log('totalFlightPathInKm: ' + this.totalFlightPathInKm + ' km');
+    // console.log('travelledDistanceInKm: ' + this.travelledDistanceInKm + ' km');
+    // console.log('travelled: ' + this.travelledDistanceInPercent + ' %');
+    // console.log(
+    //  'travelDistanceRemainingInKm: ' + this.travelDistanceRemainingInKm + ' km'
+    // );
+    // console.log('----');
+  }
+
+  updateTravelledDistanceInKm() {
+    if (
+      !this.positionOrg ||
+      !this.positionDest ||
+      !this.latitude ||
+      !this.longitude
+    )
+      return;
+
+    this.travelDistanceRemainingInKm = Math.abs(
+      Helper.getDistanceBetweenPositions(
+        this.positionDest[1],
+        this.positionDest[0],
+        this.latitude,
+        this.longitude
+      )
+    ).toFixed(1);
+
+    this.travelledDistanceInKm = (
+      this.totalFlightPathInKm - this.travelDistanceRemainingInKm
+    ).toFixed(1);
+  }
+
+  updateTravelledDistanceInPercent() {
+    if (
+      !this.positionOrg ||
+      !this.positionDest ||
+      !this.latitude ||
+      !this.longitude
+    )
+      return;
+    this.travelledDistanceInPercent =
+      (this.travelledDistanceInKm / this.totalFlightPathInKm) * 100;
+
+    this.calcFlightProgressCSSValues();
+  }
+
+  calcFlightProgressCSSValues() {
+    if (
+      !this.positionOrg ||
+      !this.positionDest ||
+      !this.latitude ||
+      !this.longitude ||
+      !this.travelledDistanceInPercent
+    )
+      return;
+
+    this.flightProgressFlownPath = this.travelledDistanceInPercent + '%';
+
+    // Da Flugzeug-Icon im Flight Progress by default in der Mitte den richtigen Wert
+    // hat, muss dieser Wert angepasst werden, damit am Ende das Icon nicht über die
+    // flown path bar hinausschießt
+    if (this.travelledDistanceInPercent <= 8) {
+      this.flightProgressPlaneIconLeft = 8 + '%';
+    } else if (
+      this.travelledDistanceInPercent > 8 &&
+      this.travelledDistanceInPercent < 96
+    ) {
+      this.flightProgressPlaneIconLeft =
+        this.travelledDistanceInPercent + 4 + '%';
+    } else {
+      this.flightProgressPlaneIconLeft = '100%';
+    }
   }
 }

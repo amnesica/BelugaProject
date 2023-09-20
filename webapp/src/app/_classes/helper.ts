@@ -222,6 +222,7 @@ export class Helper {
     let md = distance * Math.sin(alpha_rad);
     return Number(md);
   }
+
   /**
    * Berechne die benötigte Zeit für eine Strecke
    *
@@ -234,6 +235,7 @@ export class Helper {
     let seconds = secs.toFixed(0);
     return Number(seconds);
   }
+
   /**
    * Addiere Sekunden zum aktuellen Datum
    *

@@ -1698,6 +1698,9 @@ export class MapComponent implements OnInit {
                   ];
                 }
               }
+
+              // Setze Information über gesamte Länge der Strecke
+              this.aircraft.calcFlightPathLength();
             }
           },
           (error) => {
