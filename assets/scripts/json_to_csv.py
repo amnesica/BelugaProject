@@ -5,11 +5,11 @@ import sys
 
 def get_header_for_input_file(input_filename):
     if input_filename == "aircrafts.json":
-        return ["hex", "reg", "type", "military"]
+        return ["hex", "reg", "typecode", "military"]
     elif input_filename == "operators.json":
         return ["operator_icao", "operator_name", "operator_country", "operator_callsign"]
     elif input_filename == "types.json":
-        return ["typecode", "icao_aircraft_type", "aircraft_description", "aircraft_class"]
+        return ["typecode", "aircraft_description", "icao_aircraft_type", "wtc"]
 
 
 def create_csv_from_json(input_filename):
