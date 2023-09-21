@@ -20,7 +20,7 @@ public class AircraftData {
   // Hersteller bpsw. AIRBUS
   private String manufacturerName;
 
-  // Modellbezeichnung bpsw. A380-841
+  // Modellbezeichnung bspw. A380-841
   private String model;
 
   // Type-Code bpsw. A388
@@ -31,7 +31,13 @@ public class AircraftData {
   // Kategorie bpsw. L2J
   private String icaoAircraftType;
 
-  // Operator-Name bpsw. GERMAN AIR FORCE
+  // Wake Turbulance class bspw. L (Light), M (Medium), H (Heavy), J (Super)
+  private String wtc;
+
+  // Special Tag bspw. 00 (not special), 10 (military), 01 or 11 (interesting)
+  private String specialTag;
+
+  // Operator-Name bspw. GERMAN AIR FORCE
   private String operatorName;
 
   private String operatorCallsign;
@@ -53,6 +59,9 @@ public class AircraftData {
   private String acars;
   private String notes;
   private String categoryDescription;
+
+  // Data source bspw. OSN, mictronics
+  private String dataSource;
 
   public AircraftData() {
     // Benötiger, leerer Konstruktor
