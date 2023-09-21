@@ -35,11 +35,10 @@ import {
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
-import { asString } from 'ol/color';
 import VectorSource from 'ol/source/Vector';
 import { Geometry } from 'ol/geom';
 import WebGLPointsLayer from 'ol/layer/WebGLPoints';
