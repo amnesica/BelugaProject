@@ -221,6 +221,7 @@
     *ngIf="displayAircraftInfo"
     [aircraft]="aircraft"
     [darkMode]="darkMode"
+    @dummyParentAnimation
   ></app-info>
 
   <!-- Altitude-Chart -->
@@ -239,6 +240,5 @@
     [aircraft]="aircraft"
     [cesiumIonDefaultAccessToken]="cesiumIonDefaultAccessToken"
     [cesiumGoogleMapsApiKey]="cesiumGoogleMapsApiKey"
-  >
-  </app-cesium>
+  ></app-cesium>
 </div>

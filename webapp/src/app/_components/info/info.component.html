@@ -10,6 +10,13 @@
   *ngIf="showInfoLarge"
   [style.width]="widthInfoBox"
   [style.top]="topInfoBox"
+  [@slideInOutLeft]="{
+    value: true,
+    params: {
+      translateTypeAxis: getAnimationTransformAxisValue(),
+      translateTypeValue: getAnimationTransformValue()
+    }
+  }"
 >
   <mat-card-header>
     <!-- flightId -->

@@ -16,6 +16,7 @@
   "
   *ngIf="showSettingsDiv"
   [style.width]="settingsDivWidth"
+  [@slideInOutRight]
 >
   <mat-tab-group
     [disablePagination]="true"
@@ -394,7 +395,7 @@
           Select range data by feeder: (If no feeder is selected range data of
           all feeder are shown)
         </p>
-        <div style="display: flex; justify-content: center;">
+        <div style="display: flex; justify-content: center">
           <mat-form-field appearance="fill">
             <mat-label>Feeder</mat-label>
             <mat-select

@@ -18,8 +18,11 @@
   <span class="spacer"></span>
 
   <!-- Tabelle mit Flugzeugen -->
-  <app-aircraft-table [darkMode]="darkMode"></app-aircraft-table>
+  <app-aircraft-table
+    [darkMode]="darkMode"
+    @dummyParentAnimation
+  ></app-aircraft-table>
 
   <!-- Einstellungs-Menu -->
-  <app-settings [darkMode]="darkMode"></app-settings>
+  <app-settings [darkMode]="darkMode" @dummyParentAnimation></app-settings>
 </mat-toolbar>

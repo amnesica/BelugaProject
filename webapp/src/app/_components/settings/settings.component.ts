@@ -8,7 +8,6 @@ import {
 import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
-import { ThemePalette } from '@angular/material/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -27,6 +26,7 @@ import {
   MTX_DATETIME_FORMATS,
 } from '@ng-matero/extensions/core';
 import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import { slideInOutRight } from 'src/app/_common/animations';
 
 export interface DialogData {
   times: string[];
@@ -66,6 +66,7 @@ export interface DialogData {
       },
     },
   ],
+  animations: [slideInOutRight],
 })
 export class SettingsComponent implements OnInit {
   // Boolean, ob System im DarkMode ist

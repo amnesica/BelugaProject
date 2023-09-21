@@ -35,11 +35,10 @@ import {
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
-import { asString } from 'ol/color';
 import VectorSource from 'ol/source/Vector';
 import { Geometry } from 'ol/geom';
 import WebGLPointsLayer from 'ol/layer/WebGLPoints';
@@ -47,12 +46,14 @@ import XYZ from 'ol/source/XYZ';
 import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
 import { Maps } from 'src/app/_classes/maps';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
+import { dummyParentAnimation } from 'src/app/_common/animations';
 
 @Component({
   selector: 'app-map',
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
+  animations: [dummyParentAnimation],
 })
 export class MapComponent implements OnInit {
   // Openlayers Karte
@@ -102,7 +103,7 @@ export class MapComponent implements OnInit {
   infoConfigurationFailureMessage;
 
   // Boolean, in welchem Modus sich die Anwendung befindet
-  isDesktop: boolean | undefined;
+  isDesktop!: boolean;
 
   // Ausgewählter Feeder im Select
   selectedFeederUpdate: string = 'AllFeeder';

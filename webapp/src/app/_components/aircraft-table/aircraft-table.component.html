@@ -9,13 +9,14 @@
 
 <!-- Flugzeug-Tabelle -->
 <div
-  [hidden]="!showAircraftTableDiv"
+  *ngIf="showAircraftTableDiv"
   [style.width]="showAircraftTableWidth"
   [ngClass]="
     darkMode
       ? 'background-and-color-dark aircraft-table-div'
       : 'background-and-color-light aircraft-table-div'
   "
+  [@slideInOutRight]
 >
   <!-- Feld zum Filtern -->
   <mat-form-field class="form-field-filter" [style.width]="filterFieldWidth">
