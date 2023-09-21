@@ -27,6 +27,7 @@ import {
   MTX_DATETIME_FORMATS,
 } from '@ng-matero/extensions/core';
 import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import { slideInOutRight } from 'src/app/_common/animations';
 
 export interface DialogData {
   times: string[];
@@ -66,6 +67,7 @@ export interface DialogData {
       },
     },
   ],
+  animations: [slideInOutRight],
 })
 export class SettingsComponent implements OnInit {
   // Boolean, ob System im DarkMode ist

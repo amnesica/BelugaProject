@@ -29,6 +29,7 @@ import {
   ApexYAxis,
 } from 'ng-apexcharts';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
+import { trigger, style, animate, transition } from '@angular/animations';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -48,6 +49,23 @@ export type ChartOptions = {
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.css'],
+  animations: [
+    trigger('slideInOutLeft', [
+      transition(':enter', [
+        style({ transform: '{{translateTypeValue}}' }),
+        animate(
+          '200ms ease-out',
+          style({ transform: '{{translateTypeAxis}}(0)' })
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '200ms ease-out',
+          style({ transform: '{{translateTypeValue}}' })
+        ),
+      ]),
+    ]),
+  ],
 })
 export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   // Flugzeug, wofür die Info angezeigt wird als Eingabeparameter
@@ -66,7 +84,7 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   topInfoBox: string | undefined;
 
   // Boolean, ob es sich um einen Desktop-Browser-Fenster handelt
-  isDesktop: boolean | undefined;
+  isDesktop: boolean = true;
 
   // Anzahl der Spalten im Footer der Info-Box
   amountColumnsFooter: number | undefined;
@@ -336,5 +354,13 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   toggleShow3dMap() {
     // Kontaktiere Map-Component
     this.show3dMapEvent.emit();
+  }
+
+  getAnimationTransformAxisValue(): string {
+    return this.isDesktop ? 'translateX' : 'translateY';
+  }
+
+  getAnimationTransformValue(): string {
+    return this.isDesktop ? 'translateX(-100%)' : 'translateY(100%)';
   }
 }

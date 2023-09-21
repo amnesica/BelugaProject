@@ -47,12 +47,14 @@ import XYZ from 'ol/source/XYZ';
 import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
 import { Maps } from 'src/app/_classes/maps';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
+import { dummyParentAnimation } from 'src/app/_common/animations';
 
 @Component({
   selector: 'app-map',
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
+  animations: [dummyParentAnimation],
 })
 export class MapComponent implements OnInit {
   // Openlayers Karte
@@ -102,7 +104,7 @@ export class MapComponent implements OnInit {
   infoConfigurationFailureMessage;
 
   // Boolean, in welchem Modus sich die Anwendung befindet
-  isDesktop: boolean | undefined;
+  isDesktop!: boolean;
 
   // Ausgewählter Feeder im Select
   selectedFeederUpdate: string = 'AllFeeder';
