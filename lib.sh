@@ -16,6 +16,18 @@ airport_database_filename=airports.csv
 aircraft_database_url=https://opensky-network.org/datasets/metadata/$aircraft_database_zipfilename
 airport_database_url=https://davidmegginson.github.io/ourairports-data/$airport_database_filename
 
+aircraft_mictronics_database_zipfilename="indexedDB.zip"
+aircraft_mictronics_database_filename="indexedDB"
+aircraft_mictronics_database_url="https://www.mictronics.de/aircraft-database/$aircraft_mictronics_database_filename.php"
+json_to_csv_script_filename="json_to_csv.py"
+path_json_to_csv_script="assets/scripts/$json_to_csv_script_filename"
+aircraft_mictronics_database_aircrafts_json="aircrafts.json"
+aircraft_mictronics_database_operators_json="operators.json"
+aircraft_mictronics_database_types_json="types.json"
+aircraft_mictronics_database_aircrafts_csv="aircrafts.csv"
+aircraft_mictronics_database_operators_csv="operators.csv"
+aircraft_mictronics_database_types_csv="types.csv"
+
 load_beluga_db=loadBelugaDb
 load_beluga_db_filename=$load_beluga_db.sh
 path_load_beluga_db=assets/scripts/$load_beluga_db_filename
@@ -186,6 +198,38 @@ _download_airport_database() {
   echo "-> Copy $airport_database_filename to $path_db_content. Done."
 }
 
+_download_mictronics_aircraft_database() {
+  echo "Download $aircraft_mictronics_database_filename from Mictronics ..."
+  docker exec -ti $container_name_db bash -c "wget $aircraft_mictronics_database_url -O $aircraft_mictronics_database_zipfilename"
+  docker exec -ti $container_name_db bash -c "unzip $aircraft_mictronics_database_zipfilename -o -j"
+  echo "-> Download $aircraft_mictronics_database_filename from Mictronics. Done."
+
+  _copy_convert_mictronics_jsons_to_csv_script_to_container
+  _convert_mictronics_database_to_csv
+
+  echo "Copy $aircraft_mictronics_database_aircrafts_csv, $aircraft_mictronics_database_operators_csv, $aircraft_mictronics_database_types_csv to $path_db_content ..."
+  docker exec -ti $container_name_db bash -c "cp $aircraft_mictronics_database_aircrafts_csv $path_db_content"
+  docker exec -ti $container_name_db bash -c "cp $aircraft_mictronics_database_operators_csv $path_db_content"
+  docker exec -ti $container_name_db bash -c "cp $aircraft_mictronics_database_types_csv $path_db_content"
+  echo "-> Copy $aircraft_mictronics_database_aircrafts_csv, $aircraft_mictronics_database_operators_csv, $aircraft_mictronics_database_types_csv to $path_db_content. Done."
+}
+
+_convert_mictronics_database_to_csv() {
+  _install_python_on_postgres_container
+
+  echo "Converting JSON files of $aircraft_mictronics_database_filename to csv files ..."
+  docker exec -ti $container_name_db bash -c "python3 $json_to_csv_script_filename $aircraft_mictronics_database_aircrafts_json"
+  docker exec -ti $container_name_db bash -c "python3 $json_to_csv_script_filename $aircraft_mictronics_database_operators_json"
+  docker exec -ti $container_name_db bash -c "python3 $json_to_csv_script_filename $aircraft_mictronics_database_types_json"
+  echo "-> Converting JSON files of $aircraft_mictronics_database_filename to csv files. Done."
+}
+
+_install_python_on_postgres_container() {
+  echo "Installing python3 on $container_name_db container to execute $json_to_csv_script_filename ..."
+  docker exec -ti $container_name_db bash -c "apk add --no-cache python3 py3-pip"
+  echo "-> Installing python3 on $container_name_db container to execute $json_to_csv_script_filename. Done."
+}
+
 _copy_load_db_script_to_container() {
   echo "Copy $load_beluga_db_filename to container ..."
   docker cp $path_load_beluga_db $container_name_db:$load_beluga_db_filename
@@ -196,6 +240,12 @@ _copy_load_aircraftdata_script_to_container() {
   echo "Copy $load_aircraftdata_filename to container ..."
   docker cp $path_load_aircraftdata $container_name_db:$load_aircraftdata_filename
   echo "-> Copy $load_aircraftdata_filename to container. Done."
+}
+
+_copy_convert_mictronics_jsons_to_csv_script_to_container() {
+  echo "Copy $json_to_csv_script_filename to container ..."
+  docker cp $path_json_to_csv_script $container_name_db:$json_to_csv_script_filename
+  echo "-> Copy $json_to_csv_script_filename to container. Done."
 }
 
 _exec_load_db_script() {
@@ -235,6 +285,12 @@ _load_db_content() {
     _download_airport_database
   else
     echo "-> File $airport_database_filename already exists. Done."
+  fi
+
+  if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $aircraft_mictronics_database_zipfilename; then echo exists; fi") ]]; then
+    _download_mictronics_aircraft_database
+  else
+    echo "-> File $aircraft_mictronics_database_zipfilename already exists. Done."
   fi
 
   _copy_load_aircraftdata_script_to_container

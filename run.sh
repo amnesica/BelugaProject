@@ -21,6 +21,7 @@ commands:
   docker-rm-container <container_name>  Remove container (all when empty or specific container)
   docker-rm-image <image_name>          Remove image (all when empty or specific container)
   docker-rm                             Remove all containers and images of Beluga Project
+  download-mictronics                   Download mictronics db and convert jsons to csv files
   load-db                               Fill database in postgres container if tables were created
   update-db                             Update database in postgres container (db maintenance)
   tables-exist                          Check if tables in postgres container were created by spring
@@ -40,6 +41,7 @@ case ${CMD} in
   docker-rm-container) _docker_rm_container $@ ;;
   docker-rm-image) _docker_rm_image $@ ;;
   docker-rm) _docker_rm_project ;;
+  download-mictronics) _download_mictronics_aircraft_database ;;
   load-db) _load_db_content ;;
   update-db) _update_db_content ;;
   tables-exist) _check_tables_exist ;;
