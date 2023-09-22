@@ -45,7 +45,7 @@ public class AircraftDataService {
         }
 
         if ((aircraft.getType() == null || aircraft.getType().isEmpty())
-            && !aircraftData.getTypecode().isEmpty()) {
+            && aircraftData.getTypecode() != null && !aircraftData.getTypecode().isEmpty()) {
           aircraft.setType(aircraftData.getTypecode().trim());
         }
 
@@ -58,35 +58,35 @@ public class AircraftDataService {
           }
         }
 
-        if (!aircraftData.getOperatorIcao().isEmpty()) {
+        if (aircraftData.getOperatorIcao() != null && !aircraftData.getOperatorIcao().isEmpty()) {
           aircraft.setOperatorIcao(aircraftData.getOperatorIcao().trim());
         }
 
-        if (!aircraftData.getSerialNumber().isEmpty()) {
+        if (aircraftData.getSerialNumber() != null && !aircraftData.getSerialNumber().isEmpty()) {
           aircraft.setSerialNumber(aircraftData.getSerialNumber().trim());
         }
 
-        if (!aircraftData.getLineNumber().isEmpty()) {
+        if (aircraftData.getLineNumber() != null && !aircraftData.getLineNumber().isEmpty()) {
           aircraft.setLineNumber(aircraftData.getLineNumber().trim());
         }
 
-        if (!aircraftData.getTestReg().isEmpty()) {
+        if (aircraftData.getTestReg() != null && !aircraftData.getTestReg().isEmpty()) {
           aircraft.setTestReg(aircraftData.getTestReg().trim());
         }
 
-        if (!aircraftData.getRegistered().isEmpty()) {
+        if (aircraftData.getRegistered() != null && !aircraftData.getRegistered().isEmpty()) {
           aircraft.setRegistered(aircraftData.getRegistered().trim());
         }
 
-        if (!aircraftData.getRegUntil().isEmpty()) {
+        if (aircraftData.getRegUntil() != null && !aircraftData.getRegUntil().isEmpty()) {
           aircraft.setRegUntil(aircraftData.getRegUntil().trim());
         }
 
-        if (!aircraftData.getStatus().isEmpty()) {
+        if (aircraftData.getStatus() != null && !aircraftData.getStatus().isEmpty()) {
           aircraft.setStatus(aircraftData.getStatus().trim());
         }
 
-        if (!aircraftData.getBuilt().isEmpty()) {
+        if (aircraftData.getBuilt() != null && !aircraftData.getBuilt().isEmpty()) {
           String built = aircraftData.getBuilt();
           aircraft.setBuilt(aircraftData.getBuilt().trim());
 
@@ -94,15 +94,15 @@ public class AircraftDataService {
           aircraftService.calcAndSetAge(aircraft, built);
         }
 
-        if (!aircraftData.getFirstFlightDate().isEmpty()) {
+        if (aircraftData.getFirstFlightDate() != null && !aircraftData.getFirstFlightDate().isEmpty()) {
           aircraft.setFirstFlightDate(aircraftData.getFirstFlightDate().trim());
         }
 
-        if (!aircraftData.getIcaoAircraftType().isEmpty()) {
+        if (aircraftData.getIcaoAircraftType() != null && !aircraftData.getIcaoAircraftType().isEmpty()) {
           aircraft.setIcaoAircraftType(aircraftData.getIcaoAircraftType().trim());
         }
 
-        if (!aircraftData.getEngines().isEmpty()) {
+        if (aircraftData.getEngines() != null && !aircraftData.getEngines().isEmpty()) {
           String engines = aircraftData.getEngines().trim();
           if (engines.contains("<br>")) {
             engines = engines.replace("<br>", "");
