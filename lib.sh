@@ -84,6 +84,30 @@ _docker_build() {
   fi
 }
 
+_docker_start_container() {
+  if [[ $# -eq 0 ]]; then
+    _ask_user_with_message "Do you really want to start all containers for the Beluga Project (y/n)?"
+    _docker_start_all_containers
+  else
+    echo "Start container $1 ..."
+    local container_id=$(docker ps -aqf "name=$1")
+    if [[ $container_id ]]; then
+      docker start $container_id
+      echo "-> Started container for $1. Done."
+    else
+      echo "-> No container $1 to start. Done."
+    fi
+  fi
+}
+
+_docker_start_all_containers() {
+  echo "Start all containers for Beluga Project ..."
+  _docker_start_container $container_name_webapp
+  _docker_start_container $container_name_server
+  _docker_start_container $container_name_db
+  echo "-> Started all containers for Beluga Project. Done."
+}
+
 _docker_stop_container() {
   if [[ $# -eq 0 ]]; then
     _ask_user_with_message "Do you really want to stop all containers for the Beluga Project (y/n)?"

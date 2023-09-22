@@ -17,6 +17,7 @@ commands:
   run                                   Run project with docker compose
   run-bg                                Run project with docker compose (in background)
   docker-build <image_name>             Build docker images (all when empty or specific image)
+  docker-start <container_name>         Start container (all when empty or specific container)
   docker-stop <container_name>          Stop container (all when empty or specific container)
   docker-rm-container <container_name>  Remove container (all when empty or specific container)
   docker-rm-image <image_name>          Remove image (all when empty or specific container)
@@ -37,6 +38,7 @@ case ${CMD} in
   run) _docker_run ;;
   run-bg) _docker_run_background ;;
   docker-build) _docker_build $@ ;;
+  docker-start) _docker_start_container $@ ;;
   docker-stop) _docker_stop_container $@ ;;
   docker-rm-container) _docker_rm_container $@ ;;
   docker-rm-image) _docker_rm_image $@ ;;
