@@ -12,7 +12,9 @@ Currently you can use this application out of the box with [Flightradar24](https
 
 It is possible to run the application only with data from the [OpenSky-Network](https://opensky-network.org/), if you have an account there. So you need no local feeders to try out the app.
 
-Additional information about the aircraft are added through a PostgreSQL database with content from [OpenSky-Network](https://opensky-network.org/) and [OurAirports](https://ourairports.com/data/). The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
+Additional information about the aircraft are added through a PostgreSQL database with content from [OpenSky-Network](https://opensky-network.org/), [Mictronics](https://www.mictronics.de/aircraft-database/#) and [OurAirports](https://ourairports.com/data/). [Mictronics](https://www.mictronics.de/aircraft-database/#) data is used with [Open Data Commons Attribution License (ODC-By) v1.0](http://opendatacommons.org/licenses/by/1.0/).
+
+The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
 
 The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1).
 
