@@ -34,8 +34,12 @@ public class AircraftData {
   // Wake Turbulance class bspw. L (Light), M (Medium), H (Heavy), J (Super)
   private String wtc;
 
-  // Special Tag bspw. 00 (not special), 10 (military), 01 or 11 (interesting)
-  private String specialTag;
+  // Special Tags
+  private String isMilitary;
+  private String isHistoric;
+  private String isGovernment;
+  private String isSpecial;
+  private String isInteresting;
 
   // Operator-Name bspw. GERMAN AIR FORCE
   private String operatorName;
