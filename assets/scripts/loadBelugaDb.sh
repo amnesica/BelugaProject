@@ -123,5 +123,21 @@ psql -c "COPY map_type_to_shape_data (
 FROM '$pathToDirectoryWithCsv/map_type_to_shape.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
 
 echo -----------------------------------------
+echo loading table map_operator_icao_to_iata ...
+echo -----------------------------------------
+psql -c "CREATE TABLE IF NOT EXISTS public.map_operator_icao_to_iata(
+    		operator_name character varying(255) COLLATE pg_catalog."default",
+    		operator_icao character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    		operator_iata character varying(255) COLLATE pg_catalog."default",
+    		CONSTRAINT map_operator_icao_to_iata_pkey PRIMARY KEY (operator_icao)
+			);" -U beluga -d belugaDb
+psql -c "TRUNCATE TABLE map_operator_icao_to_iata;" -U beluga -d belugaDb
+psql -c "COPY map_operator_icao_to_iata (
+			operator_name,
+			operator_icao,
+			operator_iata)
+FROM '$pathToDirectoryWithCsv/map_operator_icao_to_iata.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+
+echo -----------------------------------------
 echo Done. Yippie!
 echo -----------------------------------------
