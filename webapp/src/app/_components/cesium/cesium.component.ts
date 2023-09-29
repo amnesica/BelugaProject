@@ -24,7 +24,7 @@ import { Maps } from 'src/app/_classes/maps';
 
 @Component({
   selector: 'app-cesium',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cesium.component.html',
   styleUrls: ['./cesium.component.css'],
 })
