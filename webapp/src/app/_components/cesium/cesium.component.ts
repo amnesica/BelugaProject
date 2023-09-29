@@ -239,11 +239,6 @@ export class CesiumComponent implements OnInit {
         target: 'map_canvas_3d',
         interactions: interactions,
         layers: this.layers3d,
-        controls: defaultControls({
-          attributionOptions: {
-            collapsible: false,
-          },
-        }),
         view: new View({
           center: fromLonLat(this.aircraft!.position),
           zoom: 11,
