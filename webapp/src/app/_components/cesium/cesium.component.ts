@@ -21,6 +21,7 @@ import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.c
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { Maps } from 'src/app/_classes/maps';
+import * as olInteraction from 'ol/interaction';
 
 @Component({
   selector: 'app-cesium',
@@ -225,9 +226,18 @@ export class CesiumComponent implements OnInit {
 
   create3dMap() {
     if (this.OL3dMap == null) {
+      let interactions = olInteraction.defaults({
+        altShiftDragRotate: true,
+        pinchRotate: true,
+        doubleClickZoom: true,
+        dragPan: true,
+        pinchZoom: true,
+      });
+
       // Initialisiere OL Map
       this.OL3dMap = new Map({
         target: 'map_canvas_3d',
+        interactions: interactions,
         layers: this.layers3d,
         controls: defaultControls({
           attributionOptions: {
