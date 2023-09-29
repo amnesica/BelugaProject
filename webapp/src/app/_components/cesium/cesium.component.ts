@@ -14,8 +14,7 @@ import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import { defaults as defaultControls } from 'ol/control';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { Globals } from 'src/app/_common/globals';
 import Collection from 'ol/Collection';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
@@ -80,7 +79,8 @@ export class CesiumComponent implements OnInit {
   // Aktuell ausgewählter Map-Stil
   currentSelectedMapStyle: any;
 
-  private ngUnsubscribe = new Subject();
+  // Subscriptions
+  subscriptions: Subscription[] = [];
 
   constructor(
     public breakpointObserver: BreakpointObserver,
@@ -90,24 +90,24 @@ export class CesiumComponent implements OnInit {
   ) {}
 
   initSubscriptions() {
-    this.breakpointObserver
+    let sub1 = this.breakpointObserver
       .observe(['(max-width: 599px)'])
-      .pipe(takeUntil(this.ngUnsubscribe))
+      .pipe()
       .subscribe((state: BreakpointState) => {
         this.setDesktopOrMobile(state);
       });
 
     // Zeige neue Daten an, wenn Flugzeuge aktualisiert wurden
-    this.cesumService.aircraftSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub2 = this.cesumService.aircraftSource$
+      .pipe()
       .subscribe((aircraft: Aircraft) => {
         this.aircraft = aircraft;
         this.addTrailToLayer();
       });
 
     // Passe Camera an, wenn sich Position des Flugzeugs geändert hat
-    this.cesumService.aircraftChangedPositionSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub3 = this.cesumService.aircraftChangedPositionSource$
+      .pipe()
       .subscribe((aircraft: Aircraft) => {
         this.aircraft = aircraft;
 
@@ -118,8 +118,8 @@ export class CesiumComponent implements OnInit {
       });
 
     // Passe Resolution der 3d-Map an
-    this.settingsService.cesiumResolutionValueSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub4 = this.settingsService.cesiumResolutionValueSource$
+      .pipe()
       .subscribe((resolutionValue: number) => {
         this.resolutionValue = resolutionValue;
         if (!this.ol3d) return;
@@ -127,12 +127,18 @@ export class CesiumComponent implements OnInit {
       });
 
     // Callback für anderen Map-Stil
-    this.settingsService.selectMapStyleSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub5 = this.settingsService.selectMapStyleSource$
+      .pipe()
       .subscribe((selectedMapStyle) => {
         this.currentSelectedMapStyle = selectedMapStyle;
         this.createBaseLayer();
       });
+
+    this.subscriptions.push(sub1);
+    this.subscriptions.push(sub2);
+    this.subscriptions.push(sub3);
+    this.subscriptions.push(sub4);
+    this.subscriptions.push(sub5);
   }
 
   setDesktopOrMobile(state: BreakpointState) {
@@ -294,15 +300,19 @@ export class CesiumComponent implements OnInit {
   }
 
   destroy3dAssets() {
+    this.removeOsm3dBuildings();
+    this.removeGooglePhotorealistic3D();
     this.layers3d.clear;
     this.OL3dMap = undefined;
     this.ol3d = undefined;
+    this.camera = undefined;
+    this.osmBuildingsTileset = undefined;
+    this.googlePhotorealisticTileset = undefined;
   }
 
   ngOnDestroy() {
     this.destroy3dAssets();
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   close3dMap() {
