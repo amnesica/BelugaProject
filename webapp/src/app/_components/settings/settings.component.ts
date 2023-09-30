@@ -7,10 +7,9 @@ import {
 } from '@angular/core';
 import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
-import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { Helper } from 'src/app/_classes/helper';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { environment } from 'src/environments/environment';
@@ -174,7 +173,8 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Opensky-Credentials existieren, wenn nicht disable switch
   openskyCredentialsExist: boolean = false;
 
-  private ngUnsubscribe = new Subject();
+  // Subscriptions
+  subscriptions: Subscription[] = [];
 
   // Boolean, ob Rainviewer (Rain) Daten angezeigt werden sollen
   rainViewerRain: boolean = false;
@@ -232,8 +232,7 @@ export class SettingsComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   /**
@@ -269,9 +268,9 @@ export class SettingsComponent implements OnInit {
    * Initiierung der Abonnements
    */
   initSubscriptions() {
-    this.breakpointObserver
+    let sub1 = this.breakpointObserver
       .observe(['(max-width: 599px)'])
-      .pipe(takeUntil(this.ngUnsubscribe))
+      .pipe()
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           // Setze Variable auf 'Mobile'
@@ -283,41 +282,48 @@ export class SettingsComponent implements OnInit {
           this.settingsDivWidth = '20rem';
         }
       });
+    this.subscriptions.push(sub1);
+
     // Weise Liste an Feeder zu
-    this.settingsService.listFeeder$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub2 = this.settingsService.listFeeder$
+      .pipe()
       .subscribe((listFeeder) => (this.listFeeder = listFeeder));
+    this.subscriptions.push(sub2);
 
     // Weise App-Name und App-Version zu
-    this.settingsService.appNameAndVersion$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub3 = this.settingsService.appNameAndVersion$
+      .pipe()
       .subscribe((appNameAndVersion) => {
         this.appName = appNameAndVersion[0];
         this.appVersion = appNameAndVersion[1];
       });
+    this.subscriptions.push(sub3);
 
     // Weise IP-Adresse des Clients zu
-    this.settingsService.clientIpSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub4 = this.settingsService.clientIpSource$
+      .pipe()
       .subscribe((clientIp) => {
         this.clientAddress = clientIp;
       });
+    this.subscriptions.push(sub4);
 
     // Weise openskyCredentialsExist zu, damit Switch
     // disabled werden kann, falls diese nicht vorhanden sind
-    this.settingsService.openskyCredentialsExistSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub5 = this.settingsService.openskyCredentialsExistSource$
+      .pipe()
       .subscribe((openskyCredentialsExist) => {
         this.openskyCredentialsExist = openskyCredentialsExist;
       });
+    this.subscriptions.push(sub5);
 
     // Weise Liste an verfügbaren Map-Stilen zu
-    this.settingsService.listAvailableMapsSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub6 = this.settingsService.listAvailableMapsSource$
+      .pipe()
       .subscribe((listAvailableMaps) => {
         this.listAvailableMaps = listAvailableMaps;
         this.selectCurrentlySelectedMapStyle();
       });
+    this.subscriptions.push(sub6);
   }
 
   /**

@@ -4,8 +4,7 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { ToolbarService } from 'src/app/_services/toolbar-service/toolbar-service.service';
 import { dummyParentAnimation } from 'src/app/_common/animations';
 
@@ -23,7 +22,8 @@ export class ToolbarComponent implements OnInit {
   // Flugzeug-Zähler
   counterAircraft: number = 0;
 
-  private ngUnsubscribe = new Subject();
+  // Subscriptions
+  subscriptions: Subscription[] = [];
 
   constructor(private toolbarService: ToolbarService) {}
 
@@ -33,8 +33,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   /**
@@ -42,10 +41,11 @@ export class ToolbarComponent implements OnInit {
    */
   initSubscriptions() {
     // Aktualisiere Flugzeug-Zähler
-    this.toolbarService.counterAircraft$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub1 = this.toolbarService.counterAircraft$
+      .pipe()
       .subscribe((counterAircraft) => {
         this.counterAircraft = counterAircraft;
       });
+    this.subscriptions.push(sub1);
   }
 }

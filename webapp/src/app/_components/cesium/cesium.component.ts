@@ -12,7 +12,6 @@ import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
-import { defaults as defaultControls } from 'ol/control';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subscription } from 'rxjs';
 import { Globals } from 'src/app/_common/globals';
@@ -97,6 +96,7 @@ export class CesiumComponent implements OnInit {
       .subscribe((state: BreakpointState) => {
         this.setDesktopOrMobile(state);
       });
+    this.subscriptions.push(sub1);
 
     // Zeige neue Daten an, wenn Flugzeuge aktualisiert wurden
     let sub2 = this.cesumService.aircraftSource$
@@ -105,6 +105,7 @@ export class CesiumComponent implements OnInit {
         this.aircraft = aircraft;
         this.addTrailToLayer();
       });
+    this.subscriptions.push(sub2);
 
     // Passe Camera an, wenn sich Position des Flugzeugs geändert hat
     let sub3 = this.cesumService.aircraftChangedPositionSource$
@@ -117,6 +118,7 @@ export class CesiumComponent implements OnInit {
           this.updateCockpitView();
         }
       });
+    this.subscriptions.push(sub3);
 
     // Passe Resolution der 3d-Map an
     let sub4 = this.settingsService.cesiumResolutionValueSource$
@@ -126,6 +128,7 @@ export class CesiumComponent implements OnInit {
         if (!this.ol3d) return;
         this.ol3d.setResolutionScale(this.resolutionValue);
       });
+    this.subscriptions.push(sub4);
 
     // Callback für anderen Map-Stil
     let sub5 = this.settingsService.selectMapStyleSource$
@@ -135,10 +138,6 @@ export class CesiumComponent implements OnInit {
         this.createBaseLayer();
       });
 
-    this.subscriptions.push(sub1);
-    this.subscriptions.push(sub2);
-    this.subscriptions.push(sub3);
-    this.subscriptions.push(sub4);
     this.subscriptions.push(sub5);
   }
 

@@ -14,8 +14,7 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Aircraft } from '../../_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import {
   ChartComponent,
   ApexAxisChartSeries,
@@ -105,7 +104,8 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   // Daten für das Altitude Chart
   altitudeData: any;
 
-  private ngUnsubscribe = new Subject();
+  // Subscriptions
+  subscriptions: Subscription[] = [];
 
   constructor(
     public breakpointObserver: BreakpointObserver,
@@ -170,13 +170,12 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy() {
     if (this.chart != undefined) this.chart.destroy();
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
+    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
   initSubscriptions() {
-    this.settingsService.aircraftTrailAltitudeData$
-      .pipe(takeUntil(this.ngUnsubscribe))
+    let sub1 = this.settingsService.aircraftTrailAltitudeData$
+      .pipe()
       .subscribe((altitudeData) => {
         if (altitudeData) {
           this.altitudeData = altitudeData;
@@ -186,10 +185,11 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
           this.updateThemeColorsInOptions();
         }
       });
+    this.subscriptions.push(sub1);
 
-    this.breakpointObserver
+    let sub2 = this.breakpointObserver
       .observe(['(max-width: 599px)'])
-      .pipe(takeUntil(this.ngUnsubscribe))
+      .pipe()
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           // Setze Variable auf 'Mobile'
@@ -216,6 +216,7 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
           this.showLargeInfo();
         }
       });
+    this.subscriptions.push(sub2);
   }
 
   /**
