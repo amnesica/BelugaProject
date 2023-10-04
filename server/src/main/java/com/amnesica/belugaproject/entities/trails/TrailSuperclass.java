@@ -6,6 +6,8 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Data
 @MappedSuperclass
 public class TrailSuperclass {
@@ -44,5 +46,18 @@ public class TrailSuperclass {
         + ", altitude=" + altitude + ", timestamp="
         + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timestamp) + ", reenteredAircraft="
         + reenteredAircraft + ", feeder=" + feeder + ", source=" + source + "]";
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    TrailSuperclass that = (TrailSuperclass) o;
+    return Objects.equals(hex, that.hex) && Objects.equals(longitude, that.longitude) && Objects.equals(latitude, that.latitude) && Objects.equals(altitude, that.altitude) && Objects.equals(reenteredAircraft, that.reenteredAircraft) && Objects.equals(feeder, that.feeder) && Objects.equals(source, that.source);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(hex, longitude, latitude, altitude, reenteredAircraft, feeder, source);
   }
 }

@@ -4,12 +4,14 @@ import com.amnesica.belugaproject.config.StaticValues;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;
 import com.amnesica.belugaproject.repositories.trails.AircraftTrailRepository;
+import com.amnesica.belugaproject.services.helper.TrailHelperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -17,7 +19,7 @@ public class AircraftTrailService {
   @Autowired
   private AircraftTrailRepository aircraftTrailRepository;
   @Autowired
-  private HistoryAircraftTrailService historyAircraftTrailService;
+  private TrailHelperService trailHelperService;
 
   /**
    * Speichert einen Trail im AircraftTrailRepository
@@ -70,6 +72,13 @@ public class AircraftTrailService {
         }
       }
     }
+
+    if (trails != null)
+      trails = trails.stream().distinct().collect(Collectors.toList());
+
+    if (trails != null)
+      trails = trailHelperService.checkAircraftTrailsFor180Border(trails);
+
     return trails;
   }
 

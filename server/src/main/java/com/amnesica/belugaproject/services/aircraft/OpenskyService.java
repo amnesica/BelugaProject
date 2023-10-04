@@ -13,6 +13,7 @@ import com.amnesica.belugaproject.services.data.AirportDataService;
 import com.amnesica.belugaproject.services.helper.HelperService;
 import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
 import com.amnesica.belugaproject.services.helper.Request;
+import com.amnesica.belugaproject.services.helper.TrailHelperService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 @Slf4j
 @EnableScheduling
@@ -45,6 +47,8 @@ public class OpenskyService {
   private OpenskyAircraftRepository openskyAircraftRepository;
   @Autowired
   private Configuration configuration;
+  @Autowired
+  private TrailHelperService trailHelperService;
 
   // Feeder für das Opensky-Network
   private Feeder openskyFeeder;
@@ -493,6 +497,13 @@ public class OpenskyService {
             + ": Exception = " + e);
       }
     }
+
+    if (trails != null)
+      trails = trails.stream().distinct().collect(Collectors.toList());
+
+    if (trails != null)
+      trails = trailHelperService.checkAircraftTrailsFor180Border(trails);
+
     return trails;
   }
 }

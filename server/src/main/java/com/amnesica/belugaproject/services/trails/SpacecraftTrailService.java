@@ -4,18 +4,22 @@ import com.amnesica.belugaproject.config.StaticValues;
 import com.amnesica.belugaproject.entities.aircraft.Spacecraft;
 import com.amnesica.belugaproject.entities.trails.SpacecraftTrail;
 import com.amnesica.belugaproject.repositories.trails.SpacecraftTrailRepository;
+import com.amnesica.belugaproject.services.helper.TrailHelperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class SpacecraftTrailService {
   @Autowired
   private SpacecraftTrailRepository spacecraftTrailRepository;
+  @Autowired
+  private TrailHelperService trailHelperService;
 
   /**
    * Methode speichert ein Trail-Element der ISS in der Tabelle spacecraft_trail
@@ -69,6 +73,11 @@ public class SpacecraftTrailService {
     List<SpacecraftTrail> trails = null;
     try {
       trails = spacecraftTrailRepository.findAllByHexOrderByTimestampAsc("ISS");
+      if (trails != null)
+        trails = trails.stream().distinct().collect(Collectors.toList());
+
+      if (trails != null)
+        trails = trailHelperService.checkSpacecraftTrailsFor180Border(trails);
     } catch (Exception e) {
       log.error("Server - DB error when retrieving all trails for iss : Exception = " + e);
     }

@@ -1190,7 +1190,26 @@ export class Aircraft {
     });
   }
 
+  trackLinePointsAre180Crosspoints() {
+    if (
+      (this.trackLinePoints[this.trackLinePoints.length - 1].coordinate[0] ==
+        20037508.342789244 &&
+        this.trackLinePoints[this.trackLinePoints.length - 2].coordinate[0] ==
+          -20037508.342789244) ||
+      (this.trackLinePoints[this.trackLinePoints.length - 1].coordinate[0] ==
+        -20037508.342789244 &&
+        this.trackLinePoints[this.trackLinePoints.length - 2].coordinate[0] ==
+          20037508.342789244)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   addLineFeatureToLayer(reenteredAircraft: boolean, altitude: number) {
+    if (this.trackLinePointsAre180Crosspoints()) return;
+
     let featureLine = new Feature({
       geometry: new LineString([
         this.trackLinePoints[this.trackLinePoints.length - 1].coordinate,
