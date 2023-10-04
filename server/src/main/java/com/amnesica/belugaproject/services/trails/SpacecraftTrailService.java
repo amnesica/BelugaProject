@@ -41,15 +41,14 @@ public class SpacecraftTrailService {
   }
 
   /**
-   * Methode entfernt Trails die älter als eine Stunde sind aus der Tabelle
+   * Methode entfernt Trails die älter als drei Stunden sind aus der Tabelle
    * aircraft_trail. Methode wird alle INTERVAL_REMOVE_OLD_TRAILS_ISS Sekunden
    * aufgerufen
    */
   @Scheduled(fixedRate = StaticValues.INTERVAL_REMOVE_OLD_TRAILS_ISS)
   private void removeOldTrails() {
-    // Berechne timestamp vor 1 Stunde (3600 Sekunden, entspricht 3600000
-    // Millisekunden), damit nur alte Trails gelöscht werden
-    long startTime = System.currentTimeMillis() - 3600000;
+    // Berechne timestamp vor 3 Stunden, damit nur alte Trails gelöscht werden
+    long startTime = System.currentTimeMillis() - 10800000;
 
     // Hole Trails der aktuellen Iteration
     List<SpacecraftTrail> listOldTrails = spacecraftTrailRepository

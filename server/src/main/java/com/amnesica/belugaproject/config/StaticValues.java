@@ -20,6 +20,6 @@ public class StaticValues {
   public static final int INTERVAL_REMOVE_OLD_PLANES_OPENSKY = 600000; // 10 Minuten
 
   // ISS - Scheduler
-  public static final int INTERVAL_UPDATE_ISS = 2000; // 2 Sekunden
+  public static final int INTERVAL_UPDATE_ISS = 10000; // 10 Sekunden
   public static final int INTERVAL_REMOVE_OLD_TRAILS_ISS = 600000; // 10 Minuten
 }
