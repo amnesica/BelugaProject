@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -281,7 +282,7 @@ public class LocalFeederService {
    * @return List<Aircraft>
    */
   public List<Aircraft> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax,
-                                              String selectedFeeder, long startTime) {
+                                              String selectedFeeder, long startTime, String markedHex) {
     List<Aircraft> listAircraftRaw = null;
 
     try {
@@ -293,6 +294,15 @@ public class LocalFeederService {
         // Gebe Flugzeuge aller Feeder zurück
         listAircraftRaw = aircraftRepository.findAllByLastUpdateAndWithinExtent(startTime,
             lomin, lamin, lomax, lamax);
+      }
+      if (markedHex != null && !markedHex.isEmpty()) {
+        Aircraft markedAircraft = aircraftRepository.findByHex(markedHex);
+        if (markedAircraft != null && listAircraftRaw != null) {
+          listAircraftRaw.add(markedAircraft);
+        } else if (markedAircraft != null) {
+          listAircraftRaw = new ArrayList<>();
+          listAircraftRaw.add(markedAircraft);
+        }
       }
     } catch (Exception e) {
       log.error("Server - DB error when fetching planes : Exception = " + e);

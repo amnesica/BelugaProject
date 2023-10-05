@@ -12,6 +12,7 @@ import com.amnesica.belugaproject.services.trails.AircraftTrailService;
 import com.amnesica.belugaproject.services.trails.SpacecraftTrailService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -81,6 +82,7 @@ public class Controller {
    * @param selectedFeeder   Ausgewählter Feeder (oder 'AllFeeder')
    * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
    * @param showIss          Boolean, ob ISS abgefragt werden soll
+   * @param markedHex        String, hex des markierten Flugzeugs
    * @return Collection<AircraftSuperclass>
    */
   @GetMapping(value = "/getAircraftList", produces = "application/json")
@@ -89,9 +91,10 @@ public class Controller {
                                                  @RequestParam(value = "lamin") double lamin, @RequestParam(value = "lomax") double lomax,
                                                  @RequestParam(value = "lamax") double lamax, @RequestParam(value = "selectedFeeder") String selectedFeeder,
                                                  @RequestParam(value = "fetchFromOpensky") boolean fetchFromOpensky,
-                                                 @RequestParam(value = "showIss") boolean showIss, HttpServletRequest httpRequest) {
+                                                 @RequestParam(value = "showIss") boolean showIss,
+                                                 @Nullable @RequestParam(value = "markedHex") String markedHex, HttpServletRequest httpRequest) {
     return feederService.getPlanesWithinExtent(lomin, lamin, lomax, lamax, selectedFeeder, fetchFromOpensky,
-        showIss, httpRequest);
+        showIss, markedHex, httpRequest);
   }
 
   /**

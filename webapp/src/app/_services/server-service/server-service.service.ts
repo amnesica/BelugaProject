@@ -21,6 +21,7 @@ export class ServerService {
    * @param selectedFeeder Ausgewählter Feeder (oder 'AllFeeder')
    * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
    * @param showIss Boolean, ob ISS abgefragt werden soll
+   * @param markedHex String, hex des aktuell markierten Flugzeugs
    * @returns
    */
   getPlanesUpdate(
@@ -30,7 +31,8 @@ export class ServerService {
     lamax: number,
     selectedFeeder: any,
     fetchFromOpensky: boolean,
-    showIss: boolean
+    showIss: boolean,
+    markedHex: string | null
   ): Observable<Aircraft[]> {
     // Initialiere Params-Objekt
     let params = new HttpParams();
@@ -43,6 +45,7 @@ export class ServerService {
     params = params.append('selectedFeeder', selectedFeeder.toString());
     params = params.append('fetchFromOpensky', fetchFromOpensky.toString());
     params = params.append('showIss', showIss.toString());
+    if (markedHex != null) params = params.append('markedHex', markedHex);
 
     return this.httpClient.get<Aircraft[]>(Globals.urlGetPlanes, {
       params: params,
@@ -112,7 +115,11 @@ export class ServerService {
    * @param isFromOpensky boolean
    * @returns Observable<any>
    */
-  getTrail(hex: string, selectedFeeder: any, isFromOpensky: boolean): Observable<any> {
+  getTrail(
+    hex: string,
+    selectedFeeder: any,
+    isFromOpensky: boolean
+  ): Observable<any> {
     // Initialiere Params-Objekt
     let params = new HttpParams();
 

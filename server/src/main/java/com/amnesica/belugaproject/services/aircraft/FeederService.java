@@ -55,7 +55,7 @@ public class FeederService {
    */
   @Async
   public HashSet<AircraftSuperclass> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax,
-                                                           String selectedFeeder, boolean fetchFromOpensky, boolean showIss, HttpServletRequest httpRequest) {
+                                                           String selectedFeeder, boolean fetchFromOpensky, boolean showIss, String markedHex, HttpServletRequest httpRequest) {
     if (pendingRequest)
       return null;
 
@@ -72,7 +72,7 @@ public class FeederService {
     try {
 
       // Erstelle Requests für Services, wenn Opensky oder ISS angefragt werden soll
-      createRequestsIfNecessary(lomin, lamin, lomax, lamax, fetchFromOpensky, showIss,
+      createRequestsIfNecessary(lomin, lamin, lomax, lamax, fetchFromOpensky, showIss, markedHex,
           httpRequest.getRemoteAddr());
 
       // Berechne timestamp vor 2 Sekunden, damit nur die Flugzeuge angezeigt werden,
@@ -83,7 +83,7 @@ public class FeederService {
         if (startTime != 0) {
           // Hole Flugzeuge von den lokalen Feedern
           List<Aircraft> listLocalFeederPlanes = localFeederService.getPlanesWithinExtent(lomin, lamin,
-              lomax, lamax, selectedFeeder, startTime);
+              lomax, lamax, selectedFeeder, startTime, markedHex);
           if (listLocalFeederPlanes != null) {
             for (Aircraft aircraft : listLocalFeederPlanes) {
               mapAircraftRaw.put(aircraft.getHex(), aircraft);
@@ -141,14 +141,14 @@ public class FeederService {
    * @param showIss          Boolean, ob ISS abgefragt werden soll
    */
   private void createRequestsIfNecessary(double lomin, double lamin, double lomax, double lamax,
-                                         boolean fetchFromOpensky, boolean showIss, String ipAddress) {
+                                         boolean fetchFromOpensky, boolean showIss, String markedHex, String ipAddress) {
 
     if (ipAddress == null || ipAddress.isEmpty())
       return;
 
     // Erstelle Request für ISS- und Opensky-Update mit Extent
     Request request = new Request("Request: " + requestCounter, System.currentTimeMillis(), ipAddress,
-        lomin, lamin, lomax, lamax);
+        lomin, lamin, lomax, lamax, markedHex);
     requestCounter++;
 
     if (fetchFromOpensky) {

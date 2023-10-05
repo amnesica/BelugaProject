@@ -1493,7 +1493,8 @@ export class MapComponent implements OnInit {
         extent[3],
         selectedFeeder,
         fetchFromOpensky,
-        showIss
+        showIss,
+        this.aircraft ? this.aircraft.hex : null // hex des markierten Flugzeugs
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
