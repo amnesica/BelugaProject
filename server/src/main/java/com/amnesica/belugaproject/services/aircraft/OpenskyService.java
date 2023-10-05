@@ -243,9 +243,7 @@ public class OpenskyService {
     // Hole Request aus queue. Wenn kein Request vorhanden ist, wird null zurückgegeben
     Request request = requestQueueOpensky.poll();
 
-    if (request == null) {
-      return;
-    }
+    if (request == null) return;
 
     // Suche und extrahiere den neuesten Request der IP-Addresse
     final Request copyRequest = request;
@@ -257,7 +255,7 @@ public class OpenskyService {
       // Ersetze ursprünglich gepollten Request durch neueren Request
       request = requestNewest.get();
 
-      // Lösche alle bisherigen Requests derjenigen Ip-Adressse, welche älter sind als der herausgenommene Request
+      // Lösche alle bisherigen Requests derjenigen Ip-Adressse, welche älter sind als der heraus genommene Request
       requestQueueOpensky.removeIf(r -> r.getTimestamp() < requestNewest.get().getTimestamp() && r.getIpAddressClient().equals(copyRequest.getIpAddressClient()));
     }
 
@@ -268,6 +266,10 @@ public class OpenskyService {
       return;
     }
 
+    fetchAircraftDataFromOpensky(request);
+  }
+
+  private void fetchAircraftDataFromOpensky(Request request) {
     JSONArray jsonArrayFromOpensky;
 
     // Hole Flugzeuge als JSONArray vom Opensky-Network
@@ -279,6 +281,10 @@ public class OpenskyService {
       openskyFeeder = createOpenskyFeeder();
     }
 
+    processOpenskyAircraftJsonArray(jsonArrayFromOpensky);
+  }
+
+  private void processOpenskyAircraftJsonArray(JSONArray jsonArrayFromOpensky) {
     if (jsonArrayFromOpensky != null) {
       for (int i = 0; i < jsonArrayFromOpensky.length(); i++) {
 
