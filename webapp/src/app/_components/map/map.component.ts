@@ -1955,7 +1955,7 @@ export class MapComponent implements OnInit {
 
         // Prüfe, ob Photo-Url bereits vorhanden ist,
         // wenn nicht starte Anfrage an Server
-        if (!this.aircraft.allDataWasRequested && this.aircraft.hex != 'ISS') {
+        if (!this.aircraft.allDataWasRequested) {
           // Setze intiales Flugzeug-Photo
           this.aircraft.urlPhotoDirect =
             '../../../assets/placeholder_loading_aircraft_photo.jpg';
