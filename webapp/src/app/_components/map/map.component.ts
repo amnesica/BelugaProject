@@ -962,7 +962,7 @@ export class MapComponent implements OnInit {
       view: new View({
         center: olProj.fromLonLat(Globals.SitePosition),
         zoom: Globals.zoomLevel,
-        minZoom: 2,
+        multiWorld: true,
       }),
     });
   }
@@ -1843,7 +1843,7 @@ export class MapComponent implements OnInit {
       // Suche nur in planesLayer oder webglLayer
       const hex = evt.map.forEachFeatureAtPixel(
         evt.pixel,
-        (feature, layer) => {
+        (feature) => {
           return feature.hex;
         },
         {
@@ -1887,12 +1887,12 @@ export class MapComponent implements OnInit {
       if (hex) {
         this.markOrUnmarkAircraft(hex, false);
       } else if (rangePoint && rangePoint.name == 'RangeDataPoint') {
-        this.createAndShowRangeDataPopup(rangePoint);
+        this.createAndShowRangeDataPopup(rangePoint, evt);
       } else if (
         airportPoint &&
         airportPoint.featureName == 'AirportDataPoint'
       ) {
-        this.createAndShowAirportDataPopup(airportPoint);
+        this.createAndShowAirportDataPopup(airportPoint, evt);
       } else {
         this.resetAllMarkedPlanes();
         this.resetAllTrails();
@@ -1999,7 +1999,7 @@ export class MapComponent implements OnInit {
    * Erstellt zu einem rangePoint ein Popup-Fenster mit
    * Informationen über diesen RangePoint
    */
-  createAndShowRangeDataPopup(rangePoint: any) {
+  createAndShowRangeDataPopup(rangePoint: any, evt: any) {
     // Formatiere Timestamp in deutschen LocaleString
     let dateFromTimestamp = new Date(rangePoint.timestamp);
     let dateToShow = dateFromTimestamp.toLocaleString('de-DE', {
@@ -2094,8 +2094,11 @@ export class MapComponent implements OnInit {
     });
 
     // Setze Position des Popups und füge Overlay zur Karte hinzu
-    let coordinate = rangePoint.getGeometry().getCoordinates();
-    this.rangeDataPopup.setPosition(coordinate);
+    const coordinate = rangePoint.getGeometry().getCoordinates();
+    this.rangeDataPopup.setPosition([
+      coordinate[0] + Math.round(evt.coordinate[0] / 40075016) * 40075016,
+      coordinate[1],
+    ]);
     this.OLMap.addOverlay(this.rangeDataPopup);
 
     // Verändere Bottom-Wert für Popup,
@@ -2106,7 +2109,7 @@ export class MapComponent implements OnInit {
     this.showPopupRangeDataPoint = true;
   }
 
-  createAndShowAirportDataPopup(airportPoint: any) {
+  createAndShowAirportDataPopup(airportPoint: any, evt: any) {
     if (airportPoint == undefined) return;
 
     // Erstelle aktuell angeklicktes AirportDataPoint aus Feature
@@ -2167,9 +2170,11 @@ export class MapComponent implements OnInit {
       element: document.getElementById('airportDataPopup')!,
     });
 
-    // Setze Position des Popups und füge Overlay zur Karte hinzu
-    let coordinate = airportPoint.getGeometry().getCoordinates();
-    this.airportDataPopup.setPosition(coordinate);
+    const coordinate = airportPoint.getGeometry().getCoordinates();
+    this.airportDataPopup.setPosition([
+      coordinate[0] + Math.round(evt.coordinate[0] / 40075016) * 40075016,
+      coordinate[1],
+    ]);
     this.OLMap.addOverlay(this.airportDataPopup);
 
     // Verändere Bottom-Wert für Popup,
@@ -2180,6 +2185,8 @@ export class MapComponent implements OnInit {
   resetAirportDataPopup() {
     if (this.airportDataPopup) {
       this.airportDataPopup.setPosition(undefined);
+      this.airportDataPopup.dispose();
+      this.airportDataPoint = undefined;
     }
 
     // Verändere Bottom-Wert für Popup,
@@ -2193,6 +2200,8 @@ export class MapComponent implements OnInit {
   resetRangeDataPopup() {
     if (this.rangeDataPopup) {
       this.rangeDataPopup.setPosition(undefined);
+      this.rangeDataPopup.dispose();
+      this.rangeDataPopup = undefined;
     }
 
     // Verändere Bottom-Wert für Popup,
@@ -2240,10 +2249,10 @@ export class MapComponent implements OnInit {
 
       // Hole hex von Feature (bei Flugzeugen)
       // Suche nur in planesLayer oder webglLayer
-      const hex = evt.map.forEachFeatureAtPixel(
+      const feature = evt.map.forEachFeatureAtPixel(
         evt.pixel,
         (feature) => {
-          return feature.hex;
+          return feature;
         },
         {
           layerFilter: (layer) =>
@@ -2252,7 +2261,9 @@ export class MapComponent implements OnInit {
         }
       );
 
-      if (hex) {
+      if (feature && feature.hex) {
+        const hex = feature.hex;
+
         this.OLMap.getTargetElement().style.cursor = hex ? 'pointer' : '';
 
         // Finde gehovertes Flugzeug aus Liste mit Hex
@@ -2263,13 +2274,17 @@ export class MapComponent implements OnInit {
           // Setze Flugzeug als das aktuell gehoverte
           this.createHoveredAircraft(aircraft);
 
-          let markerCoordinates;
-          markerCoordinates = Globals.webgl
-            ? aircraft.glMarker.getGeometry().getCoordinates()
-            : aircraft.marker.getGeometry().getCoordinates();
+          // Berechne richtige Position, wenn andere Welt gehovert wird
+          const featureCoordinates = feature.getGeometry().getCoordinates();
+          const coordinatesNormalized = [
+            featureCoordinates[0] +
+              Math.round(evt.coordinate[0] / 40075016) * 40075016,
+            featureCoordinates[1],
+          ];
 
-          let markerPosition =
-            this.OLMap.getPixelFromCoordinate(markerCoordinates);
+          const markerPosition = this.OLMap.getPixelFromCoordinate(
+            coordinatesNormalized
+          );
           if (!markerPosition) return;
 
           // Setze richtige Position
