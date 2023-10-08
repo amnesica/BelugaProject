@@ -14,27 +14,32 @@
   <!-- Hover-Info-Box Variante (wird nur auf dem Desktop angezeigt) -->
   <mat-card
     id="smallInfoBox"
-    *ngIf="showSmallInfo && hoveredAircraft"
+    *ngIf="showSmallInfo && hoveredAircraftObject"
     [style.top.px]="topValue"
     [style.left.px]="leftValue"
     [ngClass]="
       darkMode ? 'background-and-color-dark' : 'background-and-color-light'
     "
   >
-    <div *ngIf="hoveredAircraft">
+    <div *ngIf="hoveredAircraftObject">
       <mat-card-header id="hoveredAircraftPopupHeader">
         <!-- flightId -->
-        <mat-card-title *ngIf="hoveredAircraft.flightId" style="color: #f8c023">
-          {{ hoveredAircraft.flightId }}
+        <mat-card-title
+          *ngIf="hoveredAircraftObject.flightId"
+          style="color: #f8c023"
+        >
+          {{ hoveredAircraftObject.flightId }}
         </mat-card-title>
         <!-- hex -->
-        <mat-card-subtitle *ngIf="hoveredAircraft.hex" style="color: #d5d5d5">{{
-          hoveredAircraft.hex
-        }}</mat-card-subtitle>
+        <mat-card-subtitle
+          *ngIf="hoveredAircraftObject.hex"
+          style="color: #d5d5d5"
+          >{{ hoveredAircraftObject.hex }}</mat-card-subtitle
+        >
       </mat-card-header>
 
       <table>
-        <ng-container *ngFor="let item of hoveredAircraft.attributes">
+        <ng-container *ngFor="let item of hoveredAircraftObject.attributes">
           <tr
             [ngClass]="
               darkMode

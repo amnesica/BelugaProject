@@ -90,7 +90,7 @@ export class MapComponent implements OnInit {
   aircraft: Aircraft | null = null;
 
   // Aktuell gehovertes Aircraft
-  hoveredAircraft: any;
+  hoveredAircraftObject: any;
 
   // Distanzen fuer darzustellende Ringe (in nm)
   circleDistancesInNm: number[] = [];
@@ -1635,7 +1635,10 @@ export class MapComponent implements OnInit {
     }
 
     // Wenn Flugzeug das ist, worüber die Mouse hovert
-    if (this.hoveredAircraft && aircraft.hex == this.hoveredAircraft.hex) {
+    if (
+      this.hoveredAircraftObject &&
+      aircraft.hex == this.hoveredAircraftObject.hex
+    ) {
       this.createHoveredAircraft(aircraft);
     }
   }
@@ -2267,7 +2270,7 @@ export class MapComponent implements OnInit {
         // Setze Cursor auf 'normal' zurück
         this.OLMap.getTargetElement().style.cursor = '';
 
-        this.hoveredAircraft = undefined;
+        this.hoveredAircraftObject = undefined;
 
         // Verstecke kleine Info-Box
         this.showSmallInfo = false;
@@ -2276,7 +2279,7 @@ export class MapComponent implements OnInit {
   }
 
   createHoveredAircraft(aircraft: Aircraft) {
-    this.hoveredAircraft = {
+    this.hoveredAircraftObject = {
       flightId:
         typeof aircraft.flightId !== 'undefined' ? aircraft.flightId : 'N/A',
       hex: typeof aircraft.hex !== 'undefined' ? aircraft.hex : 'N/A',
@@ -2322,14 +2325,14 @@ export class MapComponent implements OnInit {
     };
 
     if (Globals.useDevicePositionForDistance && Globals.DevicePosition) {
-      this.hoveredAircraft.attributes.push({
+      this.hoveredAircraftObject.attributes.push({
         key: 'Dist. (Dev)',
         value: aircraft.distanceDevicePos
           ? aircraft.distanceDevicePos + ' km'
           : 'N/A',
       });
     } else {
-      this.hoveredAircraft.attributes.push({
+      this.hoveredAircraftObject.attributes.push({
         key: 'Dist. (Ant)',
         value:
           typeof aircraft.distance !== 'undefined'
