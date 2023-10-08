@@ -240,7 +240,7 @@ export class CesiumComponent implements OnInit {
         layers: this.layers3d,
         view: new View({
           center: fromLonLat(this.aircraft!.position),
-          zoom: 11,
+          zoom: this.aircraft?.hex == 'ISS' ? 7 : 11,
         }),
       });
     }
@@ -289,7 +289,7 @@ export class CesiumComponent implements OnInit {
     // Initiiere Abonnements
     this.initSubscriptions();
 
-    if (this.aircraft == null) {
+    if (this.aircraft == null || this.aircraft == undefined) {
       console.log('Ol-Cesium Error: aircraft is null!');
       return;
     }
