@@ -786,8 +786,11 @@ export class Aircraft {
    *              Karte war und nur die Position geaendert wird
    */
   createOrMoveOLPoint(moved: boolean) {
+    let longitude = this.position[0];
+    let latitude = this.position[1];
+
     // Erstelle Projection aus Positions-Daten
-    let proj = olProj.fromLonLat(this.position);
+    const proj = olProj.fromLonLat([longitude, latitude]);
 
     // Erstelle OpenLayers-Point für die Position, wenn es diesen noch nicht gibt
     if (!this.olPoint) {
