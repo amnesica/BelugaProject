@@ -44,7 +44,7 @@ mat-card-header {
   text-align: left;
 }
 
-#rangeDatPopupHeader{
+#rangeDatPopupHeader {
   height: 3rem;
   padding-top: 0.5rem;
   background-color: #303030;
@@ -66,7 +66,7 @@ mat-card-header {
   display: ruby;
 }
 
-::ng-deep .mat-card-header-text{
+::ng-deep .mat-card-header-text {
   margin: 0 8px !important;
 }
 
@@ -92,10 +92,12 @@ mat-card-header {
   flex-direction: column;
 }
 
- table, th, td {
+table,
+th,
+td {
   border-collapse: collapse;
   line-height: 0.8rem;
-} 
+}
 
 ::ng-deep .ol-zoom {
   top: 4rem !important;
@@ -162,8 +164,8 @@ mat-card-header {
 
 #cesium-map {
   position: absolute;
-  margin-top: 3.5rem; 
-  image-rendering: pixelated; 
+  margin-top: 3.5rem;
+  image-rendering: pixelated;
   z-index: 20;
   right: 0;
   top: 0;
