@@ -1274,41 +1274,57 @@ export class MapComponent implements OnInit {
     }
   }
 
-  /**
-   * Berechnet aktuellen Extent der Karte
-   */
+  myExtent(extent): any {
+    let bottomLeft = olProj.toLonLat([extent[0], extent[1]]);
+    let topRight = olProj.toLonLat([extent[2], extent[3]]);
+
+    return {
+      extent: extent,
+      minLon: bottomLeft[0],
+      maxLon: topRight[0],
+      minLat: bottomLeft[1],
+      maxLat: topRight[1],
+    };
+  }
+
+  getRenderExtent(extra): any {
+    extra || (extra = 0);
+    let renderBuffer = 60;
+    const mapSize = this.OLMap.getSize();
+    const over = renderBuffer + extra;
+    const size = [mapSize[0] + over, mapSize[1] + over];
+    return this.myExtent(this.OLMap.getView().calculateExtent(size));
+  }
+
   calcCurrentMapExtent(): any {
-    // Berechne bounding extent des aktuellen Views
-    var extentRaw = this.OLMap.getView().calculateExtent(this.OLMap.getSize());
+    const size = this.OLMap.getSize();
+    let extent = this.getRenderExtent(80);
 
-    // Transformiere bounding extent in Koordinaten
-    let extent = olProj.transformExtent(extentRaw, 'EPSG:3857', 'EPSG:4326');
+    let minLon = extent.minLon.toFixed(6);
+    let maxLon = extent.maxLon.toFixed(6);
+    const minLat = extent.minLat.toFixed(6);
+    const maxLat = extent.maxLat.toFixed(6);
 
-    // unten links
-    let x1 = extent[0];
-    let y1 = extent[1];
-
-    // oben rechts
-    let x2 = extent[2];
-    let y2 = extent[3];
-
-    // Prüfe, ob Werte zu groß sind und die initiale Karte somit verlassen wurde
-    if (x1 < -179 || x2 > 190) {
-      this.openSnackbar(
-        'You leaved the initial map. Aircraft and points are not shown at all or only partially on the map.',
-        2000
-      );
+    if (Math.abs(extent.extent[2] - extent.extent[0]) > 40075016) {
+      // Alle Longitudes im View
+      minLon = -180;
+      maxLon = 180;
+      return [minLon, minLat, maxLon, maxLat];
     }
 
-    // debug only
-    //var zoomLevel = this.OLMap.getView().getZoom();
-    // console.log('Zoom: ' + zoomLevel);
-    // console.log('x1: ' + x1);
-    // console.log('y1: ' + y1);
-    // console.log('x2: ' + x2);
-    // console.log('y2: ' + y2);
+    // Checke 180 Longitude Übergang und wähle größeren Bereich bis +-180
+    if (+minLon > +maxLon) {
+      let d1 = 180 - +minLon;
+      let d2 = +maxLon + 180;
 
-    return extent;
+      if (d1 > d2) {
+        maxLon = 180;
+      } else {
+        minLon = -180;
+      }
+    }
+
+    return [minLon, minLat, maxLon, maxLat];
   }
 
   /**
@@ -1527,6 +1543,8 @@ export class MapComponent implements OnInit {
           // Entferne alle nicht ausgewählten Flugzeuge, wenn eine Route angezeigt wird
           if (this.showRoute) {
             this.removeAllNotSelectedPlanes();
+          } else {
+            this.removePlanesNotInCurrentExtent(extent);
           }
 
           // Aktualisiere angezeigte Flugzeug-Zähler
@@ -3115,6 +3133,53 @@ export class MapComponent implements OnInit {
         // Behalte Flugzeug und pushe es zurück in die Liste
         Globals.PlanesOrdered.push(aircraft);
       }
+    }
+  }
+
+  /**
+   * Entfernt alle nicht markierten Flugzeuge, die
+   * nicht im momentanen Extent sind
+   */
+  removePlanesNotInCurrentExtent(extent) {
+    let length = Globals.PlanesOrdered.length;
+    let aircraft: Aircraft | undefined;
+    for (let i = 0; i < length; i++) {
+      aircraft = Globals.PlanesOrdered.shift();
+      if (aircraft == null || aircraft == undefined) continue;
+
+      // Wenn Flugzeug nicht im momentanem extent ist, wird das Flugzeug entfernt
+      if (!aircraft.isMarked && !this.planeInView(aircraft.position, extent)) {
+        // Entferne Flugzeug
+        this.removeAircraft(aircraft);
+      } else {
+        // Behalte Flugzeug und pushe es zurück in die Liste
+        Globals.PlanesOrdered.push(aircraft);
+      }
+    }
+  }
+
+  planeInView(position: number[], extent: any): boolean {
+    if (position == null) return false;
+
+    let lon = position[0];
+    let lat = position[1];
+
+    let minLon = extent[0];
+    let minLat = extent[1];
+    let maxLon = extent[2];
+    let maxLat = extent[3];
+
+    if (lat < minLat || lat > maxLat) return false;
+
+    if (extent[2] - extent[0] > 40075016) {
+      // all longtitudes in view, only check latitude
+      return true;
+    } else if (minLon < maxLon) {
+      // no wraparound: view not crossing 179 to -180 transition line
+      return lon > minLon && lon < maxLon;
+    } else {
+      // wraparound: view crossing 179 to -180 transition line
+      return lon > minLon || lon < maxLon;
     }
   }
 
