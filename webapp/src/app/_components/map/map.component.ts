@@ -1536,16 +1536,16 @@ export class MapComponent implements OnInit {
           // Mache Update der angezeigten Flugzeuge
           this.processPlanesUpdate(planesJSONArray);
 
-          // Aktualisiere Flugzeug-Tabelle mit der globalen Flugzeug-Liste
-          if (Globals.aircraftTableIsVisible)
-            this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
-
           // Entferne alle nicht ausgewählten Flugzeuge, wenn eine Route angezeigt wird
           if (this.showRoute) {
             this.removeAllNotSelectedPlanes();
           } else {
             this.removePlanesNotInCurrentExtent(extent);
           }
+
+          // Aktualisiere Flugzeug-Tabelle mit der globalen Flugzeug-Liste
+          if (Globals.aircraftTableIsVisible)
+            this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
 
           // Aktualisiere angezeigte Flugzeug-Zähler
           this.updatePlanesCounter(Globals.PlanesOrdered.length);
