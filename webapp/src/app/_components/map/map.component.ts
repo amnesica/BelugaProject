@@ -34,7 +34,8 @@ import {
 } from 'ol/control';
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
@@ -46,7 +47,6 @@ import { RainviewerService } from 'src/app/_services/rainviewer-service/rainview
 import { Maps } from 'src/app/_classes/maps';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
 import { dummyParentAnimation } from 'src/app/_common/animations';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-map',
@@ -266,9 +266,6 @@ export class MapComponent implements OnInit {
   // Boolean, ob Map gerade bewegt wird
   mapIsBeingMoved: boolean = false;
 
-  // Subscriptions
-  subscriptions: Subscription[] = [];
-
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -308,81 +305,73 @@ export class MapComponent implements OnInit {
    */
   initSubscriptions() {
     // Zeige Range-Data zwischen Zeitstempeln
-    let sub1 = this.settingsService.timesAsTimestamps$
-      .pipe()
+    this.settingsService.timesAsTimestamps$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((timesAsTimestamps) => {
         if (timesAsTimestamps) {
           this.datesCustomRangeData = timesAsTimestamps;
           this.receiveShowAllCustomRangeData();
         }
       });
-    this.subscriptions.push(sub1);
 
     // Toggle verstecke Range-Data
-    let sub2 = this.settingsService.toggleHideRangeData$
-      .pipe()
+    this.settingsService.toggleHideRangeData$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((toggleHideRangeData) => {
         this.rangeDataIsVisible = !toggleHideRangeData;
         this.hideRangeDataOverlay(toggleHideRangeData);
       });
-    this.subscriptions.push(sub2);
 
     // Toggle markiere Range-Data nach Feeder
-    let sub3 = this.settingsService.toggleMarkRangeDataByFeeder$
-      .pipe()
+    this.settingsService.toggleMarkRangeDataByFeeder$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((toggleMarkRangeDataByFeeder) => {
         this.bMarkRangeDataByFeeder = toggleMarkRangeDataByFeeder;
         this.markRangeDataByFeeder();
       });
-    this.subscriptions.push(sub3);
 
     // Toggle markiere Range-Data nach Höhe
-    let sub4 = this.settingsService.toggleMarkRangeDataByHeight$
-      .pipe()
+    this.settingsService.toggleMarkRangeDataByHeight$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((toggleMarkRangeDataByHeight) => {
         this.bMarkRangeDataByHeight = toggleMarkRangeDataByHeight;
         this.markRangeDataByHeight();
       });
-    this.subscriptions.push(sub4);
 
     // Toggle zeige Flugzeug-Labels
-    let sub5 = this.settingsService.toggleShowAircraftLabels$
-      .pipe()
+    this.settingsService.toggleShowAircraftLabels$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((toggleShowAircraftLabels) => {
         this.toggleShowAircraftLabels = toggleShowAircraftLabels;
         this.receiveToggleShowAircraftLabels();
       });
-    this.subscriptions.push(sub5);
 
     // Filtere Range-Data nach selektiertem Feeder
-    let sub6 = this.settingsService.selectedFeeder$
-      .pipe()
+    this.settingsService.selectedFeeder$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((selectedFeederArray) => {
         this.selectedFeederRangeData = selectedFeederArray;
         this.filterRangeDataBySelectedFeeder();
       });
-    this.subscriptions.push(sub6);
 
     // Markiere/Entmarkiere ein Flugzeug, wenn es in der Tabelle ausgewählt wurde
-    let sub7 = this.aircraftTableService.hexMarkUnmarkAircraft$
-      .pipe()
+    this.aircraftTableService.hexMarkUnmarkAircraft$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((hexMarkUnmarkAircraft) => {
         this.markUnmarkAircraftFromAircraftTable(hexMarkUnmarkAircraft);
       });
-    this.subscriptions.push(sub7);
 
     // Zeige Flugzeuge nach selektiertem Feeder an
-    let sub8 = this.settingsService.selectedFeederUpdate$
-      .pipe()
+    this.settingsService.selectedFeederUpdate$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((selectedFeederUpdate) => {
         this.selectedFeederUpdate = selectedFeederUpdate;
         this.showAircraftFromFeeder(selectedFeederUpdate);
       });
-    this.subscriptions.push(sub8);
 
     // Toggle Flughäfen auf der Karte
-    let sub9 = this.settingsService.showAirportsUpdate$
-      .pipe()
+    this.settingsService.showAirportsUpdate$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showAirportsUpdate) => {
         this.showAirportsUpdate = showAirportsUpdate;
 
@@ -393,11 +382,10 @@ export class MapComponent implements OnInit {
           this.AirportFeatures.clear();
         }
       });
-    this.subscriptions.push(sub9);
 
     // Zeige Opensky Flugzeuge und Flugzeuge nach selektiertem Feeder an
-    let sub10 = this.settingsService.showOpenskyPlanes$
-      .pipe()
+    this.settingsService.showOpenskyPlanes$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showOpenskyPlanes) => {
         this.showOpenskyPlanes = showOpenskyPlanes;
 
@@ -418,73 +406,71 @@ export class MapComponent implements OnInit {
           this.removeAllOpenskyPlanes();
         }
       });
-    this.subscriptions.push(sub10);
 
     // Zeige ISS und Opensky Flugzeuge und Flugzeuge nach selektiertem Feeder an
-    let sub11 = this.settingsService.showISS$.pipe().subscribe((showIss) => {
-      this.showIss = showIss;
+    this.settingsService.showISS$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showIss) => {
+        this.showIss = showIss;
 
-      // Wenn ISS nicht mehr angezeigt werden soll, entferne sie von Liste
-      if (!this.showIss) {
-        this.removeISSFromPlanes();
-      }
+        // Wenn ISS nicht mehr angezeigt werden soll, entferne sie von Liste
+        if (!this.showIss) {
+          this.removeISSFromPlanes();
+        }
 
-      // Aktualisiere Flugzeuge vom Server
-      this.updatePlanesFromServer(
-        this.selectedFeederUpdate,
-        this.showOpenskyPlanes,
-        this.showIss
-      );
+        // Aktualisiere Flugzeuge vom Server
+        this.updatePlanesFromServer(
+          this.selectedFeederUpdate,
+          this.showOpenskyPlanes,
+          this.showIss
+        );
 
-      // Aktualisiere Daten des markierten Flugzeugs
-      if (this.aircraft) {
-        this.getAllAircraftData(this.aircraft);
-        this.getTrailToAircraft(this.aircraft, this.selectedFeederUpdate);
-      }
-    });
-    this.subscriptions.push(sub11);
+        // Aktualisiere Daten des markierten Flugzeugs
+        if (this.aircraft) {
+          this.getAllAircraftData(this.aircraft);
+          this.getTrailToAircraft(this.aircraft, this.selectedFeederUpdate);
+        }
+      });
 
     // Toggle DarkMode
-    let sub12 = this.settingsService.showDarkMode$
-      .pipe()
+    this.settingsService.showDarkMode$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showDarkMode) => {
         this.darkMode = showDarkMode;
         this.setCenterOfRangeRings(Globals.useDevicePositionForDistance);
       });
-    this.subscriptions.push(sub12);
 
     // Toggle POMD-Point
-    let sub13 = this.settingsService.showPOMDPoint$
-      .pipe()
+    this.settingsService.showPOMDPoint$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showPOMDPoint) => {
         this.showPOMDPoint = showPOMDPoint;
         this.receiveToggleShowPOMDPoints();
       });
-    this.subscriptions.push(sub13);
 
     // Toggle WebGL
-    let sub14 = this.settingsService.useWebgl$.pipe().subscribe((webgl) => {
-      // Setze globalen WebGL-Boolean
-      Globals.webgl = webgl;
+    this.settingsService.useWebgl$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((webgl) => {
+        // Setze globalen WebGL-Boolean
+        Globals.webgl = webgl;
 
-      // Initialisiert oder deaktiviert WebGL
-      // Deaktiviert WegGL, wenn Initialisierung fehlschlägt
-      Globals.webgl = this.initWebgl();
-    });
-    this.subscriptions.push(sub14);
+        // Initialisiert oder deaktiviert WebGL
+        // Deaktiviert WegGL, wenn Initialisierung fehlschlägt
+        Globals.webgl = this.initWebgl();
+      });
 
-    let sub15 = this.settingsService.centerMapOnIssSource$
-      .pipe()
+    this.settingsService.centerMapOnIssSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((centerMapOnIss) => {
         // Zentriere Karte auf die ISS oder gehe zur
         // vorherigen Position zurück
         this.receiveCenterMapOnIss(centerMapOnIss);
       });
-    this.subscriptions.push(sub15);
 
     // Bestimme aktuellen Geräte-Standort
-    let sub16 = this.settingsService.setCurrentDevicePositionSource$
-      .pipe()
+    this.settingsService.setCurrentDevicePositionSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((setDevicePosition) => {
         if (setDevicePosition) {
           this.setCurrentDevicePosition();
@@ -492,12 +478,11 @@ export class MapComponent implements OnInit {
           this.deleteDevicePosition();
         }
       });
-    this.subscriptions.push(sub16);
 
     // Toggle Geräte-Standort als Basis für versch. Berechnungen (Zentrum für Range-Ringe,
     // Distance- und POMD-Feature-Berechnungen (default: Site-Position ist Zentrum der Range-Ringe)
-    let sub17 = this.settingsService.devicePositionAsBasisSource$
-      .pipe()
+    this.settingsService.devicePositionAsBasisSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((devicePositionAsBasis) => {
         // Setze Boolean für Distanz-Berechnungen
         Globals.useDevicePositionForDistance = devicePositionAsBasis;
@@ -505,11 +490,10 @@ export class MapComponent implements OnInit {
         // Setze Zentrum der Range-Ringe
         this.setCenterOfRangeRings(devicePositionAsBasis);
       });
-    this.subscriptions.push(sub17);
 
     // Toggle Rainviewer (Rain)
-    let sub18 = this.settingsService.rainViewerRain$
-      .pipe()
+    this.settingsService.rainViewerRain$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((rainViewerRain) => {
         // Setze showRainViewerRain-Boolean
         this.showRainViewerRain = rainViewerRain;
@@ -517,11 +501,10 @@ export class MapComponent implements OnInit {
         // Zeigt oder versteckt RainViewer (Rain)
         this.createOrHideRainViewerRain();
       });
-    this.subscriptions.push(sub18);
 
     // Toggle Rainviewer (Clouds)
-    let sub19 = this.settingsService.rainViewerClouds$
-      .pipe()
+    this.settingsService.rainViewerClouds$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((rainViewerClouds) => {
         // Setze showRainViewerClouds-Boolean
         this.showRainViewerClouds = rainViewerClouds;
@@ -529,11 +512,10 @@ export class MapComponent implements OnInit {
         // Zeigt oder versteckt RainViewer (Clouds)
         this.createOrHideRainViewerClouds();
       });
-    this.subscriptions.push(sub19);
 
     // Toggle Rainviewer Forecast (Rain)
-    let sub20 = this.settingsService.rainViewerRainForecast$
-      .pipe()
+    this.settingsService.rainViewerRainForecast$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((rainViewerRainForecast) => {
         // Setze showRainViewerRainForecast-Boolean
         this.showRainViewerRainForecast = rainViewerRainForecast;
@@ -541,38 +523,34 @@ export class MapComponent implements OnInit {
         // Zeigt oder versteckt RainViewer Forecast (Rain)
         this.createOrHideRainViewerRain();
       });
-    this.subscriptions.push(sub20);
 
     // Toggle zeige/verstecke Flugzeug-Positionen
-    let sub21 = this.settingsService.toggleShowAircraftPositions$
-      .pipe()
+    this.settingsService.toggleShowAircraftPositions$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((toggleShowAircraftPositions) => {
         this.toggleShowAircraftPositions = toggleShowAircraftPositions;
         this.receiveToggleShowAircraftPositions();
       });
-    this.subscriptions.push(sub21);
 
     // Callback für anderen Map-Stil
-    let sub22 = this.settingsService.selectMapStyleSource$
-      .pipe()
+    this.settingsService.selectMapStyleSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((selectedMapStyle) => {
         this.saveMapStyleInLocalStorage(selectedMapStyle);
         this.createBaseLayer();
       });
-    this.subscriptions.push(sub22);
 
     // Toggle dimme Map
-    let sub23 = this.settingsService.dimMapSource$
-      .pipe()
+    this.settingsService.dimMapSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((dimMap) => {
         this.dimMap = dimMap;
         this.dimMapOrRemoveFilter();
       });
-    this.subscriptions.push(sub23);
 
     // Toggle dunkle Range Ringe und dunkles Antenna-Icon
-    let sub24 = this.settingsService.darkStaticFeaturesSource$
-      .pipe()
+    this.settingsService.darkStaticFeaturesSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((darkStaticFeatures) => {
         this.darkStaticFeatures = darkStaticFeatures;
         this.createRangeRingsAndSitePos(
@@ -580,11 +558,10 @@ export class MapComponent implements OnInit {
         );
         this.toggleDarkModeInRangeData();
       });
-    this.subscriptions.push(sub24);
 
     // Setze Global icon size der Planes
-    let sub25 = this.settingsService.setIconGlobalSizeSource$
-      .pipe()
+    this.settingsService.setIconGlobalSizeSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((globalIconSizeFactor) => {
         Globals.globalScaleFactorIcons = globalIconSizeFactor;
         this.setNewIconSizeScaleAndRedrawPlanes(
@@ -592,11 +569,10 @@ export class MapComponent implements OnInit {
           Globals.smallScaleFactorIcons
         );
       });
-    this.subscriptions.push(sub25);
 
     // Setze icon size für small Planes
-    let sub26 = this.settingsService.setIconSmallSizeSource$
-      .pipe()
+    this.settingsService.setIconSmallSizeSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((smallIconSizeFactor) => {
         Globals.smallScaleFactorIcons = smallIconSizeFactor;
         this.setNewIconSizeScaleAndRedrawPlanes(
@@ -604,20 +580,17 @@ export class MapComponent implements OnInit {
           Globals.smallScaleFactorIcons
         );
       });
-    this.subscriptions.push(sub26);
 
     // Zeige oder verstecke Altitude-Chart
-    let sub27 = this.settingsService.showAltitudeChartSource$
-      .pipe()
+    this.settingsService.showAltitudeChartSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showAltitudeChart) => {
         document.getElementById('altitude_chart')!.style.visibility =
           showAltitudeChart ? 'visible' : 'hidden';
       });
-    this.subscriptions.push(sub27);
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
@@ -665,7 +638,7 @@ export class MapComponent implements OnInit {
   getConfiguration() {
     this.serverService
       .getConfigurationData()
-      .pipe()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (configuration) => {
           // Setze Werte aus Konfiguration
@@ -817,9 +790,9 @@ export class MapComponent implements OnInit {
    * und setzt die Variable isDesktop entsprechend
    */
   initBreakPointObserver() {
-    let sub = this.breakpointObserver
+    this.breakpointObserver
       .observe(['(max-width: 599px)'])
-      .pipe()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((state: BreakpointState) => {
         if (state.matches) {
           // Setze Variable auf 'Mobile'
@@ -835,7 +808,6 @@ export class MapComponent implements OnInit {
           this.aircraftTableService.updateWindowMode(this.isDesktop);
         }
       });
-    this.subscriptions.push(sub);
   }
 
   /**

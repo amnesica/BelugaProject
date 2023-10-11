@@ -11,7 +11,8 @@ import { Aircraft } from 'src/app/_classes/aircraft';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Globals } from 'src/app/_common/globals';
 import { slideInOutRight } from 'src/app/_common/animations';
 
@@ -63,8 +64,7 @@ export class AircraftTableComponent implements OnInit {
     this.aircraftList.sort = sort;
   }
 
-  // Subscriptions
-  subscriptions: Subscription[] = [];
+  private ngUnsubscribe = new Subject();
 
   constructor(
     private aircraftTableService: AircraftTableService,
@@ -79,13 +79,14 @@ export class AircraftTableComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   initSubscriptions() {
     // Ändere Breite der Tabelle im mobilen Modus
-    let sub1 = this.aircraftTableService.isDesktop$
-      .pipe()
+    this.aircraftTableService.isDesktop$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isDesktop) => {
         if (isDesktop == true) {
           this.showAircraftTableWidth = '45rem';
@@ -95,21 +96,19 @@ export class AircraftTableComponent implements OnInit {
           this.filterFieldWidth = '100%';
         }
       });
-    this.subscriptions.push(sub1);
 
     // Zeige neue Daten an, wenn Flugzeuge aktualisiert wurden
-    let sub2 = this.aircraftTableService.aircraftList$
-      .pipe()
-      .subscribe((aircraftListNew: any) => {
+    this.aircraftTableService.aircraftList$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((aircraftListNew: Aircraft[]) => {
         this.aircraftList.data = aircraftListNew;
         this.changeDetectorRefs.detectChanges();
       });
-    this.subscriptions.push(sub2);
 
     // Markiere oder entferne Markierung bei Flugzeug
     // in Tabelle, wenn es markiert ist
-    let sub3 = this.aircraftTableService.aircraftSelectUnselectInTable$
-      .pipe()
+    this.aircraftTableService.aircraftSelectUnselectInTable$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((aircraftToBeToggledInTable) => {
         this.aircraftList.data.forEach((aircraft) =>
           aircraft.hex == aircraftToBeToggledInTable.hex
@@ -118,18 +117,16 @@ export class AircraftTableComponent implements OnInit {
         );
         this.changeDetectorRefs.detectChanges();
       });
-    this.subscriptions.push(sub3);
 
     // Entferne Markierung bei allen Flugzeugen in der Tabelle
-    let sub4 = this.aircraftTableService.unselectAllPlanesInTable$
-      .pipe()
+    this.aircraftTableService.unselectAllPlanesInTable$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         this.aircraftList.data.forEach((aircraft) =>
           this.selection.deselect(aircraft)
         );
         this.changeDetectorRefs.detectChanges();
       });
-    this.subscriptions.push(sub4);
   }
 
   /**
