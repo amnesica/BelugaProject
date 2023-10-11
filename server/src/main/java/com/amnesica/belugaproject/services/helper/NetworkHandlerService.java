@@ -24,7 +24,9 @@ public class NetworkHandlerService {
   // damit reentered-Aircraft-Zustand nicht falsch gesetzt wird,
   // da Timeout zu groß ist)
   private final OkHttpClient clientLocalFeeder = new OkHttpClient.Builder()
-      .connectTimeout(1000, TimeUnit.MILLISECONDS)
+      .connectTimeout(15000, TimeUnit.MILLISECONDS)
+      .readTimeout(15000, TimeUnit.MILLISECONDS)
+      .writeTimeout(15000, TimeUnit.MILLISECONDS)
       .build();
 
   private final String userAgentBelugaProject = "The Beluga Project";
