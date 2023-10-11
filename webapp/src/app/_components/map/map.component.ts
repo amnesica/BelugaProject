@@ -112,6 +112,7 @@ export class MapComponent implements OnInit {
   showAirportsUpdate: boolean = true;
   showOpenskyPlanes: boolean = false;
   showIss: boolean = true;
+  showOnlyMilitary: boolean = false;
 
   // Anzahl der momentan laufenden Fetches (Flugzeuge) an den Server
   pendingFetchesPlanes = 0;
@@ -394,7 +395,8 @@ export class MapComponent implements OnInit {
           this.updatePlanesFromServer(
             this.selectedFeederUpdate,
             this.showOpenskyPlanes,
-            this.showIss
+            this.showIss,
+            this.showOnlyMilitary
           );
 
           // Aktualisiere Daten des markierten Flugzeugs
@@ -422,13 +424,40 @@ export class MapComponent implements OnInit {
         this.updatePlanesFromServer(
           this.selectedFeederUpdate,
           this.showOpenskyPlanes,
-          this.showIss
+          this.showIss,
+          this.showOnlyMilitary
         );
 
         // Aktualisiere Daten des markierten Flugzeugs
         if (this.aircraft) {
           this.getAllAircraftData(this.aircraft);
           this.getTrailToAircraft(this.aircraft, this.selectedFeederUpdate);
+        }
+      });
+
+    // Zeige nur militärische Flugzeuge an
+    this.settingsService.showOnlyMilitaryPlanesSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showMilitaryPlanes) => {
+        this.showOnlyMilitary = showMilitaryPlanes;
+
+        if (this.showOnlyMilitary) {
+          this.removeAllNotMilitaryPlanes();
+
+          // Aktualisiere Flugzeuge vom Server
+          this.updatePlanesFromServer(
+            this.selectedFeederUpdate,
+            this.showOpenskyPlanes,
+            this.showIss,
+            this.showOnlyMilitary
+          );
+
+          // Aktualisiere Daten des markierten Flugzeugs
+          if (this.aircraft) {
+            this.getAllAircraftData(this.aircraft);
+          }
+        } else {
+          this.removeAllNotSelectedPlanes();
         }
       });
 
@@ -1205,7 +1234,8 @@ export class MapComponent implements OnInit {
       this.updatePlanesFromServer(
         this.selectedFeederUpdate,
         this.showOpenskyPlanes,
-        this.showIss
+        this.showIss,
+        this.showOnlyMilitary
       );
     }, 2000);
 
@@ -1235,7 +1265,8 @@ export class MapComponent implements OnInit {
         this.updatePlanesFromServer(
           this.selectedFeederUpdate,
           this.showOpenskyPlanes,
-          this.showIss
+          this.showIss,
+          this.showOnlyMilitary
         );
 
         if (this.showAirportsUpdate) {
@@ -1458,7 +1489,8 @@ export class MapComponent implements OnInit {
   updatePlanesFromServer(
     selectedFeeder: any,
     fetchFromOpensky: boolean,
-    showIss: boolean
+    showIss: boolean,
+    showOnlyMilitary: boolean
   ) {
     // Wenn noch auf Fetches gewartet wird, breche ab
     if (this.pendingFetchesPlanes > 0 || this.mapIsBeingMoved) return;
@@ -1482,7 +1514,8 @@ export class MapComponent implements OnInit {
         selectedFeeder,
         fetchFromOpensky,
         showIss,
-        this.aircraft ? this.aircraft.hex : null // hex des markierten Flugzeugs
+        this.aircraft ? this.aircraft.hex : null, // hex des markierten Flugzeugs
+        showOnlyMilitary
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
@@ -3697,7 +3730,8 @@ export class MapComponent implements OnInit {
     this.updatePlanesFromServer(
       this.selectedFeederUpdate,
       this.showOpenskyPlanes,
-      this.showIss
+      this.showIss,
+      this.showOnlyMilitary
     );
 
     // Aktualisiere Daten des markierten Flugzeugs
@@ -3760,6 +3794,24 @@ export class MapComponent implements OnInit {
   updateCameraInCesium() {
     if (this.aircraft && Globals.display3dMap) {
       this.cesiumService.updateView(this.aircraft);
+    }
+  }
+
+  removeAllNotMilitaryPlanes() {
+    let length = Globals.PlanesOrdered.length;
+    let aircraft: Aircraft | undefined;
+    for (let i = 0; i < length; i++) {
+      aircraft = Globals.PlanesOrdered.shift();
+      if (aircraft == null || aircraft == undefined) continue;
+
+      // Wenn Flugzeug nicht militär ist und nicht markiert ist, wird das Flugzeug entfernt
+      if (!aircraft.isMarked && aircraft.isMilitary != 'Y') {
+        // Entferne Flugzeug
+        this.removeAircraft(aircraft);
+      } else {
+        // Behalte Flugzeug und pushe es zurück in die Liste
+        Globals.PlanesOrdered.push(aircraft);
+      }
     }
   }
 }

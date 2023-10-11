@@ -375,11 +375,14 @@ public class OpenskyService {
    * @return List<OpenskyAircraft>
    */
   public List<OpenskyAircraft> getOpenskyPlanesWithinExtent(double lomin, double lamin, double lomax,
-                                                            double lamax) {
+                                                            double lamax, boolean showOnlyMilitary) {
     List<OpenskyAircraft> listAircraftRaw = null;
 
     try {
       listAircraftRaw = openskyAircraftRepository.findAllWithinExtent(lomin, lamin, lomax, lamax);
+
+      if (listAircraftRaw != null && showOnlyMilitary)
+        listAircraftRaw = listAircraftRaw.stream().filter(a -> a.getIsMilitary() != null).collect(Collectors.toList());
 
     } catch (Exception e) {
       log.error("Server - DB error when fetching Opensky planes from db : Exception = " + e);

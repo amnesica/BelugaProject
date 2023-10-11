@@ -22,6 +22,7 @@ export class ServerService {
    * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
    * @param showIss Boolean, ob ISS abgefragt werden soll
    * @param markedHex String, hex des aktuell markierten Flugzeugs
+   * @param showOnlyMilitary Boolean, ob nur Militär angezeigt werden soll
    * @returns
    */
   getPlanesUpdate(
@@ -32,7 +33,8 @@ export class ServerService {
     selectedFeeder: any,
     fetchFromOpensky: boolean,
     showIss: boolean,
-    markedHex: string | null
+    markedHex: string | null,
+    showOnlyMilitary: boolean
   ): Observable<Aircraft[]> {
     // Initialiere Params-Objekt
     let params = new HttpParams();
@@ -46,6 +48,7 @@ export class ServerService {
     params = params.append('fetchFromOpensky', fetchFromOpensky.toString());
     params = params.append('showIss', showIss.toString());
     if (markedHex != null) params = params.append('markedHex', markedHex);
+    params = params.append('showOnlyMilitary', showOnlyMilitary.toString());
 
     return this.httpClient.get<Aircraft[]>(Globals.urlGetPlanes, {
       params: params,

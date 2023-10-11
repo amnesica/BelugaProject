@@ -110,6 +110,13 @@
         </div>
 
         <mat-slide-toggle
+          [checked]="showOnlyMilitaryPlanes"
+          (click)="$event.stopPropagation()"
+          (change)="toggleShowOnlyMilitaryPlanes($event)"
+          >Show only military</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
           [checked]="showPOMDPoint"
           (click)="$event.stopPropagation()"
           (change)="togglePOMDPoint($event)"

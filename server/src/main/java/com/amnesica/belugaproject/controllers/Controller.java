@@ -83,6 +83,7 @@ public class Controller {
    * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
    * @param showIss          Boolean, ob ISS abgefragt werden soll
    * @param markedHex        String, hex des markierten Flugzeugs
+   * @param showOnlyMilitary Boolean, ob nur Militär angezeigt werden soll
    * @return Collection<AircraftSuperclass>
    */
   @GetMapping(value = "/getAircraftList", produces = "application/json")
@@ -92,9 +93,11 @@ public class Controller {
                                                  @RequestParam(value = "lamax") double lamax, @RequestParam(value = "selectedFeeder") String selectedFeeder,
                                                  @RequestParam(value = "fetchFromOpensky") boolean fetchFromOpensky,
                                                  @RequestParam(value = "showIss") boolean showIss,
-                                                 @Nullable @RequestParam(value = "markedHex") String markedHex, HttpServletRequest httpRequest) {
+                                                 @Nullable @RequestParam(value = "markedHex") String markedHex,
+                                                 @RequestParam(value = "showOnlyMilitary") boolean showOnlyMilitary,
+                                                 HttpServletRequest httpRequest) {
     return feederService.getPlanesWithinExtent(lomin, lamin, lomax, lamax, selectedFeeder, fetchFromOpensky,
-        showIss, markedHex, httpRequest);
+        showIss, markedHex, showOnlyMilitary, httpRequest);
   }
 
   /**

@@ -130,6 +130,7 @@ export class SettingsComponent implements OnInit {
   showOpenskyPlanes: boolean | undefined;
   showIss: boolean = true;
   showAircraftPositions: boolean | undefined = true;
+  showOnlyMilitaryPlanes: boolean | undefined;
 
   // Boolean, ob Range Data verbunden angezeigt werden soll
   showFilteredRangeDatabyFeeder: boolean | undefined;
@@ -764,5 +765,12 @@ export class SettingsComponent implements OnInit {
     // Kontaktiere Cesium-Component
     Globals.resolution3dMapValue = +value;
     this.settingsService.setCesiumResolution(+value);
+  }
+
+  toggleShowOnlyMilitaryPlanes(event: MatSlideToggleChange) {
+    this.showOnlyMilitaryPlanes = event.checked;
+
+    // Kontaktiere Map-Component und übergebe showOnlyMilitaryPlanes-Boolean
+    this.settingsService.toggleOnlyMilitaryPlanes(this.showOnlyMilitaryPlanes);
   }
 }

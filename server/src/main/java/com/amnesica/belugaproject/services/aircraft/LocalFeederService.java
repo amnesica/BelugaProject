@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @EnableScheduling
@@ -282,7 +283,7 @@ public class LocalFeederService {
    * @return List<Aircraft>
    */
   public List<Aircraft> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax,
-                                              String selectedFeeder, long startTime, String markedHex) {
+                                              String selectedFeeder, long startTime, String markedHex, boolean showOnlyMilitary) {
     List<Aircraft> listAircraftRaw = null;
 
     try {
@@ -304,6 +305,10 @@ public class LocalFeederService {
           listAircraftRaw.add(markedAircraft);
         }
       }
+
+      if (listAircraftRaw != null && showOnlyMilitary)
+        listAircraftRaw = listAircraftRaw.stream().filter(a -> a.getIsMilitary() != null).collect(Collectors.toList());
+
     } catch (Exception e) {
       log.error("Server - DB error when fetching planes : Exception = " + e);
     }

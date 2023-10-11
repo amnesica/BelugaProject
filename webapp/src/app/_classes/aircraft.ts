@@ -198,6 +198,9 @@ export class Aircraft {
   flightProgressPlaneIconLeft: any;
   travelDistanceRemainingInKm: any;
 
+  // Special Tags
+  isMilitary: any;
+
   // Konstruktor mit Minimaldaten
   constructor(
     hex: string,
@@ -228,7 +231,8 @@ export class Aircraft {
     sourceList: string,
     aircraftState: any,
     isFromOpensky: any,
-    lastUpdate: any
+    lastUpdate: any,
+    isMilitary: any
   ) {
     this.hex = hex;
     this.latitude = latitude;
@@ -259,6 +263,7 @@ export class Aircraft {
     this.aircraftState = aircraftState;
     this.isFromOpensky = isFromOpensky;
     this.lastUpdate = lastUpdate;
+    this.isMilitary = isMilitary;
   }
 
   /**
@@ -296,7 +301,8 @@ export class Aircraft {
       aircraftJSONElement.sourceList,
       aircraftJSONElement.aircraftState,
       aircraftJSONElement.isFromOpensky,
-      aircraftJSONElement.lastUpdate
+      aircraftJSONElement.lastUpdate,
+      aircraftJSONElement.isMilitary
     );
   }
 

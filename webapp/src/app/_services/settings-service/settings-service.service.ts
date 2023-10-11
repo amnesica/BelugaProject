@@ -40,6 +40,7 @@ export class SettingsService {
   private setIconSmallSizeSource = new Subject<number>();
   private showAltitudeChartSource = new Subject<boolean>();
   private cesiumResolutionValueSource = new Subject<number>();
+  private showOnlyMilitaryPlanesSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -82,6 +83,8 @@ export class SettingsService {
   showAltitudeChartSource$ = this.showAltitudeChartSource.asObservable();
   cesiumResolutionValueSource$ =
     this.cesiumResolutionValueSource.asObservable();
+  showOnlyMilitaryPlanesSource$ =
+    this.showOnlyMilitaryPlanesSource.asObservable();
 
   constructor() {}
 
@@ -247,5 +250,10 @@ export class SettingsService {
   setCesiumResolution(cesiumResolutionValue: number) {
     this.cesiumResolutionValueSource.next(cesiumResolutionValue);
     return this.cesiumResolutionValueSource;
+  }
+
+  toggleOnlyMilitaryPlanes(showOnlyMilitaryPlanes: boolean) {
+    this.showOnlyMilitaryPlanesSource.next(showOnlyMilitaryPlanes);
+    return this.showOnlyMilitaryPlanesSource;
   }
 }

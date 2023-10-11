@@ -109,6 +109,10 @@ public class AircraftDataService {
           }
           aircraft.setEngines(engines);
         }
+
+        if (aircraftData.getIsMilitary() != null && aircraftData.getIsMilitary().equals("Y")) {
+          aircraft.setIsMilitary(aircraftData.getIsMilitary().trim());
+        }
       }
     }
   }

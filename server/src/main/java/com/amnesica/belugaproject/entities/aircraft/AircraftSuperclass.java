@@ -117,6 +117,13 @@ public class AircraftSuperclass {
   // Boolean, ob Flugzeug von Opensky ist
   private Boolean isFromOpensky = false;
 
+  // Special Tags
+  private String isMilitary;
+  private String isHistoric;
+  private String isGovernment;
+  private String isSpecial;
+  private String isInteresting;
+
   // Konstruktor
   public AircraftSuperclass(String hex, double latitude, double longitude) {
     this.hex = hex;
