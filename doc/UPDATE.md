@@ -1,29 +1,54 @@
-## Install (Docker version)
+## Update (Docker version)
 
-With this manual you can install the Beluga Project in a docker container on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems.
-
-If you already have BelugaProject installed in a docker container before, use instructions in [UPDATE.md](./UPDATE.md) instead of this manual.
+This is a description of the **update** process for the Beluga Project running in a docker container on your system. If you do not have BelugaProject installed before, please use instructions in [INSTALL.md](./INSTALL.md) instead of this manual.
 
 For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because BelugaProject is running significantly faster than on 32 bit OS version.
 
-If you don't have a ADS-B receiver you can use the [Opensky-Network](https://opensky-network.org/). Create an account there first.
+1. Backup your `.env` file from your existing BelugaProject before proceeding.
 
-1. Install docker and docker compose (at least version 2) from [here](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi. Check the version of docker compose with `docker compose version` (needs to be >=2)
+   (here for example to folder ~/Documents)
+   ```
+   $ cd BelugaProject/
+   $ cp .env ~/Documents/mybackup.env
+   ```
 
-2. Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP and extract it
+2. Stop and remove all containers and images
+   ```
+   $ cd BelugaProject/
+   $ sudo ./run.sh docker-stop
+   $ sudo ./run.sh docker-rm
+   ```
+
+3. Remove existing BelugaProject directory
+
+   (here assuming it is in your home directory)
+   ```
+   $ cd ~
+   $ sudo rm -r BelugaProject
+   ```
+
+4. Download the latest version of the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP and extract it
 
    ```
    $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/master.zip -O BelugaProject.zip
    $ unzip BelugaProject.zip
    ```
 
-3. Rename the environment variables template file `.env.template` in `.env` and configure the environment variables in the `.env` file. You can use `nano` for editing the config file.
+5. Compare your backup `.env` file with the current template file `.env.template`
 
+   `.env.template` may have been changed since last version. If there are no changes, you can restore your backup file with
+   ```
+   $ cd BelugaProject/
+   $ cp ~/Documents/mybackup.env .env
+	```
+
+	If there are changes, you have to copy the new template and replace the TODO-Entries with the values of your backup file using an editor like nano.
    ```
    $ cp .env.template .env
    $ nano .env
-   ```
-   
+	```
+	Important: doublecheck your IP-adress!!!
+
    For further information on how to configure the `.env` file expand the following section
    <details>
    <summary>Click to expand</summary>
@@ -94,9 +119,17 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex
 
-   </details>
+   11. Add your API-Keys for additional maps (**Optional**)
+      ```
+      GEOAPIFY_API_KEY=
+      CESIUM_ION_DEFAULTACCESSTOKEN=
+      CESIUM_GOOGLEMAPS_API_KEY=
+      ```
+      (without these API-Keys you cannot see all availible maps in settings)
+    </details>
 
-4. Build the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
+
+6. Build the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
 
    `Important:` If you installed docker only for root user, you need to execute the command below with `sudo` privilege
 
@@ -109,7 +142,6 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     - container build takes about 14 minutes
     - load database takes about 10 minutes
     - first start in browser takes about 3 minutes until all aircrafts are visible
-
 
    Possible errors:
 
@@ -127,15 +159,40 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    You can ignore this error if you don't have a flightroute.csv file.
 
-5. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed).
+7. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed).
 
-6. Operation and Maintenance
+8. Check Version of BelugaProject in browser
+
+	If you don't see the expected (new) version, you have to rebuild the docker-images and containers
+
+	Stop running containers
+   ```
+   $ ./run.sh docker-stop server
+   $ ./run.sh docker-stop webapp
+   ```
+	
+	Rebuild images and containers
+   ```
+   $ ./run.sh docker-build server
+   $ ./run.sh docker-build webapp
+   ```
+
+	Restart with
+   ```
+   $ ./run.sh install
+   ```
+	
+	Check version in browser again.
+
+	If a (new or updated) feature does not work, clean browser cache and try again.
+   
+9. Operation and Maintenance
 
    Executing 
    ```
    $ ./run.sh
    ```
-   will show some options for troubleshooting, operation and **database maintanance**. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.
+   will show some options for troubleshooting, operation and database maintanance. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.
    ```
    Usage: ./run.sh command
    commands:
@@ -155,11 +212,13 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
       install                               Install project (build docker images and populate database)
    ```
 
-7. Add Flightroute data
+10. Update database
 
-   Unfortunately, if you want to fill the database table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample. 
-   You can create your own file `flightroute_data.csv` and put it in direcory `assets/dbContent`. To load data from it to the database use this command:
-   ```
-   $ ./run.sh update-db
-   ```
+      To update aircraft and airport data use this command:
+      ```
+      $ ./run.sh update-db
+      ```
+      It may take some time to prepare and upload the data to the postgres database. Be patient.
+
    
+
