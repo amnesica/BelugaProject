@@ -92,7 +92,15 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    9. Opensky-Credentials: (**Optional**) Replace `TODO`s with your opensky network credentials. If you do not provide credentials this function will be disabled
 
-   10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex
+   10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex.
+
+   11. Add your API-Keys for additional maps (**Optional**)
+         ```
+         GEOAPIFY_API_KEY=
+         CESIUM_ION_DEFAULTACCESSTOKEN=
+         CESIUM_GOOGLEMAPS_API_KEY=
+         ```
+         (without these API-Keys you cannot see all availible maps in settings)
 
    </details>
 
