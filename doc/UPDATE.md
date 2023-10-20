@@ -163,7 +163,9 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 
 8. Check Version of BelugaProject in browser
 
-	If you don't see the expected (new) version, you have to rebuild the docker-images and containers
+	If you don't see the expected (new) version, clean browser cache and try again.
+
+   If you have not stopped and removed existing docker-images and containers before, do it now:
 
 	Stop running containers
    ```
@@ -182,9 +184,7 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
    $ ./run.sh install
    ```
 	
-	Check version in browser again.
-
-	If a (new or updated) feature does not work, clean browser cache and try again.
+	Check version in browser again. 
    
 9. Operation and Maintenance
 
