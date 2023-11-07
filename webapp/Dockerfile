@@ -1,4 +1,4 @@
-FROM node:16-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR webapp
 COPY . .
 RUN cd webapp && npm install && npm run build -- --configuration production
