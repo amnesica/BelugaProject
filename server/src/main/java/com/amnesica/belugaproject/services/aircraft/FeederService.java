@@ -48,14 +48,14 @@ public class FeederService {
    * @param lamin            lower bound for the latitude in decimal degrees
    * @param lomax            upper bound for the longitude in decimal degrees
    * @param lamax            upper bound for the latitude in decimal degrees
-   * @param selectedFeeder   Ausgewählter Feeder (oder 'AllFeeder')
+   * @param selectedFeeder   List<String>, Ausgewählte Feeder (oder keiner)
    * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
    * @param showIss          Boolean, ob ISS abgefragt werden soll
    * @return HashSet<AircraftSuperclass>
    */
   @Async
   public HashSet<AircraftSuperclass> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax,
-                                                           String selectedFeeder, boolean fetchFromOpensky, boolean showIss, String markedHex, boolean showOnlyMilitary, HttpServletRequest httpRequest) {
+                                                           List<String> selectedFeeder, boolean fetchFromOpensky, boolean showIss, String markedHex, boolean showOnlyMilitary, HttpServletRequest httpRequest) {
     if (pendingRequest)
       return null;
 
@@ -81,39 +81,19 @@ public class FeederService {
 
       try {
         if (startTime != 0) {
-          // Hole Flugzeuge von den lokalen Feedern
-          List<Aircraft> listLocalFeederPlanes = localFeederService.getPlanesWithinExtent(lomin, lamin,
-              lomax, lamax, selectedFeeder, startTime, markedHex, showOnlyMilitary);
-          if (listLocalFeederPlanes != null) {
-            for (Aircraft aircraft : listLocalFeederPlanes) {
-              mapAircraftRaw.put(aircraft.getHex(), aircraft);
-            }
-            // Füge alle lokalen Fluzeuge zur Gesamtliste hinzu
-            aircraftSet.addAll(listLocalFeederPlanes);
+          if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
+            getPlanesFromLocalFeeder(lomin, lamin, lomax, lamax, selectedFeeder, markedHex, showOnlyMilitary, startTime,
+                mapAircraftRaw, aircraftSet);
           }
 
           // Füge ISS hinzu
           if (showIss) {
-            AircraftSuperclass iss = spacecraftService.getIssWithinExtent(lomin, lamin, lomax, lamax);
-            if (iss != null) {
-              // Füge ISS zur Gesamtliste hinzu
-              aircraftSet.add(iss);
-            }
+            getIssFromApi(lomin, lamin, lomax, lamax, aircraftSet);
           }
 
           // Füge Opensky hinzu
           if (fetchFromOpensky) {
-            List<OpenskyAircraft> listOpenskyPlanes = openskyService
-                .getOpenskyPlanesWithinExtent(lomin, lamin, lomax, lamax, showOnlyMilitary);
-            if (listOpenskyPlanes != null) {
-              // Prüfe für jedes Opensky-Flugzeug, ob bereits ein lokales Flugzeug mit
-              // demselben Hex existiert
-              for (OpenskyAircraft openskyAircraft : listOpenskyPlanes) {
-                if (!mapAircraftRaw.containsKey(openskyAircraft.getHex())) {
-                  aircraftSet.add(openskyAircraft);
-                }
-              }
-            }
+            getPlanesFromOpensky(lomin, lamin, lomax, lamax, showOnlyMilitary, mapAircraftRaw, aircraftSet);
           }
         }
       } catch (Exception e) {
@@ -127,6 +107,46 @@ public class FeederService {
     pendingRequest = false;
 
     return aircraftSet;
+  }
+
+  private void getPlanesFromOpensky(double lomin, double lamin, double lomax, double lamax, boolean showOnlyMilitary, HashMap<String, AircraftSuperclass> mapAircraftRaw, LinkedHashSet<AircraftSuperclass> aircraftSet) {
+    List<OpenskyAircraft> listOpenskyPlanes = openskyService
+        .getOpenskyPlanesWithinExtent(lomin, lamin, lomax, lamax, showOnlyMilitary);
+    if (listOpenskyPlanes != null) {
+      // Prüfe für jedes Opensky-Flugzeug, ob bereits ein lokales Flugzeug mit
+      // demselben Hex existiert
+      for (OpenskyAircraft openskyAircraft : listOpenskyPlanes) {
+        if (!mapAircraftRaw.containsKey(openskyAircraft.getHex())) {
+          aircraftSet.add(openskyAircraft);
+        }
+      }
+    }
+  }
+
+  private void getIssFromApi(double lomin, double lamin, double lomax, double lamax, LinkedHashSet<AircraftSuperclass> aircraftSet) {
+    AircraftSuperclass iss = spacecraftService.getIssWithinExtent(lomin, lamin, lomax, lamax);
+    if (iss != null) {
+      // Füge ISS zur Gesamtliste hinzu
+      aircraftSet.add(iss);
+    }
+  }
+
+  private void getPlanesFromLocalFeeder(double lomin, double lamin, double lomax, double lamax, List<String> selectedFeeder, String markedHex, boolean showOnlyMilitary, long startTime, HashMap<String, AircraftSuperclass> mapAircraftRaw, LinkedHashSet<AircraftSuperclass> aircraftSet) {
+    // Hole Flugzeuge von den lokalen Feedern
+    List<Aircraft> listLocalFeederPlanes = new ArrayList<>();
+    for (String feeder : selectedFeeder) {
+      List<Aircraft> listPlanesForFeeder = localFeederService.getPlanesWithinExtent(lomin, lamin,
+          lomax, lamax, feeder, startTime, markedHex, showOnlyMilitary);
+      listLocalFeederPlanes.addAll(listPlanesForFeeder);
+    }
+
+    if (!listLocalFeederPlanes.isEmpty()) {
+      for (Aircraft aircraft : listLocalFeederPlanes) {
+        mapAircraftRaw.put(aircraft.getHex(), aircraft);
+      }
+      // Füge alle lokalen Fluzeuge zur Gesamtliste hinzu
+      aircraftSet.addAll(listLocalFeederPlanes);
+    }
   }
 
   /**

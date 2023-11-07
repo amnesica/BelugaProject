@@ -3,6 +3,7 @@ package com.amnesica.belugaproject.services.trails;
 import com.amnesica.belugaproject.config.StaticValues;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;
+import com.amnesica.belugaproject.entities.trails.TrailSuperclass;
 import com.amnesica.belugaproject.repositories.trails.AircraftTrailRepository;
 import com.amnesica.belugaproject.services.helper.TrailHelperService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,33 +54,26 @@ public class AircraftTrailService {
    * @param selectedFeeder String
    * @return List<AircraftTrail>
    */
-  public List<AircraftTrail> getAllTrailsToHexAndFeeder(String hex, String selectedFeeder) {
-    List<AircraftTrail> trails = null;
+  public List<AircraftTrail> getAllTrailsToHexAndFeeder(String hex, List<String> selectedFeeder) {
+    List<AircraftTrail> trails = new ArrayList<>();
     if (hex != null && !hex.isEmpty()) {
-      if (selectedFeeder != null && !selectedFeeder.isEmpty() && !selectedFeeder.equals("AllFeeder")) {
-        // Gebe nur Trails vom selektierten Feeder zurück
-        try {
-          trails = aircraftTrailRepository.findAllByHexAndFeederOrderByTimestampAsc(hex, selectedFeeder);
-        } catch (Exception e) {
-          log.error("Server - DB error when retrieving all trails for aircraft with hex " + hex
-              + ": Exception = " + e);
-        }
-      } else if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
-        // Geben Trails (von allen Feedern) eines Flugzeugs zurück
-        try {
-          trails = aircraftTrailRepository.findAllByHexOrderByTimestampAsc(hex);
-        } catch (Exception e) {
-          log.error("Server - DB error when retrieving all trails for aircraft with hex " + hex
-              + ": Exception = " + e);
+      for (String feeder : selectedFeeder) {
+        if (feeder != null && !feeder.isEmpty()) {
+          // Gebe nur Trails vom selektierten Feeder zurück
+          try {
+            trails.addAll(aircraftTrailRepository.findAllByHexAndFeederOrderByTimestampAsc(hex, feeder));
+          } catch (Exception e) {
+            log.error("Server - DB error when retrieving all trails for aircraft with hex " + hex
+                + ": Exception = " + e);
+          }
         }
       }
     }
 
-    if (trails != null)
-      trails = trails.stream().distinct().collect(Collectors.toList());
+    trails = trails.stream().distinct().collect(Collectors.toList());
+    trails.sort(Comparator.comparing(TrailSuperclass::getTimestamp));
 
-    if (trails != null)
-      trails = trailHelperService.checkAircraftTrailsFor180Border(trails);
+    trails = trailHelperService.checkAircraftTrailsFor180Border(trails);
 
     return trails;
   }
@@ -90,7 +86,7 @@ public class AircraftTrailService {
    * @return boolean
    */
   public boolean getIsReenteredAircraft(String hex, String selectedFeeder) {
-    if (selectedFeeder != null && !selectedFeeder.isEmpty() && !selectedFeeder.equals("AllFeeder")) {
+    if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
       try {
         long time = System.currentTimeMillis();
 

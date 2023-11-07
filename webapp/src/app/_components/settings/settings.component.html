@@ -38,20 +38,13 @@
           >
             <mat-label>Select planes by feeder</mat-label>
             <mat-select
-              multiple
-              [formControl]="selectedFeederArray"
-              [disableRipple]="true"
+              [(ngModel)]="selectedFeeder"
               (selectionChange)="selectPlanesByFeeder()"
-              [multiple]="false"
-              [(ngModel)]="selectedFeederValue"
+              multiple
             >
-              <mat-option value="AllFeeder">All feeder</mat-option>
-              <mat-option
-                *ngFor="let feeder of listFeeder"
-                [value]="feeder.name"
-                [disabled]="feeder.disabled"
-                >{{ feeder.name }}</mat-option
-              >
+              <mat-option *ngFor="let feeder of listFeeder" [value]="feeder">{{
+                feeder.name
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -373,7 +366,7 @@
             [checked]="hideRangeData"
             (click)="$event.stopPropagation()"
             (change)="toggleHideRangeData($event)"
-            >hide range data</mat-slide-toggle
+            >Hide range data</mat-slide-toggle
           >
         </div>
 
@@ -383,7 +376,7 @@
             [checked]="markRangeDataByFeeder"
             (click)="$event.stopPropagation()"
             (change)="toggleMarkRangeDataByFeeder($event)"
-            >mark range data by feeder</mat-slide-toggle
+            >Mark range data by feeder</mat-slide-toggle
           >
         </div>
 
@@ -393,31 +386,22 @@
             [checked]="markRangeDataByHeight"
             (click)="$event.stopPropagation()"
             (change)="toggleMarkRangeDataByHeight($event)"
-            >mark range data by height</mat-slide-toggle
+            >Mark range data by height</mat-slide-toggle
           >
         </div>
 
-        <!-- Select, um Range Data nach Feeder zu selektieren (default: Alle Feeder)-->
-        <p class="info-text">
-          Select range data by feeder: (If no feeder is selected range data of
-          all feeder are shown)
-        </p>
+        <!-- Select, um Range Data nach Feeder zu selektieren -->
         <div style="display: flex; justify-content: center">
           <mat-form-field appearance="fill">
-            <mat-label>Feeder</mat-label>
+            <mat-label>Select range data by feeder</mat-label>
             <mat-select
-              multiple
-              [formControl]="selectedFeederArray"
-              [disabled]="disableRangeData"
-              [disableRipple]="true"
+              [(ngModel)]="selectedFeederRangeData"
               (selectionChange)="selectRangeDataByFeeder()"
+              multiple
             >
-              <mat-option
-                *ngFor="let feeder of listFeeder"
-                [value]="feeder.name"
-                [disabled]="feeder.disabled"
-                >{{ feeder.name }}</mat-option
-              >
+              <mat-option *ngFor="let feeder of listFeeder" [value]="feeder">{{
+                feeder.name
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

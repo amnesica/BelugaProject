@@ -13,9 +13,9 @@ export class SettingsService {
   private toggleMarkRangeDataByHeightSource = new Subject<boolean>();
   private toggleShowAircraftLabelsSource = new Subject<boolean>();
   private listFeederSource = new Subject<Feeder[]>();
-  private selectedFeederSource = new Subject<string>();
+  private selectedFeederSource = new Subject<string[]>();
   private appNameAndVersionSource = new Subject<string[]>();
-  private selectedFeederUpdateSource = new Subject<string>();
+  private selectedFeederUpdateSource = new Subject<string[]>();
   private showAirportsSource = new Subject<boolean>();
   private showOpenskyPlanesSource = new Subject<boolean>();
   private showISSSource = new Subject<boolean>();
@@ -88,8 +88,12 @@ export class SettingsService {
 
   constructor() {}
 
-  showRangeDataBetweenTimestamps(timesAsTimestamps: number[]) {
+  showRangeDataBetweenTimestamps(
+    selectedFeederRangeData: string[],
+    timesAsTimestamps: number[]
+  ) {
     this.timesAsTimestampsSource.next(timesAsTimestamps);
+    this.selectedFeederSource.next(selectedFeederRangeData);
     return this.timesAsTimestampsSource;
   }
 
@@ -118,7 +122,7 @@ export class SettingsService {
     return this.listFeederSource;
   }
 
-  selectRangeDataByFeeder(selectedFeederArray: string) {
+  selectRangeDataByFeeder(selectedFeederArray: string[]) {
     this.selectedFeederSource.next(selectedFeederArray);
     return this.selectedFeederSource;
   }
@@ -128,7 +132,7 @@ export class SettingsService {
     return this.appNameAndVersionSource;
   }
 
-  selectPlanesByFeeder(selectedFeederArray: string) {
+  selectPlanesByFeeder(selectedFeederArray: string[]) {
     this.selectedFeederUpdateSource.next(selectedFeederArray);
     return this.selectedFeederUpdateSource;
   }

@@ -106,7 +106,7 @@ export class MapComponent implements OnInit {
   isDesktop!: boolean;
 
   // Ausgewählter Feeder im Select
-  selectedFeederUpdate: string = 'AllFeeder';
+  selectedFeederUpdate: string[] = [];
 
   // Default-Werte für Fetch-Booleans
   showAirportsUpdate: boolean = true;
@@ -175,7 +175,7 @@ export class MapComponent implements OnInit {
   rangeDataPopupBottomValue: any = 0;
 
   // Selektierte Feeder, nachdem Range Data selektiert werden soll
-  selectedFeederRangeData: any;
+  selectedFeederRangeData: string[] = [];
 
   // Layer für WebGL-Features
   webglLayer: WebGLPoints<VectorSource<Point>> | undefined;
@@ -311,7 +311,7 @@ export class MapComponent implements OnInit {
       .subscribe((timesAsTimestamps) => {
         if (timesAsTimestamps) {
           this.datesCustomRangeData = timesAsTimestamps;
-          this.receiveShowAllCustomRangeData();
+          this.updateRangeDataFromServer();
         }
       });
 
@@ -716,6 +716,8 @@ export class MapComponent implements OnInit {
                 )
               );
             }
+            this.selectedFeederUpdate = this.listFeeder.map((f) => f.name);
+            this.selectedFeederRangeData = this.listFeeder.map((f) => f.name);
           }
 
           // Setze Geoapify-API-Key (nicht mandatory)
@@ -1643,9 +1645,9 @@ export class MapComponent implements OnInit {
 
     // Wenn Flugzeug das aktuell ausgewählte/markierte Flugzeug ist
     if (this.aircraft && aircraft.hex == this.aircraft.hex) {
-      // Aktualisiere Trail mit momentaner Position, nur wenn alle Feeder
-      // ausgewählt sind und bereits Trails vom Server bezogen wurden
-      this.aircraft.updateTrail(this.selectedFeederUpdate);
+      // Aktualisiere Trail mit momentaner Position, nur wenn
+      // bereits Trails vom Server bezogen wurden
+      this.aircraft.updateTrail();
 
       // Update Route, da sich Flugzeug bewegt hat
       this.updateShowRoute();
@@ -2588,53 +2590,41 @@ export class MapComponent implements OnInit {
    * @param rangeDataJSON rangeDataJSON
    */
   drawRangeDataJSONOnMap(rangeDataJSON: any) {
+    if (
+      !rangeDataJSON ||
+      rangeDataJSON.length == 0 ||
+      this.selectedFeederRangeData == undefined ||
+      this.selectedFeederRangeData.length == 0
+    ) {
+      // Leere RangeDataFeatures
+      this.resetAllDrawnRangeDataPoints();
+      return;
+    }
+
     // Array an Point-Objekten
     let points: any = [];
 
     // Selektiere Feeder, wenn selectedFeederRangeData gesetzt ist und
     // formatiere JSON-Data in arrayOfObjectPoints, damit Sortier-Algorithmus
     // von https://stackoverflow.com/a/54727356 genutzt werden kann
-    if (
-      this.selectedFeederRangeData == undefined ||
-      this.selectedFeederRangeData.length == 0
-    ) {
-      // Zeige Range-Data aller Feeder an
+    // Selektiere nach ausgewählten Feedern
+    for (let feeder of this.selectedFeederRangeData) {
       for (let i = 0; i < rangeDataJSON.length; i++) {
-        points.push({
-          x: rangeDataJSON[i].longitude,
-          y: rangeDataJSON[i].latitude,
-          timestamp: rangeDataJSON[i].timestamp,
-          feederList: rangeDataJSON[i].feederList,
-          sourceList: rangeDataJSON[i].sourceList,
-          altitude: rangeDataJSON[i].altitude,
-          hex: rangeDataJSON[i].hex,
-          distance: rangeDataJSON[i].distance,
-          flightId: rangeDataJSON[i].flightId,
-          registration: rangeDataJSON[i].registration,
-          type: rangeDataJSON[i].type,
-          category: rangeDataJSON[i].category,
-        });
-      }
-    } else {
-      // Selektiere nach ausgewählten Feedern
-      for (let feeder of this.selectedFeederRangeData) {
-        for (let i = 0; i < rangeDataJSON.length; i++) {
-          if (rangeDataJSON[i].feederList.includes(feeder)) {
-            points.push({
-              x: rangeDataJSON[i].longitude,
-              y: rangeDataJSON[i].latitude,
-              timestamp: rangeDataJSON[i].timestamp,
-              feederList: rangeDataJSON[i].feederList,
-              sourceList: rangeDataJSON[i].sourceList,
-              altitude: rangeDataJSON[i].altitude,
-              hex: rangeDataJSON[i].hex,
-              distance: rangeDataJSON[i].distance,
-              flightId: rangeDataJSON[i].flightId,
-              registration: rangeDataJSON[i].registration,
-              type: rangeDataJSON[i].type,
-              category: rangeDataJSON[i].category,
-            });
-          }
+        if (rangeDataJSON[i].feederList.includes(feeder)) {
+          points.push({
+            x: rangeDataJSON[i].longitude,
+            y: rangeDataJSON[i].latitude,
+            timestamp: rangeDataJSON[i].timestamp,
+            feederList: rangeDataJSON[i].feederList,
+            sourceList: rangeDataJSON[i].sourceList,
+            altitude: rangeDataJSON[i].altitude,
+            hex: rangeDataJSON[i].hex,
+            distance: rangeDataJSON[i].distance,
+            flightId: rangeDataJSON[i].flightId,
+            registration: rangeDataJSON[i].registration,
+            type: rangeDataJSON[i].type,
+            category: rangeDataJSON[i].category,
+          });
         }
       }
     }
@@ -2764,10 +2754,10 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Fragt alle Range-Data-Datensätze innerhalb einer Zeitspanne
+   * Fragt Range-Data-Datensätze innerhalb einer Zeitspanne und abhängig von einem oder meheren Feedern
    * vom Server ab und stellt diese dar
    */
-  receiveShowAllCustomRangeData() {
+  updateRangeDataFromServer() {
     if (this.datesCustomRangeData) {
       this.serverService
         .getRangeDataBetweenTimestamps(
@@ -2792,6 +2782,9 @@ export class MapComponent implements OnInit {
             // Stelle gefundene Range-Data auf der Karte dar
             if (this.rangeDataJSON) {
               this.drawRangeDataJSONOnMap(this.rangeDataJSON);
+            } else {
+              // Leere RangeDataFeatures
+              this.resetAllDrawnRangeDataPoints();
             }
           }
         );
@@ -3720,10 +3713,14 @@ export class MapComponent implements OnInit {
     }
   }
 
-  showAircraftFromFeeder(selectedFeederUpdate: string) {
+  showAircraftFromFeeder(selectedFeederUpdate: string[]) {
     // Entferne alle Flugzeuge, die nicht vom ausgewählten Feeder kommen
-    if (this.selectedFeederUpdate != 'AllFeeder') {
-      this.removeAllNotSelectedFeederPlanes(selectedFeederUpdate);
+    if (this.selectedFeederUpdate && this.selectedFeederUpdate.length != 0) {
+      for (var selectedFeeder in selectedFeederUpdate) {
+        this.removeAllNotSelectedFeederPlanes(selectedFeeder);
+      }
+    } else if (this.selectedFeederUpdate) {
+      this.removeAllNotSelectedPlanes();
     }
 
     // Aktualisiere Flugzeuge vom Server

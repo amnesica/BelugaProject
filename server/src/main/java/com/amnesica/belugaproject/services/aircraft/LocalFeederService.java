@@ -278,7 +278,7 @@ public class LocalFeederService {
    * @param lamin          lower bound for the latitude in decimal degrees
    * @param lomax          upper bound for the longitude in decimal degrees
    * @param lamax          upper bound for the latitude in decimal degrees
-   * @param selectedFeeder Ausgewählter Feeder (oder 'AllFeeder')
+   * @param selectedFeeder Ausgewählter Feeder (oder keiner)
    * @param startTime      Zeitpunkt des letzten Updates
    * @return List<Aircraft>
    */
@@ -287,17 +287,14 @@ public class LocalFeederService {
     List<Aircraft> listAircraftRaw = null;
 
     try {
-      if (selectedFeeder != null && !selectedFeeder.isEmpty() && !selectedFeeder.equals("AllFeeder")) {
+      if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
         // Gebe Flugzeuge eines bestimmten Feeders zurück
         listAircraftRaw = aircraftRepository.findAllByLastUpdateAndFeederAndWithinExtent(
             startTime, selectedFeeder, lomin, lamin, lomax, lamax);
-      } else if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
-        // Gebe Flugzeuge aller Feeder zurück
-        listAircraftRaw = aircraftRepository.findAllByLastUpdateAndWithinExtent(startTime,
-            lomin, lamin, lomax, lamax);
       }
+
       if (markedHex != null && !markedHex.isEmpty()) {
-        Aircraft markedAircraft = aircraftRepository.findByHex(markedHex);
+        final Aircraft markedAircraft = aircraftRepository.findByHex(markedHex);
         if (markedAircraft != null && listAircraftRaw != null) {
           listAircraftRaw.add(markedAircraft);
         } else if (markedAircraft != null) {

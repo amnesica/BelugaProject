@@ -967,10 +967,9 @@ export class Aircraft {
    *
    * @param selectedFeeder Feeder
    */
-  updateTrail(selectedFeeder: any) {
+  updateTrail() {
     if (
       this.isMarked &&
-      selectedFeeder == 'AllFeeder' &&
       this.allDataWasRequested &&
       this.position &&
       this.trackLinePoints

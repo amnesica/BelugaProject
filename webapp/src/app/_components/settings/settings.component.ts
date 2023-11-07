@@ -10,7 +10,7 @@ import { SettingsService } from 'src/app/_services/settings-service/settings-ser
 import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 import { Helper } from 'src/app/_classes/helper';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { environment } from 'src/environments/environment';
@@ -27,6 +27,7 @@ import {
 } from '@ng-matero/extensions/core';
 import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 import { slideInOutRight } from 'src/app/_common/animations';
+import { Feeder } from 'src/app/_classes/feeder';
 
 export interface DialogData {
   times: string[];
@@ -135,14 +136,14 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Range Data verbunden angezeigt werden soll
   showFilteredRangeDatabyFeeder: boolean | undefined;
 
-  // Liste an Feeder (Verlinkung zu Globals)
+  // Liste an Feeder (Verlinkung zu Globals, enthält 'All Feeder'-Feeder)
   listFeeder: any;
 
   // Ausgewählte Feeder in Multi-Select
-  selectedFeederArray = new UntypedFormControl();
+  selectedFeeder: Feeder[] = [];
 
-  // Default-Wert für Feeder
-  selectedFeederValue = 'AllFeeder';
+  // Ausgewählte Feeder für Range Data in Multi-Select
+  selectedFeederRangeData: Feeder[] = [];
 
   // App-Name
   appName: any;
@@ -284,10 +285,17 @@ export class SettingsComponent implements OnInit {
           this.settingsDivWidth = '20rem';
         }
       });
+
     // Weise Liste an Feeder zu
     this.settingsService.listFeeder$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((listFeeder) => (this.listFeeder = listFeeder));
+      .subscribe((listFeeder) => {
+        this.listFeeder = listFeeder;
+
+        // Füge default-Liste an Feedern hinzu
+        this.selectedFeeder.push(...listFeeder);
+        this.selectedFeederRangeData.push(...listFeeder);
+      });
 
     // Weise App-Name und App-Version zu
     this.settingsService.appNameAndVersion$
@@ -357,9 +365,14 @@ export class SettingsComponent implements OnInit {
           new Date(timesAsTimestampsArray[1]).toLocaleTimeString(),
       ];
 
+      let selectedFeederNames = this.getNamesOfSelectedFeeder(
+        this.selectedFeederRangeData
+      );
+
       // Kontaktiere Map-Komponente, damit Server-Aufruf
       // gemacht wird mit Start- und Endzeit
       this.settingsService.showRangeDataBetweenTimestamps(
+        selectedFeederNames,
         timesAsTimestampsArray
       );
     }
@@ -492,22 +505,32 @@ export class SettingsComponent implements OnInit {
    * Zeige Range Data der selektierten Feeder an
    */
   selectRangeDataByFeeder() {
-    if (this.selectedFeederArray.value) {
-      // Kontaktiere Map-Component und übergebe
-      // selectFeeder-Name
-      this.settingsService.selectRangeDataByFeeder(
-        this.selectedFeederArray.value
-      );
-    }
+    let selectedFeederNames = this.getNamesOfSelectedFeeder(
+      this.selectedFeederRangeData
+    );
+
+    // Kontaktiere Map-Component und übergebe selectFeeder-Name
+    this.settingsService.selectRangeDataByFeeder(selectedFeederNames);
   }
 
   /**
    * Selektiere Flugzeuge nach dem ausgewählten Feeder
    */
   selectPlanesByFeeder() {
-    // Kontaktiere Map-Component und übergebe
-    // selectFeeder-Name
-    this.settingsService.selectPlanesByFeeder(this.selectedFeederArray.value);
+    let selectedFeederNames = this.getNamesOfSelectedFeeder(
+      this.selectedFeeder
+    );
+
+    // Kontaktiere Map-Component und übergebe selectFeeder-Namen
+    this.settingsService.selectPlanesByFeeder(selectedFeederNames);
+  }
+
+  getNamesOfSelectedFeeder(selectedFeederList: Feeder[]): string[] {
+    let selectedFeederNames: string[] = [];
+    for (let i = 0; i < selectedFeederList.length; i++) {
+      selectedFeederNames.push(selectedFeederList[i].name);
+    }
+    return selectedFeederNames;
   }
 
   /**
@@ -526,7 +549,7 @@ export class SettingsComponent implements OnInit {
    * Refreshe Flugzeuge nach ausgewähltem Feeder
    */
   refreshSelectedFeeder() {
-    if (this.selectedFeederArray.value) {
+    if (this.selectedFeeder) {
       this.selectPlanesByFeeder();
     }
   }

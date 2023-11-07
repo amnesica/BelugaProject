@@ -79,7 +79,7 @@ public class Controller {
    * @param lamin            lower bound for the latitude in decimal degrees
    * @param lomax            upper bound for the longitude in decimal degrees
    * @param lamax            upper bound for the latitude in decimal degrees
-   * @param selectedFeeder   Ausgewählter Feeder (oder 'AllFeeder')
+   * @param selectedFeeder   List<String>, Ausgewählte Feeder (oder keiner)
    * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
    * @param showIss          Boolean, ob ISS abgefragt werden soll
    * @param markedHex        String, hex des markierten Flugzeugs
@@ -90,7 +90,7 @@ public class Controller {
   public @ResponseBody
   Collection<AircraftSuperclass> getAircraftList(@RequestParam(value = "lomin") double lomin,
                                                  @RequestParam(value = "lamin") double lamin, @RequestParam(value = "lomax") double lomax,
-                                                 @RequestParam(value = "lamax") double lamax, @RequestParam(value = "selectedFeeder") String selectedFeeder,
+                                                 @RequestParam(value = "lamax") double lamax, @RequestParam(value = "selectedFeeder") List<String> selectedFeeder,
                                                  @RequestParam(value = "fetchFromOpensky") boolean fetchFromOpensky,
                                                  @RequestParam(value = "showIss") boolean showIss,
                                                  @Nullable @RequestParam(value = "markedHex") String markedHex,
@@ -145,14 +145,14 @@ public class Controller {
    * Wenn isFromOpensky wird nicht die Datenbank abgefragt, sondern die Opensky-API angefragt
    *
    * @param hex            String
-   * @param selectedFeeder String
+   * @param selectedFeeder List<String>
    * @param isFromOpensky  boolean
    * @return Object[]
    */
   @GetMapping(value = "/getTrail", produces = "application/json")
   public @ResponseBody
   Object[] getTrail(@RequestParam(value = "hex") String hex,
-                    @RequestParam(value = "selectedFeeder") String selectedFeeder,
+                    @RequestParam(value = "selectedFeeder") List<String> selectedFeeder,
                     @RequestParam(value = "isFromOpensky") boolean isFromOpensky) {
 
     // Baue jeweils Array als Rückgabewert
