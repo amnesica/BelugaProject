@@ -27,7 +27,7 @@ public class Configuration {
 
   // Name und Version der App
   private final String appName = "The Beluga Project";
-  private final String appVersion = "3-1-2";
+  private final String appVersion = "5-0-0";
 
   // Angezeigte Feeder-Position auf der Karte
   @Value("${location.latitude}")
