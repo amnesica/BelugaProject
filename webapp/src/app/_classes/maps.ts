@@ -66,6 +66,36 @@ export class Maps {
         'Powered by <a href="https://www.esri.com">Esri.com</a>' +
         '— Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
     },
+    {
+      name: 'Stadia Alidade Smooth',
+      url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png',
+      isSelected: false,
+      attribution: [
+        '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>',
+        '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a>',
+        '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
+      ],
+    },
+    {
+      name: 'Stadia Alidade Smooth Dark',
+      url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png',
+      isSelected: false,
+      attribution: [
+        '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>',
+        '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a>',
+        '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
+      ],
+    },
+    {
+      name: 'Stadia Alidade Outdoors',
+      url: 'https://tiles.stadiamaps.com/tiles/outdoors/{z}/{x}/{y}.png',
+      isSelected: false,
+      attribution: [
+        '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>',
+        '&copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a>',
+        '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
+      ],
+    },
   ];
 
   static listAvailableGeoapifyMaps = [
