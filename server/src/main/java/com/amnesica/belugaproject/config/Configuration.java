@@ -267,6 +267,9 @@ public class Configuration {
       if (propsFeeder.getProperty("source") != null) {
         mapping.setSource(propsFeeder.getProperty("source"));
       }
+      if (propsFeeder.getProperty("roll") != null) {
+        mapping.setRoll(propsFeeder.getProperty("roll"));
+      }
     }
     return mapping;
   }

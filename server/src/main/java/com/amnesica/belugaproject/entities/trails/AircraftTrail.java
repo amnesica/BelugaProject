@@ -15,7 +15,7 @@ public class AircraftTrail extends TrailSuperclass {
   }
 
   public AircraftTrail(String hex, Double longitude, Double latitude, Integer altitude, Boolean reenteredAircraft,
-                       Long timestamp, String feeder, String source) {
-    super(hex, longitude, latitude, altitude, reenteredAircraft, timestamp, feeder, source);
+                       Long timestamp, String feeder, String source, Integer track, Double roll) {
+    super(hex, longitude, latitude, altitude, reenteredAircraft, timestamp, feeder, source, track, roll);
   }
 }

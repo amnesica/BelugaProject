@@ -495,9 +495,10 @@ public class OpenskyService {
             final Double latitude = innerArray.getDouble(1);
             final Double longitude = innerArray.getDouble(2);
             final Double baroAltitude = innerArray.getDouble(3);
+            final Integer track = (int) innerArray.getDouble(4);
             final int altitudeInFeet = (int) HelperService.convertMeter2Foot(baroAltitude);
             final AircraftTrail openskyTrail = new AircraftTrail(hex, longitude, latitude, altitudeInFeet, false,
-                timestamp * 1000, "Opensky", null); // convert timestamp to be in milli seconds
+                timestamp * 1000, "Opensky", null, track, null); // convert timestamp to be in milli seconds
             trails.add(openskyTrail);
           }
         }

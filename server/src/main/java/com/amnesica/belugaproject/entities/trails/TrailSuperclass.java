@@ -23,9 +23,11 @@ public class TrailSuperclass {
   private Boolean reenteredAircraft = false;
   private String feeder;
   private String source;
+  private Integer track;
+  private Double roll;
 
   public TrailSuperclass(String hex, Double longitude, Double latitude, Integer altitude, Boolean reenteredAircraft,
-                         Long timestamp, String feeder, String source) {
+                         Long timestamp, String feeder, String source, Integer track, Double roll) {
     this.longitude = longitude;
     this.latitude = latitude;
     this.altitude = altitude;
@@ -34,6 +36,8 @@ public class TrailSuperclass {
     this.hex = hex;
     this.feeder = feeder;
     this.source = source;
+    this.track = track;
+    this.roll = roll;
   }
 
   public TrailSuperclass() {
@@ -42,10 +46,18 @@ public class TrailSuperclass {
 
   @Override
   public String toString() {
-    return "TrailSuperclass [id=" + id + ", hex=" + hex + ", longitude=" + longitude + ", latitude=" + latitude
-        + ", altitude=" + altitude + ", timestamp="
-        + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timestamp) + ", reenteredAircraft="
-        + reenteredAircraft + ", feeder=" + feeder + ", source=" + source + "]";
+    return "TrailSuperclass{" +
+        "id=" + id +
+        ", hex='" + hex + '\'' +
+        ", longitude=" + longitude +
+        ", latitude=" + latitude +
+        ", altitude=" + altitude +
+        ", timestamp=" + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timestamp) +
+        ", reenteredAircraft=" + reenteredAircraft +
+        ", feeder='" + feeder + '\'' +
+        ", source='" + source + '\'' +
+        ", track=" + track +
+        '}';
   }
 
   @Override

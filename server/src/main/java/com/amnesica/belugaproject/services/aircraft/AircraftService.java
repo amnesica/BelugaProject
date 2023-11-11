@@ -128,6 +128,7 @@ public class AircraftService {
     aircraftToUpdate.setSelectedHeading(aircraftNew.getSelectedHeading());
     aircraftToUpdate.setLastSeen(aircraftNew.getLastSeen());
     aircraftToUpdate.setSourceCurrentFeeder(aircraftNew.getSourceCurrentFeeder());
+    aircraftToUpdate.setRoll(aircraftNew.getRoll());
 
     // Schreibe aktuellen Feeder als Feeder in Liste
     if (!aircraftToUpdate.getFeederList().contains(feeder.getName())) {
@@ -250,6 +251,7 @@ public class AircraftService {
     String lastSeen = feeder.getMapping().getLastSeen();
     String rssi = feeder.getMapping().getRssi();
     String source = feeder.getMapping().getSource();
+    String roll = feeder.getMapping().getRoll();
 
     // Setze Werte nach Mapping
     if (altitude != null && element.has(altitude) && !element.isNull(altitude)
@@ -276,6 +278,10 @@ public class AircraftService {
 
     if (track != null && element.has(track) && !element.isNull(track)) {
       aircraft.setTrack(element.getInt(track));
+    }
+
+    if (roll != null && element.has(roll) && !element.isNull(roll)) {
+      aircraft.setRoll(element.getDouble(roll));
     }
 
     if (type != null && element.has(type) && !element.isNull(type)) {

@@ -35,7 +35,7 @@ public class AircraftTrailService {
       // Erstelle neues Trail-Element
       AircraftTrail trail = new AircraftTrail(aircraft.getHex(), aircraft.getLongitude(), aircraft.getLatitude(),
           aircraft.getAltitude(), aircraft.getReenteredAircraft(), System.currentTimeMillis(), feederName,
-          aircraft.getSourceCurrentFeeder());
+          aircraft.getSourceCurrentFeeder(), aircraft.getTrack(), aircraft.getRoll());
 
       try {
         // Speichere Trail in Datenbank

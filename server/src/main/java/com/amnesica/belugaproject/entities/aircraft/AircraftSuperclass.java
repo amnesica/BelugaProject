@@ -124,6 +124,8 @@ public class AircraftSuperclass {
   private String isSpecial;
   private String isInteresting;
 
+  private Double roll;
+
   // Konstruktor
   public AircraftSuperclass(String hex, double latitude, double longitude) {
     this.hex = hex;

@@ -17,9 +17,9 @@ public class HistoryAircraftTrail extends TrailSuperclass {
   }
 
   public HistoryAircraftTrail(String hex, Double longitude, Double latitude, Integer altitude, Boolean reenteredAircraft,
-                              Long timestamp, String feeder, String source) {
+                              Long timestamp, String feeder, String source, Integer track, Double roll) {
     super(hex, longitude, latitude, altitude, reenteredAircraft,
-        timestamp, feeder, source);
+        timestamp, feeder, source, track, roll);
   }
 
   /**
@@ -29,6 +29,6 @@ public class HistoryAircraftTrail extends TrailSuperclass {
    * @return HistoryAircraftTrail
    */
   public static HistoryAircraftTrail makeCopy(AircraftTrail that) {
-    return new HistoryAircraftTrail(that.getHex(), that.getLongitude(), that.getLatitude(), that.getAltitude(), that.getReenteredAircraft(), that.getTimestamp(), that.getFeeder(), that.getSource());
+    return new HistoryAircraftTrail(that.getHex(), that.getLongitude(), that.getLatitude(), that.getAltitude(), that.getReenteredAircraft(), that.getTimestamp(), that.getFeeder(), that.getSource(), that.getTrack(), that.getRoll());
   }
 }

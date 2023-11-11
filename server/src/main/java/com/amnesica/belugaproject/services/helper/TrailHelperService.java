@@ -29,8 +29,8 @@ public class TrailHelperService {
       if (Math.abs(currentTrail.getLongitude() - nextTrail.getLongitude()) > 180) {
         var midY = (nextTrail.getLatitude() + currentTrail.getLatitude()) / 2;
 
-        var tempEndpoint = new AircraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), true, 0L, null, null);
-        var tempStartpoint = new AircraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), true, 0L, null, null);
+        var tempEndpoint = new AircraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), true, 0L, null, null, currentTrail.getTrack(), currentTrail.getRoll());
+        var tempStartpoint = new AircraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), true, 0L, null, null, nextTrail.getTrack(), nextTrail.getRoll());
 
         if (currentTrail.getLongitude() > nextTrail.getLongitude()) {
           tempEndpoint.setLongitude(-180.0);
@@ -66,8 +66,8 @@ public class TrailHelperService {
       if (Math.abs(currentTrail.getLongitude() - nextTrail.getLongitude()) > 180) {
         var midY = (nextTrail.getLatitude() + currentTrail.getLatitude()) / 2;
 
-        var tempEndpoint = new SpacecraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), false, 0L, null, null);
-        var tempStartpoint = new SpacecraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), false, 0L, null, null);
+        var tempEndpoint = new SpacecraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), false, 0L, null, null, currentTrail.getTrack(), currentTrail.getRoll());
+        var tempStartpoint = new SpacecraftTrail(currentTrail.getHex(), nextTrail.getLongitude(), midY, nextTrail.getAltitude(), false, 0L, null, null, nextTrail.getTrack(), nextTrail.getRoll());
 
         if (currentTrail.getLongitude() > nextTrail.getLongitude()) {
           tempEndpoint.setLongitude(-180.0);
