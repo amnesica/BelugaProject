@@ -98,6 +98,15 @@ public class NetworkHandlerService {
    * @return String
    */
   public String makeServiceCallLocalFeeder(String url) {
+
+//    // Debug: For testing local json files from feeder
+//    try {
+//      String content = new String(Files.readAllBytes(Paths.get("src/main/resources/testFile.json")));
+//      return content;
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
+//    }
+
     if (!url.equalsIgnoreCase("none")) {
       try {
         Request request = new Request.Builder()
