@@ -17,16 +17,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class NetworkHandlerService {
 
-  // Networkhandler (Standard-Timeout)
-  private final OkHttpClient client = new OkHttpClient();
-
-  // Networkhandler (geringes Connect-Timeout für lokale Feeder,
-  // damit reentered-Aircraft-Zustand nicht falsch gesetzt wird,
-  // da Timeout zu groß ist)
-  private final OkHttpClient clientLocalFeeder = new OkHttpClient.Builder()
-      .connectTimeout(15000, TimeUnit.MILLISECONDS)
-      .readTimeout(15000, TimeUnit.MILLISECONDS)
-      .writeTimeout(15000, TimeUnit.MILLISECONDS)
+  // Networkhandler
+  private final OkHttpClient client = new OkHttpClient.Builder()
+      .connectTimeout(30000, TimeUnit.MILLISECONDS)
+      .readTimeout(30000, TimeUnit.MILLISECONDS)
+      .writeTimeout(30000, TimeUnit.MILLISECONDS)
       .build();
 
   private final String userAgentBelugaProject = "The Beluga Project";
@@ -114,7 +109,7 @@ public class NetworkHandlerService {
             .header("User-Agent", userAgentBelugaProject)
             .build();
 
-        try (Response response = clientLocalFeeder.newCall(request).execute()) {
+        try (Response response = client.newCall(request).execute()) {
           return response.body().string();
         }
       } catch (Exception e) {
