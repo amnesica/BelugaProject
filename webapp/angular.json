@@ -37,7 +37,10 @@
               "src/theme.scss",
               "node_modules/cesium/Build/Cesium/Widgets/widgets.css"
             ],
-            "scripts": ["node_modules/apexcharts/dist/apexcharts.min.js"],
+            "scripts": [
+              "node_modules/apexcharts/dist/apexcharts.min.js",
+              "node_modules/cesium/Build/Cesium/Cesium.js"
+            ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,

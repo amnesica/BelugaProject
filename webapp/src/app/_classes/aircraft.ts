@@ -68,6 +68,7 @@ export class Aircraft {
   age!: any;
   aircraftState!: any;
   isFromOpensky!: any;
+  roll: any;
 
   // Daten für Info-Abschnitt PositionOfMinimumDistance
   pomdLatitude!: any;
@@ -98,8 +99,11 @@ export class Aircraft {
 
   //Trail des Flugzeugs als Punkte
   trackLinePoints: any; // 2D-Karte
-  trackLinePoints3dLine: any; //3D-Karte (Line)
-  trackLinePoints3dBar: any; //3D-Karte (Bar)
+
+  trackLinePoints3d: any; //3D-Karte (Line)
+  trackLinePoints3dColors: any; //3D-Karte (Line-Farben)
+
+  track3d: any; // Object-Wrapper für 3D-Daten
 
   // Position des Herkunfts-Flughafens
   // und des Zielflughafens
@@ -232,7 +236,8 @@ export class Aircraft {
     aircraftState: any,
     isFromOpensky: any,
     lastUpdate: any,
-    isMilitary: any
+    isMilitary: any,
+    roll: any
   ) {
     this.hex = hex;
     this.latitude = latitude;
@@ -264,6 +269,7 @@ export class Aircraft {
     this.isFromOpensky = isFromOpensky;
     this.lastUpdate = lastUpdate;
     this.isMilitary = isMilitary;
+    this.roll = roll;
   }
 
   /**
@@ -302,7 +308,8 @@ export class Aircraft {
       aircraftJSONElement.aircraftState,
       aircraftJSONElement.isFromOpensky,
       aircraftJSONElement.lastUpdate,
-      aircraftJSONElement.isMilitary
+      aircraftJSONElement.isMilitary,
+      aircraftJSONElement.roll
     );
   }
 
@@ -317,7 +324,9 @@ export class Aircraft {
       this.altitude,
       this.onGround,
       true,
-      this.isMarked
+      this.isMarked,
+      false,
+      false
     );
 
     // Setze StrokeColor anders, wenn Flugzeug von Opensky kommt
@@ -574,6 +583,7 @@ export class Aircraft {
     this.photoPhotographer = listElement.photoPhotographer;
     this.isFromOpensky = listElement.isFromOpensky;
     this.lastUpdate = listElement.lastUpdate;
+    this.roll = listElement.roll;
 
     // Generell: Berechne POMD-Point nur, wenn dieser auch angefragt wird
     // Ausnahme: Flugzeug ist das aktuell markierte, dann aktualisiere Werte,
@@ -816,7 +826,9 @@ export class Aircraft {
       this.altitude,
       this.onGround,
       false,
-      this.isMarked
+      this.isMarked,
+      false,
+      false
     );
 
     this.glMarker.set('r', rgb[0]);
@@ -893,8 +905,14 @@ export class Aircraft {
 
     // initialisiere das Array für die LinienSegmente
     this.trackLinePoints = [];
-    this.trackLinePoints3dLine = [];
-    this.trackLinePoints3dBar = [];
+
+    this.track3d = {
+      trailPoints: [],
+      colors: [],
+      tracks: [],
+      rolls: [],
+      isReentered: [],
+    };
   }
 
   /**
@@ -916,8 +934,7 @@ export class Aircraft {
     this.trail_features3d_line.clear();
     this.trail_features3d_bar.clear();
     this.trackLinePoints = [];
-    this.trackLinePoints3dLine = [];
-    this.trackLinePoints3dBar = [];
+    this.track3d = undefined;
     this.aircraftTrailAltitudes = undefined;
 
     for (let i = 0; i < this.aircraftTrailList.length; i++) {
@@ -926,10 +943,20 @@ export class Aircraft {
       let altitude = this.aircraftTrailList[i].altitude;
       let reenteredAircraft = this.aircraftTrailList[i].reenteredAircraft;
       let timestamp = this.aircraftTrailList[i].timestamp;
+      let track = this.aircraftTrailList[i].track;
+      let roll = this.aircraftTrailList[i].roll;
 
-      this.addTrackLinePoint2D(longitude, latitude, altitude);
+      this.addTrack2D(longitude, latitude);
 
-      this.addTrackLinePoints3d(longitude, latitude, altitude);
+      this.addTrack3D(
+        longitude,
+        latitude,
+        altitude,
+        timestamp,
+        track,
+        roll,
+        reenteredAircraft
+      );
 
       this.updateAltitudeData(timestamp, reenteredAircraft, altitude);
 
@@ -975,9 +1002,17 @@ export class Aircraft {
       this.trackLinePoints
     ) {
       // Füge neuen Trailpunkt hinzu
-      this.addTrackLinePoint2D(this.longitude, this.latitude, this.altitude);
+      this.addTrack2D(this.longitude, this.latitude);
 
-      this.addTrackLinePoints3d(this.longitude, this.latitude, this.altitude);
+      this.addTrack3D(
+        this.longitude,
+        this.latitude,
+        this.altitude,
+        new Date().getTime(),
+        this.track,
+        this.roll,
+        false
+      );
 
       if (this.trackLinePoints.length > 1) {
         this.addLineFeatureToLayer(false, this.altitude);
@@ -1152,7 +1187,7 @@ export class Aircraft {
     }
   }
 
-  addTrackLinePoint2D(longitude, latitude, altitude) {
+  addTrack2D(longitude, latitude) {
     this.trackLinePoints.push({
       coordinate: olProj.transform(
         [longitude, latitude],
@@ -1162,40 +1197,47 @@ export class Aircraft {
     });
   }
 
-  addTrackLinePoints3d(longitude, latitude, altitude) {
-    this.addTrackLinePoint3dLine(longitude, latitude, altitude);
-    this.addTrackLinePoint3dBar(longitude, latitude, altitude);
-  }
+  addTrack3D(
+    longitude,
+    latitude,
+    altitude,
+    timestamp,
+    track,
+    roll,
+    isReentered
+  ) {
+    if (!this.track3d) {
+      this.track3d = {
+        trailPoints: [],
+        colors: [],
+        tracks: [],
+        rolls: [],
+        isReentered: [],
+      };
+    }
 
-  addTrackLinePoint3dLine(longitude, latitude, altitude) {
-    this.trackLinePoints3dLine.push({
-      coordinate: olProj.transform(
-        [longitude, latitude, altitude * 0.3048], // OL-Cesium braucht Meter
-        'EPSG:4326',
-        'EPSG:3857'
-      ),
-      altitude: altitude * 0.3048, // Für Kamerahöhe nicht 0
-    });
-  }
-
-  addTrackLinePoint3dBar(longitude: any, latitude: any, altitude: any) {
-    this.trackLinePoints3dBar.push({
-      coordinate: olProj.transform(
-        [longitude, latitude, 0], // Um Balken zu bekommen
-        'EPSG:4326',
-        'EPSG:3857'
-      ),
-      altitude: altitude * 0.3048, // Für Kamerahöhe nicht 0
-    });
-
-    this.trackLinePoints3dBar.push({
-      coordinate: olProj.transform(
-        [longitude, latitude, altitude * 0.3048], // OL-Cesium braucht Meter
-        'EPSG:4326',
-        'EPSG:3857'
-      ),
+    this.track3d.trailPoints.push({
+      longitude: longitude,
+      latitude: latitude,
       altitude: altitude * 0.3048,
     });
+
+    this.track3d.colors.push(
+      Markers.getColorFromAltitude(
+        altitude,
+        false,
+        false,
+        false,
+        true,
+        isReentered
+      )
+    );
+
+    this.track3d.isReentered.push(isReentered);
+
+    this.track3d.tracks.push(track);
+
+    this.track3d.rolls.push(roll);
   }
 
   trackLinePointsAre180Crosspoints() {
@@ -1225,24 +1267,6 @@ export class Aircraft {
       ]),
     });
 
-    let featureLine3d = new Feature({
-      geometry: new LineString([
-        this.trackLinePoints3dLine[this.trackLinePoints3dLine.length - 1]
-          .coordinate,
-        this.trackLinePoints3dLine[this.trackLinePoints3dLine.length - 2]
-          .coordinate,
-      ]),
-    });
-
-    let featureBar3d = new Feature({
-      geometry: new LineString([
-        this.trackLinePoints3dBar[this.trackLinePoints3dBar.length - 1]
-          .coordinate,
-        this.trackLinePoints3dBar[this.trackLinePoints3dBar.length - 2]
-          .coordinate,
-      ]),
-    });
-
     let style;
 
     // Setze Style des LineStrings
@@ -1258,6 +1282,8 @@ export class Aircraft {
         altitude,
         onGround,
         true,
+        false,
+        false,
         false
       );
 
@@ -1271,14 +1297,10 @@ export class Aircraft {
 
     // Setze Style
     featureLine.setStyle(style);
-    featureLine3d.setStyle(style);
-    featureBar3d.setStyle(style);
 
     // Fuege erstellte Linie zu allen
     // Linien hinzu
     this.trail_features.addFeature(featureLine);
-    this.trail_features3d_line.addFeature(featureLine3d);
-    this.trail_features3d_bar.addFeature(featureBar3d);
   }
 
   calcFlightPathLength() {

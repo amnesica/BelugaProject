@@ -1,4 +1,4 @@
-<div style="height: 100%" id="map_canvas_3d" [style.width]="widthMap3d">
+<div id="app-cesium-buttons" style="height: 100%" [style.width]="widthMap3d">
   <button
     mat-button
     class="button-3d-map"
@@ -20,50 +20,6 @@
       aria-hidden="false"
       aria-label="close window"
       >explore</mat-icon
-    >
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
-    id="tiltLessOnGlobe3dMap"
-    (click)="tiltLessOnGlobe3dMap()"
-    title="Tilt map less"
-  >
-    <mat-icon aria-hidden="false" aria-label="close window">undo</mat-icon>
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
-    id="tiltMoreOnGlobe3dMap"
-    (click)="tiltMoreOnGlobe3dMap()"
-    title="Tilt map more"
-  >
-    <mat-icon aria-hidden="false" aria-label="close window">redo</mat-icon>
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
-    id="rotateMapLeftButton3dMap"
-    (click)="rotateMapLeft3dMap()"
-    title="Rotate map left"
-  >
-    <mat-icon aria-hidden="false" aria-label="close window"
-      >rotate_left</mat-icon
-    >
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
-    id="rotateMapRightButton3dMap"
-    (click)="rotateMapRight3dMap()"
-    title="Rotate map right"
-  >
-    <mat-icon aria-hidden="false" aria-label="close window"
-      >rotate_right</mat-icon
     >
   </button>
 
@@ -114,34 +70,14 @@
   <button
     mat-button
     class="button-3d-map"
-    id="showTrailLine3d"
-    (click)="showTrailLine3d()"
-    title="Show trail as line"
+    id="showTerrain"
+    (click)="showTerrain()"
   >
-    <mat-icon aria-hidden="false" aria-label="close window"
-      >show_chart</mat-icon
-    >
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
-    id="showTrailBar3d"
-    (click)="showTrailBar3d()"
-    title="Show trail as bars"
-  >
-    <mat-icon aria-hidden="false" aria-label="close window">bar_chart</mat-icon>
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
-    id="showTrailBarLine3d"
-    (click)="showTrailBarLine3d()"
-    title="Show trail as line and bars"
-  >
-    <mat-icon aria-hidden="false" aria-label="close window"
-      >monitoring</mat-icon
+    <mat-icon
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable/Disable terrain"
+      >Landscape</mat-icon
     >
   </button>
 
@@ -150,7 +86,7 @@
     class="button-3d-map"
     id="showCockpitView3d"
     (click)="showCockpitView3d()"
-    title="Enable cockpit mode"
+    title="Enable/Disable cockpit mode"
   >
     <mat-icon aria-hidden="false" aria-label="close window"
       >flight_class</mat-icon
@@ -205,28 +141,6 @@
   <button
     mat-button
     class="button-3d-map"
-    id="enableMoonSunMap"
-    (click)="enableMoonSunOnMap()"
-  >
-    <mat-icon
-      *ngIf="!enableMoonSunMap"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Enable sun, moon, sky"
-      >bedtime</mat-icon
-    >
-    <mat-icon
-      *ngIf="enableMoonSunMap"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Disable sun, moon, sky"
-      >bedtime_off</mat-icon
-    >
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
     id="enableShadowsMap"
     (click)="enableShadowsOnMap()"
   >
@@ -243,6 +157,28 @@
       aria-label="close window"
       title="Disable shadows, lighting"
       >ev_shadow_minus</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="enableDayNightMap"
+    (click)="enableDayNightOnMap()"
+  >
+    <mat-icon
+      *ngIf="!enableDayNightMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable day/night imaginery"
+      >light_mode</mat-icon
+    >
+    <mat-icon
+      *ngIf="enableDayNightMap"
+      aria-hidden="false"
+      aria-label="close window"
+      title="Disable day/night imaginery"
+      >dark_mode</mat-icon
     >
   </button>
 </div>

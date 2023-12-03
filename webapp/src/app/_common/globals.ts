@@ -102,7 +102,7 @@ export class Globals {
   static display3dMap: Boolean = false;
 
   // Resolution für 3d-Map
-  static resolution3dMapValue: number = 0.5;
+  static resolution3dMapValue: number = 1.0;
 
   // Boolean, ob aircraft table sichtbar ist
   static aircraftTableIsVisible: boolean;
@@ -140,4 +140,8 @@ export class Globals {
   // URL zum Server zum Holen der ISS ohne Extent
   static urlGetISSWithoutExtent: string =
     'http://' + Globals.serverUrl + ':8080/getIssWithoutExtent';
+
+  // URL zum Server zum Holen der ISS ohne Extent
+  static urlGetModelFromServer: string =
+    'http://' + Globals.serverUrl + ':8080/get3DModel';
 }

@@ -282,17 +282,12 @@ public class LocalFeederService {
    * @param startTime      Zeitpunkt des letzten Updates
    * @return List<Aircraft>
    */
-  public List<Aircraft> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax,
-                                              String selectedFeeder, long startTime, String markedHex, boolean showOnlyMilitary) {
-    List<Aircraft> listAircraftRaw = null;
+  public List<Aircraft> getPlanes(Double lomin, Double lamin, Double lomax, Double lamax,
+                                  String selectedFeeder, long startTime, String markedHex, boolean showOnlyMilitary) {
+    List<Aircraft> listAircraftRaw;
+    listAircraftRaw = getPlanesWithinExtent(lomin, lamin, lomax, lamax, selectedFeeder, startTime, markedHex, showOnlyMilitary);
 
     try {
-      if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
-        // Gebe Flugzeuge eines bestimmten Feeders zurück
-        listAircraftRaw = aircraftRepository.findAllByLastUpdateAndFeederAndWithinExtent(
-            startTime, selectedFeeder, lomin, lamin, lomax, lamax);
-      }
-
       if (markedHex != null && !markedHex.isEmpty()) {
         final Aircraft markedAircraft = aircraftRepository.findByHex(markedHex);
         if (markedAircraft != null && listAircraftRaw != null) {
@@ -306,6 +301,22 @@ public class LocalFeederService {
       if (listAircraftRaw != null && showOnlyMilitary)
         listAircraftRaw = listAircraftRaw.stream().filter(a -> a.getIsMilitary() != null).collect(Collectors.toList());
 
+    } catch (Exception e) {
+      log.error("Server - DB error when fetching planes : Exception = " + e);
+    }
+
+    return listAircraftRaw;
+  }
+
+  private List<Aircraft> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax, String selectedFeeder, long startTime, String markedHex, boolean showOnlyMilitary) {
+    List<Aircraft> listAircraftRaw = null;
+
+    try {
+      if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
+        // Gebe Flugzeuge eines bestimmten Feeders zurück
+        listAircraftRaw = aircraftRepository.findAllByLastUpdateAndFeederAndWithinExtent(
+            startTime, selectedFeeder, lomin, lamin, lomax, lamax);
+      }
     } catch (Exception e) {
       log.error("Server - DB error when fetching planes : Exception = " + e);
     }

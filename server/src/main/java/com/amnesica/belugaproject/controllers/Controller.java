@@ -38,6 +38,9 @@ public class Controller {
   private AircraftService aircraftService;
 
   @Autowired
+  private Model3DService model3DService;
+
+  @Autowired
   private AirportDataService airportDataService;
   @Autowired
   private RangeDataService rangeDataService;
@@ -96,7 +99,7 @@ public class Controller {
                                                  @Nullable @RequestParam(value = "markedHex") String markedHex,
                                                  @RequestParam(value = "showOnlyMilitary") boolean showOnlyMilitary,
                                                  HttpServletRequest httpRequest) {
-    return feederService.getPlanesWithinExtent(lomin, lamin, lomax, lamax, selectedFeeder, fetchFromOpensky,
+    return feederService.getPlanes(lomin, lamin, lomax, lamax, selectedFeeder, fetchFromOpensky,
         showIss, markedHex, showOnlyMilitary, httpRequest);
   }
 
@@ -214,5 +217,17 @@ public class Controller {
   public @ResponseBody
   AircraftSuperclass getIssWithoutExtent() {
     return spacecraftService.getIssWithoutExtent();
+  }
+
+  /**
+   * Gibt ein 3D-Modell (glb-Format) zu einem type zurück
+   *
+   * @param type String
+   * @return byte[]
+   */
+  @GetMapping(value = "/get3DModel", produces = "model/gltf-binary")
+  public @ResponseBody
+  byte[] getAircraftData(@RequestParam(value = "type") String type) {
+    return model3DService.getModelFromType(type);
   }
 }

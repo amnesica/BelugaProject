@@ -369,19 +369,4 @@ public class Configuration {
       return true;
     }
   }
-
-  /**
-   * Methode prüft, ob die API-Key für Google Maps für Cesium-Komponente gesetzt wurde
-   *
-   * @return true, wenn API-Key gesetzt wurde
-   */
-  public boolean cesiumGoogleMapsApiKeyIsValid() {
-    if (cesiumGoogleMapsApiKey == null || cesiumGoogleMapsApiKey.isBlank()
-        || cesiumGoogleMapsApiKey.equals("TODO")) {
-      log.info("Cesium Google Maps: API-Key is not present in application.properties and Google maps feature will not be available!");
-      return false;
-    } else {
-      return true;
-    }
-  }
 }

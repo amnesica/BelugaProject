@@ -244,6 +244,7 @@
     *ngIf="display3dMap && cesiumIonDefaultAccessToken"
     [aircraft]="aircraft"
     [cesiumIonDefaultAccessToken]="cesiumIonDefaultAccessToken"
-    [cesiumGoogleMapsApiKey]="cesiumGoogleMapsApiKey"
+    [style.width]="cesiumMapWidth"
+    @dummyParentAnimation
   ></app-cesium>
 </div>

@@ -1,6 +1,6 @@
 {
   "name": "webapp",
-  "version": "5.0.0",
+  "version": "4.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -25,9 +25,9 @@
     "@types/ol": "^6.5.3",
     "apexcharts": "^3.41.0",
     "arc": "^0.1.1",
+    "cesium": "^1.111.0",
     "ng-apexcharts": "^1.8.0",
     "ol": "^6.15.1",
-    "ol-cesium": "^2.15.0",
     "ol-ext": "^4.0.11",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",

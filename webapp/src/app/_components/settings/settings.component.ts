@@ -212,7 +212,7 @@ export class SettingsComponent implements OnInit {
   showAltitudeChart: boolean = true;
 
   // Resolution für OL-Cesium Map
-  sliderCesiumResolutionValue: any = [0.5];
+  sliderCesiumResolutionValue: any = [1.0];
 
   constructor(
     public settingsService: SettingsService,

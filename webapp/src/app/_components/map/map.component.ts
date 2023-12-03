@@ -267,6 +267,9 @@ export class MapComponent implements OnInit {
   // Boolean, ob Map gerade bewegt wird
   mapIsBeingMoved: boolean = false;
 
+  // Breite der Cesium-Map-Komponente
+  cesiumMapWidth: string = '';
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -829,11 +832,15 @@ export class MapComponent implements OnInit {
           // Setze Variable auf 'Mobile'
           this.isDesktop = false;
 
+          this.cesiumMapWidth = '100vw';
+
           // Ändere Modus der Flugzeug-Tabelle
           this.aircraftTableService.updateWindowMode(this.isDesktop);
         } else {
           // Setze Variable auf 'Desktop'
           this.isDesktop = true;
+
+          this.cesiumMapWidth = '40rem';
 
           // Ändere Modus der Flugzeug-Tabelle
           this.aircraftTableService.updateWindowMode(this.isDesktop);
@@ -1554,6 +1561,8 @@ export class MapComponent implements OnInit {
           if (Globals.aircraftTableIsVisible)
             this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
 
+          this.updateCesiumComponentWithAircraft();
+
           // Aktualisiere angezeigte Flugzeug-Zähler
           this.updatePlanesCounter(Globals.PlanesOrdered.length);
 
@@ -1654,9 +1663,6 @@ export class MapComponent implements OnInit {
 
       // Update Daten des Altitude Charts mit aktueller Altitude
       this.updateAltitudeChart();
-
-      // Kontaktiere Cesium für Update der Camera, wenn nötig
-      this.updateCameraInCesium();
     }
 
     // Wenn Flugzeug das ist, worüber die Mouse hovert
@@ -1953,6 +1959,7 @@ export class MapComponent implements OnInit {
         this.resetAllTrails();
         this.resetAllDrawnCircles();
         this.resetAllDrawnPOMDPoints();
+        this.reset3dEntityCesium();
 
         // Toggle markiere Flugzeug
         aircraft.toggleMarkPlane();
@@ -2000,6 +2007,9 @@ export class MapComponent implements OnInit {
         }
       }
     }
+  }
+  reset3dEntityCesium() {
+    this.cesiumService.unmarkAircraft();
   }
 
   /**
@@ -2870,6 +2880,8 @@ export class MapComponent implements OnInit {
             altitude,
             false,
             true,
+            false,
+            false,
             false
           );
 
@@ -3785,12 +3797,6 @@ export class MapComponent implements OnInit {
   updateCesiumComponentWithAircraft() {
     if (this.aircraft && Globals.display3dMap) {
       this.cesiumService.updateAircraft(this.aircraft);
-    }
-  }
-
-  updateCameraInCesium() {
-    if (this.aircraft && Globals.display3dMap) {
-      this.cesiumService.updateView(this.aircraft);
     }
   }
 

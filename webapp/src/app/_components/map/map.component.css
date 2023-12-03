@@ -163,14 +163,17 @@ td {
 }
 
 #cesium-map {
-  position: absolute;
+  position: fixed;
   margin-top: 3.5rem;
   image-rendering: pixelated;
   z-index: 20;
   right: 0;
   top: 0;
   bottom: 0;
-  border-radius: 0px;
   font-size: 14px;
-  overflow: auto;
+  overflow: hidden;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 0;
 }

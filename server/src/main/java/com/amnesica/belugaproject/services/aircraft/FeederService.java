@@ -54,8 +54,8 @@ public class FeederService {
    * @return HashSet<AircraftSuperclass>
    */
   @Async
-  public HashSet<AircraftSuperclass> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax,
-                                                           List<String> selectedFeeder, boolean fetchFromOpensky, boolean showIss, String markedHex, boolean showOnlyMilitary, HttpServletRequest httpRequest) {
+  public HashSet<AircraftSuperclass> getPlanes(Double lomin, Double lamin, Double lomax, Double lamax,
+                                               List<String> selectedFeeder, boolean fetchFromOpensky, boolean showIss, String markedHex, boolean showOnlyMilitary, HttpServletRequest httpRequest) {
     if (pendingRequest)
       return null;
 
@@ -80,21 +80,19 @@ public class FeederService {
       long startTime = System.currentTimeMillis() - 2000;
 
       try {
-        if (startTime != 0) {
-          if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
-            getPlanesFromLocalFeeder(lomin, lamin, lomax, lamax, selectedFeeder, markedHex, showOnlyMilitary, startTime,
-                mapAircraftRaw, aircraftSet);
-          }
+        if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
+          getPlanesFromLocalFeeder(lomin, lamin, lomax, lamax, selectedFeeder, markedHex, showOnlyMilitary, startTime,
+              mapAircraftRaw, aircraftSet);
+        }
 
-          // Füge ISS hinzu
-          if (showIss) {
-            getIssFromApi(lomin, lamin, lomax, lamax, aircraftSet);
-          }
+        // Füge ISS hinzu
+        if (showIss) {
+          getIssFromApi(lomin, lamin, lomax, lamax, aircraftSet);
+        }
 
-          // Füge Opensky hinzu
-          if (fetchFromOpensky) {
-            getPlanesFromOpensky(lomin, lamin, lomax, lamax, showOnlyMilitary, mapAircraftRaw, aircraftSet);
-          }
+        // Füge Opensky hinzu
+        if (fetchFromOpensky) {
+          getPlanesFromOpensky(lomin, lamin, lomax, lamax, showOnlyMilitary, mapAircraftRaw, aircraftSet);
         }
       } catch (Exception e) {
         log.error("Server - DB error when fetching and converting planes : Exception = " + e);
@@ -135,7 +133,7 @@ public class FeederService {
     // Hole Flugzeuge von den lokalen Feedern
     List<Aircraft> listLocalFeederPlanes = new ArrayList<>();
     for (String feeder : selectedFeeder) {
-      List<Aircraft> listPlanesForFeeder = localFeederService.getPlanesWithinExtent(lomin, lamin,
+      List<Aircraft> listPlanesForFeeder = localFeederService.getPlanes(lomin, lamin,
           lomax, lamax, feeder, startTime, markedHex, showOnlyMilitary);
       listLocalFeederPlanes.addAll(listPlanesForFeeder);
     }
@@ -160,7 +158,7 @@ public class FeederService {
    * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
    * @param showIss          Boolean, ob ISS abgefragt werden soll
    */
-  private void createRequestsIfNecessary(double lomin, double lamin, double lomax, double lamax,
+  private void createRequestsIfNecessary(Double lomin, Double lamin, Double lomax, Double lamax,
                                          boolean fetchFromOpensky, boolean showIss, String markedHex, String ipAddress) {
 
     if (ipAddress == null || ipAddress.isEmpty())
@@ -239,11 +237,6 @@ public class FeederService {
     // Prüfe, ob Cesium Ion Default Access Token gesetzt wurde, damit Cesium-Komponenten im Frontend genutzt werden kann
     if (configuration.cesiumIonDefaultAccessTokenIsValid()) {
       configMap.put("cesiumIonDefaultAccessToken", configuration.getCesiumIonDefaultAccessToken());
-    }
-
-    // Prüfe, ob Cesium Google Maps API-Key gesetzt wurde, damit Google Maps für Cesium im Frontend verfügbar gemacht werden kann
-    if (configuration.cesiumGoogleMapsApiKeyIsValid()) {
-      configMap.put("cesiumGoogleMapsApiKey", configuration.getCesiumGoogleMapsApiKey());
     }
 
     return configMap;

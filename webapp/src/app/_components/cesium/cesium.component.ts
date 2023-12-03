@@ -1,27 +1,19 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   Input,
   OnInit,
 } from '@angular/core';
 import { Aircraft } from 'src/app/_classes/aircraft';
-import OLCesium from 'ol-cesium';
 import * as Cesium from 'cesium';
-import { fromLonLat } from 'ol/proj';
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import TileLayer from 'ol/layer/Tile';
-import OSM from 'ol/source/OSM';
-import { defaults as defaultControls } from 'ol/control';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Globals } from 'src/app/_common/globals';
-import Collection from 'ol/Collection';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
-import { Maps } from 'src/app/_classes/maps';
-import * as olInteraction from 'ol/interaction';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cesium',
@@ -36,110 +28,119 @@ export class CesiumComponent implements OnInit {
   // Cesium Ion Default Access Token (Eingabeparameter)
   @Input() cesiumIonDefaultAccessToken: any;
 
-  // Cesium Google Maps API-Key (Eingabeparameter)
-  @Input() cesiumGoogleMapsApiKey: any;
-
-  OL3dMap: any;
-  layers3d!: Collection<any>;
-  ol3d: OLCesium;
-
   isDesktop: boolean | undefined;
   widthMap3d: string | undefined;
   heightMap3d: string | undefined;
 
-  camera: any;
-  osmLayer: any;
+  // Cesium
+  viewer: Cesium.Viewer | undefined;
+  scene: Cesium.Scene | undefined;
+  camera: Cesium.Camera | undefined;
+  pickedEntity: undefined;
 
-  // OSM 3d buildings
+  // Settings
   display3dBuildings: boolean = false;
   osmBuildingsTileset: Cesium.Cesium3DTileset | undefined;
-
-  // Google photorealisitc 3d map
   displayGooglePhotorealistic3D: boolean = false;
   googlePhotorealisticTileset: any;
-
-  displayTrailLine3d: boolean = true; // default
-  displayTrailBar3d: boolean = false;
-  displayTrailBarLine3d: boolean = false;
-
-  displayTrailLine3dOld: boolean = false;
-  displayTrailBar3dOld: boolean = false;
-  displayTrailBarLine3dOld: boolean = false;
-
   displayCockpitView3d: boolean = false;
-
   display3dMapFullscreen: boolean = false;
-
+  displayTerrain: boolean = false;
   enableHdr3dMap: boolean = false;
-  enableMoonSunMap: boolean = false;
   enableShadowsMap: boolean = false;
+  enableDayNightMap: boolean = false;
 
   // Initialer Wert von Globals
   resolutionValue: number = Globals.resolution3dMapValue;
 
-  // Aktuell ausgewählter Map-Stil
-  currentSelectedMapStyle: any;
+  earthAtNightLayer: Cesium.ImageryLayer | undefined;
+  initViewOnAircraft: boolean = false;
 
   // Subscriptions
-  subscriptions: Subscription[] = [];
+  private ngUnsubscribe = new Subject();
 
   constructor(
     public breakpointObserver: BreakpointObserver,
     private cesumService: CesiumService,
     private snackBar: MatSnackBar,
-    private settingsService: SettingsService
-  ) {}
+    private settingsService: SettingsService,
+    private el: ElementRef
+  ) {
+    new Promise<any>(() => {
+      this.createCesium3dMap(el);
+    });
+  }
+
+  async createCesium3dMap(el: ElementRef) {
+    if (el == undefined || el == null) return;
+
+    this.createCesiumViewer();
+
+    this.createAirplanePicking();
+
+    this.enableMoonSunOnMap();
+
+    this.setupMapProviders();
+
+    // TODO debug
+    if (this.viewer) this.viewer.scene.debugShowFramesPerSecond = true;
+  }
+
+  async ngOnInit(): Promise<void> {
+    if (!this.cesiumIonDefaultAccessToken) return;
+
+    // Setze Cesium Ion Default Access Token
+    Cesium.Ion.defaultAccessToken = this.cesiumIonDefaultAccessToken;
+
+    // Initiiere Abonnements
+    this.initSubscriptions();
+
+    if (!this.camera) return;
+
+    // Setze Home-Position auf SitePosition (Antennen-Position)
+    this.setHomeToSitePosition();
+
+    // Setze aircraft trail
+    this.addAircraftAndTrailTo3DMap();
+  }
+
+  ngOnDestroy() {
+    this.destroy3dAssets();
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 
   initSubscriptions() {
-    let sub1 = this.breakpointObserver
+    this.breakpointObserver
       .observe(['(max-width: 599px)'])
-      .pipe()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((state: BreakpointState) => {
         this.setDesktopOrMobile(state);
       });
 
-    // Zeige neue Daten an, wenn Flugzeuge aktualisiert wurden
-    let sub2 = this.cesumService.aircraftSource$
-      .pipe()
-      .subscribe((aircraft: Aircraft) => {
+    // Zeige neue Daten an, wenn Flugzeug aktualisiert wurde
+    this.cesumService.updateAircraftSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(async (aircraft: Aircraft) => {
         this.aircraft = aircraft;
-        this.addTrailToLayer();
+        this.addAircraftAndTrailTo3DMap();
       });
 
-    // Passe Camera an, wenn sich Position des Flugzeugs geändert hat
-    let sub3 = this.cesumService.aircraftChangedPositionSource$
-      .pipe()
-      .subscribe((aircraft: Aircraft) => {
-        this.aircraft = aircraft;
-
-        // Aktualisiere Cockpit-View, wenn benötigt
-        if (this.displayCockpitView3d) {
-          this.updateCockpitView();
-        }
+    // Löschen alle Entitäten des Flugzeugs, da diese nicht mehr markiert ist
+    this.cesumService.unmarkAircraftSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => {
+        this.destroyPrimitiesAndEntities();
       });
 
     // Passe Resolution der 3d-Map an
-    let sub4 = this.settingsService.cesiumResolutionValueSource$
-      .pipe()
+    this.settingsService.cesiumResolutionValueSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((resolutionValue: number) => {
         this.resolutionValue = resolutionValue;
-        if (!this.ol3d) return;
-        this.ol3d.setResolutionScale(this.resolutionValue);
+        if (!this.viewer) return;
+        this.viewer.resolutionScale = this.resolutionValue;
       });
-
-    // Callback für anderen Map-Stil
-    let sub5 = this.settingsService.selectMapStyleSource$
-      .pipe()
-      .subscribe((selectedMapStyle) => {
-        this.currentSelectedMapStyle = selectedMapStyle;
-        this.createBaseLayer();
-      });
-
-    this.subscriptions.push(sub1);
-    this.subscriptions.push(sub2);
-    this.subscriptions.push(sub3);
-    this.subscriptions.push(sub4);
-    this.subscriptions.push(sub5);
   }
 
   setDesktopOrMobile(state: BreakpointState) {
@@ -166,158 +167,428 @@ export class CesiumComponent implements OnInit {
     }
   }
 
-  createBaseLayer() {
-    this.currentSelectedMapStyle = this.getMapStyleFromLocalStorage();
+  setupMapProviders() {
+    if (!this.viewer || !this.scene) return;
 
-    if (this.layers3d == undefined) {
-      this.layers3d = new Collection();
-    }
+    // Entferne "earth at night" and "blue marble" (index 12)
+    this.removeDefaultImageryProvier(12);
+    this.removeDefaultImageryProvier(12);
 
-    if (this.layers3d.getLength() > 0) {
-      // Entferne alten osmLayer um Performance zu verbessern, wenn Map ausgetauscht wird
-      this.layers3d.removeAt(0);
-    }
+    // Entferne "sentinel 2" (index 11)
+    this.removeDefaultImageryProvier(11);
 
-    this.osmLayer = new TileLayer({
-      source: new OSM({
-        url: this.currentSelectedMapStyle.url,
-        attributions: this.currentSelectedMapStyle.attribution,
-        imageSmoothing: false,
-      }),
-      preload: 0,
-      useInterimTilesOnError: false,
-    });
-
-    this.layers3d.insertAt(0, this.osmLayer);
+    this.setOsmAsDefaultMapForCesium();
   }
 
-  addTrailToLayer() {
-    if (this.aircraftReadyFor3d()) {
-      this.removePreviousTrailLayer();
-
-      this.layers3d.push(this.aircraft!.layer3dLine);
-      this.layers3d.push(this.aircraft!.layer3dBar);
-
-      this.showTrailBarOrLine();
-    }
-  }
-
-  aircraftReadyFor3d() {
-    return (
-      this.layers3d &&
-      this.aircraft != null &&
-      this.aircraft.layer3dBar != null &&
-      this.aircraft.layer3dLine != null &&
-      this.aircraft.trackLinePoints3dLine != null &&
-      this.aircraft.trackLinePoints3dBar != null
+  removeDefaultImageryProvier(index: number) {
+    if (!this.viewer || !index) return;
+    this.viewer.baseLayerPicker.viewModel.imageryProviderViewModels.splice(
+      index,
+      1
     );
   }
 
-  toRadians(degrees) {
-    if (typeof degrees == undefined) return;
-    return ((degrees * Math.PI) / 180.0) * -1;
+  createAirplanePicking() {
+    if (!this.viewer) return;
+
+    this.viewer.screenSpaceEventHandler.setInputAction((movement) => {
+      if (!this.viewer) return;
+
+      // Picken eines Features
+      const pickedFeature = this.viewer?.scene.pick(movement.position);
+      if (!Cesium.defined(pickedFeature)) {
+        this.viewer?.screenSpaceEventHandler.getInputAction(
+          Cesium.ScreenSpaceEventType.LEFT_CLICK
+        );
+        return;
+      }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   }
 
-  removePreviousTrailLayer() {
-    while (this.layers3d.getLength() > 1) {
-      this.layers3d.removeAt(this.layers3d.getLength() - 1);
+  setOsmAsDefaultMapForCesium() {
+    if (!this.viewer || !this.scene) return;
+
+    // Setze Openstreetmap (OSM) als Default-Karte (index 6)
+    let defaultProvider =
+      this.viewer.baseLayerPicker.viewModel.imageryProviderViewModels;
+    this.viewer.baseLayerPicker.viewModel.selectedImagery = defaultProvider[6];
+  }
+
+  createCesiumViewer() {
+    this.viewer = new Cesium.Viewer(this.el.nativeElement, {
+      sceneMode: Cesium.SceneMode.SCENE3D,
+      baseLayerPicker: true,
+      scene3DOnly: true,
+      shadows: false,
+      terrainShadows: Cesium.ShadowMode.DISABLED,
+      fullscreenButton: false,
+      shouldAnimate: true,
+      timeline: false,
+      animation: false,
+    });
+    this.scene = this.viewer.scene;
+    this.camera = this.viewer.camera;
+  }
+
+  setHomeToSitePosition() {
+    if (!this.camera || !this.aircraft) return;
+
+    var extent = Cesium.Rectangle.fromDegrees(
+      Globals.SitePosition[0] - 2,
+      Globals.SitePosition[1] - 2,
+      Globals.SitePosition[0] + 2,
+      Globals.SitePosition[1] + 2
+    );
+
+    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = extent;
+    Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+  }
+
+  setCameraToAircraftPosition(aircraft: Aircraft) {
+    if (!this.camera || !aircraft) return;
+
+    const startPosition = Cesium.Cartesian3.fromDegrees(
+      aircraft.position[0],
+      aircraft.position[1],
+      aircraft.altitude * 0.3048 * 80
+    );
+
+    this.camera.setView({ destination: startPosition });
+  }
+
+  addAircraftAndTrailTo3DMap() {
+    return new Promise<any>(() => {
+      if (!this.aircraftReadyFor3d() || !this.scene || !this.aircraft) return;
+
+      this.createOrUpdateTrailAndAircraft(this.aircraft);
+
+      // Für nicht markierte Flugzeug (nur Flugzeug)
+      // for (var aircraft of Globals.PlanesOrdered) {
+      //   if (!aircraft.isMarked) {
+      //   this.loadAircraftModel(aircraft);
+      //   }
+      // }
+    });
+  }
+
+  createOrUpdateTrailAndAircraft(aircraft: Aircraft) {
+    if (!this.scene || !this.viewer || !aircraft) return;
+
+    const track3dObjectAircraft = this.getTrack3dObjectAircraft(aircraft);
+    if (!track3dObjectAircraft) return;
+
+    const modelGroupName = aircraft.hex + '_model';
+    const polylineGroupName = aircraft.hex + '_polyline';
+    const wallGroupName = aircraft.hex + '_wall';
+
+    var entityGroupModel = this.getOrCreateEntityGroup(modelGroupName);
+    var entityGroupPolyline = this.getOrCreateEntityGroup(polylineGroupName);
+    var entityGroupWall = this.getOrCreateEntityGroup(wallGroupName);
+
+    if (!entityGroupModel || !entityGroupPolyline || !entityGroupWall) return;
+
+    if (this.initViewOnAircraft) {
+      this.setCameraToAircraftPosition(aircraft);
+
+      // Zurücksetzen des Booleans, damit View nicht nochmal initial gesetzt wird
+      this.initViewOnAircraft = false;
     }
+
+    this.createTrail(
+      track3dObjectAircraft,
+      entityGroupPolyline,
+      entityGroupWall
+    );
+
+    this.loadAircraftModel(aircraft, entityGroupModel);
   }
 
-  create3dMap() {
-    if (this.OL3dMap == null) {
-      let interactions = olInteraction.defaults({
-        altShiftDragRotate: true,
-        pinchRotate: true,
-        doubleClickZoom: true,
-        dragPan: true,
-        pinchZoom: true,
-      });
+  getOrCreateEntityGroup(
+    entityGroupModelName: string
+  ): Cesium.CustomDataSource | undefined {
+    if (!entityGroupModelName || !this.viewer) return;
 
-      // Initialisiere OL Map
-      this.OL3dMap = new Map({
-        target: 'map_canvas_3d',
-        interactions: interactions,
-        layers: this.layers3d,
-        view: new View({
-          center: fromLonLat(this.aircraft!.position),
-          zoom: this.aircraft?.hex == 'ISS' ? 7 : 11,
-        }),
-      });
+    var entityGroup =
+      this.viewer.dataSources.getByName(entityGroupModelName)[0];
+    if (!entityGroup) {
+      this.initViewOnAircraft = true; // Flugzeug wurde neu markiert (wichtig für Setzen des initialen Views)
+      entityGroup = new Cesium.CustomDataSource(entityGroupModelName);
+      this.viewer.dataSources.add(entityGroup);
     }
+    return entityGroup;
   }
 
-  async createCesium3dMap() {
-    // Erstelle OLCesium
-    if (this.OL3dMap != null) {
-      this.ol3d = new OLCesium({
-        map: this.OL3dMap,
-        target: 'cesium-map',
-        scene3DOnly: true, // Lade nur 3D- und nicht 2D Karte zusätzlich
-      });
+  getTrack3dObjectAircraft(aircraft: Aircraft) {
+    return aircraft?.track3d;
+  }
 
-      const scene = this.ol3d.getCesiumScene();
+  createTrail(
+    track3dObjectAircraft: any,
+    entityGroupPolyline: Cesium.CustomDataSource,
+    entityGroupWall: Cesium.CustomDataSource
+  ) {
+    let wallSegmentPositions: any = [];
+    let wallSegmentColor: Cesium.Color | undefined;
+    const lastIndex = track3dObjectAircraft.trailPoints.length - 1;
 
-      // Performance improvements
-      this.ol3d.setResolutionScale(this.resolutionValue);
-      this.ol3d.setTargetFrameRate(Number.POSITIVE_INFINITY);
-      this.ol3d.enableAutoRenderLoop();
-      scene.requestRenderMode = true;
-      scene.maximumRenderTimeChange = Infinity;
-
-      // Terrain
-      Cesium.createWorldTerrainAsync().then(
-        (tp) => (scene.terrainProvider = tp)
+    // Update existing trail
+    if (
+      entityGroupPolyline.entities.values.length > 0 ||
+      entityGroupWall.entities.values.length > 0
+    ) {
+      const lastDrawnPosition: any =
+        track3dObjectAircraft.trailPoints[lastIndex - 1];
+      if (!lastDrawnPosition) return;
+      const position: any = track3dObjectAircraft.trailPoints[lastIndex];
+      const color: Cesium.Color = track3dObjectAircraft.colors[lastIndex];
+      if (lastDrawnPosition == position) return;
+      this.addPositionToWallPositions(wallSegmentPositions, lastDrawnPosition);
+      this.addPositionToWallPositions(wallSegmentPositions, position);
+      this.createPolylineAndWall(
+        entityGroupPolyline,
+        entityGroupWall,
+        wallSegmentPositions,
+        color
       );
-      const globe = scene.globe;
-      globe.enableTerrain = true;
-
-      // Setze Kamera-Winkel
-      this.camera = this.ol3d.getCamera();
-      this.camera.setTilt(Math.PI / 3);
-      this.camera.setHeading(0);
-
-      this.ol3d.setEnabled(true);
-    }
-  }
-
-  async ngOnInit(): Promise<void> {
-    if (!this.cesiumIonDefaultAccessToken) return;
-
-    // Setze Cesium Ion Default Access Token
-    Cesium.Ion.defaultAccessToken = this.cesiumIonDefaultAccessToken;
-
-    // Initiiere Abonnements
-    this.initSubscriptions();
-
-    if (this.aircraft == null || this.aircraft == undefined) {
-      console.log('Ol-Cesium Error: aircraft is null!');
       return;
     }
 
-    this.createBaseLayer();
+    // Create new trail
+    for (let i = 0; i < track3dObjectAircraft.trailPoints.length; i++) {
+      let position: any = track3dObjectAircraft.trailPoints[i];
+      let color: Cesium.Color = track3dObjectAircraft.colors[i];
+      let reentered = track3dObjectAircraft.isReentered[i];
 
-    this.create3dMap();
+      if (!wallSegmentColor) wallSegmentColor = color;
+      if (!wallSegmentColor || !color) continue;
 
-    this.addTrailToLayer();
+      if (!reentered)
+        this.addPositionToWallPositions(wallSegmentPositions, position);
 
-    this.createCesium3dMap();
+      if (!this.colorsAreEquals(wallSegmentColor, color) || i == lastIndex) {
+        this.createPolylineAndWall(
+          entityGroupPolyline,
+          entityGroupWall,
+          wallSegmentPositions,
+          wallSegmentColor
+        );
+        wallSegmentPositions.length = 0;
+        wallSegmentColor = color;
+
+        if (!reentered)
+          this.addPositionToWallPositions(wallSegmentPositions, position);
+      }
+    }
+  }
+
+  addPositionToWallPositions(wallSegmentPositions: any, position: any) {
+    if (!wallSegmentPositions) return;
+
+    wallSegmentPositions.push(position.longitude);
+    wallSegmentPositions.push(position.latitude);
+    wallSegmentPositions.push(position.altitude);
+  }
+
+  createPolylineAndWall(
+    entityGroupPolyline: Cesium.CustomDataSource,
+    entityGroupWall: Cesium.CustomDataSource,
+    positions,
+    color
+  ) {
+    if (
+      !this.viewer ||
+      !positions ||
+      !color ||
+      !this.scene ||
+      !entityGroupPolyline ||
+      !entityGroupWall
+    )
+      return;
+
+    this.createPolyline(entityGroupPolyline, positions, color);
+    this.createWallSegment(entityGroupWall, positions, color);
+  }
+
+  private createWallSegment(
+    entityGroupWall: Cesium.CustomDataSource,
+    positions: any,
+    color: any
+  ) {
+    entityGroupWall.entities.add({
+      wall: {
+        positions: Cesium.Cartesian3.fromDegreesArrayHeights(positions),
+        material: color.withAlpha(0.3),
+      },
+    });
+  }
+
+  private createPolyline(
+    entityGroupPolyline: Cesium.CustomDataSource,
+    positions: any,
+    color: any
+  ) {
+    entityGroupPolyline.entities.add({
+      polyline: {
+        positions: Cesium.Cartesian3.fromDegreesArrayHeights(positions),
+        material: color.withAlpha(0.9),
+        width: 5,
+        arcType: Cesium.ArcType.GEODESIC,
+      },
+    });
+  }
+
+  colorsAreEquals(color1, color2) {
+    return (
+      color1.red == color2.red &&
+      color1.green == color2.green &&
+      color1.blue == color2.blue
+    );
+  }
+
+  async loadAircraftModel(
+    aircraft: Aircraft | undefined,
+    entityGroup: Cesium.CustomDataSource
+  ) {
+    if (!this.scene || !this.viewer || !aircraft) return;
+
+    const hex = aircraft.hex;
+    const type = aircraft.type;
+    const position: any = Cesium.Cartesian3.fromDegrees(
+      aircraft.position[0],
+      aircraft.position[1],
+      aircraft.altitude ? aircraft.altitude * 0.3048 : 0
+    );
+    const lastTrack = aircraft.track ? aircraft.track : 0;
+    const lastRoll = aircraft.roll ? aircraft.roll : 0;
+
+    const heading = Cesium.Math.toRadians(lastTrack);
+    const pitch = Cesium.Math.toRadians(0);
+    const roll = Cesium.Math.toRadians(lastRoll);
+    const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+    const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+      position,
+      hpr
+    );
+
+    const orientationProperty = new Cesium.ConstantProperty(orientation);
+
+    let entity = entityGroup.entities.getById(hex + '_model');
+
+    if (!entity) {
+      entity = this.createNewAircraftEntity(
+        entity,
+        entityGroup,
+        hex,
+        position,
+        orientationProperty,
+        type,
+        aircraft
+      );
+    } else {
+      this.updateAircraftEntity(entity, position, orientationProperty);
+    }
+
+    if (this.displayCockpitView3d) {
+      entity.show = false;
+      this.updateCockpitView(type, lastTrack, pitch, roll, position);
+    } else {
+      entity.show = true;
+    }
+  }
+
+  private updateCockpitView(
+    type: string,
+    lastTrack: number,
+    pitch: number,
+    roll: number,
+    position: any
+  ) {
+    if (!this.viewer) return;
+
+    if (type == 'ISS') pitch = Cesium.Math.toRadians(-25);
+
+    const hprCockpit = new Cesium.HeadingPitchRoll(
+      Cesium.Math.toRadians(lastTrack),
+      pitch,
+      roll
+    );
+    this.viewer.scene.camera.setView({
+      destination: position,
+      orientation: hprCockpit,
+    });
+  }
+
+  private updateAircraftEntity(
+    entity: Cesium.Entity,
+    position: any,
+    orientationProperty: Cesium.ConstantProperty
+  ) {
+    entity.position = position;
+    entity.orientation = orientationProperty;
+  }
+
+  private createNewAircraftEntity(
+    entity: Cesium.Entity | undefined,
+    entityGroup: Cesium.CustomDataSource,
+    hex: string,
+    position: any,
+    orientationProperty: Cesium.ConstantProperty,
+    type: string,
+    aircraft: Aircraft
+  ) {
+    entity = entityGroup.entities.add({
+      id: hex + '_model',
+      name: hex,
+      position: position,
+      orientation: orientationProperty,
+      model: {
+        uri: this.createUriForModel(type),
+        minimumPixelSize: 20,
+      },
+      label: {
+        text: aircraft.flightId + '\n' + hex + '\n' + aircraft.type,
+        verticalOrigin: Cesium.VerticalOrigin.TOP,
+        horizontalOrigin: Cesium.HorizontalOrigin.RIGHT,
+        font: 'bold 10px Roboto',
+        fillColor: Cesium.Color.WHITE,
+        outlineWidth: 1,
+        style: Cesium.LabelStyle.FILL,
+        pixelOffset: new Cesium.Cartesian2(20, -50),
+        showBackground: true,
+        backgroundColor: new Cesium.Color(0.2, 0.2, 0.2, 0.5),
+      },
+    });
+    return entity;
+  }
+
+  createUriForModel(
+    type: string
+  ): string | Cesium.Property | Cesium.Resource | undefined {
+    return Globals.urlGetModelFromServer + '?type=' + type;
+  }
+
+  aircraftReadyFor3d() {
+    return this.aircraft != null && this.aircraft.track3d != null;
   }
 
   destroy3dAssets() {
+    this.destroyPrimitiesAndEntities();
+    this.camera = undefined;
+
+    this.aircraft = null;
+
     this.removeOsm3dBuildings();
     this.removeGooglePhotorealistic3D();
-    this.layers3d.clear;
-    this.OL3dMap = undefined;
-    this.ol3d = undefined;
-    this.camera = undefined;
+
     this.osmBuildingsTileset = undefined;
     this.googlePhotorealisticTileset = undefined;
+
+    this.initViewOnAircraft = false;
   }
 
-  ngOnDestroy() {
-    this.destroy3dAssets();
-    this.subscriptions.forEach((subscription) => subscription.unsubscribe());
+  destroyPrimitiesAndEntities() {
+    this.viewer?.dataSources.removeAll();
+    this.viewer?.entities.removeAll();
   }
 
   close3dMap() {
@@ -325,37 +596,16 @@ export class CesiumComponent implements OnInit {
   }
 
   resetToNorth3dMap() {
-    if (this.OL3dMap == null || !this.ol3d || !this.camera) return;
-    this.camera.setTilt(0);
-    this.camera.setHeading(0);
-  }
-
-  tiltLessOnGlobe3dMap() {
-    if (this.OL3dMap == null || !this.ol3d || !this.camera) return;
-    if (this.camera.getTilt() > -1.5) {
-      this.camera.setTilt(this.camera.getTilt() - 0.05);
-    }
-  }
-
-  tiltMoreOnGlobe3dMap() {
-    if (this.OL3dMap == null || !this.ol3d || !this.camera) return;
-    if (this.camera.getTilt() < 1.5) {
-      this.camera.setTilt(this.camera.getTilt() + 0.05);
-    }
-  }
-
-  rotateMapLeft3dMap() {
-    if (this.OL3dMap == null || !this.ol3d || !this.camera) return;
-    this.camera.setHeading(this.camera.getHeading() + 0.1);
-  }
-
-  rotateMapRight3dMap() {
-    if (this.OL3dMap == null || !this.ol3d || !this.camera) return;
-    this.camera.setHeading(this.camera.getHeading() - 0.1);
+    if (!this.camera) return;
+    this.camera.setView({
+      orientation: {
+        heading: 0,
+      },
+    });
   }
 
   show3dBuildings() {
-    if (!this.ol3d) return;
+    if (!this.viewer) return;
 
     if (!this.display3dBuildings) {
       if (!this.osmBuildingsTileset) {
@@ -367,8 +617,10 @@ export class CesiumComponent implements OnInit {
   }
 
   async createOsmBuildings() {
+    if (!this.viewer) return;
+
     try {
-      const scene = this.ol3d.getCesiumScene();
+      const scene = this.viewer?.scene;
 
       // Füge OSM Buildings Tileset hinzu
       await Cesium.createOsmBuildingsAsync().then((osmBuildingsTileset) => {
@@ -386,7 +638,8 @@ export class CesiumComponent implements OnInit {
   }
 
   removeOsm3dBuildings() {
-    const scene = this.ol3d.getCesiumScene();
+    if (!this.viewer) return;
+    const scene = this.viewer?.scene;
     if (this.osmBuildingsTileset)
       scene.primitives.remove(this.osmBuildingsTileset);
     this.osmBuildingsTileset = undefined;
@@ -394,7 +647,7 @@ export class CesiumComponent implements OnInit {
   }
 
   showGooglePhotorealistic3D() {
-    if (!this.ol3d) return;
+    if (!this.viewer) return;
 
     if (!this.displayGooglePhotorealistic3D) {
       if (!this.googlePhotorealisticTileset) {
@@ -406,27 +659,23 @@ export class CesiumComponent implements OnInit {
   }
 
   async createGooglePhotorealistic3D() {
-    if (!this.cesiumGoogleMapsApiKey) {
-      this.openSnackBar(
-        `Cesium Google Maps API-key is not available. Photogrammetry feature cannot be used!`,
-        'OK'
-      );
-      return;
-    }
-
-    const scene = this.ol3d.getCesiumScene();
-    // Globe muss nicht angezeigt werden, da die Photorealistic 3D Tiles das Terrain beinhalten
-    scene.globe.show = false;
-
-    Cesium.GoogleMaps.defaultApiKey = this.cesiumGoogleMapsApiKey;
+    if (!this.viewer || !this.scene) return;
 
     // Füge Photorealistic 3D Tiles hinzu
     try {
-      await Cesium.createGooglePhotorealistic3DTileset().then((tileset) => {
-        this.googlePhotorealisticTileset = tileset;
-        scene.primitives.add(tileset);
-        this.displayGooglePhotorealistic3D = true;
-      });
+      this.googlePhotorealisticTileset =
+        await Cesium.Cesium3DTileset.fromIonAssetId(2275207, {
+          preloadWhenHidden: true,
+          dynamicScreenSpaceError: true,
+          skipLevelOfDetail: true,
+          immediatelyLoadDesiredLevelOfDetail: true,
+          projectTo2D: false,
+          loadSiblings: true,
+        });
+      this.scene.primitives.add(this.googlePhotorealisticTileset);
+      this.displayGooglePhotorealistic3D = true;
+      // Globe muss nicht angezeigt werden, da die Photorealistic 3D Tiles das Terrain beinhalten
+      this.scene.globe.show = false;
     } catch (error) {
       this.openSnackBar(
         `Error loading Photorealistic 3D Tiles tileset. ${error}`,
@@ -437,134 +686,39 @@ export class CesiumComponent implements OnInit {
   }
 
   removeGooglePhotorealistic3D() {
-    const scene = this.ol3d.getCesiumScene();
+    if (!this.viewer || !this.scene) return;
+
     if (this.googlePhotorealisticTileset)
-      scene.primitives.remove(this.googlePhotorealisticTileset);
+      this.scene.primitives.remove(this.googlePhotorealisticTileset);
+    this.scene.globe.show = true;
     this.googlePhotorealisticTileset = undefined;
     this.displayGooglePhotorealistic3D = false;
-    scene.globe.show = true;
-  }
-
-  showTrailLine3d() {
-    if (!this.OL3dMap) return;
-
-    this.displayTrailLine3d = this.displayTrailLine3d ? false : true;
-    this.displayTrailBar3d = false;
-    this.displayTrailBarLine3d = false;
-
-    this.showTrailBarOrLine();
-  }
-
-  showTrailBar3d() {
-    if (!this.OL3dMap) return;
-
-    this.displayTrailLine3d = false;
-    this.displayTrailBar3d = this.displayTrailBar3d ? false : true;
-    this.displayTrailBarLine3d = false;
-
-    this.showTrailBarOrLine();
-  }
-
-  showTrailBarLine3d() {
-    if (!this.OL3dMap) return;
-
-    this.displayTrailLine3d = false;
-    this.displayTrailBar3d = false;
-    this.displayTrailBarLine3d = this.displayTrailBarLine3d ? false : true;
-
-    this.showTrailBarOrLine();
-  }
-
-  showTrailBarOrLine() {
-    if (!this.OL3dMap || !this.aircraft) return;
-
-    const showLine =
-      this.displayTrailLine3d &&
-      !this.displayTrailBar3d &&
-      !this.displayTrailBarLine3d;
-    const showBar =
-      !this.displayTrailLine3d &&
-      this.displayTrailBar3d &&
-      !this.displayTrailBarLine3d;
-    const showBarLine =
-      !this.displayTrailLine3d &&
-      !this.displayTrailBar3d &&
-      this.displayTrailBarLine3d;
-    const showCockpitView = this.displayCockpitView3d;
-
-    if (!this.displayCockpitView3d && !showLine && !showBar && !showBarLine) {
-      this.aircraft!.setTrailVisibility3dBar(false);
-      this.aircraft!.setTrailVisibility3dLine(false);
-      this.openSnackBar('No trail is shown on the 3d map', 'OK');
-    }
-
-    if (!showCockpitView && showLine) {
-      this.aircraft!.setTrailVisibility3dBar(false);
-      this.aircraft!.setTrailVisibility3dLine(true);
-    } else if (!showCockpitView && showBar) {
-      this.aircraft!.setTrailVisibility3dBar(true);
-      this.aircraft!.setTrailVisibility3dLine(false);
-    } else if (!showCockpitView && showBarLine) {
-      this.aircraft!.setTrailVisibility3dBar(true);
-      this.aircraft!.setTrailVisibility3dLine(true);
-    } else if (showCockpitView) {
-      this.aircraft!.setTrailVisibility3dBar(false);
-      this.aircraft!.setTrailVisibility3dLine(false);
-    }
   }
 
   showCockpitView3d() {
-    this.setCockpitPerspective();
-  }
-
-  async setCockpitPerspective() {
-    if (!this.OL3dMap) return;
-
-    if (!this.displayCockpitView3d) {
-      this.updateCockpitView();
-
-      // Speichere alte Anzeige-Attribute
-      this.displayTrailLine3dOld = this.displayTrailLine3d;
-      this.displayTrailBar3dOld = this.displayTrailBar3d;
-      this.displayTrailBarLine3dOld = this.displayTrailBarLine3d;
-
-      this.displayCockpitView3d = true;
-
-      // Verstecke Trails
-      this.showTrailBarOrLine();
-    } else if (this.displayCockpitView3d) {
-      // Reset Kamera-Winkel
-      this.camera = this.ol3d.getCamera();
-      this.camera.setTilt(Math.PI / 3);
-      this.camera.setHeading(0);
-
+    if (this.displayCockpitView3d) {
       this.displayCockpitView3d = false;
-
-      // Setze View auf alte Anzeige-Attribute zurück
-      this.displayTrailLine3d = this.displayTrailLine3dOld;
-      this.displayTrailBar3d = this.displayTrailBar3dOld;
-      this.displayTrailBarLine3d = this.displayTrailBarLine3dOld;
-
-      // Zeige Trails
-      this.showTrailBarOrLine();
+      this.setCameraToAircraftPosition(this.aircraft!);
+    } else {
+      this.displayCockpitView3d = true;
     }
+    // Initiiere Update
+    this.addAircraftAndTrailTo3DMap();
   }
 
-  updateCockpitView() {
-    const lastIndex = this.aircraft!.trackLinePoints3dLine.length - 1;
+  async showTerrain() {
+    if (!this.viewer || !this.scene) return;
 
-    // Setze View-Attribute
-    this.OL3dMap.getView().setCenter(
-      this.aircraft!.trackLinePoints3dLine[lastIndex].coordinate
-    );
-    this.OL3dMap.getView().setZoom(20);
+    this.displayTerrain = !this.displayTerrain;
 
-    // Setze Camera-Attribute
-    this.camera.setTilt(1.5);
-    this.camera.setHeading(this.toRadians(this.aircraft!.track));
-    this.camera.setAltitude(
-      this.aircraft!.trackLinePoints3dLine[lastIndex].altitude
-    );
+    if (this.displayTerrain) {
+      this.viewer.terrainProvider = await Cesium.createWorldTerrainAsync({
+        requestWaterMask: false,
+        requestVertexNormals: true,
+      });
+    } else {
+      this.viewer.scene.terrainProvider = new Cesium.EllipsoidTerrainProvider();
+    }
   }
 
   openSnackBar(message: string, action: string) {
@@ -574,91 +728,110 @@ export class CesiumComponent implements OnInit {
   }
 
   show3dMapFullscreen() {
-    if (!this.ol3d || !this.isDesktop) return;
+    if (!this.viewer || !this.scene || !this.isDesktop) return;
 
     this.display3dMapFullscreen = this.display3dMapFullscreen ? false : true;
+    let cesiumMap = document.getElementById('cesium-map');
 
     if (this.display3dMapFullscreen) {
       this.widthMap3d = '100vw';
+      if (cesiumMap) cesiumMap.style.width = '100vw';
     } else {
       this.widthMap3d = '40rem';
+      if (cesiumMap) cesiumMap.style.width = '40rem';
     }
   }
 
-  /**
-   * Hole gewünschte Karte aus LocalStorage, ansonsten nehme default
-   * @returns object mit MapStyle
-   */
-  getMapStyleFromLocalStorage() {
-    let mapStyle = localStorage.getItem('mapStyle');
-    return mapStyle !== null
-      ? JSON.parse(mapStyle)[0] // ist object in array
-      : Maps.listAvailableFreeMaps[0];
-  }
-
   enableHdr3dOnMap() {
-    if (!this.OL3dMap) return;
+    if (!this.viewer || !this.scene) return;
     this.enableHdr3dMap = !this.enableHdr3dMap;
 
-    const scene = this.ol3d.getCesiumScene();
-
     if (this.enableHdr3dMap) {
-      scene.highDynamicRange = true;
-      scene.allowTextureFilterAnisotropic = true;
-      scene.msaaSamples = 8;
+      this.scene.highDynamicRange = true;
+      this.scene.msaaSamples = 8;
+      this.scene.postProcessStages.fxaa.enabled = true;
     } else {
-      scene.highDynamicRange = false;
-      scene.allowTextureFilterAnisotropic = false;
-      scene.msaaSamples = 1;
+      this.scene.highDynamicRange = false;
+      this.scene.msaaSamples = 1;
+      this.scene.postProcessStages.fxaa.enabled = false;
     }
   }
 
   enableMoonSunOnMap() {
-    if (!this.OL3dMap) return;
-    this.enableMoonSunMap = !this.enableMoonSunMap;
-
-    const scene = this.ol3d.getCesiumScene();
-
-    if (this.enableMoonSunMap) {
-      scene.sun = new Cesium.Sun();
-      scene.skyBox = new Cesium.SkyBox({
-        sources: {
-          positiveX: '../../../assets/skybox_px.jpg',
-          negativeX: '../../../assets/skybox_mx.jpg',
-          positiveY: '../../../assets/skybox_py.jpg',
-          negativeY: '../../../assets/skybox_my.jpg',
-          positiveZ: '../../../assets/skybox_pz.jpg',
-          negativeZ: '../../../assets/skybox_mz.jpg',
-        },
-        show: true,
-      });
-      scene.moon = new Cesium.Moon();
-    } else {
-      scene.sun = undefined;
-      scene.skyBox = undefined;
-      scene.moon = undefined;
-    }
+    if (!this.viewer || !this.scene) return;
+    this.scene.sun.glowFactor = 2.0;
+    this.scene.sunBloom = true;
+    this.scene.sun.show = true;
+    this.scene.skyBox.show = true;
+    this.scene.moon.show = true;
+    this.scene.postProcessStages.add(
+      Cesium.PostProcessStageLibrary.createLensFlareStage()
+    );
   }
 
   enableShadowsOnMap() {
-    if (!this.OL3dMap) return;
+    if (!this.viewer || !this.scene) return;
+
     this.enableShadowsMap = !this.enableShadowsMap;
-
-    const scene = this.ol3d.getCesiumScene();
-    const globe = scene.globe;
-
+    const globe = this.scene.globe;
     if (this.enableShadowsMap) {
-      scene.shadows = true;
+      this.viewer.shadows = true;
+      this.viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
       globe.enableLighting = true;
       globe.atmosphereLightIntensity = 20.0;
       globe.dynamicAtmosphereLighting = true;
       globe.dynamicAtmosphereLightingFromSun = true;
     } else {
-      scene.shadows = false;
+      this.viewer.shadows = false;
+      this.viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
       globe.enableLighting = false;
       globe.atmosphereLightIntensity = 10.0;
       globe.dynamicAtmosphereLighting = false;
       globe.dynamicAtmosphereLightingFromSun = false;
     }
+  }
+
+  async enableDayNightOnMap() {
+    if (!this.viewer || !this.scene) return;
+
+    if (!this.earthAtNightLayer) {
+      this.earthAtNightLayer = Cesium.ImageryLayer.fromProviderAsync(
+        Cesium.IonImageryProvider.fromAssetId(3812, {}),
+        {}
+      );
+    }
+
+    if (!this.earthAtNightLayer) return;
+
+    this.enableDayNightMap = !this.enableDayNightMap;
+
+    if (this.enableDayNightMap) {
+      if (this.displayTerrain) {
+        this.displayTerrain = false;
+        // Entferne terrain, da ansonsten Layer nicht richtig angezeigt werden
+        this.viewer.scene.terrainProvider =
+          new Cesium.EllipsoidTerrainProvider();
+      }
+      const imagerLayers = this.viewer.imageryLayers;
+      if (imagerLayers.length > 1) {
+        // Verstecke den Layer, wenn dieser bereits hinzugefügt wurde
+        this.earthAtNightLayer.show = true;
+        return;
+      }
+
+      this.addEarthAtNightLayerToLayers();
+    } else {
+      if (!this.earthAtNightLayer) return;
+      this.earthAtNightLayer.show = false;
+    }
+  }
+
+  addEarthAtNightLayerToLayers() {
+    if (!this.viewer || !this.scene || !this.earthAtNightLayer) return;
+    this.viewer.imageryLayers.add(this.earthAtNightLayer);
+    let dynamicLighting = true;
+    this.viewer.scene.globe.enableLighting = dynamicLighting;
+    this.viewer.clock.shouldAnimate = dynamicLighting;
+    this.earthAtNightLayer.dayAlpha = dynamicLighting ? 0.0 : 1.0;
   }
 }

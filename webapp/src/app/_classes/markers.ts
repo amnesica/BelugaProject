@@ -1,4 +1,5 @@
 import { Globals } from 'src/app/_common/globals';
+import * as Cesium from 'cesium';
 
 export class Markers {
   /**
@@ -110,18 +111,24 @@ export class Markers {
   /**
    * Funktion liefert die passende Farbe zu einer Hoehe in ft
    * @param altitude              Hoehe in ft
+   * @param onGround              Boolean, ob Flugzeug on ground ist
    * @param asHex                 Boolean, ob hex code zurückgegeben werden soll
+   * @param isMarked              Boolean, ob Flugzeug markiert ist
+   * @param isCesium              Boolean, ob return-Wert für Cesium ist
+   * @param isReentered           Boolean, ob Flugzeug reentered ist
    * @returns {string | []}       hex code oder rgb-Array
    */
   static getColorFromAltitude(
     altitude: number,
     onGround: boolean,
     asHex: boolean,
-    isMarked: boolean
+    isMarked: boolean,
+    isCesium: boolean,
+    isReentered: boolean
   ): any {
-    let rgb;
+    let rgb: number[];
 
-    if (altitude === 0 || onGround === true) {
+    if (altitude <= 0 || onGround === true) {
       rgb = [50, 50, 50];
     } else if (altitude > 0 && altitude <= 1000) {
       rgb = [100, 50, 0];
@@ -141,6 +148,16 @@ export class Markers {
       rgb = [100, 100, 100];
     } else {
       rgb = [25, 25, 25];
+    }
+
+    if (isReentered || altitude == null) {
+      rgb = [0, 0, 0];
+    }
+
+    if (isCesium) {
+      let colorAsHex = Markers.rgbToHex(rgb[0], rgb[1], rgb[2]);
+      let rgba = Cesium.Color.fromCssColorString(colorAsHex).withAlpha(1.0);
+      return rgba;
     }
 
     if (isMarked) {
