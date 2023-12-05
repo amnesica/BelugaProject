@@ -143,5 +143,5 @@ export class Globals {
 
   // URL zum Server zum Holen der ISS ohne Extent
   static urlGetModelFromServer: string =
-    'http://' + Globals.serverUrl + ':8080/get3DModel';
+    'http://' + Globals.serverUrl + ':8080/get3dModel';
 }
