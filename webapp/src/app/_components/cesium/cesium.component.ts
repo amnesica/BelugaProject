@@ -451,6 +451,9 @@ export class CesiumComponent implements OnInit {
   ) {
     if (!this.scene || !this.viewer || !aircraft) return;
 
+    // Überspringe aircraft, wenn altitude nicht gesetzt ist
+    if (!aircraft.altitude) return;
+
     const hex = aircraft.hex;
     const type = aircraft.type;
     const position: any = Cesium.Cartesian3.fromDegrees(
