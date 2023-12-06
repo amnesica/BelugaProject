@@ -451,13 +451,13 @@ export class CesiumComponent implements OnInit {
   ) {
     if (!this.scene || !this.viewer || !aircraft) return;
 
+    // Überspringe aircraft, wenn altitude nicht gesetzt ist
+    if (!aircraft.altitude) return;
+
     const hex = aircraft.hex;
     const type = aircraft.type;
-    const position: any = Cesium.Cartesian3.fromDegrees(
-      aircraft.position[0],
-      aircraft.position[1],
-      aircraft.altitude ? aircraft.altitude * 0.3048 : 0
-    );
+    const position: any = this.create3dPosition(aircraft);
+
     const lastTrack = aircraft.track ? aircraft.track : 0;
     const lastRoll = aircraft.roll ? aircraft.roll : 0;
 
@@ -494,6 +494,23 @@ export class CesiumComponent implements OnInit {
     } else {
       entity.show = true;
     }
+  }
+
+  private create3dPosition(aircraft: Aircraft) {
+    let position: any;
+    if (aircraft.onGround || aircraft.altitude == 0 || aircraft.altitude < 0) {
+      position = Cesium.Cartesian3.fromDegrees(
+        aircraft.position[0],
+        aircraft.position[1]
+      );
+    } else {
+      position = Cesium.Cartesian3.fromDegrees(
+        aircraft.position[0],
+        aircraft.position[1],
+        aircraft.altitude ? aircraft.altitude * 0.3048 : 0
+      );
+    }
+    return position;
   }
 
   private updateCockpitView(

@@ -225,7 +225,7 @@ public class Controller {
    * @param type String
    * @return byte[]
    */
-  @GetMapping(value = "/get3DModel", produces = "model/gltf-binary")
+  @GetMapping(value = "/get3dModel", produces = "model/gltf-binary")
   public @ResponseBody
   byte[] getAircraftData(@RequestParam(value = "type") String type) {
     return model3DService.getModelFromType(type);
