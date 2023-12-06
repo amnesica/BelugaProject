@@ -413,7 +413,7 @@
     <!-- Traveled distance -->
     <mat-grid-list
       cols="9"
-      rowHeight="3.5rem"
+      rowHeight="4.2rem"
       [ngClass]="darkMode ? 'background-color-dark' : 'background-color-light'"
     >
       <mat-grid-tile
@@ -446,6 +446,19 @@
           "
         >
           <!-- Distance path -->
+            <!-- Total flight distance -->
+            <div
+              id="total-flight-distance"
+              style="
+                  margin-right: 0.8rem;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <span>{{ aircraft.totalFlightPathInKm }} km ({{ roundValue(aircraft.totalFlightPathInKm / 1.852) }} nm) </span>
+              </div>
+
           <div
             id="distance-path"
             style="
