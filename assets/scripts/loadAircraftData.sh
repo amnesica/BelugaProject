@@ -210,6 +210,14 @@ psql -c "CREATE TABLE IF NOT EXISTS TMP_AIRCRAFT_DATA_MICTRONICS(
 			CONSTRAINT TMP_AIRCRAFT_DATA_MICTRONICS_pkey PRIMARY KEY (hex)
 			);" -U beluga -d belugaDb
 
+psql -c "DROP INDEX IF EXISTS public.idx_typecode;" -U beluga -d belugaDb
+
+psql -c "CREATE INDEX IF NOT EXISTS idx_typecode
+    ON public.tmp_aircraft_data_mictronics USING btree
+    (typecode COLLATE pg_catalog."default" ASC NULLS LAST)
+    WITH (deduplicate_items=True)
+    TABLESPACE pg_default;" -U beluga -d belugaDb
+	
 psql -c "COPY tmp_aircraft_data_mictronics (
 			hex,
 			registration,
