@@ -23,7 +23,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
    $ cp .env.template .env
    $ nano .env
    ```
-   
+
    For further information on how to configure the `.env` file expand the following section
    <details>
    <summary>Click to expand</summary>
@@ -52,15 +52,15 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    2. Enter the **URLs** of your feeders with an json output seperated by comma (If you do not have a local feeder, just leave the value empty)
 
-    - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
-    - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
-    - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
-    - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
-    - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
+   - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
+   - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
+   - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
+   - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
+   - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
 
-      ```
-      ipFeeder=URL1,URL2
-      ```
+     ```
+     ipFeeder=URL1,URL2
+     ```
 
    3. Enter the **type** of your feeders. Currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder (If you do not have a local feeder, just leave the value empty)
 
@@ -77,7 +77,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
    5. Enter the **color** of your feeders seperated by comma. This color is used later in statistical views (if you do not have a local feeder, set `colorFeeder=red` (valid color is needed here!)
 
       ```
-      colorFeeder=red, blue
+      colorFeeder=red,blue
       ```
 
    6. Enter the **amount** of your feeders. This value must match with the amount of feeder configuration entries (If you do not have a local feeder set `amountFeeder=1`)
@@ -95,12 +95,12 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
    10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex.
 
    11. Add your API-Keys for additional maps (**Optional**)
-         ```
-         GEOAPIFY_API_KEY=
-         CESIUM_ION_DEFAULTACCESSTOKEN=
-         CESIUM_GOOGLEMAPS_API_KEY=
-         ```
-         (without these API-Keys you cannot see all availible maps in settings)
+       ```
+       GEOAPIFY_API_KEY=
+       CESIUM_ION_DEFAULTACCESSTOKEN=
+       CESIUM_GOOGLEMAPS_API_KEY=
+       ```
+       (without these API-Keys you cannot see all availible maps in settings)
 
    </details>
 
@@ -114,10 +114,9 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    This will take some time. On an RaspberryPi 4B
 
-    - container build takes about 14 minutes
-    - load database takes about 10 minutes
-    - first start in browser takes about 3 minutes until all aircrafts are visible
-
+   - container build takes about 14 minutes
+   - load database takes about 10 minutes
+   - first start in browser takes about 3 minutes until all aircrafts are visible
 
    Possible errors:
 
@@ -139,11 +138,14 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
 6. Operation and Maintenance
 
-   Executing 
+   Executing
+
    ```
    $ ./run.sh
    ```
+
    will show some options for troubleshooting, operation and **database maintanance**. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.
+
    ```
    Usage: ./run.sh command
    commands:
@@ -165,9 +167,9 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
 7. Add Flightroute data
 
-   Unfortunately, if you want to fill the database table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample. 
+   Unfortunately, if you want to fill the database table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample.
    You can create your own file `flightroute_data.csv` and put it in direcory `assets/dbContent`. To load data from it to the database use this command:
+
    ```
    $ ./run.sh update-db
    ```
-   
