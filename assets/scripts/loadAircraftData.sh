@@ -131,6 +131,7 @@ psql -c "INSERT INTO AIRCRAFT_DATA(
 				ADSB,
 				BUILT,
 				CATEGORY_DESCRIPTION,
+				DATA_SOURCE,
 				ENGINES,
 				FIRST_FLIGHT_DATE,
 				ICAO_AIRCRAFT_TYPE,
@@ -160,6 +161,7 @@ psql -c "INSERT INTO AIRCRAFT_DATA(
 				ADSB,
 				BUILT,
 				CATEGORY_DESCRIPTION,
+				'OpenSkyNetwork',
 				ENGINES,
 				FIRST_FLIGHT_DATE,
 				ICAO_AIRCRAFT_TYPE,
@@ -185,11 +187,17 @@ psql -c "INSERT INTO AIRCRAFT_DATA(
 			FROM TMP_AIRCRAFT_DATA2
 			ORDER BY HEX_LOW, HEX;" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo update data source in aircraft_data
-echo -----------------------------------------
-psql -c "UPDATE AIRCRAFT_DATA
-			SET data_source = 'OpenSkyNetwork';" -U beluga -d belugaDb
+psql -c "CREATE INDEX IF NOT EXISTS idx_typecode_ad
+    ON public.aircraft_data USING btree
+    (typecode COLLATE pg_catalog."default" ASC NULLS LAST)
+    WITH (deduplicate_items=True)
+    TABLESPACE pg_default;" -U beluga -d belugaDb
+
+psql -c "CREATE INDEX IF NOT EXISTS idx_is_military_ad
+    ON public.aircraft_data USING btree
+    (is_military COLLATE pg_catalog."default" ASC NULLS LAST)
+    WITH (deduplicate_items=True)
+    TABLESPACE pg_default;" -U beluga -d belugaDb
 
 echo -----------------------------------------
 echo cleanup ... drop temp tables
@@ -210,14 +218,6 @@ psql -c "CREATE TABLE IF NOT EXISTS TMP_AIRCRAFT_DATA_MICTRONICS(
 			CONSTRAINT TMP_AIRCRAFT_DATA_MICTRONICS_pkey PRIMARY KEY (hex)
 			);" -U beluga -d belugaDb
 
-psql -c "DROP INDEX IF EXISTS public.idx_typecode;" -U beluga -d belugaDb
-
-psql -c "CREATE INDEX IF NOT EXISTS idx_typecode
-    ON public.tmp_aircraft_data_mictronics USING btree
-    (typecode COLLATE pg_catalog."default" ASC NULLS LAST)
-    WITH (deduplicate_items=True)
-    TABLESPACE pg_default;" -U beluga -d belugaDb
-	
 psql -c "COPY tmp_aircraft_data_mictronics (
 			hex,
 			registration,
@@ -226,6 +226,12 @@ psql -c "COPY tmp_aircraft_data_mictronics (
 		FROM '$pathToDirectoryWithCsv/aircrafts.csv'
 		WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
 
+psql -c "CREATE INDEX IF NOT EXISTS idx_typecode_adm
+    ON public.tmp_aircraft_data_mictronics USING btree
+    (typecode COLLATE pg_catalog."default" ASC NULLS LAST)
+    WITH (deduplicate_items=True)
+    TABLESPACE pg_default;" -U beluga -d belugaDb
+	
 echo -----------------------------------------
 echo load types data from mictronics
 echo -----------------------------------------
@@ -246,6 +252,12 @@ psql -c "COPY tmp_types_data_mictronics (
 			wtc)
 		FROM '$pathToDirectoryWithCsv/types.csv'
 		WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+
+psql -c "CREATE INDEX IF NOT EXISTS idx_typecode_tdm
+    ON public.tmp_types_data_mictronics USING btree
+    (typecode COLLATE pg_catalog."default" ASC NULLS LAST)
+    WITH (deduplicate_items=True)
+    TABLESPACE pg_default;" -U beluga -d belugaDb
 
 echo -----------------------------------------
 echo loading table typecode_tags ...
