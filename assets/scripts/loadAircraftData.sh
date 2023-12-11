@@ -4,21 +4,34 @@
 # e.g. '/var/lib/postgres'
 pathToDirectoryWithCsv="/var/lib/postgresql/dbContent"
 
-echo -----------------------------------------
-echo load aircraft data from opensky-network
-echo   filtering out duplicate records
-echo   filtering out duplicate hex codes
-echo   in upper case notation
-echo -----------------------------------------
+# Define timestamp function
+timestamp() {
+  date +%Y-%m-%d_%H:%M:%S
+}
 
-echo -----------------------------------------
-echo import csv-file to temp-file 1 ...
-echo -----------------------------------------
+start_time=$(timestamp)
 
+SECONDS=0
+SECONDS_AT_START=$SECONDS
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) loadAircraftData.sh Version 4-0-0
+echo ----------------------------------------------------------------------
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) load aircraft data from opensky-network
+echo $(timestamp) - filtering out duplicate records
+echo $(timestamp) - filtering out duplicate hex codes
+echo $(timestamp) - in upper case notation
+echo ----------------------------------------------------------------------
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) import csv-file to temp-file 1 ...
+echo ----------------------------------------------------------------------
 psql -c "DROP TABLE IF EXISTS TMP_AIRCRAFT_DATA;" -U beluga -d belugaDb
 
 psql -c "CREATE TABLE TMP_AIRCRAFT_DATA AS
-SELECT * FROM AIRCRAFT_DATA WITH NO DATA;" -U beluga -d belugaDb
+			SELECT * FROM AIRCRAFT_DATA WITH NO DATA;" -U beluga -d belugaDb
 
 psql -c "COPY TMP_AIRCRAFT_DATA (HEX,
 							REGISTRATION,
@@ -50,10 +63,9 @@ psql -c "COPY TMP_AIRCRAFT_DATA (HEX,
 		FROM '$pathToDirectoryWithCsv/aircraftDatabase.csv' WITH
 			DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
 
-echo ------------------------------------------------------------
-echo copy to temp-file 2 with additional column hex_low
-echo ------------------------------------------------------------
-
+echo ----------------------------------------------------------------------
+echo $(timestamp) copy to temp-file 2 with additional column hex_low
+echo ----------------------------------------------------------------------
 psql -c "DROP TABLE IF EXISTS TMP_AIRCRAFT_DATA2;" -U beluga -d belugaDb
 
 psql -c "CREATE TABLE TMP_AIRCRAFT_DATA2 (HEX CHARACTER VARYING(255) NOT NULL,
@@ -116,13 +128,13 @@ psql -c "INSERT INTO TMP_AIRCRAFT_DATA2
 				TYPECODE
 			FROM TMP_AIRCRAFT_DATA;" -U beluga -d belugaDb
 
-echo ------------------------------------------------------------
-echo copy to destination table aircraft_data
-echo   with distinct on hex_low 
-echo   combined with order by hex_low, hex DESC
-echo   result: for all duplicates we get the first record
-echo      with original lower case hex code
-echo ------------------------------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) copy to destination table aircraft_data
+echo $(timestamp) - with distinct on hex_low 
+echo $(timestamp) - combined with order by hex_low, hex DESC
+echo $(timestamp) - result: for all duplicates we get the first record
+echo $(timestamp) - with original lower case hex code
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE AIRCRAFT_DATA;" -U beluga -d belugaDb
 
 psql -c "INSERT INTO AIRCRAFT_DATA(
@@ -199,15 +211,15 @@ psql -c "CREATE INDEX IF NOT EXISTS idx_is_military_ad
     WITH (deduplicate_items=True)
     TABLESPACE pg_default;" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo cleanup ... drop temp tables
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) cleanup ... drop temp tables
+echo ----------------------------------------------------------------------
 psql -c "DROP TABLE IF EXISTS TMP_AIRCRAFT_DATA;" -U beluga -d belugaDb
 psql -c "DROP TABLE IF EXISTS TMP_AIRCRAFT_DATA2;" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo load aircraft data from mictronics
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) load aircraft data from mictronics
+echo ----------------------------------------------------------------------
 psql -c "DROP TABLE IF EXISTS TMP_AIRCRAFT_DATA_MICTRONICS;" -U beluga -d belugaDb
 
 psql -c "CREATE TABLE IF NOT EXISTS TMP_AIRCRAFT_DATA_MICTRONICS(
@@ -232,9 +244,9 @@ psql -c "CREATE INDEX IF NOT EXISTS idx_typecode_adm
     WITH (deduplicate_items=True)
     TABLESPACE pg_default;" -U beluga -d belugaDb
 	
-echo -----------------------------------------
-echo load types data from mictronics
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) load types data from mictronics
+echo ----------------------------------------------------------------------
 psql -c "DROP TABLE IF EXISTS TMP_TYPES_DATA_MICTRONICS;" -U beluga -d belugaDb
 
 psql -c "CREATE TABLE IF NOT EXISTS public.tmp_types_data_mictronics(
@@ -259,9 +271,9 @@ psql -c "CREATE INDEX IF NOT EXISTS idx_typecode_tdm
     WITH (deduplicate_items=True)
     TABLESPACE pg_default;" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo loading table typecode_tags ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table typecode_tags ...
+echo ----------------------------------------------------------------------
 psql -c "CREATE TABLE IF NOT EXISTS public.typecode_tags(
     		typecode character varying(255) COLLATE pg_catalog."default" NOT NULL,
     		aircraft_description character varying(255) COLLATE pg_catalog."default",
@@ -283,9 +295,9 @@ psql -c "COPY TYPECODE_TAGS (TYPECODE,
 							IS_INTERESTING)
 FROM '$pathToDirectoryWithCsv/typecode_tags.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo add missing aircraft from mictronics
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) add missing aircraft from mictronics
+echo ----------------------------------------------------------------------
 psql -c "insert into aircraft_data
 		(hex, registration, typecode, is_military, model, icao_aircraft_type, wtc, data_source)
 		SELECT 
@@ -304,20 +316,20 @@ psql -c "insert into aircraft_data
 			WHERE TDM.TYPECODE = ADM.TYPECODE
 			AND AD.HEX IS NULL;" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo add wtc from types mictronics
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) add wtc from types mictronics
+echo ----------------------------------------------------------------------
 psql -c "UPDATE AIRCRAFT_DATA
 			SET WTC =
 				(SELECT WTC
 					FROM TMP_TYPES_DATA_MICTRONICS
 					WHERE AIRCRAFT_DATA.TYPECODE = TMP_TYPES_DATA_MICTRONICS.TYPECODE);" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo decode "is_military" and "is_interesting"
-echo from aircraft mictronics and copy to 
-echo aircraft_data
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) decode "is_military" and "is_interesting"
+echo $(timestamp) - from aircraft mictronics and copy to 
+echo $(timestamp) - aircraft_data
+echo ----------------------------------------------------------------------
 psql -c "UPDATE AIRCRAFT_DATA
 			SET is_military =
 				(SELECT special_tag
@@ -336,12 +348,12 @@ psql -c "UPDATE AIRCRAFT_DATA
 			SET is_military = NULL
 					WHERE is_military in ('00', '01', '11', '110');" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo import tags to aircraft_data depending on
-echo typecode from typecode_tags to 
-echo aircraft_data 
-echo manual maintenance required
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) import tags to aircraft_data depending on
+echo $(timestamp) - typecode from typecode_tags to 
+echo $(timestamp) - aircraft_data 
+echo $(timestamp) - you may change typecode_tags if you like
+echo ----------------------------------------------------------------------
 psql -c "UPDATE AIRCRAFT_DATA
 			SET is_military = TCT.is_military
 				FROM TYPECODE_TAGS AS TCT
@@ -372,12 +384,17 @@ psql -c "UPDATE AIRCRAFT_DATA
 				WHERE UPPER(AIRCRAFT_DATA.TYPECODE) = UPPER(TCT.TYPECODE)
 				AND TCT.is_interesting = 'Y';" -U beluga -d belugaDb
 
-echo -----------------------------------------
-echo cleanup ... drop temp tables
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) cleanup ... drop temp tables
+echo ----------------------------------------------------------------------
 psql -c "DROP TABLE IF EXISTS TMP_AIRCRAFT_DATA_MICTRONICS;" -U beluga -d belugaDb
 psql -c "DROP TABLE IF EXISTS TMP_TYPES_DATA_MICTRONICS;" -U beluga -d belugaDb
 
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo Start time was: $start_time
+echo End time is...: $(timestamp)
+SECONDS_ELAPSED=$(( SECONDS - a ))
+echo Script runtime in Min:Sec
+echo $((SECONDS_ELAPSED-SECONDS_AT_START)) | awk '{print int($1/60)":"int($1%60)}'
 echo Done. Yippie!
-echo -----------------------------------------
+echo ----------------------------------------------------------------------

@@ -4,9 +4,23 @@
 # e.g. '/var/lib/postgres'
 pathToDirectoryWithCsv="/var/lib/postgresql/dbContent"
 
-echo -----------------------------------------
-echo loading table airport_Data ...
-echo -----------------------------------------
+# Define timestamp function
+timestamp() {
+  date +%Y-%m-%d_%H:%M:%S
+}
+
+start_time=$(timestamp)
+
+SECONDS=0
+SECONDS_AT_START=$SECONDS
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) loadBelugaDb.sh Version 4-0-0
+echo ----------------------------------------------------------------------
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table airport_Data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE airport_Data;" -U beluga -d belugaDb
 psql -c "COPY airport_data (
 			number_airport,
@@ -28,11 +42,11 @@ psql -c "COPY airport_data (
 			wikipedia_link,
 			keywords)
 		FROM '$pathToDirectoryWithCsv/airports.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
-echo Done.
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table country_data ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table country_data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE country_data;" -U beluga -d belugaDb
 psql -c "COPY country_data (
 	 		country_iso2letter,
@@ -41,22 +55,22 @@ psql -c "COPY country_data (
 	 		country_name_de,
 			country_flag_utf8code)
 		FROM '$pathToDirectoryWithCsv/country_data.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
-echo Done.
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table regcode_data ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table regcode_data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE regcode_data;" -U beluga -d belugaDb
 psql -c "COPY regcode_data (
 			regcode_prefix,
 			regcode_flag_utf8code,
 			regcode_name)
 		FROM '$pathToDirectoryWithCsv/regcode_data.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
-echo Done.
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table map_operator_icao_to_iata ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table map_operator_icao_to_iata ...
+echo ----------------------------------------------------------------------
 psql -c "CREATE TABLE IF NOT EXISTS map_operator_icao_to_iata(
     		operator_name character varying(255) COLLATE pg_catalog."default",
     		operator_icao character varying(255) COLLATE pg_catalog."default" NOT NULL,
@@ -69,10 +83,11 @@ psql -c "COPY map_operator_icao_to_iata (
 			operator_icao,
 			operator_iata)
 FROM '$pathToDirectoryWithCsv/map_operator_icao_to_iata.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table operators.csv 
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table operators.csv 
+echo ----------------------------------------------------------------------
 psql -c "CREATE TABLE IF NOT EXISTS tmp_operator_data_mictronics(
     		operator_id bigint NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1 ),
     		operator_icao character varying(255) COLLATE pg_catalog."default",
@@ -92,10 +107,11 @@ psql -c "COPY tmp_operator_data_mictronics (
 			operator_callsign
 			)
 		FROM '$pathToDirectoryWithCsv/operators.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo 	change coutry_name to ISO-Standard
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) change coutry_name to ISO-Standard
+echo ----------------------------------------------------------------------
 psql -c "UPDATE PUBLIC.TMP_OPERATOR_DATA_MICTRONICS
 			SET OPERATOR_COUNTRY = 'Korea (Democratic People''s Republic of)'
 			WHERE OPERATOR_COUNTRY = 'North Korea';" -U beluga -d belugaDb
@@ -183,28 +199,31 @@ psql -c "UPDATE PUBLIC.TMP_OPERATOR_DATA_MICTRONICS
 psql -c "UPDATE PUBLIC.TMP_OPERATOR_DATA_MICTRONICS
 			SET OPERATOR_COUNTRY = 'United States of America'
 			WHERE OPERATOR_COUNTRY = 'United States';" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo 	set country_iso2letter
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) set country_iso2letter
+echo ----------------------------------------------------------------------
 psql -c "UPDATE PUBLIC.TMP_OPERATOR_DATA_MICTRONICS
 			SET OPERATOR_COUNTRY_ISO2LETTER =
 			(SELECT COUNTRY_ISO2LETTER
 			FROM COUNTRY_DATA
 			WHERE OPERATOR_COUNTRY = RTRIM(COUNTRY_NAME_EN));" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo 	set iata code
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) set iata code
+echo ----------------------------------------------------------------------
 psql -c "UPDATE PUBLIC.TMP_OPERATOR_DATA_MICTRONICS
 			SET OPERATOR_IATA =
 			(SELECT OPERATOR_IATA
 			FROM map_OPERATOR_icao_to_iata
 				WHERE tmp_OPERATOR_DATA_MICTRONICS.OPERATOR_ICAO = map_OPERATOR_icao_to_iata.OPERATOR_ICAO);" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo 	copy to table operator_data ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) copy to table operator_data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE operator_data;" -U beluga -d belugaDb
 
 psql -c "INSERT INTO OPERATOR_DATA(
@@ -226,21 +245,22 @@ psql -c "INSERT INTO OPERATOR_DATA(
 
 psql -c "DROP TABLE IF EXISTS TMP_OPERATOR_DATA_MICTRONICS;" -U beluga -d belugaDb
 
-echo Done.
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table flightroute_data ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table flightroute_data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE flightroute_data;" -U beluga -d belugaDb
 psql -c "COPY flightroute_data (
 			flight_id,
 			flight_route,
 			flight_last_update)
 		FROM '$pathToDirectoryWithCsv/flightroute_data.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table shape_data ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table shape_data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE shape_data;" -U beluga -d belugaDb
 psql -c "COPY shape_data (
 			designator,
@@ -253,10 +273,11 @@ psql -c "COPY shape_data (
 			png_id,
 			png_scale)
 		FROM '$pathToDirectoryWithCsv/shape_data.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table map_cat_to_shape_data ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table map_cat_to_shape_data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE map_cat_to_shape_data;" -U beluga -d belugaDb
 psql -c "COPY map_cat_to_shape_data (
 			category,
@@ -266,10 +287,11 @@ psql -c "COPY map_cat_to_shape_data (
 			shape_scale,
 			version)
 		FROM '$pathToDirectoryWithCsv/map_cat_to_shape.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
-echo loading table map_type_to_shape_data ...
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo $(timestamp) loading table map_type_to_shape_data ...
+echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE map_type_to_shape_data;" -U beluga -d belugaDb
 psql -c "COPY map_type_to_shape_data (
 			type_designator,
@@ -279,7 +301,13 @@ psql -c "COPY map_type_to_shape_data (
 			shape_scale,
 			version)
 		FROM '$pathToDirectoryWithCsv/map_type_to_shape.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+echo $(timestamp) Done.
 
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
+echo Start time was: $start_time
+echo End time is...: $(timestamp)
+SECONDS_ELAPSED=$(( SECONDS - a ))
+echo Script runtime in Min:Sec
+echo $((SECONDS_ELAPSED-SECONDS_AT_START)) | awk '{print int($1/60)":"int($1%60)}'
 echo Done. Yippie!
-echo -----------------------------------------
+echo ----------------------------------------------------------------------
