@@ -274,13 +274,13 @@ _copy_convert_mictronics_jsons_to_csv_script_to_container() {
 
 _exec_load_db_script() {
   echo "Execute $load_beluga_db_filename on container to populate database with content ..."
-  docker exec $container_name_db bash -c ". $load_beluga_db_filename" >$load_beluga_db_output_file
+  docker exec $container_name_db bash -c ". $load_beluga_db_filename" | tee $load_beluga_db_output_file
   echo "-> Execute $load_beluga_db_filename on container to populate database with content. Done."
 }
 
 _exec_load_aircraftdata_script() {
   echo "Execute $load_aircraftdata_filename on container to populate database with aircraftdata ..."
-  docker exec $container_name_db bash -c ". $load_aircraftdata_filename" >$load_aircraftdata_output_file
+  docker exec $container_name_db bash -c ". $load_aircraftdata_filename" | tee $load_aircraftdata_output_file
   echo "-> Execute $load_aircraftdata_filename on container to populate database with aircraftdata. Done."
 }
 
@@ -332,12 +332,14 @@ _update_db_content() {
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $aircraft_database_filename; then echo exists; fi") ]]; then
     echo "-> file $aircraft_database_filename does not exist, download required."
     _download_aircraft_database
+    _download_mictronics_aircraft_database
   else
     if [[ $# -eq 0 ]]; then
         _ask_user_for_decision "Do you want to download current version of $aircraft_database_filename (y/n)?"
         if [ "$choice" != "${choice#[Yy]}" ] ; then
           echo "$aircraft_database_filename exists. Download for update requested."
           _download_aircraft_database
+          _download_mictronics_aircraft_database
         else
           if [ "$choice" != "${choice#[Nn]}" ] ;then
             echo "-> $aircraft_database_filename exists. Download for update not requested."
@@ -394,7 +396,7 @@ _check_tables_exist() {
 
   echo "Check if tables in postgres database were created by spring ..."
   while $table_does_not_exist; do
-    if [[ -n $(docker exec -it $container_name_db psql $postgres_db $postgres_user -c "psql $postgres_db -U $postgres_user" -c "\c $postgres_db" -c "\dt" | grep $table_to_check) ]]; then
+    if [[ -n $(docker exec -it $container_name_db psql $postgres_db $postgres_user -c "\c $postgres_db" -c "\dt" | grep $table_to_check ) ]]; then
       echo "-> Check if tables in postgres database were created by spring. Done."
       table_does_not_exist=false
       return 1
