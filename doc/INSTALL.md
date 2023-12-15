@@ -23,7 +23,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
    $ cp .env.template .env
    $ nano .env
    ```
-
+   
    For further information on how to configure the `.env` file expand the following section
    <details>
    <summary>Click to expand</summary>
@@ -52,15 +52,15 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    2. Enter the **URLs** of your feeders with an json output seperated by comma (If you do not have a local feeder, just leave the value empty)
 
-   - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
-   - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
-   - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
-   - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
-   - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
+    - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
+    - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
+    - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
+    - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
+    - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
 
-     ```
-     ipFeeder=URL1,URL2
-     ```
+      ```
+      ipFeeder=URL1,URL2
+      ```
 
    3. Enter the **type** of your feeders. Currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder (If you do not have a local feeder, just leave the value empty)
 
@@ -77,7 +77,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
    5. Enter the **color** of your feeders seperated by comma. This color is used later in statistical views (if you do not have a local feeder, set `colorFeeder=red` (valid color is needed here!)
 
       ```
-      colorFeeder=red,blue
+      colorFeeder=red, blue
       ```
 
    6. Enter the **amount** of your feeders. This value must match with the amount of feeder configuration entries (If you do not have a local feeder set `amountFeeder=1`)
@@ -95,12 +95,12 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
    10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex.
 
    11. Add your API-Keys for additional maps (**Optional**)
-       ```
-       GEOAPIFY_API_KEY=
-       CESIUM_ION_DEFAULTACCESSTOKEN=
-       CESIUM_GOOGLEMAPS_API_KEY=
-       ```
-       (without these API-Keys you cannot see all availible maps in settings)
+         ```
+         GEOAPIFY_API_KEY=
+         CESIUM_ION_DEFAULTACCESSTOKEN=
+         CESIUM_GOOGLEMAPS_API_KEY=
+         ```
+         (without these API-Keys you cannot see all availible maps in settings)
 
    </details>
 
@@ -114,13 +114,28 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    This will take some time. On an RaspberryPi 4B
 
-   - container build takes about 14 minutes
-   - load database takes about 10 minutes
-   - first start in browser takes about 3 minutes until all aircrafts are visible
+    - container build takes about 14 minutes
+    - load database takes about 10 minutes
+    - first start in browser takes about 3 minutes until all aircrafts are visible
+
 
    Possible errors:
 
-   The following error might appear after you run the command above:
+   Sometimes we got error messages like this in the container build process:
+
+   - Error response from daemon: Head "https://registry-1.docker.io/v2/library/postgres/manifests/13.1-alpine": net/http: TLS handshake timeout
+   - => ERROR [webapp internal] load metadata for docker.io/library/node:20-alpine                                     0.2s
+   - Error [server internal] load metadata for docker.io/library/gradle:8.1.1-jdk17-focal:
+   - failed to solve: rpc error: code = Unknown desc = failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to authorize: rpc error: code = Unknown desc = failed to fetch anonymous token: Get "https://...: read tcp ... -> ... read: connection reset by peer
+
+   In all this cases we simply repeated 
+   ```
+   $ ./run.sh install
+   ```
+   until container build was finished. We guess that timeouts occured while downloading objects from repositories. 
+
+
+   The following errors might appear after container build is finished and database is to be populated with data:
 
    > psql: error: FATAL: the database system is in recovery mode
 
@@ -134,18 +149,15 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    You can ignore this error if you don't have a flightroute.csv file.
 
-5. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed).
+5. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. On first run after installation it may take up to about 3 minutes until all aircrafts are visible. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed). 
 
 6. Operation and Maintenance
 
-   Executing
-
+   Executing 
    ```
    $ ./run.sh
    ```
-
    will show some options for troubleshooting, operation and **database maintanance**. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.
-
    ```
    Usage: ./run.sh command
    commands:
@@ -167,9 +179,9 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
 7. Add Flightroute data
 
-   Unfortunately, if you want to fill the database table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample.
+   Unfortunately, if you want to fill the database table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample. 
    You can create your own file `flightroute_data.csv` and put it in direcory `assets/dbContent`. To load data from it to the database use this command:
-
    ```
    $ ./run.sh update-db
    ```
+   
