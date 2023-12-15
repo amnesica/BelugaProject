@@ -158,7 +158,7 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
    ```
    until container build was finished. We guess that timeouts occured while downloading objects from repositories. 
 
-   The following error might appear after you run the command above:
+   The following errors might appear after container build is finished and database is to be populated with data:
 
    > psql: error: FATAL: the database system is in recovery mode
 
