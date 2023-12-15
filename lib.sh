@@ -396,7 +396,7 @@ _check_tables_exist() {
 
   echo "Check if tables in postgres database were created by spring ..."
   while $table_does_not_exist; do
-    if [[ -n $(docker exec -it $container_name_db psql $postgres_db $postgres_user -c "\c $postgres_db" -c "\dt" | grep $table_to_check ) ]]; then
+    if [[ -n $(docker exec $container_name_db psql $postgres_db $postgres_user -c "\dt" | grep $table_to_check ) ]]; then
       echo "-> Check if tables in postgres database were created by spring. Done."
       table_does_not_exist=false
       return 1
