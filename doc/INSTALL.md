@@ -123,10 +123,10 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    Sometimes we got error messages like this in the container build process:
 
-   - Error response from daemon: Head "https://registry-1.docker.io/v2/library/postgres/manifests/13.1-alpine": net/http: TLS handshake timeout
-   - => ERROR [webapp internal] load metadata for docker.io/library/node:20-alpine                                     0.2s
-   - Error [server internal] load metadata for docker.io/library/gradle:8.1.1-jdk17-focal:
-   - failed to solve: rpc error: code = Unknown desc = failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to authorize: rpc error: code = Unknown desc = failed to fetch anonymous token: Get "https://...: read tcp ... -> ... read: connection reset by peer
+   > - Error response from daemon: Head "https://registry-1.docker.io/v2/library/postgres/manifests/13.1-alpine": net/http: TLS handshake timeout
+   > - ERROR [webapp internal] load metadata for docker.io/library/node:20-alpine                                     0.2s
+   > - Error [server internal] load metadata for docker.io/library/gradle:8.1.1-jdk17-focal:
+   > - failed to solve: rpc error: code = Unknown desc = failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to authorize: rpc error: code = Unknown desc = failed to fetch anonymous token: Get "https://...: read tcp ... -> ... read: connection reset by peer
 
    In all this cases we simply repeated 
    ```
