@@ -145,6 +145,19 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 
    Possible errors:
 
+   Sometimes we got error messages like this in the container build process:
+
+   > - Error response from daemon: Head "https://registry-1.docker.io/v2/library/postgres/manifests/13.1-alpine": net/http: TLS handshake timeout
+   > - ERROR [webapp internal] load metadata for docker.io/library/node:20-alpine                                     0.2s
+   > - Error [server internal] load metadata for docker.io/library/gradle:8.1.1-jdk17-focal:
+   > - failed to solve: rpc error: code = Unknown desc = failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to authorize: rpc error: code = Unknown desc = failed to fetch anonymous token: Get "https://...: read tcp ... -> ... read: connection reset by peer
+
+   In all this cases we simply repeated 
+   ```
+   $ ./run.sh install
+   ```
+   until container build was finished. We guess that timeouts occured while downloading objects from repositories. 
+
    The following error might appear after you run the command above:
 
    > psql: error: FATAL: the database system is in recovery mode
