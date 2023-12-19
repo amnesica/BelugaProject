@@ -60,7 +60,6 @@ export class CesiumComponent implements OnInit {
     public breakpointObserver: BreakpointObserver,
     private cesumService: CesiumService,
     private snackBar: MatSnackBar,
-    private settingsService: SettingsService,
     private el: ElementRef
   ) {
     new Promise<any>(() => {
@@ -213,6 +212,7 @@ export class CesiumComponent implements OnInit {
       shouldAnimate: true,
       timeline: false,
       animation: false,
+      terrain: Cesium.Terrain.fromWorldTerrain(),
     });
     this.scene = this.viewer.scene;
     this.camera = this.viewer.camera;
@@ -709,21 +709,6 @@ export class CesiumComponent implements OnInit {
     }
     // Initiiere Update
     this.addAircraftAndTrailTo3DMap();
-  }
-
-  async showTerrain() {
-    if (!this.viewer || !this.scene) return;
-
-    this.displayTerrain = !this.displayTerrain;
-
-    if (this.displayTerrain) {
-      this.viewer.terrainProvider = await Cesium.createWorldTerrainAsync({
-        requestWaterMask: false,
-        requestVertexNormals: true,
-      });
-    } else {
-      this.viewer.scene.terrainProvider = new Cesium.EllipsoidTerrainProvider();
-    }
   }
 
   openSnackBar(message: string, action: string) {
