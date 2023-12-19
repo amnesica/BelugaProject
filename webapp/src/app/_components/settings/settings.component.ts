@@ -28,6 +28,7 @@ import {
 import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 import { slideInOutRight } from 'src/app/_common/animations';
 import { Feeder } from 'src/app/_classes/feeder';
+import { Storage } from 'src/app/_classes/storage';
 
 export interface DialogData {
   times: string[];
@@ -126,12 +127,12 @@ export class SettingsComponent implements OnInit {
   timesAsDateStrings: String[] | undefined;
 
   // Booleans für Toggles (mit Default-Werten, wenn nötig)
-  showAircraftLabels: boolean | undefined;
+  showAircraftLabels: boolean = false;
   showAirports: boolean = true;
-  showOpenskyPlanes: boolean | undefined;
+  showOpenskyPlanes: boolean = false;
   showIss: boolean = true;
-  showAircraftPositions: boolean | undefined = true;
-  showOnlyMilitaryPlanes: boolean | undefined;
+  showAircraftPositions: boolean = true;
+  showOnlyMilitaryPlanes: boolean = false;
 
   // Boolean, ob Range Data verbunden angezeigt werden soll
   showFilteredRangeDatabyFeeder: boolean | undefined;
@@ -152,7 +153,7 @@ export class SettingsComponent implements OnInit {
   appVersion: any;
 
   // Boolean, ob POMD-Point angezeigt werden soll
-  showPOMDPoint: boolean | undefined;
+  showPOMDPoint: boolean = false;
 
   // Boolean, ob WebGL verwendet werden soll
   webgl: boolean = false;
@@ -203,16 +204,16 @@ export class SettingsComponent implements OnInit {
   darkStaticFeatures: boolean = true;
 
   // Global icon size multiplier für Plane-Icons
-  sliderGlobalIconSizeValue: any = [1.3];
+  sliderGlobalIconSizeValue: any;
 
   // Small icon size multiplier für Plane-Icons
-  sliderSmallIconSizeValue: any = [1];
+  sliderSmallIconSizeValue: any;
 
   // Boolean, ob Altitude Chart angezeigt werden soll
-  showAltitudeChart: boolean = true;
-
-  // Resolution für OL-Cesium Map
-  sliderCesiumResolutionValue: any = [1.0];
+  showAltitudeChart: boolean = Storage.getPropertyFromLocalStorage(
+    'showAltitudeChart',
+    true
+  );
 
   constructor(
     public settingsService: SettingsService,
@@ -220,6 +221,71 @@ export class SettingsComponent implements OnInit {
     public serverService: ServerService,
     private snackBar: MatSnackBar
   ) {}
+
+  setSettingsFromLocalStorage() {
+    this.toggleAircraftLabels(
+      Storage.getPropertyFromLocalStorage('aircraftLabels', false)
+    );
+
+    this.toggleAircraftPositions(
+      Storage.getPropertyFromLocalStorage('aircraftPositions', true)
+    );
+
+    this.toggleAirports(
+      Storage.getPropertyFromLocalStorage('airportLabels', true)
+    );
+
+    this.toggleDarkMode(Storage.getPropertyFromLocalStorage('darkMode', false));
+
+    this.toggleDarkStaticFeatures(
+      Storage.getPropertyFromLocalStorage('darkStaticFeatures', true)
+    );
+
+    this.toggleDevicePositionAsBasis(
+      Storage.getPropertyFromLocalStorage('devicePosForCalc', false),
+      true
+    );
+
+    this.toggleDimMap(Storage.getPropertyFromLocalStorage('dimMap', true));
+
+    this.toggleIss(Storage.getPropertyFromLocalStorage('ISS', true));
+
+    this.togglePOMDPoint(
+      Storage.getPropertyFromLocalStorage('pomdFeature', false)
+    );
+
+    this.toggleRainViewerRain(
+      Storage.getPropertyFromLocalStorage('rainViewerRadar', false)
+    );
+
+    this.toggleRainViewerClouds(
+      Storage.getPropertyFromLocalStorage('rainViewerClouds', false)
+    );
+
+    this.toggleRainViewerRainForecast(
+      Storage.getPropertyFromLocalStorage('rainViewerForecast', false)
+    );
+
+    this.toggleAltitudeChart(
+      Storage.getPropertyFromLocalStorage('showAltitudeChart', true)
+    );
+
+    this.toggleShowOnlyMilitaryPlanes(
+      Storage.getPropertyFromLocalStorage('showOnlyMilitary', false)
+    );
+
+    this.sliderGlobalIconSizeValue = Storage.getPropertyFromLocalStorage(
+      'globalIconSize',
+      1.3
+    );
+    this.settingsService.setGlobalIconSize(+this.sliderGlobalIconSizeValue);
+
+    this.sliderSmallIconSizeValue = Storage.getPropertyFromLocalStorage(
+      'gsmallIconSize',
+      1.0
+    );
+    this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
+  }
 
   ngOnInit(): void {
     // Initiiere Abonnements
@@ -295,6 +361,9 @@ export class SettingsComponent implements OnInit {
         // Füge default-Liste an Feedern hinzu
         this.selectedFeeder.push(...listFeeder);
         this.selectedFeederRangeData.push(...listFeeder);
+
+        // Map ist fertig mit Initialisierung -> setze Default-werte
+        this.setSettingsFromLocalStorage();
       });
 
     // Weise App-Name und App-Version zu
@@ -380,10 +449,15 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Methode zeigt oder versteckt die Labels der Flugzeuge
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleAircraftLabels(event: MatSlideToggleChange) {
-    this.showAircraftLabels = event.checked;
+  toggleAircraftLabels(checked: boolean) {
+    this.showAircraftLabels = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'aircraftLabels',
+      this.showAircraftLabels
+    );
 
     // Kontaktiere Map-Component und übergebe showAircraftLabels-Boolean
     this.settingsService.toggleAircraftLabels(this.showAircraftLabels);
@@ -536,10 +610,12 @@ export class SettingsComponent implements OnInit {
   /**
    * Methode zeigt oder versteckt die Flughäfen
    * auf der Karte
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleAirports(event: MatSlideToggleChange) {
-    this.showAirports = event.checked;
+  toggleAirports(checked: boolean) {
+    this.showAirports = checked;
+
+    Storage.savePropertyInLocalStorage('airportLabels', this.showAirports);
 
     // Kontaktiere Map-Component und übergebe toggleAirports-Boolean
     this.settingsService.toggleAirports(this.showAirports);
@@ -557,8 +633,8 @@ export class SettingsComponent implements OnInit {
   /**
    * Toggle Anzeige der Opensky Flugzeuge
    */
-  toggleOpenskyPlanes(event: MatSlideToggleChange) {
-    this.showOpenskyPlanes = event.checked;
+  toggleOpenskyPlanes(checked: boolean) {
+    this.showOpenskyPlanes = checked;
 
     // Kontaktiere Map-Component und übergebe showOpenskyPlanes-Boolean
     this.settingsService.toggleOpenskyPlanes(this.showOpenskyPlanes);
@@ -567,8 +643,10 @@ export class SettingsComponent implements OnInit {
   /**
    * Toggle Anzeige der ISS
    */
-  toggleIss(event: MatSlideToggleChange) {
-    this.showIss = event.checked;
+  toggleIss(checked: boolean) {
+    this.showIss = checked;
+
+    Storage.savePropertyInLocalStorage('ISS', this.showIss);
 
     // Kontaktiere Map-Component und übergebe showIss-Boolean
     this.settingsService.toggleIss(this.showIss);
@@ -576,10 +654,12 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Dark Mode
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleDarkMode(event: MatSlideToggleChange) {
-    this.darkMode = event.checked;
+  toggleDarkMode(checked: boolean) {
+    this.darkMode = checked;
+
+    Storage.savePropertyInLocalStorage('darkMode', this.darkMode);
 
     // Kontaktiere Map-Component und übergebe showDarkMode-Boolean
     this.settingsService.toggleDarkMode(this.darkMode);
@@ -587,10 +667,10 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle WebGL
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleWebgl(event: MatSlideToggleChange) {
-    this.webgl = event.checked;
+  toggleWebgl(checked: boolean) {
+    this.webgl = checked;
 
     // Kontaktiere Map-Component und übergebe WebGL-Boolean
     this.settingsService.toggleWebgl(this.webgl);
@@ -598,10 +678,12 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle POMD-Point
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  togglePOMDPoint(event: MatSlideToggleChange) {
-    this.showPOMDPoint = event.checked;
+  togglePOMDPoint(checked: boolean) {
+    this.showPOMDPoint = checked;
+
+    Storage.savePropertyInLocalStorage('pomdFeature', this.showPOMDPoint);
 
     // Kontaktiere Map-Component und übergebe showPOMDPoint-Boolean
     this.settingsService.togglePOMDPoint(this.showPOMDPoint);
@@ -629,12 +711,17 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Geräte-Position als Basis für weitere Berechnungen (Distanz, Range-Ringe)
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleDevicePositionAsBasis(event: MatSlideToggleChange) {
-    this.devicePositionAsBasis = event.checked;
+  toggleDevicePositionAsBasis(checked: boolean, isInit: boolean) {
+    this.devicePositionAsBasis = checked;
 
-    if (Globals.DevicePosition === undefined) {
+    if (isInit && checked == false) {
+      this.devicePositionAsBasis = false;
+      return;
+    }
+
+    if (this.devicePositionAsBasis && Globals.DevicePosition === undefined) {
       console.log(
         'Device position needs to be set before enabling this toggle!'
       );
@@ -642,12 +729,18 @@ export class SettingsComponent implements OnInit {
         'Device position needs to be set before enabling this toggle'
       );
       this.devicePositionAsBasis = false;
+      return;
     } else {
       // Kontaktiere Map-Component und übergebe devicePositionAsBasis-Boolean
       this.settingsService.toggleDevicePositionAsBasis(
         this.devicePositionAsBasis
       );
     }
+
+    Storage.savePropertyInLocalStorage(
+      'devicePosForCalc',
+      this.devicePositionAsBasis
+    );
   }
 
   /**
@@ -662,10 +755,12 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Rainviewer (Rain)
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleRainViewerRain(event: MatSlideToggleChange) {
-    this.rainViewerRain = event.checked;
+  toggleRainViewerRain(checked: boolean) {
+    this.rainViewerRain = checked;
+
+    Storage.savePropertyInLocalStorage('rainViewerRadar', this.rainViewerRain);
 
     // Kontaktiere Map-Component und übergebe Rainviewer (Rain) Boolean
     this.settingsService.toggleRainViewerRain(this.rainViewerRain);
@@ -673,10 +768,15 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Rainviewer (Clouds)
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleRainViewerClouds(event: MatSlideToggleChange) {
-    this.rainViewerClouds = event.checked;
+  toggleRainViewerClouds(checked: boolean) {
+    this.rainViewerClouds = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'rainViewerClouds',
+      this.rainViewerClouds
+    );
 
     // Kontaktiere Map-Component und übergebe Rainviewer (Clouds) Boolean
     this.settingsService.toggleRainViewerClouds(this.rainViewerClouds);
@@ -684,10 +784,15 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Rainviewer Forecast(Rain)
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleRainViewerRainForecast(event: MatSlideToggleChange) {
-    this.rainViewerRainForecast = event.checked;
+  toggleRainViewerRainForecast(checked: boolean) {
+    this.rainViewerRainForecast = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'rainViewerForecast',
+      this.rainViewerRainForecast
+    );
 
     // Kontaktiere Map-Component und übergebe Rainviewer Forecast (Rain) Boolean
     this.settingsService.toggleRainViewerRainForecast(
@@ -697,10 +802,15 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Methode zeigt oder versteckt die Flugzeuge
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleAircraftPositions(event: MatSlideToggleChange) {
-    this.showAircraftPositions = event.checked;
+  toggleAircraftPositions(checked: boolean) {
+    this.showAircraftPositions = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'aircraftPositions',
+      this.showAircraftPositions
+    );
 
     // Kontaktiere Map-Component und übergebe showAircraftPositions-Boolean
     this.settingsService.toggleAircraftPositions(this.showAircraftPositions);
@@ -724,10 +834,12 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Dimming der Map
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleDimMap(event: MatSlideToggleChange) {
-    this.dimMap = event.checked;
+  toggleDimMap(checked: boolean) {
+    this.dimMap = checked;
+
+    Storage.savePropertyInLocalStorage('dimMap', this.dimMap);
 
     // Kontaktiere Map-Component und übergebe DimMap-Boolean
     this.settingsService.toggleDimMap(this.dimMap);
@@ -743,55 +855,81 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle dunkle Range Ringe und dunkles Antenna-Icon
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleDarkStaticFeatures(event: MatSlideToggleChange) {
-    this.darkStaticFeatures = event.checked;
+  toggleDarkStaticFeatures(checked: boolean) {
+    this.darkStaticFeatures = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'darkStaticFeatures',
+      this.darkStaticFeatures
+    );
 
     // Kontaktiere Map-Component und übergebe darkStaticFeatures-Boolean
     this.settingsService.toggleDarkStaticFeatures(this.darkStaticFeatures);
   }
 
-  onInputChangeGlobalIconSize(event: Event) {
-    let value = (event.target as HTMLInputElement).value;
+  onInputChangeGlobalIconSize(event: any) {
+    this.sliderGlobalIconSizeValue = event.target.valueAsNumber;
+
+    Storage.savePropertyInLocalStorage(
+      'globalIconSize',
+      this.sliderGlobalIconSizeValue
+    );
 
     // Kontaktiere Map-Component
-    this.settingsService.setGlobalIconSize(+value);
+    this.settingsService.setGlobalIconSize(+this.sliderGlobalIconSizeValue);
   }
 
-  onInputChangeSmallIconSize(event: Event) {
-    let value = (event.target as HTMLInputElement).value;
+  onInputChangeSmallIconSize(event: any) {
+    this.sliderSmallIconSizeValue = event.target.valueAsNumber;
+
+    Storage.savePropertyInLocalStorage(
+      'smallIconSize',
+      this.sliderSmallIconSizeValue
+    );
 
     // Kontaktiere Map-Component
-    this.settingsService.setSmallIconSize(+value);
+    this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
   }
 
   resetIconSizeSlider() {
-    this.sliderGlobalIconSizeValue = [1.3];
-    this.sliderSmallIconSizeValue = [1];
+    this.sliderGlobalIconSizeValue = Globals.defaultGlobalScaleFactorIcons;
+    this.sliderSmallIconSizeValue = Globals.defaultSmallScaleFactorIcons;
+
+    Storage.savePropertyInLocalStorage(
+      'globalIconSize',
+      this.sliderGlobalIconSizeValue
+    );
+    Storage.savePropertyInLocalStorage(
+      'smallIconSize',
+      this.sliderSmallIconSizeValue
+    );
 
     // Kontaktiere Map-Component
     this.settingsService.setGlobalIconSize(this.sliderGlobalIconSizeValue);
     this.settingsService.setSmallIconSize(this.sliderSmallIconSizeValue);
   }
 
-  toggleAltitudeChart(event: MatSlideToggleChange) {
-    this.showAltitudeChart = event.checked;
+  toggleAltitudeChart(checked: boolean) {
+    this.showAltitudeChart = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showAltitudeChart',
+      this.showAltitudeChart
+    );
 
     // Kontaktiere Map-Component und übergebe showAltitudeChart-Boolean
     this.settingsService.toggleAltitudeChart(this.showAltitudeChart);
   }
 
-  onInputChangeCesiumResolutionValue(event: Event) {
-    let value = (event.target as HTMLInputElement).value;
+  toggleShowOnlyMilitaryPlanes(checked: boolean) {
+    this.showOnlyMilitaryPlanes = checked;
 
-    // Kontaktiere Cesium-Component
-    Globals.resolution3dMapValue = +value;
-    this.settingsService.setCesiumResolution(+value);
-  }
-
-  toggleShowOnlyMilitaryPlanes(event: MatSlideToggleChange) {
-    this.showOnlyMilitaryPlanes = event.checked;
+    Storage.savePropertyInLocalStorage(
+      'showOnlyMilitary',
+      this.showOnlyMilitaryPlanes
+    );
 
     // Kontaktiere Map-Component und übergebe showOnlyMilitaryPlanes-Boolean
     this.settingsService.toggleOnlyMilitaryPlanes(this.showOnlyMilitaryPlanes);

@@ -39,7 +39,6 @@ export class SettingsService {
   private setIconGlobalSizeSource = new Subject<number>();
   private setIconSmallSizeSource = new Subject<number>();
   private showAltitudeChartSource = new Subject<boolean>();
-  private cesiumResolutionValueSource = new Subject<number>();
   private showOnlyMilitaryPlanesSource = new Subject<boolean>();
 
   // Observable streams
@@ -81,8 +80,6 @@ export class SettingsService {
   setIconGlobalSizeSource$ = this.setIconGlobalSizeSource.asObservable();
   setIconSmallSizeSource$ = this.setIconSmallSizeSource.asObservable();
   showAltitudeChartSource$ = this.showAltitudeChartSource.asObservable();
-  cesiumResolutionValueSource$ =
-    this.cesiumResolutionValueSource.asObservable();
   showOnlyMilitaryPlanesSource$ =
     this.showOnlyMilitaryPlanesSource.asObservable();
 
@@ -249,11 +246,6 @@ export class SettingsService {
   toggleAltitudeChart(showAltitudeChart: boolean) {
     this.showAltitudeChartSource.next(showAltitudeChart);
     return this.showAltitudeChartSource;
-  }
-
-  setCesiumResolution(cesiumResolutionValue: number) {
-    this.cesiumResolutionValueSource.next(cesiumResolutionValue);
-    return this.cesiumResolutionValueSource;
   }
 
   toggleOnlyMilitaryPlanes(showOnlyMilitaryPlanes: boolean) {

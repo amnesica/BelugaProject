@@ -64,14 +64,14 @@
         <mat-slide-toggle
           [checked]="showAircraftPositions"
           (click)="$event.stopPropagation()"
-          (change)="toggleAircraftPositions($event)"
+          (change)="toggleAircraftPositions($event.checked)"
           >Aircraft Positions</mat-slide-toggle
         >
 
         <mat-slide-toggle
           [checked]="showAircraftLabels"
           (click)="$event.stopPropagation()"
-          (change)="toggleAircraftLabels($event)"
+          (change)="toggleAircraftLabels($event.checked)"
           >Aircraft Labels</mat-slide-toggle
         >
 
@@ -79,7 +79,7 @@
           [checked]="showOpenskyPlanes"
           [disabled]="!openskyCredentialsExist"
           (click)="$event.stopPropagation()"
-          (change)="toggleOpenskyPlanes($event)"
+          (change)="toggleOpenskyPlanes($event.checked)"
           >Fetch from Opensky-Network</mat-slide-toggle
         >
 
@@ -87,7 +87,7 @@
           <mat-slide-toggle
             [checked]="showIss"
             (click)="$event.stopPropagation()"
-            (change)="toggleIss($event)"
+            (change)="toggleIss($event.checked)"
             >ISS</mat-slide-toggle
           >
           <div mat-dialog-actions style="margin-left: 8.5rem">
@@ -105,14 +105,14 @@
         <mat-slide-toggle
           [checked]="showOnlyMilitaryPlanes"
           (click)="$event.stopPropagation()"
-          (change)="toggleShowOnlyMilitaryPlanes($event)"
+          (change)="toggleShowOnlyMilitaryPlanes($event.checked)"
           >Show only military</mat-slide-toggle
         >
 
         <mat-slide-toggle
           [checked]="showPOMDPoint"
           (click)="$event.stopPropagation()"
-          (change)="togglePOMDPoint($event)"
+          (change)="togglePOMDPoint($event.checked)"
           >Toggle POMD-Feature</mat-slide-toggle
         >
 
@@ -121,7 +121,7 @@
           [checked]="webgl"
           [disabled]="webglNotSupported"
           (click)="$event.stopPropagation()"
-          (change)="toggleWebgl($event)"
+          (change)="toggleWebgl($event.checked)"
           >WebGL</mat-slide-toggle
         >
 
@@ -217,7 +217,7 @@
           <mat-slide-toggle
             [checked]="darkMode"
             (click)="$event.stopPropagation()"
-            (change)="toggleDarkMode($event)"
+            (change)="toggleDarkMode($event.checked)"
             >Dark Mode</mat-slide-toggle
           >
         </div>
@@ -227,7 +227,7 @@
           <mat-slide-toggle
             [checked]="dimMap"
             (click)="$event.stopPropagation()"
-            (change)="toggleDimMap($event)"
+            (change)="toggleDimMap($event.checked)"
             >Dim Map</mat-slide-toggle
           >
         </div>
@@ -237,7 +237,7 @@
           <mat-slide-toggle
             [checked]="darkStaticFeatures"
             (click)="$event.stopPropagation()"
-            (change)="toggleDarkStaticFeatures($event)"
+            (change)="toggleDarkStaticFeatures($event.checked)"
             >Dark Static Features</mat-slide-toggle
           >
         </div>
@@ -245,37 +245,16 @@
         <mat-slide-toggle
           [checked]="showAltitudeChart"
           (click)="$event.stopPropagation()"
-          (change)="toggleAltitudeChart($event)"
+          (change)="toggleAltitudeChart($event.checked)"
           >Show Altitude Chart</mat-slide-toggle
         >
 
         <mat-slide-toggle
           [checked]="showAirports"
           (click)="$event.stopPropagation()"
-          (change)="toggleAirports($event)"
+          (change)="toggleAirports($event.checked)"
           >Airport Labels</mat-slide-toggle
         >
-
-        <div style="display: flex; justify-content: start; max-height: 2rem">
-          <mat-slider min="0.1" max="1" step="0.1">
-            <input
-              matSliderThumb
-              [(ngModel)]="sliderCesiumResolutionValue"
-              (input)="onInputChangeCesiumResolutionValue($event)"
-            />
-          </mat-slider>
-          <p
-            style="
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              max-height: 2rem;
-              padding-top: 0.6rem;
-            "
-          >
-            Resolution 3D-Map ({{ sliderCesiumResolutionValue }})
-          </p>
-        </div>
 
         <mat-divider></mat-divider>
 
@@ -310,7 +289,7 @@
           <mat-slide-toggle
             [checked]="devicePositionAsBasis"
             (click)="$event.stopPropagation()"
-            (change)="toggleDevicePositionAsBasis($event)"
+            (change)="toggleDevicePositionAsBasis($event.checked, false)"
           >
             <p class="info-text">
               Device Position as basis for range rings, distance calculation and
@@ -327,7 +306,7 @@
             [checked]="rainViewerRain"
             [disabled]="rainViewerRainForecast"
             (click)="$event.stopPropagation()"
-            (change)="toggleRainViewerRain($event)"
+            (change)="toggleRainViewerRain($event.checked)"
             >Radar (Rainviewer)</mat-slide-toggle
           >
         </div>
@@ -338,7 +317,7 @@
             [checked]="rainViewerRainForecast"
             [disabled]="rainViewerRain"
             (click)="$event.stopPropagation()"
-            (change)="toggleRainViewerRainForecast($event)"
+            (change)="toggleRainViewerRainForecast($event.checked)"
             >Radar Forecast (Rainviewer)</mat-slide-toggle
           >
         </div>
@@ -348,7 +327,7 @@
           <mat-slide-toggle
             [checked]="rainViewerClouds"
             (click)="$event.stopPropagation()"
-            (change)="toggleRainViewerClouds($event)"
+            (change)="toggleRainViewerClouds($event.checked)"
             >Clouds (Rainviewer)</mat-slide-toggle
           >
         </div>

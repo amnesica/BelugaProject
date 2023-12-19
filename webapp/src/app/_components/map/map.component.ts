@@ -47,6 +47,7 @@ import { RainviewerService } from 'src/app/_services/rainviewer-service/rainview
 import { Maps } from 'src/app/_classes/maps';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
 import { dummyParentAnimation } from 'src/app/_common/animations';
+import { Storage } from 'src/app/_classes/storage';
 
 @Component({
   selector: 'app-map',
@@ -124,7 +125,7 @@ export class MapComponent implements OnInit {
   darkMode: boolean = false;
 
   // Boolean, ob Flugzeug-Label angezeigt werden sollen
-  toggleShowAircraftLabels: boolean = false;
+  showAircraftLabel: boolean = false;
 
   // Boolean, ob Flugzeug-Positionen angezeigt werden sollen
   toggleShowAircraftPositions: boolean = true;
@@ -300,6 +301,9 @@ export class MapComponent implements OnInit {
    * Einstiegspunkt
    */
   ngOnInit(): void {
+    // Init Default-Settings Values
+    Storage.setDefaultSettingsValues();
+
     // Hole Konfiguration vom Server, wenn diese nicht vorhanden ist, breche ab
     this.getConfiguration();
   }
@@ -345,8 +349,8 @@ export class MapComponent implements OnInit {
     // Toggle zeige Flugzeug-Labels
     this.settingsService.toggleShowAircraftLabels$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((toggleShowAircraftLabels) => {
-        this.toggleShowAircraftLabels = toggleShowAircraftLabels;
+      .subscribe((showAircraftLabel) => {
+        this.showAircraftLabel = showAircraftLabel;
         this.receiveToggleShowAircraftLabels();
       });
 
@@ -738,6 +742,25 @@ export class MapComponent implements OnInit {
           if (configuration.cesiumGoogleMapsApiKey) {
             this.cesiumGoogleMapsApiKey = configuration.cesiumGoogleMapsApiKey;
           }
+
+          if (localStorage.getItem('globalIconSize') == null) {
+            Storage.savePropertyInLocalStorage(
+              'globalIconSize',
+              Globals.globalScaleFactorIcons
+            );
+          }
+
+          Globals.defaultGlobalScaleFactorIcons =
+            Globals.globalScaleFactorIcons;
+
+          if (localStorage.getItem('smallIconSize') == null) {
+            Storage.savePropertyInLocalStorage(
+              'smallIconSize',
+              Globals.smallScaleFactorIcons
+            );
+          }
+
+          Globals.defaultSmallScaleFactorIcons = Globals.smallScaleFactorIcons;
         },
         (error) => {
           console.log(
@@ -878,6 +901,12 @@ export class MapComponent implements OnInit {
           this.darkMode = false;
         }
       });
+
+    // Setze default-Value für darkMode
+    Storage.savePropertyInLocalStorage(
+      'darkMode',
+      Storage.getPropertyFromLocalStorage('darkMode', this.darkMode)
+    );
   }
 
   /**
@@ -1221,7 +1250,6 @@ export class MapComponent implements OnInit {
         continue;
       }
       if (!element.complete) {
-        console.log('moep');
         tryAgain.push(item);
         continue;
       }
@@ -2952,10 +2980,10 @@ export class MapComponent implements OnInit {
 
   /**
    * Erstellt und zeigt die Flugzeug-Label an,
-   * je nach Wert des Booleans toggleShowAircraftLabels
+   * je nach Wert des Booleans showAircraftLabel
    */
   receiveToggleShowAircraftLabels() {
-    if (this.toggleShowAircraftLabels) {
+    if (this.showAircraftLabel) {
       Globals.showAircraftLabel = true;
 
       // Erstelle für jedes Flugzeug aus Planes das Label
@@ -3304,9 +3332,9 @@ export class MapComponent implements OnInit {
       // Transformiere Koordinaten in EPSG:3857
       Globals.DevicePosition = olProj.toLonLat(coordinates, 'EPSG:3857');
 
-      localStorage.setItem(
+      Storage.savePropertyInLocalStorage(
         'coordinatesDevicePosition',
-        JSON.stringify(Globals.DevicePosition)
+        Globals.DevicePosition
       );
 
       this.DrawFeature.clear();
@@ -3325,28 +3353,30 @@ export class MapComponent implements OnInit {
       Globals.DevicePosition !== null ||
       localStorage.getItem('coordinatesDevicePosition') !== null
     ) {
-      let coordinates;
+      let coordinatesDevicePosition = Storage.getPropertyFromLocalStorage(
+        'coordinatesDevicePosition',
+        null
+      );
 
-      if (localStorage.getItem('coordinatesDevicePosition') !== null) {
-        let coordinatesDevicePositionString = localStorage.getItem(
-          'coordinatesDevicePosition'
-        );
-        if (coordinatesDevicePositionString === null) return;
-
-        coordinates = JSON.parse(coordinatesDevicePositionString);
-
+      if (coordinatesDevicePosition) {
         // Speichere Koordinaten in globaler Variable ab (lon, lat)
-        Globals.DevicePosition = coordinates;
+        Globals.DevicePosition = coordinatesDevicePosition;
       } else if (Globals.DevicePosition !== null) {
-        coordinates = Globals.DevicePosition;
+        coordinatesDevicePosition = Globals.DevicePosition;
       }
 
-      if (coordinates === undefined) return;
+      if (
+        coordinatesDevicePosition == undefined ||
+        coordinatesDevicePosition == null
+      )
+        return;
 
       // Lösche bisherige Geräte-Position, wenn diese existiert
       this.removeDevicePositionFromStaticFeatures();
 
-      let feature = new Feature(new Point(olProj.fromLonLat(coordinates)));
+      let feature = new Feature(
+        new Point(olProj.fromLonLat(coordinatesDevicePosition))
+      );
       feature.setStyle(Styles.DevicePositionStyle);
       feature.set('name', 'devicePosition');
       this.StaticFeatures.addFeature(feature);
@@ -3685,9 +3715,9 @@ export class MapComponent implements OnInit {
   receiveToggleShowAircraftPositions() {
     if (this.OLMap && this.layers && (this.planesLayer || this.webglLayer)) {
       if (this.planesLayer)
-        this.planesLayer.setVisible(!this.planesLayer.getVisible());
+        this.planesLayer.setVisible(this.toggleShowAircraftPositions);
       if (this.webglLayer)
-        this.webglLayer.setVisible(!this.webglLayer.getVisible());
+        this.webglLayer.setVisible(this.toggleShowAircraftPositions);
     }
   }
 
@@ -3696,9 +3726,9 @@ export class MapComponent implements OnInit {
    * @returns object mit MapStyle
    */
   getMapStyleFromLocalStorage() {
-    let mapStyle = localStorage.getItem('mapStyle');
+    let mapStyle = Storage.getPropertyFromLocalStorage('mapStyle', null);
     return mapStyle !== null
-      ? JSON.parse(mapStyle)[0] // ist object in array
+      ? mapStyle[0] // ist object in array
       : Maps.listAvailableFreeMaps[0];
   }
 
@@ -3709,7 +3739,7 @@ export class MapComponent implements OnInit {
     let mapStyle = this.listAvailableMaps.filter(
       (mapStyle) => mapStyle.name == selectedMapStyle
     );
-    localStorage.setItem('mapStyle', JSON.stringify(mapStyle));
+    Storage.savePropertyInLocalStorage('mapStyle', mapStyle);
   }
 
   resetCurrentCSSFilter() {

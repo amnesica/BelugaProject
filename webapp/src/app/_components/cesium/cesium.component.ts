@@ -50,9 +50,6 @@ export class CesiumComponent implements OnInit {
   enableShadowsMap: boolean = false;
   enableDayNightMap: boolean = false;
 
-  // Initialer Wert von Globals
-  resolutionValue: number = Globals.resolution3dMapValue;
-
   earthAtNightLayer: Cesium.ImageryLayer | undefined;
   initViewOnAircraft: boolean = false;
 
@@ -131,15 +128,6 @@ export class CesiumComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         this.destroyPrimitiesAndEntities();
-      });
-
-    // Passe Resolution der 3d-Map an
-    this.settingsService.cesiumResolutionValueSource$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((resolutionValue: number) => {
-        this.resolutionValue = resolutionValue;
-        if (!this.viewer) return;
-        this.viewer.resolutionScale = this.resolutionValue;
       });
   }
 

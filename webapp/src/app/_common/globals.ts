@@ -55,6 +55,14 @@ export class Globals {
   // Skalierung der kleinen Flugzeug-Icons (WebGL & Non-WebGL)
   static smallScaleFactorIcons;
 
+  // Default-Wert für globale Skalierung der Flugzeug-Icons (WebGL & Non-WebGL),
+  // um Werte wieder zurückzusetzen auf Wert aus Configuration vom Server
+  static defaultGlobalScaleFactorIcons;
+
+  // Default-Wert für Skalierung der kleinen Flugzeug-Icons (WebGL & Non-WebGL),
+  // um Werte wieder zurückzusetzen auf Wert aus Configuration vom Server
+  static defaultSmallScaleFactorIcons;
+
   // Boolean, ob Flugzeug-Labels angezeigt werden sollen
   static showAircraftLabel: boolean = false;
 
@@ -100,9 +108,6 @@ export class Globals {
 
   // Boolean, ob 3d-Map angezeigt werden soll (OL-Cesium)
   static display3dMap: Boolean = false;
-
-  // Resolution für 3d-Map
-  static resolution3dMapValue: number = 1.0;
 
   // Boolean, ob aircraft table sichtbar ist
   static aircraftTableIsVisible: boolean;
