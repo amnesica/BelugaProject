@@ -446,19 +446,6 @@
           "
         >
           <!-- Distance path -->
-            <!-- Total flight distance -->
-            <div
-              id="total-flight-distance"
-              style="
-                  margin-right: 0.8rem;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                "
-              >
-                <span>{{ aircraft.totalFlightPathInKm }} km ({{ roundValue(aircraft.totalFlightPathInKm / 1.852) }} nm) </span>
-              </div>
-
           <div
             id="distance-path"
             style="
@@ -510,6 +497,12 @@
             "
           >
             <span>{{ aircraft.travelledDistanceInKm }} km</span>
+            <span
+              >{{ aircraft.totalFlightPathInKm }} km ({{
+                roundValue(aircraft.totalFlightPathInKm / 1.852)
+              }}
+              nm)</span
+            >
             <span>{{ aircraft.travelDistanceRemainingInKm }} km</span>
           </div>
         </div>
