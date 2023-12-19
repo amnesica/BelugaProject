@@ -17,7 +17,7 @@ public class Model3DService {
     final String pathTo3dModels = modelDirectory + File.separator;
     byte[] model;
 
-    if (!"ISS".equals(type)) {
+    if (!"ISS".equals(type) && !"A337".equals(type)) {
       type = "Cesium_Air";
     }
 
