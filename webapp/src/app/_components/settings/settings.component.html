@@ -385,6 +385,8 @@
           </mat-form-field>
         </div>
 
+        <mat-divider></mat-divider>
+
         <!-- Info-Text -->
         <p class="info-text">
           Please specify the desired period for which the range data should be
@@ -487,7 +489,12 @@
         <div mat-dialog-actions>
           <button
             mat-button
-            style="background-color: gray; color: white"
+            style="
+              background-color: gray;
+              color: white;
+              margin-left: 0.5rem;
+              margin-top: 0.2rem;
+            "
             (click)="showRangeDataBetweenCustomTimestamps()"
           >
             Show data
