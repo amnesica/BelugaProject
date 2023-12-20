@@ -1275,7 +1275,7 @@ export class Aircraft {
       // sollte Flugzeug ein reeteredAircraft sein
       style = Styles.DashedLineStyle;
     } else {
-      let onGround = this.onGround || altitude <= 0;
+      let onGround = altitude <= 0;
 
       // Berechne Farbwert des Trailabschnittes
       let trailColor = Markers.getColorFromAltitude(
