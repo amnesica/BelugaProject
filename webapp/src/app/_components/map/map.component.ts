@@ -3865,7 +3865,7 @@ export class MapComponent implements OnInit {
 
   showAllTrailsOnMap(showTrailData: boolean) {
     if (this.showTrailData) {
-      this.getAllTrailsFromServer();
+      new Promise(() => this.getAllTrailsFromServer());
     } else {
       if (this.allTrailsLayer) this.removeAllTrailsLayer();
     }
@@ -3895,16 +3895,7 @@ export class MapComponent implements OnInit {
       .subscribe(
         (trailsByHexArray) => {
           if (!trailsByHexArray || trailsByHexArray.length == 0) return;
-
-          this.createAllTrailsLayer();
-
-          for (let trailsByHex of trailsByHexArray) {
-            if (!trailsByHex) return;
-
-            let trail = new Trail();
-            trail.makeTrail(trailsByHex);
-            trail.setTrailVisibility2d(true);
-          }
+          new Promise(() => this.processAllTrailsFromServer(trailsByHexArray));
         },
         (error) => {
           console.log(
@@ -3916,5 +3907,19 @@ export class MapComponent implements OnInit {
           );
         }
       );
+  }
+
+  processAllTrailsFromServer(trailsByHexArray: any): Promise<void> {
+    this.createAllTrailsLayer();
+
+    for (let trailsByHex of trailsByHexArray) {
+      if (!trailsByHex) return Promise.reject();
+
+      let trail = new Trail();
+      trail.makeTrail(trailsByHex);
+      trail.setTrailVisibility2d(true);
+    }
+
+    return Promise.resolve();
   }
 }
