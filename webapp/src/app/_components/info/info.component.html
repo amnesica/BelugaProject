@@ -1798,7 +1798,7 @@
       <!-- space at left side -->
       <mat-grid-tile
         colspan="1"
-        rowspan="10"
+        rowspan="12"
         [ngClass]="
           darkMode ? 'background-and-color-dark' : 'background-and-color-light'
         "
@@ -2189,6 +2189,39 @@
           </p>
           <p
             *ngIf="aircraft && !aircraft.onGround"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- roll -->
+      <mat-grid-tile
+        colspan="8"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Roll
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.roll != null"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.roll }}°
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.roll == null"
             style="font-size: larger; font-weight: bold"
           >
             N/A
