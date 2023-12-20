@@ -48,6 +48,7 @@ import { Maps } from 'src/app/_classes/maps';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
 import { dummyParentAnimation } from 'src/app/_common/animations';
 import { Storage } from 'src/app/_classes/storage';
+import { Trail } from 'src/app/_classes/trail';
 
 @Component({
   selector: 'app-map',
@@ -270,6 +271,12 @@ export class MapComponent implements OnInit {
 
   // Breite der Cesium-Map-Komponente
   cesiumMapWidth: string = '';
+
+  // Boolean, um alle gespeicherten Trails anzuzeigen
+  showTrailData: boolean = false;
+
+  // Layer für alle Trails vom Server
+  allTrailsLayer!: LayerGroup;
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
@@ -623,6 +630,14 @@ export class MapComponent implements OnInit {
       .subscribe((showAltitudeChart) => {
         document.getElementById('altitude_chart')!.style.visibility =
           showAltitudeChart ? 'visible' : 'hidden';
+      });
+
+    // Zeige oder verstecke Altitude-Chart
+    this.settingsService.showTrailDataSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showTrailData) => {
+        this.showTrailData = showTrailData;
+        this.showAllTrailsOnMap(this.showTrailData);
       });
   }
 
@@ -3846,5 +3861,60 @@ export class MapComponent implements OnInit {
         Globals.PlanesOrdered.push(aircraft);
       }
     }
+  }
+
+  showAllTrailsOnMap(showTrailData: boolean) {
+    if (this.showTrailData) {
+      this.getAllTrailsFromServer();
+    } else {
+      if (this.allTrailsLayer) this.removeAllTrailsLayer();
+    }
+  }
+
+  removeAllTrailsLayer() {
+    this.layers?.remove(this.allTrailsLayer);
+  }
+
+  createAllTrailsLayer() {
+    if (this.layers == undefined) return;
+
+    this.allTrailsLayer = new LayerGroup({
+      layers: Globals.allTrailsGroup,
+      zIndex: 140,
+    });
+    this.allTrailsLayer.set('name', 'all_ac_trail');
+    this.allTrailsLayer.set('title', 'all aircraft trails');
+    this.allTrailsLayer.set('type', 'overlay');
+    this.layers.push(this.allTrailsLayer);
+  }
+
+  getAllTrailsFromServer() {
+    this.serverService
+      .getAllTrails()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (trailsByHexArray) => {
+          if (!trailsByHexArray || trailsByHexArray.length == 0) return;
+
+          this.createAllTrailsLayer();
+
+          for (let trailsByHex of trailsByHexArray) {
+            if (!trailsByHex) return;
+
+            let trail = new Trail();
+            trail.makeTrail(trailsByHex);
+            trail.setTrailVisibility2d(true);
+          }
+        },
+        (error) => {
+          console.log(
+            'Error getting all trails from the server. Is the server running?'
+          );
+          this.openSnackbar(
+            'Error getting all trails from the server. Is the server running?',
+            2000
+          );
+        }
+      );
   }
 }

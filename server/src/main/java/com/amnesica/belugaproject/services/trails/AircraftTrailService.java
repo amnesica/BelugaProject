@@ -54,7 +54,7 @@ public class AircraftTrailService {
    * @param selectedFeeder String
    * @return List<AircraftTrail>
    */
-  public List<AircraftTrail> getAllTrailsToHexAndFeeder(String hex, List<String> selectedFeeder) {
+  public List<AircraftTrail> getAllTrails(String hex, List<String> selectedFeeder) {
     List<AircraftTrail> trails = new ArrayList<>();
     if (hex != null && !hex.isEmpty()) {
       for (String feeder : selectedFeeder) {
@@ -74,6 +74,30 @@ public class AircraftTrailService {
     trails.sort(Comparator.comparing(TrailSuperclass::getTimestamp));
 
     trails = trailHelperService.checkAircraftTrailsFor180Border(trails);
+
+    return trails;
+  }
+
+  /**
+   * Gibt alle gespeicherten Trails zurück
+   *
+   * @return List<List < AircraftTrail>>
+   */
+  public List<List<AircraftTrail>> getAllTrails() {
+    List<List<AircraftTrail>> trails = new ArrayList<>();
+
+    try {
+      List<String> hexList = new ArrayList<>(aircraftTrailRepository.findAllHex());
+
+      for (String hex : hexList) {
+        List<AircraftTrail> allTrailsForHex = aircraftTrailRepository.findAllByHexOrderByTimestampAsc(hex);
+        allTrailsForHex = allTrailsForHex.stream().distinct().toList();
+        allTrailsForHex = trailHelperService.checkAircraftTrailsFor180Border(allTrailsForHex);
+        trails.add(allTrailsForHex);
+      }
+    } catch (Exception e) {
+      log.error("Server - DB error when retrieving all trails : Exception = " + e);
+    }
 
     return trails;
   }

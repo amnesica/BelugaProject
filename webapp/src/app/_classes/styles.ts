@@ -91,6 +91,17 @@ export class Styles {
     }),
   });
 
+  // Gestrichelte Linie als Style des LineString,
+  // sollte Flugzeug ein reeteredAircraft sein
+  // (kleiner als normal für All-Trails-Anzeige)
+  static DashedLineSmallStyle = new Style({
+    stroke: new Stroke({
+      width: 1,
+      color: 'rgba(0, 0, 0, 1)',
+      lineDash: [1, 2],
+    }),
+  });
+
   // Style für den POMD-Marker
   static pomdMarkerStyle: Style = new Style({
     image: new Circle({

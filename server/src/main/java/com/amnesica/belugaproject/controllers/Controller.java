@@ -163,12 +163,23 @@ public class Controller {
       List<SpacecraftTrail> trails = spacecraftTrailService.getAllTrails();
       return new Object[]{trails};
     } else if (!isFromOpensky) {
-      List<AircraftTrail> trails = aircraftTrailService.getAllTrailsToHexAndFeeder(hex, selectedFeeder);
+      List<AircraftTrail> trails = aircraftTrailService.getAllTrails(hex, selectedFeeder);
       return new Object[]{trails};
     } else {
       List<AircraftTrail> trails = openskyService.getTrail(hex);
       return new Object[]{trails};
     }
+  }
+
+  /**
+   * Holt alle gespeicherten Trails aus der Datenbank
+   *
+   * @return List<List < AircraftTrail>>
+   */
+  @GetMapping(value = "/getAllTrails", produces = "application/json")
+  public @ResponseBody
+  List<List<AircraftTrail>> getAllTrails() {
+    return aircraftTrailService.getAllTrails();
   }
 
   /**

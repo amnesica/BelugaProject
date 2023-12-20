@@ -35,6 +35,9 @@ export class Globals {
   // Group als Sammlung an Trails der Flugzeuge
   static trailGroup = new Collection<Layer>();
 
+  // Group als Sammlung aller Trails
+  static allTrailsGroup = new Collection<Layer>();
+
   // Cache der Icons
   static iconCache = {};
   static addToIconCache: any = [];
@@ -149,4 +152,8 @@ export class Globals {
   // URL zum Server zum Holen der ISS ohne Extent
   static urlGetModelFromServer: string =
     'http://' + Globals.serverUrl + ':8080/get3dModel';
+
+  // URL zum Server zum Holen aller Trails
+  static urlGetAllTrailData: string =
+    'http://' + Globals.serverUrl + ':8080/getAllTrails';
 }

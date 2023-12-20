@@ -500,6 +500,19 @@
             Show data
           </button>
         </div>
+
+        <mat-divider style="margin-bottom: 0"></mat-divider>
+
+        <h3>Trails</h3>
+        <!-- Toggle, um alle gespeicherten Trails aus- oder einzublenden -->
+        <div>
+          <mat-slide-toggle
+            [checked]="showTrailData"
+            (click)="$event.stopPropagation()"
+            (change)="toggleTrailData($event.checked)"
+            >Show all trails of last hour (slow!)</mat-slide-toggle
+          >
+        </div>
       </div>
     </mat-tab>
 

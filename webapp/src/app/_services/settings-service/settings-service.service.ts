@@ -40,6 +40,7 @@ export class SettingsService {
   private setIconSmallSizeSource = new Subject<number>();
   private showAltitudeChartSource = new Subject<boolean>();
   private showOnlyMilitaryPlanesSource = new Subject<boolean>();
+  private showTrailDataSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -82,6 +83,7 @@ export class SettingsService {
   showAltitudeChartSource$ = this.showAltitudeChartSource.asObservable();
   showOnlyMilitaryPlanesSource$ =
     this.showOnlyMilitaryPlanesSource.asObservable();
+  showTrailDataSource$ = this.showTrailDataSource.asObservable();
 
   constructor() {}
 
@@ -251,5 +253,10 @@ export class SettingsService {
   toggleOnlyMilitaryPlanes(showOnlyMilitaryPlanes: boolean) {
     this.showOnlyMilitaryPlanesSource.next(showOnlyMilitaryPlanes);
     return this.showOnlyMilitaryPlanesSource;
+  }
+
+  toggleTrailData(showTrailData: boolean) {
+    this.showTrailDataSource.next(showTrailData);
+    return this.showTrailDataSource;
   }
 }

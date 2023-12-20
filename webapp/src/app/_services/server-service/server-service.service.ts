@@ -174,4 +174,12 @@ export class ServerService {
   getISSWithoutExtent(): Observable<any> {
     return this.httpClient.get(Globals.urlGetISSWithoutExtent);
   }
+
+  /**
+   * Methode ruft alle Trails vom Server ab (Server-Aufruf)
+   * @returns Observable<any>
+   */
+  getAllTrails(): Observable<any> {
+    return this.httpClient.get(Globals.urlGetAllTrailData);
+  }
 }

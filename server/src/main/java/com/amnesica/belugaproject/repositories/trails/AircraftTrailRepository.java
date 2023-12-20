@@ -1,6 +1,7 @@
 package com.amnesica.belugaproject.repositories.trails;
 
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +16,7 @@ public interface AircraftTrailRepository extends CrudRepository<AircraftTrail, S
   List<AircraftTrail> findAllByHexAndFeederOrderByTimestampAsc(String hex, String feeder);
 
   AircraftTrail findFirstByHexAndFeederOrderByTimestampDesc(String hex, String feeder);
+
+  @Query(value = "select distinct hex from aircraft_trail", nativeQuery = true)
+  List<String> findAllHex();
 }

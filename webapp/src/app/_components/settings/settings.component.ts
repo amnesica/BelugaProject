@@ -215,6 +215,9 @@ export class SettingsComponent implements OnInit {
     true
   );
 
+  // Boolean, ob Trail-Data angezeigt werden soll
+  showTrailData: boolean = false;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -933,5 +936,11 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component und übergebe showOnlyMilitaryPlanes-Boolean
     this.settingsService.toggleOnlyMilitaryPlanes(this.showOnlyMilitaryPlanes);
+  }
+
+  toggleTrailData(checked: boolean) {
+    this.showTrailData = checked;
+
+    this.settingsService.toggleTrailData(this.showTrailData);
   }
 }
