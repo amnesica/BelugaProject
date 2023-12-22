@@ -52,8 +52,6 @@ export class Trail {
     this.trail_features.clear();
     this.trackLinePoints = [];
 
-    console.log('HERE');
-
     for (let i = 0; i < aircraftTrailList.length; i++) {
       let longitude = aircraftTrailList[i].longitude;
       let latitude = aircraftTrailList[i].latitude;
