@@ -9,7 +9,7 @@ import * as olProj from 'ol/proj';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import TileLayer from 'ol/layer/Tile';
-import { Group as LayerGroup, WebGLPoints } from 'ol/layer';
+import { Layer, Group as LayerGroup, WebGLPoints } from 'ol/layer';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { Aircraft } from 'src/app/_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
@@ -276,7 +276,7 @@ export class MapComponent implements OnInit {
   showTrailData: boolean = false;
 
   // Layer für alle Trails vom Server
-  allTrailsLayer!: LayerGroup;
+  allTrailsLayer: LayerGroup | undefined;
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
@@ -3873,6 +3873,8 @@ export class MapComponent implements OnInit {
 
   removeAllTrailsLayer() {
     this.layers?.remove(this.allTrailsLayer);
+    this.allTrailsLayer = undefined;
+    Globals.allTrailsGroup.clear();
   }
 
   createAllTrailsLayer() {
