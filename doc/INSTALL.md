@@ -118,36 +118,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     - load database takes about 10 minutes
     - first start in browser takes about 3 minutes until all aircrafts are visible
 
-
-   Possible errors:
-
-   Sometimes we got error messages like this in the container build process:
-
-   > - Error response from daemon: Head "https://registry-1.docker.io/v2/library/postgres/manifests/13.1-alpine": net/http: TLS handshake timeout
-   > - ERROR [webapp internal] load metadata for docker.io/library/node:20-alpine                                     0.2s
-   > - Error [server internal] load metadata for docker.io/library/gradle:8.1.1-jdk17-focal:
-   > - failed to solve: rpc error: code = Unknown desc = failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to authorize: rpc error: code = Unknown desc = failed to fetch anonymous token: Get "https://...: read tcp ... -> ... read: connection reset by peer
-
-   In all this cases we simply repeated 
-   ```
-   $ ./run.sh install
-   ```
-   until container build was finished. We guess that timeouts occured while downloading objects from repositories. 
-
-
-   The following errors might appear after container build is finished and database is to be populated with data:
-
-   > psql: error: FATAL: the database system is in recovery mode
-
-   In this case try execute `./run.sh load-db`.
-
-   The following error might appear if you don't specify a flightroute.csv file:
-
-   > ERROR: missing data for column "flight_route"
-   >
-   > CONTEXT: COPY flightroute_data, line 2: ""SAMPLE,EDDH-EDDF,1257415993"")
-
-   You can ignore this error if you don't have a flightroute.csv file.
+   If you get error messages please take a look into [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).  
 
 5. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. On first run after installation it may take up to about 3 minutes until all aircrafts are visible. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed). 
 
