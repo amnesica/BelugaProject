@@ -31,7 +31,7 @@ First hint: doublecheck your `.env` file. All entries with TODO have to be repla
    ```
    until container build was finished. We guess that timeouts occured while downloading objects from repositories. 
 
-#### Populationg database with data
+#### Populating database with data
 
    This will take some time. Be patient :-)
 
