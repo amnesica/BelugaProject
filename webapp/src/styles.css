@@ -1,4 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
+@import "styles/roboto.scss";
+@import "styles/material-icons.scss";
 
 html,
 body {
@@ -11,7 +12,7 @@ body {
 
 /* Use Material Symbols instead of Material Icons */
 mat-icon {
-  font-family: 'Material Symbols Outlined';
+  font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -22,6 +23,6 @@ mat-icon {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -moz-font-feature-settings: 'liga';
+  -moz-font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
 }
