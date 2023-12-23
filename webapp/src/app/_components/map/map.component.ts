@@ -869,20 +869,14 @@ export class MapComponent implements OnInit {
         if (state.matches) {
           // Setze Variable auf 'Mobile'
           this.isDesktop = false;
-
           this.cesiumMapWidth = '100vw';
-
-          // Ändere Modus der Flugzeug-Tabelle
-          this.aircraftTableService.updateWindowMode(this.isDesktop);
         } else {
           // Setze Variable auf 'Desktop'
           this.isDesktop = true;
-
           this.cesiumMapWidth = '40rem';
-
-          // Ändere Modus der Flugzeug-Tabelle
-          this.aircraftTableService.updateWindowMode(this.isDesktop);
         }
+        // Ändere Modus der Flugzeug-Tabelle
+        this.aircraftTableService.updateWindowMode(this.isDesktop);
       });
   }
 
