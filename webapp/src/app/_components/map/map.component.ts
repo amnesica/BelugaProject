@@ -278,6 +278,9 @@ export class MapComponent implements OnInit {
   // Layer für alle Trails vom Server
   allTrailsLayer: LayerGroup | undefined;
 
+  // Boolean, ob Altitude Chart angezeigt werden soll
+  showAltitudeChart: boolean = true;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
@@ -628,8 +631,8 @@ export class MapComponent implements OnInit {
     this.settingsService.showAltitudeChartSource$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showAltitudeChart) => {
-        document.getElementById('altitude_chart')!.style.visibility =
-          showAltitudeChart ? 'visible' : 'hidden';
+        this.showAltitudeChart = showAltitudeChart;
+        this.showHideAltitudeChartElement();
       });
 
     // Zeige oder verstecke Altitude-Chart
@@ -877,6 +880,9 @@ export class MapComponent implements OnInit {
         }
         // Ändere Modus der Flugzeug-Tabelle
         this.aircraftTableService.updateWindowMode(this.isDesktop);
+
+        // Zeige/Verstecke Altitude Chart HTML Element
+        this.showHideAltitudeChartElement();
       });
   }
 
@@ -3917,5 +3923,17 @@ export class MapComponent implements OnInit {
     }
 
     return Promise.resolve();
+  }
+
+  showHideAltitudeChartElement() {
+    if (!this.isDesktop) {
+      document.getElementById('altitude_chart')!.style.visibility = 'hidden';
+    } else {
+      if (this.showAltitudeChart) {
+        document.getElementById('altitude_chart')!.style.visibility = 'visible';
+      } else {
+        document.getElementById('altitude_chart')!.style.visibility = 'hidden';
+      }
+    }
   }
 }

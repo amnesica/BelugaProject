@@ -244,6 +244,7 @@
 
         <mat-slide-toggle
           [checked]="showAltitudeChart"
+          [disabled]="!isDesktop"
           (click)="$event.stopPropagation()"
           (change)="toggleAltitudeChart($event.checked)"
           >Show Altitude Chart</mat-slide-toggle

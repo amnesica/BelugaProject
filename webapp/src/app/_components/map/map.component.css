@@ -160,6 +160,7 @@ td {
   width: 100vw;
   pointer-events: none;
   transform: scale(2);
+  visibility: hidden;
 }
 
 #cesium-map {
