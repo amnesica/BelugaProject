@@ -17,9 +17,11 @@ public class Model3DService {
     final String pathTo3dModels = modelDirectory + File.separator;
     byte[] model;
 
-    if (!"ISS".equals(type) && !"A337".equals(type)) {
-      type = "Cesium_Air";
-    }
+    /*if (!"ISS".equals(type) && !"A337".equals(type) && !"A320".equals(type) && !"A380".equals(type)) {
+      type = "A380";
+    }*/
+
+    type = mapTypeToModel(type);
 
     try {
       model = getModelFromResources(pathTo3dModels + type + ".glb");
@@ -28,6 +30,19 @@ public class Model3DService {
     }
 
     return model;
+  }
+
+  private String mapTypeToModel(String type) {
+    return switch (type) {
+      case "A320", "A20N" -> "A320";
+      case "A337" -> "A337";
+      case "A346" -> "A346";
+      case "A359", "A35K" -> "A359";
+      case "A380" -> "A380";
+      case "EC35", "EC45" -> "EC35";
+      case "ISS" -> "ISS";
+      default -> "Cesium_Air";
+    };
   }
 
   private byte[] getModelFromResources(String path) throws IOException {

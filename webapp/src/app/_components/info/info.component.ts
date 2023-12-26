@@ -296,7 +296,7 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   /**
-   * Platzhalter für weitere Funktionalität
+   * Zeige eine Snackbar mit message und action string
    */
   openSnackBar(message: string, action: string) {
     if (this.showInfoLarge) {
@@ -352,6 +352,14 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
    * nicht
    */
   toggleShow3dMap() {
+    if (this.aircraft?.altitude == undefined) {
+      this.openSnackBar(
+        'Current aircraft has no altitude. 3D view is not available',
+        'OK'
+      );
+      return;
+    }
+
     // Kontaktiere Map-Component
     this.show3dMapEvent.emit();
   }
