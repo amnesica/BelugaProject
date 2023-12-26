@@ -440,7 +440,12 @@ export class CesiumComponent implements OnInit {
     if (!this.scene || !this.viewer || !aircraft) return;
 
     // Überspringe aircraft, wenn altitude nicht gesetzt ist
-    if (!aircraft.altitude) return;
+    if (
+      aircraft.altitude == undefined ||
+      aircraft.altitude == null ||
+      !aircraft.altitude
+    )
+      return;
 
     const hex = aircraft.hex;
     const type = aircraft.type;
