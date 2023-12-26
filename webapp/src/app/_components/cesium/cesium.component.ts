@@ -451,8 +451,9 @@ export class CesiumComponent implements OnInit {
     const type = aircraft.type;
     const position: any = this.create3dPosition(aircraft);
 
-    const lastTrack = aircraft.track ? aircraft.track : 0;
-    const lastRoll = aircraft.roll ? aircraft.roll : 0;
+    const lastTrack = aircraft.track ? aircraft.track + 90 : 0;
+    // Ändere Vorzeichen von roll-Wert, damit Winkel richtig dargestellt wird
+    const lastRoll = aircraft.roll ? aircraft.roll * -1 : 0;
 
     const heading = Cesium.Math.toRadians(lastTrack);
     const pitch = Cesium.Math.toRadians(0);
@@ -518,7 +519,7 @@ export class CesiumComponent implements OnInit {
     if (type == 'ISS') pitch = Cesium.Math.toRadians(-25);
 
     const hprCockpit = new Cesium.HeadingPitchRoll(
-      Cesium.Math.toRadians(lastTrack),
+      Cesium.Math.toRadians(lastTrack - 90),
       pitch,
       roll
     );
