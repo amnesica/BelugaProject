@@ -231,7 +231,12 @@
 
   <!-- Altitude-Chart -->
   <div id="altitude_chart" class="ol-unselectable ol-control">
-    <img src="../../../assets/altitude_chart.svg" alt="altitude chart" />
+    <div *ngIf="darkMode">
+      <img src="../../../assets/altitude_chart_dark.svg" alt="altitude chart" />
+    </div>
+    <div *ngIf="!darkMode">
+      <img src="../../../assets/altitude_chart.svg" alt="altitude chart" />
+    </div>
   </div>
 
   <!-- Cesium-3d-Map -->
