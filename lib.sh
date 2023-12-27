@@ -28,15 +28,28 @@ aircraft_mictronics_database_aircrafts_csv="aircrafts.csv"
 aircraft_mictronics_database_operators_csv="operators.csv"
 aircraft_mictronics_database_types_csv="types.csv"
 
+load_belugadb_func=loadBelugaDbFunctions
+load_belugadb_func_filename_sh=$load_belugadb_func.sh
+load_belugadb_func_filename_sql=$load_belugadb_func.sql
+path_load_belugadb_func_sh=assets/scripts/$load_belugadb_func_filename_sh
+path_load_belugadb_func_sql=assets/scripts/$load_belugadb_func_filename_sql
+load_belugadb_func_output_file=$load_belugadb_func-output.txt
+
 load_beluga_db=loadBelugaDb
-load_beluga_db_filename=$load_beluga_db.sh
-path_load_beluga_db=assets/scripts/$load_beluga_db_filename
+load_beluga_db_filename_sh=$load_beluga_db.sh
+load_beluga_db_filename_sql=$load_beluga_db.sql
+path_load_beluga_db_sh=assets/scripts/$load_beluga_db_filename_sh
+path_load_beluga_db_sql=assets/scripts/$load_beluga_db_filename_sql
 load_beluga_db_output_file=$load_beluga_db-output.txt
 
 load_aircraftdata=loadAircraftData
-load_aircraftdata_filename=$load_aircraftdata.sh
-path_load_aircraftdata=assets/scripts/$load_aircraftdata_filename
+load_aircraftdata_filename_sh=$load_aircraftdata.sh
+load_aircraftdata_filename_sql=$load_aircraftdata.sql
+path_load_aircraftdata_sh=assets/scripts/$load_aircraftdata_filename_sh
+path_load_aircraftdata_sql=assets/scripts/$load_aircraftdata_filename_sql
 load_aircraftdata_output_file=$load_aircraftdata-output.txt
+
+dbfunction_get_stat_belugaDb="getBelugaDbStatistics()"
 
 _ask_user_with_message() {
   read -p "$1" choice
@@ -254,16 +267,31 @@ _install_python_on_postgres_container() {
   echo "-> Installing python3 on $container_name_db container to execute $json_to_csv_script_filename. Done."
 }
 
+_copy_load_db_func_script_to_container() {
+  echo "Copy $load_belugadb_func_filename_sh to container ..."
+  docker cp $path_load_belugadb_func_sh $container_name_db:$load_belugadb_func_filename_sh
+  echo "-> Copy $load_belugadb_func_filename_sh to container. Done."
+  echo "Copy $load_belugadb_func_filename_sql to container ..."
+  docker cp $path_load_belugadb_func_sql $container_name_db:$load_belugadb_func_filename_sql
+  echo "-> Copy $load_belugadb_func_filename_sql to container. Done."
+}
+
 _copy_load_db_script_to_container() {
-  echo "Copy $load_beluga_db_filename to container ..."
-  docker cp $path_load_beluga_db $container_name_db:$load_beluga_db_filename
-  echo "-> Copy $load_beluga_db_filename to container. Done."
+  echo "Copy $load_beluga_db_filename_sh to container ..."
+  docker cp $path_load_beluga_db_sh $container_name_db:$load_beluga_db_filename_sh
+  echo "-> Copy $load_beluga_db_filename_sh to container. Done."
+  echo "Copy $load_beluga_db_filename_sql to container ..."
+  docker cp $path_load_beluga_db_sql $container_name_db:$load_beluga_db_filename_sql
+  echo "-> Copy $load_beluga_db_filename_sql to container. Done."
 }
 
 _copy_load_aircraftdata_script_to_container() {
-  echo "Copy $load_aircraftdata_filename to container ..."
-  docker cp $path_load_aircraftdata $container_name_db:$load_aircraftdata_filename
-  echo "-> Copy $load_aircraftdata_filename to container. Done."
+  echo "Copy $load_aircraftdata_filename_sh to container ..."
+  docker cp $path_load_aircraftdata_sh $container_name_db:$load_aircraftdata_filename_sh
+  echo "-> Copy $load_aircraftdata_filename_sh to container. Done."
+  echo "Copy $load_aircraftdata_filename_sql to container ..."
+  docker cp $path_load_aircraftdata_sql $container_name_db:$load_aircraftdata_filename_sql
+  echo "-> Copy $load_aircraftdata_filename_sql to container. Done."
 }
 
 _copy_convert_mictronics_jsons_to_csv_script_to_container() {
@@ -272,16 +300,22 @@ _copy_convert_mictronics_jsons_to_csv_script_to_container() {
   echo "-> Copy $json_to_csv_script_filename to container. Done."
 }
 
+_exec_load_db_func_script() {
+  echo "Execute $load_belugadb_func_filename_sh on container to populate database with content ..."
+  docker exec $container_name_db bash -c ". $load_belugadb_func_filename_sh" | tee $load_belugadb_func_output_file
+  echo "-> Execute $load_belugadb_func_filename_sh on container to populate database with content. Done."
+}
+
 _exec_load_db_script() {
-  echo "Execute $load_beluga_db_filename on container to populate database with content ..."
-  docker exec $container_name_db bash -c ". $load_beluga_db_filename" | tee $load_beluga_db_output_file
-  echo "-> Execute $load_beluga_db_filename on container to populate database with content. Done."
+  echo "Execute $load_beluga_db_filename_sh on container to populate database with content ..."
+  docker exec $container_name_db bash -c ". $load_beluga_db_filename_sh" | tee $load_beluga_db_output_file
+  echo "-> Execute $load_beluga_db_filename_sh on container to populate database with content. Done."
 }
 
 _exec_load_aircraftdata_script() {
-  echo "Execute $load_aircraftdata_filename on container to populate database with aircraftdata ..."
-  docker exec $container_name_db bash -c ". $load_aircraftdata_filename" | tee $load_aircraftdata_output_file
-  echo "-> Execute $load_aircraftdata_filename on container to populate database with aircraftdata. Done."
+  echo "Execute $load_aircraftdata_filename_sh on container to populate database with aircraftdata ..."
+  docker exec $container_name_db bash -c ". $load_aircraftdata_filename_sh" | tee $load_aircraftdata_output_file
+  echo "-> Execute $load_aircraftdata_filename_sh on container to populate database with aircraftdata. Done."
 }
 
 _load_db_content() {
@@ -319,7 +353,9 @@ _load_db_content() {
 
   _copy_load_aircraftdata_script_to_container
   _copy_load_db_script_to_container
+  _copy_load_db_func_script_to_container
 
+  _exec_load_db_func_script
   _exec_load_aircraftdata_script
   _exec_load_db_script
 }
@@ -378,7 +414,9 @@ echo "Download $airport_database_filename ... "
   _copy_db_content_to_container
   _copy_load_aircraftdata_script_to_container
   _copy_load_db_script_to_container
+  _copy_load_db_func_script_to_container
 
+  _exec_load_db_func_script
   _exec_load_aircraftdata_script
   _exec_load_db_script
 }
@@ -405,6 +443,13 @@ _check_tables_exist() {
       sleep 1
     fi
   done
+}
+
+_get_stat_belugaDb() {
+  local postgres_db=$(docker exec $container_name_db bash -c "echo \$POSTGRES_DB")
+  local postgres_user=$(docker exec $container_name_db bash -c "echo \$POSTGRES_USER")
+  echo "-> Retrieving data from Postgres database ..."
+  docker exec $container_name_db psql $postgres_db $postgres_user -c "select $dbfunction_get_stat_belugaDb;"
 }
 
 _install() {

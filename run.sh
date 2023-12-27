@@ -26,6 +26,7 @@ commands:
   load-db                               Fill database in postgres container if tables were created
   update-db                             Update database in postgres container (db maintenance)
   tables-exist                          Check if tables in postgres container were created by spring
+  stat-db                               Show BelugaDB statistics
   env                                   Show current environment variables in .env file
   install                               Install project (build docker images and populate database)
 EOF
@@ -47,6 +48,7 @@ case ${CMD} in
   load-db) _load_db_content ;;
   update-db) _update_db_content ;;
   tables-exist) _check_tables_exist ;;
+  stat-db) _get_stat_belugaDb ;;
   env) _env ;;
   install) _install ;;
   *) _usage ;;

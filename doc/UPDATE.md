@@ -194,6 +194,7 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
       load-db                               Fill database in postgres container if tables were created
       update-db                             Update database in postgres container (db maintenance)
       tables-exist                          Check if tables in postgres container were created by spring
+      stat-db                               Show BelugaDB statistics                              
       env                                   Show current environment variables in .env file
       install                               Install project (build docker images and populate database)
    ```
