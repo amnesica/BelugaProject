@@ -428,7 +428,7 @@ _env() {
 
 _check_tables_exist() {
   local table_does_not_exist=true
-  local table_to_check=opensky_aircraft
+  local table_to_check=remote_aircraft
   local postgres_db=$(docker exec $container_name_db bash -c "echo \$POSTGRES_DB")
   local postgres_user=$(docker exec $container_name_db bash -c "echo \$POSTGRES_USER")
 
