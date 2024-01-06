@@ -130,6 +130,7 @@ export class SettingsComponent implements OnInit {
   showAircraftLabels: boolean = false;
   showAirports: boolean = true;
   showOpenskyPlanes: boolean = false;
+  showAirplanesLivePlanes: boolean = false;
   showIss: boolean = true;
   showAircraftPositions: boolean = true;
   showOnlyMilitaryPlanes: boolean = false;
@@ -942,5 +943,14 @@ export class SettingsComponent implements OnInit {
     this.showTrailData = checked;
 
     this.settingsService.toggleTrailData(this.showTrailData);
+  }
+
+  toggleAirplanesLivePlanes(checked: boolean) {
+    this.showAirplanesLivePlanes = checked;
+
+    // Kontaktiere Map-Component und übergebe showAirplanesLivePlanes-Boolean
+    this.settingsService.toggleAirplanesLivePlanes(
+      this.showAirplanesLivePlanes
+    );
   }
 }

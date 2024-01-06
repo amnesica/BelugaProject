@@ -4,7 +4,7 @@ import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.config.Feeder;
 import com.amnesica.belugaproject.entities.aircraft.Aircraft;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
-import com.amnesica.belugaproject.entities.aircraft.OpenskyAircraft;
+import com.amnesica.belugaproject.entities.aircraft.RemoteAircraft;
 import com.amnesica.belugaproject.services.data.FlightrouteDataService;
 import com.amnesica.belugaproject.services.data.OperatorDataService;
 import com.amnesica.belugaproject.services.data.RegcodeDataService;
@@ -61,19 +61,21 @@ public class AircraftService {
   }
 
   /**
-   * Erstellt ein neues Flugzeug (OpenskyAircraft)
+   * Erstellt ein neues Remote-Flugzeug (von Opensky oder Airplanes-Live)
    *
-   * @param element JSONObject
-   * @param feeder  Feeder
+   * @param aircraft JSONObject
+   * @param feeder   Feeder
    * @return OpenskyAircraft
    */
-  public OpenskyAircraft createNewOpenskyAircraft(JSONObject element, Feeder feeder) {
+  public RemoteAircraft createNewRemoteAircraft(JSONObject aircraft, Feeder feeder) {
     // Erstelle Flugzeug
-    OpenskyAircraft aircraftNew = new OpenskyAircraft(element.getString("hex").toLowerCase().trim(),
-        element.getDouble("lat"), element.getDouble("lon"));
+    RemoteAircraft aircraftNew = new RemoteAircraft(aircraft.getString("hex").toLowerCase().trim(),
+        aircraft.getDouble("lat"), aircraft.getDouble("lon"));
+
+    aircraftNew.setIsFromRemote(feeder.getName());
 
     // Setze spezifische Werte der Feeder
-    setValuesToAircraft(feeder, element, aircraftNew);
+    setValuesToAircraft(feeder, aircraft, aircraftNew);
 
     return aircraftNew;
   }

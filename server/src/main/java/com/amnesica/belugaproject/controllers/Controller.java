@@ -30,9 +30,11 @@ public class Controller {
   @Autowired
   private LocalFeederService localFeederService;
   @Autowired
-  private OpenskyService openskyService;
+  private RemoteService remoteService;
   @Autowired
   private SpacecraftService spacecraftService;
+  @Autowired
+  private OpenskyService openskyService;
 
   @Autowired
   private AircraftService aircraftService;
@@ -83,7 +85,7 @@ public class Controller {
    * @param lomax            upper bound for the longitude in decimal degrees
    * @param lamax            upper bound for the latitude in decimal degrees
    * @param selectedFeeder   List<String>, Ausgewählte Feeder (oder keiner)
-   * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
+   * @param fetchRemote      String, ob Remote-Flugzeuge ("Opensky" oder "Airplanes-Live") angefragt werden soll
    * @param showIss          Boolean, ob ISS abgefragt werden soll
    * @param markedHex        String, hex des markierten Flugzeugs
    * @param showOnlyMilitary Boolean, ob nur Militär angezeigt werden soll
@@ -94,12 +96,12 @@ public class Controller {
   Collection<AircraftSuperclass> getAircraftList(@RequestParam(value = "lomin") double lomin,
                                                  @RequestParam(value = "lamin") double lamin, @RequestParam(value = "lomax") double lomax,
                                                  @RequestParam(value = "lamax") double lamax, @RequestParam(value = "selectedFeeder") List<String> selectedFeeder,
-                                                 @RequestParam(value = "fetchFromOpensky") boolean fetchFromOpensky,
+                                                 @Nullable @RequestParam(value = "fetchRemote") String fetchRemote,
                                                  @RequestParam(value = "showIss") boolean showIss,
                                                  @Nullable @RequestParam(value = "markedHex") String markedHex,
                                                  @RequestParam(value = "showOnlyMilitary") boolean showOnlyMilitary,
                                                  HttpServletRequest httpRequest) {
-    return feederService.getPlanes(lomin, lamin, lomax, lamax, selectedFeeder, fetchFromOpensky,
+    return feederService.getPlanes(lomin, lamin, lomax, lamax, selectedFeeder, fetchRemote,
         showIss, markedHex, showOnlyMilitary, httpRequest);
   }
 
@@ -132,10 +134,10 @@ public class Controller {
   public @ResponseBody
   Object[] getAircraftData(@RequestParam(value = "hex") String hex,
                            @RequestParam(value = "registration") String registration,
-                           @RequestParam(value = "isFromOpensky") boolean isFromOpensky) {
+                           @RequestParam(value = "isFromRemote") boolean isFromRemote) {
 
-    if (isFromOpensky) {
-      return openskyService.getAllAircraftData(hex, registration);
+    if (isFromRemote) {
+      return remoteService.getAllAircraftData(hex, registration);
     } else if (!hex.equals("ISS")) {
       return localFeederService.getAllAircraftData(hex, registration);
     }
@@ -145,29 +147,33 @@ public class Controller {
   /**
    * Holt die Trails zu einem Flugzeug mit einer hex aus der Datenbank. Aus
    * Kompatibilitätsgründen wird hier die Liste an Trails in ein Object[] gepackt.
-   * Wenn isFromOpensky wird nicht die Datenbank abgefragt, sondern die Opensky-API angefragt
+   * Wenn fetchRemote den Wert "Opensky" hat wird nicht die Datenbank abgefragt, sondern die Opensky-API angefragt.
+   * Wenn fetchRemote den Wert "Airplanes-Live" hat, wird kein Trail angefragt, da die Airplanes-Live-API keinen
+   * Endpoint für Trails hat
    *
    * @param hex            String
    * @param selectedFeeder List<String>
-   * @param isFromOpensky  boolean
+   * @param fetchRemote    String, ob Remote-Flugzeuge ("Opensky" oder "Airplanes-Live") angefragt werden soll
    * @return Object[]
    */
   @GetMapping(value = "/getTrail", produces = "application/json")
   public @ResponseBody
   Object[] getTrail(@RequestParam(value = "hex") String hex,
                     @RequestParam(value = "selectedFeeder") List<String> selectedFeeder,
-                    @RequestParam(value = "isFromOpensky") boolean isFromOpensky) {
+                    @Nullable @RequestParam(value = "fetchRemote") String fetchRemote) {
 
     // Baue jeweils Array als Rückgabewert
     if (hex.equals("ISS")) {
       List<SpacecraftTrail> trails = spacecraftTrailService.getAllTrails();
       return new Object[]{trails};
-    } else if (!isFromOpensky) {
+    } else if (fetchRemote == null) {
       List<AircraftTrail> trails = aircraftTrailService.getAllTrails(hex, selectedFeeder);
       return new Object[]{trails};
-    } else {
+    } else if (fetchRemote.equals("Opensky")) {
       List<AircraftTrail> trails = openskyService.getTrail(hex);
       return new Object[]{trails};
+    } else {
+      return null;
     }
   }
 

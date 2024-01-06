@@ -16,8 +16,8 @@ public class StaticValues {
   public static final int RETENTION_DAYS_AIRCRAFT_IN_HISTORY = 365; // 365 Tage
 
   // Opensky-Network - Scheduler
-  public static final int INTERVAL_UPDATE_OPENSKY = 5000; // 5 Sekunden
-  public static final int INTERVAL_REMOVE_OLD_PLANES_OPENSKY = 600000; // 10 Minuten
+  public static final int INTERVAL_UPDATE_REMOTE = 5000; // 5 Sekunden
+  public static final int INTERVAL_REMOVE_OLD_PLANES_REMOTE = 600000; // 10 Minuten
 
   // ISS - Scheduler
   public static final int INTERVAL_UPDATE_ISS = 10000; // 10 Sekunden

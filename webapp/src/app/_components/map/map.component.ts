@@ -113,6 +113,7 @@ export class MapComponent implements OnInit {
   // Default-Werte für Fetch-Booleans
   showAirportsUpdate: boolean = true;
   showOpenskyPlanes: boolean = false;
+  showAirplanesLivePlanes: boolean = false;
   showIss: boolean = true;
   showOnlyMilitary: boolean = false;
 
@@ -411,7 +412,6 @@ export class MapComponent implements OnInit {
           // Aktualisiere Flugzeuge vom Server
           this.updatePlanesFromServer(
             this.selectedFeederUpdate,
-            this.showOpenskyPlanes,
             this.showIss,
             this.showOnlyMilitary
           );
@@ -421,12 +421,34 @@ export class MapComponent implements OnInit {
             this.getAllAircraftData(this.aircraft);
           }
         } else {
-          // Lösche alle bisherigen Opensky-Flugzeuge
-          this.removeAllOpenskyPlanes();
+          // Lösche alle bisherigen Remote-Flugzeuge
+          this.removeAllRemotePlanes();
         }
       });
 
-    // Zeige ISS und Opensky Flugzeuge und Flugzeuge nach selektiertem Feeder an
+    // Zeige Airplanes-Live Flugzeuge und Flugzeuge nach selektiertem Feeder an
+    this.settingsService.showAirplanesLivePlanesSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showAirplanesLivePlanes) => {
+        this.showAirplanesLivePlanes = showAirplanesLivePlanes;
+
+        if (this.showAirplanesLivePlanes) {
+          // Aktualisiere Flugzeuge vom Server
+          this.updatePlanesFromServer(
+            this.selectedFeederUpdate,
+            this.showIss,
+            this.showOnlyMilitary
+          );
+
+          // Aktualisiere Daten des markierten Flugzeugs
+          if (this.aircraft) this.getAllAircraftData(this.aircraft);
+        } else {
+          // Lösche alle bisherigen Remote-Flugzeuge
+          this.removeAllRemotePlanes();
+        }
+      });
+
+    // Zeige ISS und Remote Flugzeuge und Flugzeuge nach selektiertem Feeder an
     this.settingsService.showISS$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showIss) => {
@@ -440,7 +462,6 @@ export class MapComponent implements OnInit {
         // Aktualisiere Flugzeuge vom Server
         this.updatePlanesFromServer(
           this.selectedFeederUpdate,
-          this.showOpenskyPlanes,
           this.showIss,
           this.showOnlyMilitary
         );
@@ -464,7 +485,6 @@ export class MapComponent implements OnInit {
           // Aktualisiere Flugzeuge vom Server
           this.updatePlanesFromServer(
             this.selectedFeederUpdate,
-            this.showOpenskyPlanes,
             this.showIss,
             this.showOnlyMilitary
           );
@@ -1285,7 +1305,6 @@ export class MapComponent implements OnInit {
     window.setInterval(() => {
       this.updatePlanesFromServer(
         this.selectedFeederUpdate,
-        this.showOpenskyPlanes,
         this.showIss,
         this.showOnlyMilitary
       );
@@ -1304,7 +1323,7 @@ export class MapComponent implements OnInit {
         this.mapIsBeingMoved = true;
 
         Globals.webgl &&
-          Globals.amountDisplayedAircraft > 2000 &&
+          Globals.amountDisplayedAircraft > 500 &&
           this.webglLayer?.setOpacity(0.25);
       });
 
@@ -1316,7 +1335,6 @@ export class MapComponent implements OnInit {
         // Aktualisiere Flugzeuge auf der Karte
         this.updatePlanesFromServer(
           this.selectedFeederUpdate,
-          this.showOpenskyPlanes,
           this.showIss,
           this.showOnlyMilitary
         );
@@ -1540,7 +1558,6 @@ export class MapComponent implements OnInit {
    */
   updatePlanesFromServer(
     selectedFeeder: any,
-    fetchFromOpensky: boolean,
     showIss: boolean,
     showOnlyMilitary: boolean
   ) {
@@ -1556,6 +1573,8 @@ export class MapComponent implements OnInit {
     // Starte Fetch
     this.pendingFetchesPlanes += 1;
 
+    const fetchRemote = this.getRemoteNetworkParamter();
+
     // Mache Server-Aufruf und subscribe (0: lomin, 1: lamin, 2: lomax, 3: lamax)
     this.serverService
       .getPlanesUpdate(
@@ -1564,7 +1583,7 @@ export class MapComponent implements OnInit {
         extent[2],
         extent[3],
         selectedFeeder,
-        fetchFromOpensky,
+        fetchRemote,
         showIss,
         this.aircraft ? this.aircraft.hex : null, // hex des markierten Flugzeugs
         showOnlyMilitary
@@ -1727,7 +1746,7 @@ export class MapComponent implements OnInit {
         .getAllAircraftData(
           aircraft.hex,
           aircraft.registration,
-          aircraft.isFromOpensky
+          aircraft.isFromRemote == null ? false : true
         )
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
@@ -1825,14 +1844,23 @@ export class MapComponent implements OnInit {
 
   /**
    * Holt den Trail zu einem Flugzeug vom Server,
-   * wenn es kein Flugzeug von Opensky ist
+   * wenn es kein Flugzeug von Airplanes-Live ist
    * @param aircraft Aircraft
    * @param selectedFeeder Ausgewählter Feeder
    */
   getTrailToAircraft(aircraft: Aircraft, selectedFeeder: any) {
+    if (aircraft.isFromRemote == 'Airplanes-Live') {
+      this.createEmptyTrailForRemoteAircraft(aircraft);
+      return;
+    }
+
     if (aircraft) {
       this.serverService
-        .getTrail(aircraft.hex, selectedFeeder, aircraft.isFromOpensky)
+        .getTrail(
+          aircraft.hex,
+          selectedFeeder,
+          this.showOpenskyPlanes ? 'Opensky' : null
+        )
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           (trailDataJSONObject) => {
@@ -1866,6 +1894,12 @@ export class MapComponent implements OnInit {
           }
         );
     }
+  }
+
+  private createEmptyTrailForRemoteAircraft(aircraft: Aircraft) {
+    aircraft.makeTrail();
+    aircraft.setTrailVisibility2d(true);
+    this.updateCesiumComponentWithAircraft();
   }
 
   /**
@@ -2027,6 +2061,7 @@ export class MapComponent implements OnInit {
           this.aircraft.allDataWasRequested = true;
         } else {
           // Hole nur Trail und update 3d-Komponente
+
           this.getTrailToAircraft(aircraft, this.selectedFeederUpdate);
         }
 
@@ -3119,17 +3154,20 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Entfernt alle Flugzeuge von Opensky
+   * Entfernt alle Remote-Flugzeuge
    */
-  removeAllOpenskyPlanes() {
+  removeAllRemotePlanes() {
     let length = Globals.PlanesOrdered.length;
     let aircraft: Aircraft | undefined;
     for (let i = 0; i < length; i++) {
       aircraft = Globals.PlanesOrdered.shift();
       if (aircraft == null || aircraft == undefined) continue;
 
-      // Wenn Flugzeug von Opensky ist, wird das Flugzeug entfernt
-      if (!aircraft.isMarked && aircraft.isFromOpensky) {
+      // Wenn Flugzeug von Remote ist, wird das Flugzeug entfernt
+      if (
+        !aircraft.isMarked &&
+        (aircraft.isFromRemote != undefined || aircraft.isFromRemote != null)
+      ) {
         // Entferne Flugzeug
         this.removeAircraft(aircraft);
       } else {
@@ -3783,7 +3821,6 @@ export class MapComponent implements OnInit {
     // Aktualisiere Flugzeuge vom Server
     this.updatePlanesFromServer(
       this.selectedFeederUpdate,
-      this.showOpenskyPlanes,
       this.showIss,
       this.showOnlyMilitary
     );
@@ -3934,6 +3971,16 @@ export class MapComponent implements OnInit {
       } else {
         document.getElementById('altitude_chart')!.style.visibility = 'hidden';
       }
+    }
+  }
+
+  getRemoteNetworkParamter(): string | null {
+    if (this.showOpenskyPlanes) {
+      return 'Opensky';
+    } else if (this.showAirplanesLivePlanes) {
+      return 'Airplanes-Live';
+    } else {
+      return null;
     }
   }
 }

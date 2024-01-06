@@ -41,6 +41,7 @@ export class SettingsService {
   private showAltitudeChartSource = new Subject<boolean>();
   private showOnlyMilitaryPlanesSource = new Subject<boolean>();
   private showTrailDataSource = new Subject<boolean>();
+  private showAirplanesLivePlanesSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -84,6 +85,8 @@ export class SettingsService {
   showOnlyMilitaryPlanesSource$ =
     this.showOnlyMilitaryPlanesSource.asObservable();
   showTrailDataSource$ = this.showTrailDataSource.asObservable();
+  showAirplanesLivePlanesSource$ =
+    this.showAirplanesLivePlanesSource.asObservable();
 
   constructor() {}
 
@@ -258,5 +261,10 @@ export class SettingsService {
   toggleTrailData(showTrailData: boolean) {
     this.showTrailDataSource.next(showTrailData);
     return this.showTrailDataSource;
+  }
+
+  toggleAirplanesLivePlanes(showAirplanesLivePlanes: boolean) {
+    this.showAirplanesLivePlanesSource.next(showAirplanesLivePlanes);
+    return this.showAirplanesLivePlanesSource;
   }
 }

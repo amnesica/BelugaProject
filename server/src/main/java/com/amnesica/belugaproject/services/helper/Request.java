@@ -19,6 +19,7 @@ public class Request {
   private Double lomax;
   private Double lamax;
   private String markedHex;
+  private String remote;
 
   @Override
   public int hashCode() {

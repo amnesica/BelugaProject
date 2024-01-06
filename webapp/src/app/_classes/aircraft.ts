@@ -67,7 +67,7 @@ export class Aircraft {
   icaoAircraftType!: any;
   age!: any;
   aircraftState!: any;
-  isFromOpensky!: any;
+  isFromRemote!: string;
   roll: any;
 
   // Daten für Info-Abschnitt PositionOfMinimumDistance
@@ -234,7 +234,7 @@ export class Aircraft {
     selectedHeading: number,
     sourceList: string,
     aircraftState: any,
-    isFromOpensky: any,
+    isFromRemote: string,
     lastUpdate: any,
     isMilitary: any,
     roll: any
@@ -266,7 +266,7 @@ export class Aircraft {
     this.selectedHeading = selectedHeading;
     this.sourceList = sourceList;
     this.aircraftState = aircraftState;
-    this.isFromOpensky = isFromOpensky;
+    this.isFromRemote = isFromRemote;
     this.lastUpdate = lastUpdate;
     this.isMilitary = isMilitary;
     this.roll = roll;
@@ -306,7 +306,7 @@ export class Aircraft {
       aircraftJSONElement.selectedHeading,
       aircraftJSONElement.sourceList,
       aircraftJSONElement.aircraftState,
-      aircraftJSONElement.isFromOpensky,
+      aircraftJSONElement.isFromRemote,
       aircraftJSONElement.lastUpdate,
       aircraftJSONElement.isMilitary,
       aircraftJSONElement.roll
@@ -329,8 +329,8 @@ export class Aircraft {
       false
     );
 
-    // Setze StrokeColor anders, wenn Flugzeug von Opensky kommt
-    if (this.isFromOpensky) {
+    // Setze StrokeColor anders, wenn Flugzeug von Remote kommt
+    if (this.isFromRemote != null || this.isFromRemote != undefined) {
       this.strokeColor = '#fff';
     } else {
       this.strokeColor = '#000';
@@ -581,7 +581,7 @@ export class Aircraft {
     this.urlPhotoDirect = listElement.urlPhotoDirect;
     this.urlPhotoWebsite = listElement.urlPhotoWebsite;
     this.photoPhotographer = listElement.photoPhotographer;
-    this.isFromOpensky = listElement.isFromOpensky;
+    this.isFromRemote = listElement.isFromRemote;
     this.lastUpdate = listElement.lastUpdate;
     this.roll = listElement.roll;
 
@@ -924,18 +924,14 @@ export class Aircraft {
   makeTrail(): void {
     if (this.position === null) return;
 
+    // Initialisiere Trail bei Remote-Flugzeuge, da ansonsten kein Trail geupdatet
+    // wird und 3d-Komponente nicht funktioniert
+    if (this.isFromRemote != undefined) this.initTrail();
+
     if (this.aircraftTrailList === null || this.aircraftTrailList === undefined)
       return;
 
-    if (!this.trail_features) this.createFeatures();
-
-    // Setze Trail-Variablen zurück
-    this.trail_features.clear();
-    this.trail_features3d_line.clear();
-    this.trail_features3d_bar.clear();
-    this.trackLinePoints = [];
-    this.track3d = undefined;
-    this.aircraftTrailAltitudes = undefined;
+    this.initTrail();
 
     for (let i = 0; i < this.aircraftTrailList.length; i++) {
       let longitude = this.aircraftTrailList[i].longitude;
@@ -964,6 +960,18 @@ export class Aircraft {
         this.addLineFeatureToLayer(reenteredAircraft, altitude);
       }
     }
+  }
+
+  initTrail() {
+    if (!this.trail_features) this.createFeatures();
+
+    // Setze Trail-Variablen zurück
+    this.trail_features.clear();
+    this.trail_features3d_line.clear();
+    this.trail_features3d_bar.clear();
+    this.trackLinePoints = [];
+    this.track3d = undefined;
+    this.aircraftTrailAltitudes = undefined;
   }
 
   /**

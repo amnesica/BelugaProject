@@ -77,10 +77,18 @@
 
         <mat-slide-toggle
           [checked]="showOpenskyPlanes"
-          [disabled]="!openskyCredentialsExist"
+          [disabled]="!openskyCredentialsExist || showAirplanesLivePlanes"
           (click)="$event.stopPropagation()"
           (change)="toggleOpenskyPlanes($event.checked)"
           >Fetch from Opensky-Network</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
+          [checked]="showAirplanesLivePlanes"
+          [disabled]="showOpenskyPlanes"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAirplanesLivePlanes($event.checked)"
+          >Fetch from Airplanes-Live (250nm max)</mat-slide-toggle
         >
 
         <div style="display: flex; justify-content: start; align-items: center">

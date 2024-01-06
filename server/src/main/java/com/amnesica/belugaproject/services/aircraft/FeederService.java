@@ -4,7 +4,7 @@ import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.config.Feeder;
 import com.amnesica.belugaproject.entities.aircraft.Aircraft;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
-import com.amnesica.belugaproject.entities.aircraft.OpenskyAircraft;
+import com.amnesica.belugaproject.entities.aircraft.RemoteAircraft;
 import com.amnesica.belugaproject.services.data.MapCatToShapeDataService;
 import com.amnesica.belugaproject.services.data.MapTypeToShapeDataService;
 import com.amnesica.belugaproject.services.data.ShapeDataService;
@@ -23,7 +23,7 @@ public class FeederService {
   @Autowired
   private LocalFeederService localFeederService;
   @Autowired
-  private OpenskyService openskyService;
+  private RemoteService remoteService;
   @Autowired
   private SpacecraftService spacecraftService;
 
@@ -44,18 +44,18 @@ public class FeederService {
   /**
    * Öffentliche Methode zum Abfragen von Flugzeugen innerhalb eines Extents
    *
-   * @param lomin            lower bound for the longitude in decimal degrees
-   * @param lamin            lower bound for the latitude in decimal degrees
-   * @param lomax            upper bound for the longitude in decimal degrees
-   * @param lamax            upper bound for the latitude in decimal degrees
-   * @param selectedFeeder   List<String>, Ausgewählte Feeder (oder keiner)
-   * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
-   * @param showIss          Boolean, ob ISS abgefragt werden soll
+   * @param lomin          lower bound for the longitude in decimal degrees
+   * @param lamin          lower bound for the latitude in decimal degrees
+   * @param lomax          upper bound for the longitude in decimal degrees
+   * @param lamax          upper bound for the latitude in decimal degrees
+   * @param selectedFeeder List<String>, Ausgewählte Feeder (oder keiner)
+   * @param fetchRemote    Boolean, ob Remote-Flugzeug angefragt werden soll ("Opensky" oder "Airplanes-Live")
+   * @param showIss        Boolean, ob ISS abgefragt werden soll
    * @return HashSet<AircraftSuperclass>
    */
   @Async
   public HashSet<AircraftSuperclass> getPlanes(Double lomin, Double lamin, Double lomax, Double lamax,
-                                               List<String> selectedFeeder, boolean fetchFromOpensky, boolean showIss, String markedHex, boolean showOnlyMilitary, HttpServletRequest httpRequest) {
+                                               List<String> selectedFeeder, String fetchRemote, boolean showIss, String markedHex, boolean showOnlyMilitary, HttpServletRequest httpRequest) {
     if (pendingRequest)
       return null;
 
@@ -71,8 +71,8 @@ public class FeederService {
 
     try {
 
-      // Erstelle Requests für Services, wenn Opensky oder ISS angefragt werden soll
-      createRequestsIfNecessary(lomin, lamin, lomax, lamax, fetchFromOpensky, showIss, markedHex,
+      // Erstelle Requests für Services, wenn Remote oder ISS angefragt werden soll
+      createRequestsIfNecessary(lomin, lamin, lomax, lamax, fetchRemote, showIss, markedHex,
           httpRequest.getRemoteAddr());
 
       // Berechne timestamp vor 2 Sekunden, damit nur die Flugzeuge angezeigt werden,
@@ -90,9 +90,9 @@ public class FeederService {
           getIssFromApi(lomin, lamin, lomax, lamax, aircraftSet);
         }
 
-        // Füge Opensky hinzu
-        if (fetchFromOpensky) {
-          getPlanesFromOpensky(lomin, lamin, lomax, lamax, showOnlyMilitary, mapAircraftRaw, aircraftSet);
+        // Füge Remote-Flugzeuge hinzu
+        if (("Opensky".equals(fetchRemote) || "Airplanes-Live".equals(fetchRemote))) {
+          getPlanesFromRemote(lomin, lamin, lomax, lamax, showOnlyMilitary, mapAircraftRaw, aircraftSet, fetchRemote);
         }
       } catch (Exception e) {
         log.error("Server - DB error when fetching and converting planes : Exception = " + e);
@@ -107,15 +107,18 @@ public class FeederService {
     return aircraftSet;
   }
 
-  private void getPlanesFromOpensky(double lomin, double lamin, double lomax, double lamax, boolean showOnlyMilitary, HashMap<String, AircraftSuperclass> mapAircraftRaw, LinkedHashSet<AircraftSuperclass> aircraftSet) {
-    List<OpenskyAircraft> listOpenskyPlanes = openskyService
-        .getOpenskyPlanesWithinExtent(lomin, lamin, lomax, lamax, showOnlyMilitary);
-    if (listOpenskyPlanes != null) {
-      // Prüfe für jedes Opensky-Flugzeug, ob bereits ein lokales Flugzeug mit
+  private void getPlanesFromRemote(double lomin, double lamin, double lomax, double lamax, boolean showOnlyMilitary,
+                                   HashMap<String, AircraftSuperclass> mapAircraftRaw,
+                                   LinkedHashSet<AircraftSuperclass> aircraftSet,
+                                   String fetchRemote) {
+    List<RemoteAircraft> listRemotePlanes = remoteService
+        .getRemotePlanesWithinExtent(lomin, lamin, lomax, lamax, showOnlyMilitary, fetchRemote);
+    if (listRemotePlanes != null) {
+      // Prüfe für jedes Remote-Flugzeug, ob bereits ein lokales Flugzeug mit
       // demselben Hex existiert
-      for (OpenskyAircraft openskyAircraft : listOpenskyPlanes) {
-        if (!mapAircraftRaw.containsKey(openskyAircraft.getHex())) {
-          aircraftSet.add(openskyAircraft);
+      for (RemoteAircraft remoteAircraft : listRemotePlanes) {
+        if (!mapAircraftRaw.containsKey(remoteAircraft.getHex())) {
+          aircraftSet.add(remoteAircraft);
         }
       }
     }
@@ -148,30 +151,30 @@ public class FeederService {
   }
 
   /**
-   * Erstellt einen Request an Opensky und/oder an Open-Notify (ISS), je nach
-   * Booleans fetchFromOpensky und showIss
+   * Erstellt einen Request an Opensky/Airplanes-Live und/oder an ISS-API, je nach
+   * Booleans fetchRemote und showIss
    *
-   * @param lomin            lower bound for the longitude in decimal degrees
-   * @param lamin            lower bound for the latitude in decimal degrees
-   * @param lomax            upper bound for the longitude in decimal degrees
-   * @param lamax            upper bound for the latitude in decimal degrees
-   * @param fetchFromOpensky Boolean, ob Opensky angefragt werden soll
-   * @param showIss          Boolean, ob ISS abgefragt werden soll
+   * @param lomin       lower bound for the longitude in decimal degrees
+   * @param lamin       lower bound for the latitude in decimal degrees
+   * @param lomax       upper bound for the longitude in decimal degrees
+   * @param lamax       upper bound for the latitude in decimal degrees
+   * @param fetchRemote String, ob Remote-API angefragt werden soll ("Opensky" oder "Airplanes-Live")
+   * @param showIss     Boolean, ob ISS abgefragt werden soll
    */
   private void createRequestsIfNecessary(Double lomin, Double lamin, Double lomax, Double lamax,
-                                         boolean fetchFromOpensky, boolean showIss, String markedHex, String ipAddress) {
+                                         String fetchRemote, boolean showIss, String markedHex, String ipAddress) {
 
     if (ipAddress == null || ipAddress.isEmpty())
       return;
 
     // Erstelle Request für ISS- und Opensky-Update mit Extent
     Request request = new Request("Request: " + requestCounter, System.currentTimeMillis(), ipAddress,
-        lomin, lamin, lomax, lamax, markedHex);
+        lomin, lamin, lomax, lamax, markedHex, fetchRemote);
     requestCounter++;
 
-    if (fetchFromOpensky) {
+    if (("Opensky".equals(fetchRemote) || "Airplanes-Live".equals(fetchRemote))) {
       // Packe Request in Opensky-Queue
-      openskyService.addRequest(request);
+      remoteService.addRequest(request);
     }
 
     if (showIss) {

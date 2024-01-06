@@ -122,7 +122,7 @@ public class LocalFeederService {
             aircraftDataService.addAircraftData(aircraftNew);
 
             // Setze Boolean, dass Flugzeug nicht von Opensky ist
-            aircraftNew.setIsFromOpensky(false);
+            aircraftNew.setIsFromRemote(null);
 
             // Füge Timestamp als Zeitpunkt des letzten Updates an
             aircraftNew.setLastUpdate(System.currentTimeMillis());

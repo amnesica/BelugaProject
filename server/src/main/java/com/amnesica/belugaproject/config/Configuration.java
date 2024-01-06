@@ -175,7 +175,7 @@ public class Configuration {
    * @return FeederMapping
    * @throws IOException IOException
    */
-  private FeederMapping getMappingsFromConfig(String typeFeederProperty) throws IOException {
+  public FeederMapping getMappingsFromConfig(String typeFeederProperty) throws IOException {
     FeederMapping mapping = new FeederMapping();
 
     final String pathToFeederMappings = "config" + File.separator + "feederMappings" + File.separator;

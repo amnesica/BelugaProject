@@ -114,8 +114,8 @@ public class AircraftSuperclass {
   // Photograph des Bildes von urlPhotoDirect
   private String photoPhotographer;
 
-  // Boolean, ob Flugzeug von Opensky ist
-  private Boolean isFromOpensky = false;
+  // Flugzeug von "Opensky" oder "Airplanes-Live" ist
+  private String isFromRemote;
 
   // Special Tags
   private String isMilitary;
