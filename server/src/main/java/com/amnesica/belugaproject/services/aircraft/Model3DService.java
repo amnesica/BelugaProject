@@ -17,10 +17,6 @@ public class Model3DService {
     final String pathTo3dModels = modelDirectory + File.separator;
     byte[] model;
 
-    /*if (!"ISS".equals(type) && !"A337".equals(type) && !"A320".equals(type) && !"A380".equals(type)) {
-      type = "A380";
-    }*/
-
     type = mapTypeToModel(type);
 
     try {
@@ -38,7 +34,7 @@ public class Model3DService {
       case "A337" -> "A337";
       case "A346" -> "A346";
       case "A359", "A35K" -> "A359";
-      case "A380" -> "A380";
+      case "A388" -> "A388";
       case "EC35", "EC45" -> "EC35";
       case "ISS" -> "ISS";
       default -> "Cesium_Air";
