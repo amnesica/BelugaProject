@@ -53,6 +53,8 @@ export class CesiumComponent implements OnInit {
   earthAtNightLayer: Cesium.ImageryLayer | undefined;
   initViewOnAircraft: boolean = false;
 
+  elementRef: ElementRef<any>;
+
   // Subscriptions
   private ngUnsubscribe = new Subject();
 
@@ -62,24 +64,7 @@ export class CesiumComponent implements OnInit {
     private snackBar: MatSnackBar,
     private el: ElementRef
   ) {
-    new Promise<any>(() => {
-      this.createCesium3dMap(el);
-    });
-  }
-
-  async createCesium3dMap(el: ElementRef) {
-    if (el == undefined || el == null) return;
-
-    this.createCesiumViewer();
-
-    this.createAirplanePicking();
-
-    this.enableMoonSunOnMap();
-
-    this.setupMapProviders();
-
-    // TODO debug
-    if (this.viewer) this.viewer.scene.debugShowFramesPerSecond = true;
+    this.elementRef = el;
   }
 
   async ngOnInit(): Promise<void> {
@@ -87,6 +72,10 @@ export class CesiumComponent implements OnInit {
 
     // Setze Cesium Ion Default Access Token
     Cesium.Ion.defaultAccessToken = this.cesiumIonDefaultAccessToken;
+
+    //new Promise<any>(() => {
+    this.createCesium3dMap(this.el);
+    //});
 
     // Initiiere Abonnements
     this.initSubscriptions();
@@ -104,6 +93,21 @@ export class CesiumComponent implements OnInit {
     this.destroy3dAssets();
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  async createCesium3dMap(el: ElementRef) {
+    if (el == undefined || el == null) return;
+
+    this.createCesiumViewer();
+
+    this.createAirplanePicking();
+
+    this.enableMoonSunOnMap();
+
+    this.setupMapProviders();
+
+    // TODO debug
+    if (this.viewer) this.viewer.scene.debugShowFramesPerSecond = true;
   }
 
   initSubscriptions() {
@@ -235,10 +239,18 @@ export class CesiumComponent implements OnInit {
   setCameraToAircraftPosition(aircraft: Aircraft) {
     if (!this.camera || !aircraft) return;
 
+    let altitude = aircraft.altitude;
+    if (altitude == 0 || altitude < 0) {
+      altitude = this.getAltitudeWhenOnGround(
+        aircraft.longitude,
+        aircraft.latitude
+      );
+    }
+
     const startPosition = Cesium.Cartesian3.fromDegrees(
       aircraft.position[0],
       aircraft.position[1],
-      aircraft.altitude * 0.3048 * 80
+      altitude * 0.3048 * 20
     );
 
     this.camera.setView({ destination: startPosition });
@@ -370,11 +382,41 @@ export class CesiumComponent implements OnInit {
   }
 
   addPositionToWallPositions(wallSegmentPositions: any, position: any) {
-    if (!wallSegmentPositions) return;
+    if (!wallSegmentPositions || !this.scene) return;
 
     wallSegmentPositions.push(position.longitude);
     wallSegmentPositions.push(position.latitude);
-    wallSegmentPositions.push(position.altitude);
+
+    let altitude = position.altitude;
+    if (position.altitude == 0 || position.altitude < 0) {
+      // Hole Höhe von Terrain (wichtig, wenn Wert "on ground" gesendet wird und keine altitude vorliegt!)
+      altitude = this.getAltitudeWhenOnGround(
+        position.longitude,
+        position.latitude
+      );
+    }
+    wallSegmentPositions.push(altitude);
+  }
+
+  getAltitudeWhenOnGround(lon, lat): number {
+    const defaultHeightInMeters = 5;
+
+    if (!this.scene) return defaultHeightInMeters;
+    let altitude = this.scene.globe.getHeight(
+      Cesium.Cartographic.fromDegrees(lon, lat)
+    );
+
+    if (altitude == undefined) {
+      // default, wenn kein altitude-Wert gefunden wird (in Metern)
+      altitude = defaultHeightInMeters;
+    }
+
+    // Google Photogrammetrie ist höher als normales OSM-Terrain
+    if (this.displayGooglePhotorealistic3D) {
+      altitude += 5;
+    }
+
+    return altitude;
   }
 
   createPolylineAndWall(
@@ -440,12 +482,7 @@ export class CesiumComponent implements OnInit {
     if (!this.scene || !this.viewer || !aircraft) return;
 
     // Überspringe aircraft, wenn altitude nicht gesetzt ist
-    if (
-      aircraft.altitude == undefined ||
-      aircraft.altitude == null ||
-      !aircraft.altitude
-    )
-      return;
+    if (aircraft.altitude == undefined || aircraft.altitude == null) return;
 
     const hex = aircraft.hex;
     const type = aircraft.type;
@@ -491,11 +528,20 @@ export class CesiumComponent implements OnInit {
   }
 
   private create3dPosition(aircraft: Aircraft) {
+    if (!this.scene) return;
+
     let position: any;
     if (aircraft.onGround || aircraft.altitude == 0 || aircraft.altitude < 0) {
+      // Hole Höhe von Terrain (wichtig, wenn Wert "on ground" gesendet wird und keine altitude vorliegt!)
+      let altitude = this.getAltitudeWhenOnGround(
+        aircraft.longitude,
+        aircraft.latitude
+      );
+
       position = Cesium.Cartesian3.fromDegrees(
         aircraft.position[0],
-        aircraft.position[1]
+        aircraft.position[1],
+        altitude
       );
     } else {
       position = Cesium.Cartesian3.fromDegrees(
