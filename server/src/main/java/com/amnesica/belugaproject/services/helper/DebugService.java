@@ -71,8 +71,8 @@ public class DebugService {
       return "Invalid filename for log file.";
 
     // Erstelle Pfad zur Log-Datei mit passendem filename
-    int indexLastSlash = logFilePath.lastIndexOf("/");
-    String pathToLogFile = logFilePath.substring(0, indexLastSlash) + "/" + filename;
+    final int indexLastSlash = logFilePath.lastIndexOf("/");
+    final String pathToLogFile = logFilePath.substring(0, indexLastSlash) + "/" + filename;
 
     try {
       if (filename.endsWith(".gz")) {
