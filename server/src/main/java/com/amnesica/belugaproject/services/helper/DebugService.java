@@ -67,7 +67,7 @@ public class DebugService {
    * @return String
    */
   public String getSpecificLog(String filename) {
-    if (filename == null || filename.isEmpty() || logFilePath == null || logFilePath.isEmpty())
+    if (filename == null || filename.isEmpty() || logFilePath == null || logFilePath.isEmpty() || filename.contains(".."))
       return "Invalid filename for log file.";
 
     // Erstelle Pfad zur Log-Datei mit passendem filename
