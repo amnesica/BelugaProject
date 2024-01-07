@@ -82,6 +82,18 @@
   <button
     mat-button
     class="button-3d-map"
+    id="followPlane3d"
+    (click)="followUnfollowPlane3d()"
+    title="Follow/Unfollow the marked aircraft"
+  >
+    <mat-icon aria-hidden="false" aria-label="close window"
+      >jump_to_element</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
     id="show3dMapFullscreen"
     (click)="show3dMapFullscreen()"
     [style.visibility]="!isDesktop ? 'hidden' : 'visible'"

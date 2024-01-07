@@ -36,7 +36,6 @@ export class CesiumComponent implements OnInit {
   viewer: Cesium.Viewer | undefined;
   scene: Cesium.Scene | undefined;
   camera: Cesium.Camera | undefined;
-  pickedEntity: undefined;
 
   // Settings
   display3dBuildings: boolean = false;
@@ -49,9 +48,16 @@ export class CesiumComponent implements OnInit {
   enableHdr3dMap: boolean = false;
   enableShadowsMap: boolean = false;
   enableDayNightMap: boolean = false;
+  followPlane3d: boolean = false;
 
   earthAtNightLayer: Cesium.ImageryLayer | undefined;
   initViewOnAircraft: boolean = false;
+  entityGroupModel: Cesium.CustomDataSource | undefined;
+
+  cameraFollowsPlaneInitial: any;
+  aircraftPosition!: Cesium.Cartesian3;
+  aircraftTrack!: number;
+  aircraftPitch!: number;
 
   elementRef: ElementRef<any>;
 
@@ -73,9 +79,7 @@ export class CesiumComponent implements OnInit {
     // Setze Cesium Ion Default Access Token
     Cesium.Ion.defaultAccessToken = this.cesiumIonDefaultAccessToken;
 
-    //new Promise<any>(() => {
     this.createCesium3dMap(this.el);
-    //});
 
     // Initiiere Abonnements
     this.initSubscriptions();
@@ -281,11 +285,12 @@ export class CesiumComponent implements OnInit {
     const polylineGroupName = aircraft.hex + '_polyline';
     const wallGroupName = aircraft.hex + '_wall';
 
-    var entityGroupModel = this.getOrCreateEntityGroup(modelGroupName);
+    this.entityGroupModel = this.getOrCreateEntityGroup(modelGroupName);
     var entityGroupPolyline = this.getOrCreateEntityGroup(polylineGroupName);
     var entityGroupWall = this.getOrCreateEntityGroup(wallGroupName);
 
-    if (!entityGroupModel || !entityGroupPolyline || !entityGroupWall) return;
+    if (!this.entityGroupModel || !entityGroupPolyline || !entityGroupWall)
+      return;
 
     if (this.initViewOnAircraft) {
       this.setCameraToAircraftPosition(aircraft);
@@ -300,7 +305,7 @@ export class CesiumComponent implements OnInit {
       entityGroupWall
     );
 
-    this.loadAircraftModel(aircraft, entityGroupModel);
+    this.loadAircraftModel(aircraft, this.entityGroupModel);
   }
 
   getOrCreateEntityGroup(
@@ -486,7 +491,7 @@ export class CesiumComponent implements OnInit {
 
     const hex = aircraft.hex;
     const type = aircraft.type;
-    const position: any = this.create3dPosition(aircraft);
+    const position: Cesium.Cartesian3 = this.create3dPosition(aircraft);
 
     const lastTrack = aircraft.track ? aircraft.track + 90 : 0;
     // Ändere Vorzeichen von roll-Wert, damit Winkel richtig dargestellt wird
@@ -500,6 +505,11 @@ export class CesiumComponent implements OnInit {
       position,
       hpr
     );
+
+    // Wichtig für Follow-Plane-Feature
+    this.aircraftPosition = position;
+    this.aircraftTrack = lastTrack;
+    this.aircraftPitch = pitch;
 
     const orientationProperty = new Cesium.ConstantProperty(orientation);
 
@@ -524,6 +534,10 @@ export class CesiumComponent implements OnInit {
       this.updateCockpitView(type, lastTrack, pitch, roll, position);
     } else {
       entity.show = true;
+    }
+
+    if (this.followPlane3d) {
+      this.makeCameraFollowPlane(entity, lastTrack, pitch, true);
     }
   }
 
@@ -876,5 +890,57 @@ export class CesiumComponent implements OnInit {
     this.viewer.scene.globe.enableLighting = dynamicLighting;
     this.viewer.clock.shouldAnimate = dynamicLighting;
     this.earthAtNightLayer.dayAlpha = dynamicLighting ? 0.0 : 1.0;
+  }
+
+  followUnfollowPlane3d() {
+    if (
+      !this.viewer ||
+      !this.scene ||
+      !this.entityGroupModel ||
+      this.aircraft == null
+    )
+      return;
+    this.followPlane3d = !this.followPlane3d;
+
+    if (this.followPlane3d) {
+      let entity = this.entityGroupModel.entities.getById(
+        this.aircraft.hex + '_model'
+      );
+      if (!entity) {
+        this.followPlane3d = false;
+        return;
+      }
+
+      this.makeCameraFollowPlane(
+        entity,
+        this.aircraftTrack,
+        this.aircraftPitch,
+        false
+      );
+      this.viewer.trackedEntity = entity;
+    } else {
+      this.viewer.trackedEntity = undefined;
+      this.setCameraToAircraftPosition(this.aircraft);
+      this.cameraFollowsPlaneInitial = false;
+    }
+  }
+
+  makeCameraFollowPlane(entity, track, pitch, isPlaneUpdate) {
+    if (!this.viewer || !this.scene || !entity) return;
+
+    if (isPlaneUpdate) {
+      if (!this.cameraFollowsPlaneInitial) {
+        const hpRange = new Cesium.HeadingPitchRange();
+        hpRange.heading = Cesium.Math.toRadians(track - 90);
+        hpRange.pitch = pitch;
+        hpRange.range = 150;
+
+        this.viewer.camera.lookAt(this.aircraftPosition, hpRange);
+
+        this.cameraFollowsPlaneInitial = true;
+      }
+    }
+
+    this.viewer.trackedEntity = entity;
   }
 }
