@@ -1585,7 +1585,9 @@ export class MapComponent implements OnInit {
         selectedFeeder,
         fetchRemote,
         showIss,
-        this.aircraft ? this.aircraft.hex : null, // hex des markierten Flugzeugs
+        this.aircraft && this.aircraft.isFromRemote == null
+          ? this.aircraft.hex
+          : null, // hex des markierten Flugzeugs
         showOnlyMilitary
       )
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -2031,7 +2033,7 @@ export class MapComponent implements OnInit {
         // Verstecke große Info-Component
         this.hideLargeAircraftInfoComponent();
       } else {
-        // Setze Zustand auf 'unmarkiert'
+        // Setze Zustand auf 'markiert'
         this.resetAllMarkedPlanes();
         this.resetAllTrails();
         this.resetAllDrawnCircles();
