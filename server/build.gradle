@@ -8,7 +8,7 @@ apply plugin: "io.spring.dependency-management"
 
 ext {
   postgresqlVersion = "42.6.0"
-  jsonVersion = "20230618"
+  jsonVersion = "20231013"
   hibernateTypesVersion = "2.21.1"
   okhttpVersion = "4.11.0"
   lombokVersion = "1.18.28"
