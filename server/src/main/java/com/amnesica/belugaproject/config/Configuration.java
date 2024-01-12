@@ -14,6 +14,8 @@ import org.springframework.validation.annotation.Validated;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Data
@@ -28,6 +30,11 @@ public class Configuration {
   // Name und Version der App
   private final String appName = "The Beluga Project";
   private final String appVersion = "4-0-0";
+  private final String appStage = "dev";
+
+  final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+  LocalDateTime localDateTime = LocalDateTime.now();
+  private final String appBuildTS = localDateTime.format(CUSTOM_FORMATTER);
 
   // Angezeigte Feeder-Position auf der Karte
   @Value("${location.latitude}")
@@ -165,13 +172,27 @@ public class Configuration {
         + "| |_) |  __/ | |_| | (_| | (_| |  __/| | | (_) | |  __/ (__| |_ \n"
         + "|____/ \\___|_|\\__,_|\\__, |\\__,_|_|   |_|  \\___// |\\___|\\___|\\__|\n"
         + "                    |___/                    |__/   ");
-    System.out.println(" :: " + getAppName() + " :: " + "			" + "Version: "
-        + getAppVersion());
-    System.out.println(" made by RexKramer1 and amnesica");
+    System.out.println(getVersionInfo());
     System.out.println("================================================================");
   }
 
+
   /**
+   * Methode baut die Versions-Info zusammen
+   *
+   * @return versionInfo
+   */
+  public String getVersionInfo() {
+    String versionInfo =
+            " :: " + getAppName() + " ::     " + "Version: " + getAppVersion()
+                    + "       Stage: " + getAppStage() + "\n"
+                    + "                              Build time: " + getAppBuildTS() + "\n"
+             + " made by RexKramer1 and amnesica";
+
+    return versionInfo;
+  }
+
+/**
    * Gibt ein FeederMapping mit den Zuweisungen aus der Konfigurationsdatei mit
    * dem Namen aus typeFeederProperty
    *
