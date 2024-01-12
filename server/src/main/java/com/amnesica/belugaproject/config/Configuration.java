@@ -1,6 +1,5 @@
 package com.amnesica.belugaproject.config;
 
-import com.amnesica.belugaproject.Application;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.validation.annotation.Validated;
 
 import java.io.File;
@@ -95,6 +95,10 @@ public class Configuration {
   @Value("${cesium.googleMaps.api.key:}")
   private String cesiumGoogleMapsApiKey;
 
+  // Directory für Config-Files (dev/prod)
+  @Value("${config.files.directory:}")
+  private String configFilesDirectory;
+
   // Liste mit Feedern aus der Konfigurationsdatei
   private List<Feeder> listFeeder;
 
@@ -178,7 +182,11 @@ public class Configuration {
   public FeederMapping getMappingsFromConfig(String typeFeederProperty) throws IOException {
     FeederMapping mapping = new FeederMapping();
 
-    final String pathToFeederMappings = "config" + File.separator + "feederMappings" + File.separator;
+    if (configFilesDirectory == null || configFilesDirectory.isEmpty()) {
+      throw new IOException("Error: Directory for config files not found.");
+    }
+
+    final String pathToFeederMappings = configFilesDirectory + File.separator + "feederMappings" + File.separator;
 
     if (typeFeederProperty != null && !typeFeederProperty.isEmpty()) {
       Properties propsFeeder = readPropertiesFromResourcesFile(pathToFeederMappings + typeFeederProperty + ".config");
@@ -275,26 +283,25 @@ public class Configuration {
   }
 
   /**
-   * Gibt Properties-Objekt zurück, welches aus dem resources-Verzeichnis mit dem
-   * Namen filename stammt
+   * Gibt Properties-Objekt zurück, welches aus dem angegebenen path stammt
    *
-   * @param filename String
+   * @param path String
    * @return Properties
    * @throws IOException IOException
    */
-  private Properties readPropertiesFromResourcesFile(String filename) throws IOException {
+  public Properties readPropertiesFromResourcesFile(final String path) throws IOException {
     Properties props = new Properties();
-    InputStream configStream = null;
-    try {
-      configStream = Application.class.getResourceAsStream("/" + filename);
-      if (configStream != null) {
-        props.load(configStream);
+
+    if (path.contains("dev")) {
+      // dev
+      try (InputStream inputStream = this.getClass().getResourceAsStream(path)) {
+        props.load(inputStream);
       }
-    } finally {
-      if (configStream != null) {
-        configStream.close();
+    } else {
+      // prod
+      try (InputStream inputStream = new FileSystemResource(path).getInputStream()) {
+        props.load(inputStream);
       }
-      configStream = null;
     }
 
     return props;
