@@ -7,6 +7,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -27,6 +28,10 @@ public class Model3DService {
     try {
       type = getTypeForModelFromResources(type, pathTo3dModels);
       model = getModelFromResources(pathTo3dModels + type + ".glb");
+      if (model == null) {
+        type = "Cesium_Air";
+        model = getModelFromResources(pathTo3dModels + type + ".glb");
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -48,6 +53,9 @@ public class Model3DService {
         return null;
       }
       model = inputStream.readAllBytes();
+    } catch (FileNotFoundException exception) {
+      // Kein model für type vorhanden
+      return null;
     }
     return model;
   }
