@@ -47,3 +47,6 @@ Thumbs.db
 
 # Cache
 .angular
+
+# Environment
+/src/environments/environment.ts
