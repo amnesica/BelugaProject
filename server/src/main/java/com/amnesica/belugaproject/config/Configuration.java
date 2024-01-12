@@ -291,19 +291,9 @@ public class Configuration {
    */
   public Properties readPropertiesFromResourcesFile(final String path) throws IOException {
     Properties props = new Properties();
-
-    if (path.contains("dev")) {
-      // dev
-      try (InputStream inputStream = this.getClass().getResourceAsStream(path)) {
-        props.load(inputStream);
-      }
-    } else {
-      // prod
-      try (InputStream inputStream = new FileSystemResource(path).getInputStream()) {
-        props.load(inputStream);
-      }
+    try (InputStream inputStream = new FileSystemResource(path).getInputStream()) {
+      props.load(inputStream);
     }
-
     return props;
   }
 

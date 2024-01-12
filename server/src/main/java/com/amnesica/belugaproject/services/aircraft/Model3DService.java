@@ -43,25 +43,12 @@ public class Model3DService {
 
   private byte[] getModelFromResources(String path) throws IOException {
     final byte[] model;
-
-    if (path.contains("dev")) {
-      // dev
-      try (InputStream inputStream = this.getClass().getResourceAsStream(path)) {
-        if (inputStream == null) {
-          return null;
-        }
-        model = inputStream.readAllBytes();
+    try (InputStream inputStream = new FileSystemResource(path).getInputStream()) {
+      if (inputStream == null) {
+        return null;
       }
-    } else {
-      // prod
-      try (InputStream inputStream = new FileSystemResource(path).getInputStream()) {
-        if (inputStream == null) {
-          return null;
-        }
-        model = inputStream.readAllBytes();
-      }
+      model = inputStream.readAllBytes();
     }
-
     return model;
   }
 }
