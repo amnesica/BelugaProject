@@ -32,10 +32,6 @@ public class Configuration {
   private final String appVersion = "4-0-0";
   private final String appStage = "dev";
 
-  final static DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-  LocalDateTime localDateTime = LocalDateTime.now();
-  private final String appBuildTS = localDateTime.format(CUSTOM_FORMATTER);
-
   // Angezeigte Feeder-Position auf der Karte
   @Value("${location.latitude}")
   private Double latFeeder;
@@ -176,23 +172,26 @@ public class Configuration {
     System.out.println("================================================================");
   }
 
-
   /**
    * Methode baut die Versions-Info zusammen
    *
    * @return versionInfo
    */
   public String getVersionInfo() {
-    String versionInfo =
-            " :: " + getAppName() + " ::     " + "Version: " + getAppVersion()
-                    + "       Stage: " + getAppStage() + "\n"
-                    + "                              Build time: " + getAppBuildTS() + "\n"
-             + " made by RexKramer1 and amnesica";
+    final DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    final LocalDateTime localDateTime = LocalDateTime.now();
+    final String appBuildTS = localDateTime.format(CUSTOM_FORMATTER);
+
+    final String versionInfo =
+        " :: " + getAppName() + " ::     " + "Version: " + getAppVersion()
+            + "       Stage: " + getAppStage() + "\n"
+            + "                              Build time: " + appBuildTS + "\n"
+            + " made by RexKramer1 and amnesica";
 
     return versionInfo;
   }
 
-/**
+  /**
    * Gibt ein FeederMapping mit den Zuweisungen aus der Konfigurationsdatei mit
    * dem Namen aus typeFeederProperty
    *
