@@ -816,7 +816,9 @@ export class CesiumComponent implements OnInit {
 
   enableMoonSunOnMap() {
     if (!this.viewer || !this.scene) return;
-    this.scene.sun.glowFactor = 2.0;
+    const sunLight = new Cesium.SunLight();
+    this.scene.light = sunLight;
+    this.scene.sun.glowFactor = 1.0;
     this.scene.sunBloom = true;
     this.scene.sun.show = true;
     this.scene.skyBox.show = true;
