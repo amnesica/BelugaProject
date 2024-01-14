@@ -893,6 +893,12 @@ export class CesiumComponent implements OnInit {
     } else {
       if (!this.earthAtNightLayer) return;
       this.earthAtNightLayer.show = false;
+      this.viewer.scene.setTerrain(
+        Cesium.Terrain.fromWorldTerrain({
+          requestVertexNormals: true,
+          requestWaterMask: false,
+        })
+      );
     }
   }
 
