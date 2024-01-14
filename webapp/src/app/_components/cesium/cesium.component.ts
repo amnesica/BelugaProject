@@ -220,7 +220,10 @@ export class CesiumComponent implements OnInit {
       shouldAnimate: true,
       timeline: false,
       animation: false,
-      terrain: Cesium.Terrain.fromWorldTerrain(),
+      terrain: Cesium.Terrain.fromWorldTerrain({
+        requestVertexNormals: true,
+        requestWaterMask: false,
+      }),
     });
     this.scene = this.viewer.scene;
     this.camera = this.viewer.camera;
@@ -840,6 +843,11 @@ export class CesiumComponent implements OnInit {
       globe.atmosphereLightIntensity = 20.0;
       globe.dynamicAtmosphereLighting = true;
       globe.dynamicAtmosphereLightingFromSun = true;
+      this.scene.fog.enabled = true;
+      this.scene.fog.minimumBrightness = 0.3;
+      this.scene.fog.density = 2.0e-4 * 1.0;
+      globe.depthTestAgainstTerrain = true;
+      globe.showGroundAtmosphere = true;
     } else {
       this.viewer.shadows = false;
       this.viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
@@ -847,6 +855,9 @@ export class CesiumComponent implements OnInit {
       globe.atmosphereLightIntensity = 10.0;
       globe.dynamicAtmosphereLighting = false;
       globe.dynamicAtmosphereLightingFromSun = false;
+      this.scene.fog.enabled = false;
+      globe.depthTestAgainstTerrain = false;
+      globe.showGroundAtmosphere = false;
     }
   }
 
