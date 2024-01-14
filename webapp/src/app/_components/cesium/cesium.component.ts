@@ -531,7 +531,7 @@ export class CesiumComponent implements OnInit {
 
     if (this.displayCockpitView3d) {
       entity.show = false;
-      this.updateCockpitView(type, lastTrack, pitch, roll, position);
+      this.updateCockpitView(type, lastTrack, pitch, roll * -1, position);
     } else {
       entity.show = true;
     }
