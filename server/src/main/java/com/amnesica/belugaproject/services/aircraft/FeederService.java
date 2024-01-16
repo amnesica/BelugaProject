@@ -213,6 +213,8 @@ public class FeederService {
     configMap.put("smallScaleIcons", configuration.getSmallScaleIcons());
     configMap.put("appName", buildProperties.getName());
     configMap.put("appVersion", buildProperties.getVersion());
+    configMap.put("appStage", configuration.getAppStage());
+    configMap.put("appBuildTime", buildProperties.getTime());
     configMap.put("circleDistancesInNm", configuration.getListCircleDistancesInNm());
     configMap.put("shapesMap", shapesMap);
     configMap.put("catMap", catMap);

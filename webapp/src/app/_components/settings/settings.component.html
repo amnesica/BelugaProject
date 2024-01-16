@@ -565,6 +565,30 @@
               display: flex;
               justify-content: center;
               height: 1.5rem;
+              font-size: 0.8rem;
+            "
+          >
+            <!-- App-Stage (dev / Master) -->
+            Stage {{ appStage }}
+          </p>
+
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              height: 1.5rem;
+              font-size: 0.8rem;
+            "
+          >
+            <!-- App-BuildTime -->
+            BuildTime {{ appBuildTime *1000 | date: 'yyyy-MM-dd HH:mm:ss'}}
+          </p>
+
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              height: 1.5rem;
               margin-bottom: 2rem;
             "
           >

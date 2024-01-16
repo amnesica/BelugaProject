@@ -153,6 +153,12 @@ export class SettingsComponent implements OnInit {
   // App-Version
   appVersion: any;
 
+  // App-Stage (dev / Master)
+  appStage: any;
+
+  // App-BuildTime
+  appBuildTime: any;
+
   // Boolean, ob POMD-Point angezeigt werden soll
   showPOMDPoint: boolean = false;
 
@@ -370,12 +376,14 @@ export class SettingsComponent implements OnInit {
         this.setSettingsFromLocalStorage();
       });
 
-    // Weise App-Name und App-Version zu
+    // Weise App-Name, App-Version, App-Stage und App-Buildtime zu
     this.settingsService.appNameAndVersion$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((appNameAndVersion) => {
         this.appName = appNameAndVersion[0];
         this.appVersion = appNameAndVersion[1];
+        this.appStage = appNameAndVersion[2];
+        this.appBuildTime = appNameAndVersion[3];
       });
 
     // Weise IP-Adresse des Clients zu

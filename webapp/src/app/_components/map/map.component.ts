@@ -721,9 +721,11 @@ export class MapComponent implements OnInit {
           Globals.globalScaleFactorIcons = configuration.scaleIcons;
           Globals.smallScaleFactorIcons = configuration.smallScaleIcons;
 
-          // Setze App-Name und App-Version
+          // Setze App-Daten (App-Name, App-Version, App-Stage (dev/Master) und App-Buildtime
           Globals.appName = configuration.appName;
           Globals.appVersion = configuration.appVersion;
+          Globals.appStage = configuration.appStage;
+          Globals.appBuildTime = configuration.appBuildTime;
 
           // Setze SitePosition aus neu zugewiesenen Werten
           Globals.SitePosition = [Globals.lonFeeder, Globals.latFeeder];
@@ -816,6 +818,8 @@ export class MapComponent implements OnInit {
             Globals.SitePosition,
             Globals.appName,
             Globals.appVersion,
+            Globals.appStage,
+            Globals.appBuildTime,
             this.circleDistancesInNm.length != 0,
             this.listFeeder.length != 0,
             Globals.shapesMap,
@@ -3082,6 +3086,8 @@ export class MapComponent implements OnInit {
     this.settingsService.sendReceiveAppNameAndVersion([
       Globals.appName,
       Globals.appVersion,
+      Globals.appStage,
+      Globals.appBuildTime,
     ]);
     this.settingsService.sendReceiveClientIp(Globals.clientIp);
     this.settingsService.sendReceiveOpenskyCredentialsExist(

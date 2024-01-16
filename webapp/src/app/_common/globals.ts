@@ -10,9 +10,11 @@ import { Point } from 'ol/geom';
  * Globale Variablen
  */
 export class Globals {
-  // Name und Version der App
+  // Name, Version, Stage und Buildtime der App
   static appName: any;
   static appVersion: any;
+  static appStage: any;
+  static appBuildTime: any;
 
   // Allgemeine Location-Daten und Zoom-Level
   static latFeeder: number;
