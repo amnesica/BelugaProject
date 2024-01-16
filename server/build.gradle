@@ -6,6 +6,10 @@ plugins {
 
 apply plugin: "io.spring.dependency-management"
 
+springBoot {
+  buildInfo()
+}
+
 ext {
   postgresqlVersion = "42.6.0"
   jsonVersion = "20231013"

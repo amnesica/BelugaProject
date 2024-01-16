@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
@@ -14,7 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -26,6 +28,8 @@ public class Configuration {
 
   @Autowired
   private Environment environment;
+  @Autowired
+  private BuildProperties buildProperties;
 
   // Name und Version der App
   private final String appName = "The Beluga Project";
@@ -178,14 +182,15 @@ public class Configuration {
    * @return versionInfo
    */
   public String getVersionInfo() {
-    final DateTimeFormatter CUSTOM_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    final LocalDateTime localDateTime = LocalDateTime.now();
-    final String appBuildTS = localDateTime.format(CUSTOM_FORMATTER);
+    final String PATTERN_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault());
+    final Instant buildTime = buildProperties.getTime();
+    final String formattedBuildTime = formatter.format(buildTime);
 
     final String versionInfo =
         " :: " + getAppName() + " ::     " + "Version: " + getAppVersion()
             + "       Stage: " + getAppStage() + "\n"
-            + "                              Build time: " + appBuildTS + "\n"
+            + "                              Build time: " + formattedBuildTime + "\n"
             + " made by RexKramer1 and amnesica";
 
     return versionInfo;
