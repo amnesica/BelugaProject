@@ -12,6 +12,7 @@ import com.amnesica.belugaproject.services.helper.Request;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,8 @@ public class FeederService {
   private MapTypeToShapeDataService mapTypeToShapeDataService;
   @Autowired
   private ShapeDataService shapeDataService;
+  @Autowired
+  private BuildProperties buildProperties;
 
   @Autowired
   private Configuration configuration;
@@ -208,8 +211,8 @@ public class FeederService {
     configMap.put("lonFeeder", configuration.getLonFeeder());
     configMap.put("scaleIcons", configuration.getScaleIcons());
     configMap.put("smallScaleIcons", configuration.getSmallScaleIcons());
-    configMap.put("appName", configuration.getAppName());
-    configMap.put("appVersion", configuration.getAppVersion());
+    configMap.put("appName", buildProperties.getName());
+    configMap.put("appVersion", buildProperties.getVersion());
     configMap.put("circleDistancesInNm", configuration.getListCircleDistancesInNm());
     configMap.put("shapesMap", shapesMap);
     configMap.put("catMap", catMap);

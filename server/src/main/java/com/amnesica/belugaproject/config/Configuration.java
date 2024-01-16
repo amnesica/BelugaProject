@@ -31,9 +31,7 @@ public class Configuration {
   @Autowired
   private BuildProperties buildProperties;
 
-  // Name und Version der App
-  private final String appName = "The Beluga Project";
-  private final String appVersion = "4-0-0";
+  // Version der App
   private final String appStage = "dev";
 
   // Angezeigte Feeder-Position auf der Karte
@@ -182,14 +180,18 @@ public class Configuration {
    * @return versionInfo
    */
   public String getVersionInfo() {
+    final String appName = buildProperties.getName();
+    final String appVersion = buildProperties.getVersion();
+    final String appStage = getAppStage();
+
     final String PATTERN_FORMAT = "yyyy-MM-dd HH:mm:ss";
     final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault());
     final Instant buildTime = buildProperties.getTime();
     final String formattedBuildTime = formatter.format(buildTime);
 
     final String versionInfo =
-        " :: " + getAppName() + " ::     " + "Version: " + getAppVersion()
-            + "       Stage: " + getAppStage() + "\n"
+        " :: " + appName + " ::     " + "Version: " + appVersion
+            + "       Stage: " + appStage + "\n"
             + "                              Build time: " + formattedBuildTime + "\n"
             + " made by RexKramer1 and amnesica";
 
