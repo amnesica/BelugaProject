@@ -51,8 +51,15 @@ public class AircraftService {
    */
   public Aircraft createNewAircraft(JSONObject element, Feeder feeder) {
     // Erstelle Flugzeug
-    Aircraft aircraftNew = new Aircraft(element.getString("hex").toLowerCase().trim(), element.getDouble("lat"),
-        element.getDouble("lon"));
+    // TODO: alle Feeder außer vrs arbeiten mit hex, lat, lon
+    Aircraft aircraftNew;
+    if (feeder.getType().equals("vrs")) {
+      aircraftNew = new Aircraft(element.getString("Icao").toLowerCase().trim(), element.getDouble("Lat"),
+              element.getDouble("Long"));
+    } else {
+      aircraftNew = new Aircraft(element.getString("hex").toLowerCase().trim(), element.getDouble("lat"),
+              element.getDouble("lon"));
+    }
 
     // Setze spezifische Werte der Feeder
     setValuesToAircraft(feeder, element, aircraftNew);
