@@ -8,9 +8,9 @@
 
 Spring Boot Angular web application that displays one or multiple, local ADS-B feeders along with additional information on a map interface in the browser.
 
-Currently you can use this application out of the box with [Flightradar24](https://www.flightradar24.com/), [tar1090](https://github.com/wiedehopf/tar1090) or [AirSquitter](https://airsquitter.com/) feeders. Other ADS-B feeder can be added aswell.
+Currently you can use this application out of the box with [Flightradar24](https://www.flightradar24.com/), [tar1090](https://github.com/wiedehopf/tar1090), [AirSquitter](https://airsquitter.com/) or [VirtualRadarServer](https://www.virtualradarserver.co.uk/) Rebroadcast Server feeders. Other ADS-B feeder can be added aswell.
 
-It is possible to run the application only with data from the [OpenSky-Network](https://opensky-network.org/), if you have an account there. So you need no local feeders to try out the app.
+It is possible to run the application only with data from the [OpenSky-Network](https://opensky-network.org/), if you have an account there. Besides you can use data from [Airplanes.live](https://airplanes.live/). So you need no local feeders to try out the app.
 
 Additional information about the aircraft are added through a PostgreSQL database with content from [OpenSky-Network](https://opensky-network.org/), [Mictronics](https://www.mictronics.de/aircraft-database/) and [OurAirports](https://ourairports.com/data/). Mictronics data is used with [Open Data Commons Attribution License (ODC-By) v1.0](http://opendatacommons.org/licenses/by/1.0/).
 
@@ -26,8 +26,9 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 
 - View the application on your desktop or mobile (for the android app see folder "android_app")
 - Display on a map in the browser
-  - aircraft from your local ADS-B feeders (like tar1090, AirSquitter, fr24feeder)
-  - aircraft from Opensky-Network (update interval is 5 seconds)
+  - aircraft from your local ADS-B feeders (like tar1090, AirSquitter, fr24feeder, vrs)
+  - aircraft from [OpenSky-Network](https://opensky-network.org/) (update interval is 5 seconds)
+  - aircraft from [Airplanes.live](https://airplanes.live/) (update interval is 5 seconds)
   - the ISS (International Space Station)
 - See additional information about tracked aircraft like model and type, country of registration, operator callsign and more
 - Display aircraft picture from planespotters.net

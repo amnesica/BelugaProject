@@ -57,12 +57,13 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
     - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
     - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
     - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
+    - for vrs use the URL `http://XXX.XXX.XXX.XX/VirtualRadar/AircraftList.json`
 
       ```
       ipFeeder=URL1,URL2
       ```
 
-   3. Enter the **type** of your feeders. Currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder (If you do not have a local feeder, just leave the value empty)
+   3. Enter the **type** of your feeders. Currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder, vrs (If you do not have a local feeder, just leave the value empty)
 
       ```
       typeFeeder=typeoffeeder1,typeoffeeder2
