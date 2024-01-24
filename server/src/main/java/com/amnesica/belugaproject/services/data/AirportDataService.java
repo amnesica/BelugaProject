@@ -40,6 +40,29 @@ public class AirportDataService {
   }
 
   /**
+   * Gibt den ICAO-Code (bspw. EDDH) für einen Flughafen bei Aufruf mit dem IATA-Code (HAM) zurück
+   *
+   * @param iataCode String
+   * @return icaoCode String
+   */
+  public String getAirportIcaoCode(String iataCode) {
+    String icaoCode = null;
+
+    if (iataCode != null && !iataCode.isEmpty() && !iataCode.equals("null")) {
+      // Hole Icao Code aus Datenbank mit Angabe des Iata Codes (bspw. "HAM")
+
+      try {
+        icaoCode = airportDataRepository.findByIataCode(iataCode);
+      } catch (Exception e) {
+        log.error("Server - DB error while reading AirportData for iata_code " + iataCode + ": Exception = " + e);
+      }
+
+    }
+
+    return icaoCode;
+  }
+
+  /**
    * Gibt alle Flughäfen innerhalb eines Extents zurück
    *
    * @param lomin     lower bound for the longitude in decimal degrees

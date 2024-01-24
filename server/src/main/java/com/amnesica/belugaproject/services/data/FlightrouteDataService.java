@@ -48,11 +48,15 @@ public class FlightrouteDataService {
   public void addFlightrouteData(AircraftSuperclass aircraft) {
 
     // Lese Flugrouten-Information für flightId hinzu
+    // Flugroute direkt vom feeder soll aber nicht überschrieben werden
     if (aircraft.getFlightId() != null && !aircraft.getFlightId().isEmpty()) {
-      FlightrouteData flightrouteData = getFlightrouteData(aircraft.getFlightId());
-      if (flightrouteData != null && flightrouteData.getFlightRoute().length() == 9) {
-        aircraft.setOrigin(flightrouteData.getFlightRoute().substring(0, 4));
-        aircraft.setDestination(flightrouteData.getFlightRoute().substring(5, 9));
+      if ((aircraft.getOrigin() == null || aircraft.getOrigin().isEmpty()) &&
+          (aircraft.getDestination() == null || aircraft.getDestination().isEmpty())) {
+        FlightrouteData flightrouteData = getFlightrouteData(aircraft.getFlightId());
+        if (flightrouteData != null && flightrouteData.getFlightRoute().length() == 9) {
+          aircraft.setOrigin(flightrouteData.getFlightRoute().substring(0, 4));
+          aircraft.setDestination(flightrouteData.getFlightRoute().substring(5, 9));
+        }
       }
     }
   }

@@ -5,6 +5,7 @@ import com.amnesica.belugaproject.config.Feeder;
 import com.amnesica.belugaproject.entities.aircraft.Aircraft;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.aircraft.RemoteAircraft;
+import com.amnesica.belugaproject.services.data.AirportDataService;
 import com.amnesica.belugaproject.services.data.FlightrouteDataService;
 import com.amnesica.belugaproject.services.data.OperatorDataService;
 import com.amnesica.belugaproject.services.data.RegcodeDataService;
@@ -24,6 +25,8 @@ import java.util.Calendar;
 public class AircraftService {
   @Autowired
   private RegcodeDataService regcodeDataService;
+  @Autowired
+  private AirportDataService airportDataService;
   @Autowired
   private OperatorDataService operatorDataService;
   @Autowired
@@ -329,12 +332,31 @@ public class AircraftService {
       aircraft.setWindFromDirection(element.getInt(feeder.getMapping().getWindFromDirection()));
     }
 
-    if (destination != null && element.has(destination) && !element.isNull(destination)) {
-      aircraft.setDestination(element.getString(destination));
+    // Virtual Radar Server liefert Origin/Destination im Format IATA-Code plus Airportbezeichnung
+    // Nur der IATA-Code wird extrahiert und über die Datenbank nach ICAO gemappt
+    if (feeder.getType().equals("vrs") && destination != null && element.has(destination) && !element.isNull(destination)) {
+      String iataCode = element.getString(destination).substring(0,3);
+      String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
+      if (icaoCode != null) {
+        element.put(destination, icaoCode);
+        aircraft.setDestination(element.getString(destination));
+      }
+    } else {
+      if (destination != null && element.has(destination) && !element.isNull(destination)) {
+        aircraft.setDestination(element.getString(destination));
+      }
     }
-
-    if (origin != null && element.has(origin) && !element.isNull(origin)) {
-      aircraft.setOrigin(element.getString(origin));
+    if (feeder.getType().equals("vrs") && origin != null && element.has(origin) && !element.isNull(origin)) {
+      String iataCode = element.getString(origin).substring(0,3);
+      String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
+      if (icaoCode != null) {
+        element.put(origin, icaoCode);
+        aircraft.setOrigin(element.getString(origin));
+      }
+    } else {
+      if (origin != null && element.has(origin) && !element.isNull(origin)) {
+        aircraft.setOrigin(element.getString(origin));
+      }
     }
 
     if (squawk != null && element.has(squawk) && !element.isNull(squawk)) {
