@@ -149,12 +149,4 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
       env                                   Show current environment variables in .env file
       install                               Install project (build docker images and populate database)
    ```
-
-7. Add Flightroute data
-
-   Unfortunately, if you want to fill the database table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample. 
-   You can create your own file `flightroute_data.csv` and put it in direcory `assets/dbContent`. To load data from it to the database use this command:
-   ```
-   $ ./run.sh update-db
-   ```
    

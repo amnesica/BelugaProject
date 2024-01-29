@@ -13,8 +13,14 @@ path_db_content=$path_postgresql/dbContent
 aircraft_database_zipfilename=aircraftDatabase.zip
 aircraft_database_filename=aircraftDatabase.csv
 airport_database_filename=airports.csv
+flightroute_database_filename=flightroute_data.csv
 aircraft_database_url=https://opensky-network.org/datasets/metadata/$aircraft_database_zipfilename
 airport_database_url=https://davidmegginson.github.io/ourairports-data/$airport_database_filename
+flightroute_database_zipfilename="vrs_standing_data.zip"
+flightroute_database_url=https://github.com/vradarserver/standing-data/archive/refs/heads/main.zip
+flightroute_database_folder="standing-data-main/routes"
+flightroute_create_csv_script_filename="flightroute_create_csv.py"
+path_flightroute_create_csv_script="assets/scripts/$flightroute_create_csv_script_filename"
 
 aircraft_mictronics_database_zipfilename="indexedDB.zip"
 aircraft_mictronics_database_filename="indexedDB"
@@ -251,6 +257,20 @@ _download_mictronics_aircraft_database() {
   echo "-> Copy $aircraft_mictronics_database_aircrafts_csv, $aircraft_mictronics_database_operators_csv, $aircraft_mictronics_database_types_csv to $path_db_content. Done."
 }
 
+_download_flightroute_database() {
+  echo "Download $flightroute_database_filename from Github repository VRS standing-data ..."
+  docker exec -ti $container_name_db bash -c "wget $flightroute_database_url -O $flightroute_database_zipfilename"
+  docker exec -ti $container_name_db bash -c "unzip $flightroute_database_zipfilename -o"
+  echo "-> Download $flightroute_database_zipfilename from Github repository VRS standing-data. Done."
+
+  _copy_flightroute_create_csv_script_to_container
+  _convert_flightroute_database_to_csv
+
+  echo "Copy $flightroute_database_filename to $path_db_content ..."
+  docker exec -ti $container_name_db bash -c "cp $flightroute_database_filename $path_db_content"
+  echo "-> Copy $flightroute_database_filename to $path_db_content. Done."
+}
+
 _convert_mictronics_database_to_csv() {
   _install_python_on_postgres_container
 
@@ -261,9 +281,18 @@ _convert_mictronics_database_to_csv() {
   echo "-> Converting JSON files of $aircraft_mictronics_database_filename to csv files. Done."
 }
 
+_convert_flightroute_database_to_csv() {
+  _install_python_on_postgres_container
+
+  echo "Combine all csv files in $flightroute_database_folder to one csv file ..."
+  docker exec -ti $container_name_db bash -c "python3 $flightroute_create_csv_script_filename $flightroute_database_folder"
+  echo "-> Combine all csv files in $flightroute_database_folder to one csv file. Done."
+}
+
 _install_python_on_postgres_container() {
   echo "Installing python3 on $container_name_db container to execute $json_to_csv_script_filename ..."
   docker exec -ti $container_name_db bash -c "apk add --no-cache python3 py3-pip"
+  docker exec -ti $container_name_db bash -c "apk add py3-pandas"
   echo "-> Installing python3 on $container_name_db container to execute $json_to_csv_script_filename. Done."
 }
 
@@ -300,6 +329,12 @@ _copy_convert_mictronics_jsons_to_csv_script_to_container() {
   echo "-> Copy $json_to_csv_script_filename to container. Done."
 }
 
+_copy_flightroute_create_csv_script_to_container() {
+  echo "Copy $flightroute_create_csv_script_filename to container ..."
+  docker cp $path_flightroute_create_csv_script $container_name_db:$flightroute_create_csv_script_filename
+  echo "-> Copy $flightroute_create_csv_script_filename to container. Done."
+}
+
 _exec_load_db_func_script() {
   echo "Execute $load_belugadb_func_filename_sh on container to populate database with content ..."
   docker exec $container_name_db bash -c ". $load_belugadb_func_filename_sh" | tee $load_belugadb_func_output_file
@@ -329,7 +364,7 @@ _load_db_content() {
     _copy_db_content_to_container
   else
     echo "-> Directory $path_db_content already exists. Done."
-    echo "-> Use command option -update-db to update database with content from assets/dbContent."
+    _copy_db_content_to_container
   fi
 
   echo "Download $aircraft_database_filename and $airport_database_filename ... "
@@ -349,6 +384,12 @@ _load_db_content() {
     _download_mictronics_aircraft_database
   else
     echo "-> File $aircraft_mictronics_database_zipfilename already exists. Done."
+  fi
+
+  if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $flightroute_database_filename; then echo exists; fi") ]]; then
+    _download_flightroute_database
+  else
+    echo "-> File $flightroute_database_filename already exists. Done."
   fi
 
   _copy_load_aircraftdata_script_to_container
@@ -390,7 +431,7 @@ _update_db_content() {
 echo "Download $airport_database_filename ... "
 
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $airport_database_filename; then echo exists; fi") ]]; then
-    echo "-> file $aircraft_database_filename does not exist, download required."
+    echo "-> file $airport_database_filename does not exist, download required."
     _download_airport_database
   else
     if [[ $# -eq 0 ]]; then
@@ -401,6 +442,28 @@ echo "Download $airport_database_filename ... "
         else
           if [ "$choice" != "${choice#[Nn]}" ] ;then
             echo "-> $airport_database_filename exists. Download for update not requested."
+          else
+            echo "-> Invalid answer: $choice. Operation cancelled. Try again."
+            exit
+          fi
+        fi
+    fi
+  fi
+
+echo "Download $flightroute_database_filename ... "
+
+  if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $flightroute_database_filename; then echo exists; fi") ]]; then
+    echo "-> file $flightroute_database_filename does not exist, download required."
+    _download_flightroute_database
+  else
+    if [[ $# -eq 0 ]]; then
+        _ask_user_for_decision "Do you want to download current version of $flightroute_database_filename (y/n)?"
+        if [ "$choice" != "${choice#[Yy]}" ] ; then
+          echo "$flightroute_database_filename exists. Download for update requested."
+          _download_flightroute_database
+        else
+          if [ "$choice" != "${choice#[Nn]}" ] ;then
+            echo "-> $flightroute_database_filename exists. Download for update not requested."
           else
             echo "-> Invalid answer: $choice. Operation cancelled. Try again."
             exit

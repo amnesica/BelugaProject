@@ -74,19 +74,6 @@ First hint: doublecheck your `.env` file. All entries with TODO have to be repla
    Have you set the right IP adress at PROD_BASE_URL_WEBAPP in your .env file? It must be the IP-adress of your server.
 
 
-### Flightroute data
-
-   Unfortunately we have not found an `open` source for flight route information. This is the reason why route information (callsign/flightid with origin and destination airport) cannot be shown in BelugaProject by default.
-
-   If you know an open (!) source for flightroute data please contact us.
-
-   If you want to fill the database table `flightroute_data` you have to provide the data yourself. The provided csv file is just a sample.
-
-   You can create your own `flightroute_data.csv` file and put it into folder `assets/dbContent`. To load data from here into to the database use this command:
-   ```
-   $ ./run.sh update-db
-   ```
-
 ### Opensky Network
 BelugaProject can show aircraft from [Opensky network](https://opensky-network.org/) only when you set valid Opensky-Credentials in your .env file. Otherwise option "Fetch from Opensky-Network" is not availible in BelugaProject Map settings.
 

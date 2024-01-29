@@ -253,8 +253,7 @@ echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE flightroute_data;" -U beluga -d belugaDb
 psql -c "COPY flightroute_data (
 			flight_id,
-			flight_route,
-			flight_last_update)
+			flight_route)
 		FROM '$pathToDirectoryWithCsv/flightroute_data.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
 

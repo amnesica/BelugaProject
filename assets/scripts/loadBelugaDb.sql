@@ -240,8 +240,7 @@ DROP TABLE IF EXISTS TMP_OPERATOR_DATA_MICTRONICS;
 TRUNCATE TABLE flightroute_data;
 COPY flightroute_data (
 			flight_id,
-			flight_route,
-			flight_last_update)
+			flight_route)
 		FROM '/var/lib/postgresql/dbContent/flightroute_data.csv' WITH DELIMITER ',' CSV HEADER;
 \echo Done.
 
