@@ -4,7 +4,7 @@
 
 <h1 align="center">The Beluga Project</h1>
 
-![GitHub version](https://img.shields.io/badge/version-v3.1.2-brightgreen)
+![GitHub version](https://img.shields.io/badge/version-v4.0.0-brightgreen)
 
 Spring Boot Angular web application that displays one or multiple, local ADS-B feeders along with additional information on a map interface in the browser.
 
@@ -12,7 +12,7 @@ Currently you can use this application out of the box with [Flightradar24](https
 
 It is possible to run the application only with data from the [OpenSky-Network](https://opensky-network.org/), if you have an account there. Besides you can use data from [Airplanes.live](https://airplanes.live/). So you need no local feeders to try out the app.
 
-Additional information about the aircraft are added through a PostgreSQL database with content from [OpenSky-Network](https://opensky-network.org/), [Mictronics](https://www.mictronics.de/aircraft-database/) and [OurAirports](https://ourairports.com/data/). Mictronics data is used with [Open Data Commons Attribution License (ODC-By) v1.0](http://opendatacommons.org/licenses/by/1.0/).
+Additional information about the aircraft are added through a PostgreSQL database with content from [OpenSky-Network](https://opensky-network.org/), [Mictronics](https://www.mictronics.de/aircraft-database/), [OurAirports](https://ourairports.com/data/), [Virtual Radar Server standing-data](https://github.com/vradarserver/standing-data). Mictronics data is used with [Open Data Commons Attribution License (ODC-By) v1.0](http://opendatacommons.org/licenses/by/1.0/).
 
 The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
 
