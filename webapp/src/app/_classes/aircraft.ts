@@ -99,10 +99,6 @@ export class Aircraft {
 
   //Trail des Flugzeugs als Punkte
   trackLinePoints: any; // 2D-Karte
-
-  trackLinePoints3d: any; //3D-Karte (Line)
-  trackLinePoints3dColors: any; //3D-Karte (Line-Farben)
-
   track3d: any; // Object-Wrapper für 3D-Daten
 
   // Position des Herkunfts-Flughafens
@@ -908,10 +904,6 @@ export class Aircraft {
 
     this.track3d = {
       trailPoints: [],
-      colors: [],
-      tracks: [],
-      rolls: [],
-      isReentered: [],
     };
   }
 
@@ -1012,15 +1004,36 @@ export class Aircraft {
       // Füge neuen Trailpunkt hinzu
       this.addTrack2D(this.longitude, this.latitude);
 
-      this.addTrack3D(
-        this.longitude,
-        this.latitude,
-        this.altitude,
-        new Date().getTime(),
-        this.track,
-        this.roll,
-        false
-      );
+      if (this.track3d) {
+        // Verhindere das Position doppelt in trailPoints ist
+        const lastIndex = this.track3d.trailPoints.length;
+        let lastTrack3d = this.track3d.trailPoints[lastIndex - 1];
+        let lastLon = lastTrack3d.longitude;
+        let lastLat = lastTrack3d.latitude;
+
+        if (lastLon != this.longitude && lastLat && this.latitude) {
+          this.addTrack3D(
+            this.longitude,
+            this.latitude,
+            this.altitude,
+            new Date().getTime(),
+            this.track,
+            this.roll,
+            false
+          );
+        }
+      } else {
+        // Füge auch Trail von Remote-Flugzeugen hinzu (haben kein makeTrail() vorher)
+        this.addTrack3D(
+          this.longitude,
+          this.latitude,
+          this.altitude,
+          new Date().getTime(),
+          this.track,
+          this.roll,
+          false
+        );
+      }
 
       if (this.trackLinePoints.length > 1) {
         this.addLineFeatureToLayer(false, this.altitude);
@@ -1217,35 +1230,27 @@ export class Aircraft {
     if (!this.track3d) {
       this.track3d = {
         trailPoints: [],
-        colors: [],
-        tracks: [],
-        rolls: [],
-        isReentered: [],
       };
     }
 
     this.track3d.trailPoints.push({
       longitude: longitude,
       latitude: latitude,
-      altitude: altitude * 0.3048,
-    });
-
-    this.track3d.colors.push(
-      Markers.getColorFromAltitude(
+      altitude: altitude * 0.3048, // Cesium braucht Meter
+      color: Markers.getColorFromAltitude(
         altitude,
         false,
         false,
         false,
         true,
         isReentered
-      )
-    );
-
-    this.track3d.isReentered.push(isReentered);
-
-    this.track3d.tracks.push(track);
-
-    this.track3d.rolls.push(roll);
+      ),
+      timestamp: timestamp,
+      track: track,
+      isReentered: isReentered,
+      roll: roll,
+      hex: this.hex,
+    });
   }
 
   trackLinePointsAre180Crosspoints() {

@@ -30,18 +30,10 @@
     (click)="show3dBuildings()"
   >
     <mat-icon
-      *ngIf="!display3dBuildings"
       aria-hidden="false"
       aria-label="close window"
-      title="Enable OSM 3D buildings"
+      title="Enable/Disable OSM 3D buildings"
       >domain</mat-icon
-    >
-    <mat-icon
-      *ngIf="display3dBuildings"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Disable OSM 3D buildings"
-      >domain_disabled</mat-icon
     >
   </button>
 
@@ -52,18 +44,10 @@
     (click)="showGooglePhotorealistic3D()"
   >
     <mat-icon
-      *ngIf="!displayGooglePhotorealistic3D"
       aria-hidden="false"
       aria-label="close window"
-      title="Enable Google Maps Photogrammatry"
+      title="Enable/Disable Google Maps Photogrammatry"
       >photo_camera</mat-icon
-    >
-    <mat-icon
-      *ngIf="displayGooglePhotorealistic3D"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Disable Google Maps Photogrammatry"
-      >no_photography</mat-icon
     >
   </button>
 
@@ -121,18 +105,10 @@
     (click)="enableHdr3dOnMap()"
   >
     <mat-icon
-      *ngIf="!enableHdr3dMap"
       aria-hidden="false"
       aria-label="close window"
-      title="Enable HDR, allow anisotropic filter, max msaaSample value (requires high performance!)"
+      title="Enable/Disable HDR, allow anisotropic filter, max msaaSample value (requires high performance!)"
       >hdr_on</mat-icon
-    >
-    <mat-icon
-      *ngIf="enableHdr3dMap"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Disable HDR, disallow anisotropic filter, min msaaSample value"
-      >hdr_off</mat-icon
     >
   </button>
 
@@ -143,18 +119,10 @@
     (click)="enableShadowsOnMap()"
   >
     <mat-icon
-      *ngIf="!enableShadowsMap"
       aria-hidden="false"
       aria-label="close window"
-      title="Enable shadows, lighting"
-      >ev_shadow_add</mat-icon
-    >
-    <mat-icon
-      *ngIf="enableShadowsMap"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Disable shadows, lighting"
-      >ev_shadow_minus</mat-icon
+      title="Enable/Disable shadows, lighting"
+      >ev_shadow</mat-icon
     >
   </button>
 
@@ -165,14 +133,6 @@
     (click)="enableDayNightOnMap()"
   >
     <mat-icon
-      *ngIf="!enableDayNightMap"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Enable day/night imaginery"
-      >light_mode</mat-icon
-    >
-    <mat-icon
-      *ngIf="enableDayNightMap"
       aria-hidden="false"
       aria-label="close window"
       title="Disable day/night imaginery"
