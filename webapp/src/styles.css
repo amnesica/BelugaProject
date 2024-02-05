@@ -34,9 +34,9 @@ mat-icon {
   left: 0;
   bottom: 0;
   right: 0;
-  width: 3rem;
-  height: 3rem;
-  border: 5px solid #f3f3f3;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 5px solid #000;
   border-top: 5px solid #f8c023;
   border-radius: 50%;
   -webkit-animation: spin 400ms linear infinite; /* Safari */
