@@ -45,7 +45,7 @@ export class CesiumComponent implements OnInit {
   display3dMapFullscreen: boolean = false;
   displayTerrain: boolean = false;
   enableHdr3dMap: boolean = false;
-  enableShadowsMap: boolean = false;
+  enableHighQuality: boolean = false;
   enableDayNightMap: boolean = false;
   followPlane3d: boolean = false;
   earthAtNightLayer: Cesium.ImageryLayer | undefined;
@@ -902,15 +902,7 @@ export class CesiumComponent implements OnInit {
 
     this.showClickedBehaviourOnButton('enableHdr3dMap', this.enableHdr3dMap);
 
-    if (this.enableHdr3dMap) {
-      this.scene.highDynamicRange = true;
-      this.scene.msaaSamples = 8;
-      this.scene.postProcessStages.fxaa.enabled = true;
-    } else {
-      this.scene.highDynamicRange = false;
-      this.scene.msaaSamples = 1;
-      this.scene.postProcessStages.fxaa.enabled = false;
-    }
+    this.scene.highDynamicRange = this.enableHdr3dMap;
   }
 
   enableMoonSunOnMap() {
@@ -927,18 +919,18 @@ export class CesiumComponent implements OnInit {
     );
   }
 
-  enableShadowsOnMap() {
+  enableHighQualityOnMap() {
     if (!this.viewer || !this.scene) return;
 
-    this.enableShadowsMap = !this.enableShadowsMap;
+    this.enableHighQuality = !this.enableHighQuality;
 
     this.showClickedBehaviourOnButton(
-      'enableShadowsMap',
-      this.enableShadowsMap
+      'enableHighQualityMap',
+      this.enableHighQuality
     );
 
     const globe = this.scene.globe;
-    if (this.enableShadowsMap) {
+    if (this.enableHighQuality) {
       this.viewer.shadows = true;
       this.viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
       globe.enableLighting = true;
@@ -950,6 +942,8 @@ export class CesiumComponent implements OnInit {
       this.scene.fog.density = 2.0e-4 * 1.0;
       globe.depthTestAgainstTerrain = true;
       globe.showGroundAtmosphere = true;
+      this.scene.msaaSamples = 8;
+      this.scene.postProcessStages.fxaa.enabled = true;
     } else {
       this.viewer.shadows = false;
       this.viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
@@ -960,6 +954,8 @@ export class CesiumComponent implements OnInit {
       this.scene.fog.enabled = false;
       globe.depthTestAgainstTerrain = false;
       globe.showGroundAtmosphere = false;
+      this.scene.msaaSamples = 1;
+      this.scene.postProcessStages.fxaa.enabled = false;
     }
   }
 
