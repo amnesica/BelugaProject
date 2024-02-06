@@ -129,6 +129,20 @@
   <button
     mat-button
     class="button-3d-map"
+    id="enableCloudsMap"
+    (click)="enableCloudsOnMap()"
+  >
+    <mat-icon
+      aria-hidden="false"
+      aria-label="close window"
+      title="Enable/Disable clouds"
+      >cloud</mat-icon
+    >
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
     id="enableDayNightMap"
     (click)="enableDayNightOnMap()"
   >

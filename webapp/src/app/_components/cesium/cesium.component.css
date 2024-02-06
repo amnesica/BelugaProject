@@ -60,8 +60,13 @@
   right: 0;
 }
 
-#enableDayNightMap {
+#enableCloudsMap {
   top: 18rem;
+  right: 0;
+}
+
+#enableDayNightMap {
+  top: 21rem;
   right: 0;
 }
 

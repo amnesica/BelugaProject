@@ -51,6 +51,7 @@ export class CesiumComponent implements OnInit {
   earthAtNightLayer: Cesium.ImageryLayer | undefined;
   initViewOnAircraft: boolean = false;
   cameraFollowsPlaneInitial: any;
+  enableClouds: boolean = false;
 
   aircraftPosition!: Cesium.Cartesian3;
   aircraftTrack!: number;
@@ -1076,5 +1077,61 @@ export class CesiumComponent implements OnInit {
     }
 
     this.viewer.trackedEntity = entity;
+  }
+
+  enableCloudsOnMap() {
+    if (!this.viewer) return;
+
+    this.enableClouds = !this.enableClouds;
+    this.showClickedBehaviourOnButton('enableCloudsMap', this.enableClouds);
+
+    if (this.enableClouds) {
+      const equatorialRadius = 6378137.0;
+      const polarRadius = 6356752.3142;
+      const cloudAltitude = 3500;
+
+      this.viewer.entities.add({
+        id: 'clouds',
+        position: Cesium.Cartesian3.ZERO,
+        orientation: this.computeCloudOrientation(),
+        ellipsoid: {
+          radii: new Cesium.Cartesian3(
+            equatorialRadius + cloudAltitude,
+            equatorialRadius + cloudAltitude,
+            polarRadius + cloudAltitude
+          ),
+          material: new Cesium.ImageMaterialProperty({
+            image: '../../../assets/clouds.png',
+            transparent: true,
+          }),
+          slicePartitions: 128,
+          stackPartitions: 128,
+          distanceDisplayCondition: new Cesium.DistanceDisplayCondition(
+            0.0,
+            Infinity
+          ),
+        },
+      });
+    } else {
+      this.viewer.entities.removeById('clouds');
+    }
+  }
+
+  computeCloudOrientation(): any {
+    if (!this.viewer) return;
+
+    const position = Cesium.Cartesian3.ZERO;
+    const timestamp = Cesium.JulianDate.toDate(
+      this.viewer.clock.currentTime
+    ).getTime();
+    const heading = Cesium.Math.toRadians(timestamp / 1000);
+    const pitch = Cesium.Math.toRadians(0);
+    const roll = 0;
+    const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+    const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+      position,
+      hpr
+    );
+    return orientation;
   }
 }
