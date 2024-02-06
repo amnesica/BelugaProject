@@ -32,7 +32,7 @@ public class SpacecraftTrailService {
       // Erstelle neues Trail-Element
       SpacecraftTrail trail = new SpacecraftTrail(spacecraft.getHex(), spacecraft.getLongitude(),
           spacecraft.getLatitude(), spacecraft.getAltitude(), spacecraft.getReenteredAircraft(),
-          System.currentTimeMillis(), feederName, spacecraft.getSourceCurrentFeeder(), spacecraft.getTrack(), spacecraft.getRoll());
+          spacecraft.getLastUpdate(), feederName, spacecraft.getSourceCurrentFeeder(), spacecraft.getTrack(), spacecraft.getRoll());
 
       try {
         // Speichere Trail in Datenbank

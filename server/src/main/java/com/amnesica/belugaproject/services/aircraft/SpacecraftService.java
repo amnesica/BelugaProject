@@ -107,7 +107,7 @@ public class SpacecraftService {
       iss.setLatitude(jsonObject.getDouble("latitude"));
 
       // Setze aktuelle Zeit als LastUpdate
-      iss.setLastUpdate(jsonObject.getLong("timestamp"));
+      iss.setLastUpdate(jsonObject.getLong("timestamp") * 1000);
 
       // Setze aktuelle Höhe (km -> ft)
       iss.setAltitude((int) HelperService.convertKilometer2Foot(jsonObject.getDouble("altitude")));
