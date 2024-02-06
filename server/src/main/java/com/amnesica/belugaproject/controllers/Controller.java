@@ -169,9 +169,10 @@ public class Controller {
     } else if (fetchRemote == null) {
       List<AircraftTrail> trails = aircraftTrailService.getAllTrails(hex, selectedFeeder);
       return new Object[]{trails};
-    } else if (fetchRemote.equals("Opensky")) {
-      List<AircraftTrail> trails = openskyService.getTrail(hex);
-      return new Object[]{trails};
+      // TODO: Opensky schickt falsche Trails momentan zurück
+      //    } else if (fetchRemote.equals("Opensky")) {
+      //      List<AircraftTrail> trails = openskyService.getTrail(hex);
+      //      return new Object[]{trails};
     } else {
       return null;
     }

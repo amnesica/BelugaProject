@@ -1855,7 +1855,11 @@ export class MapComponent implements OnInit {
    * @param selectedFeeder Ausgewählter Feeder
    */
   getTrailToAircraft(aircraft: Aircraft, selectedFeeder: any) {
-    if (aircraft.isFromRemote == 'Airplanes-Live') {
+    // TODO: Opensky schickt falsche Trails momentan zurück
+    if (
+      aircraft.isFromRemote == 'Airplanes-Live' ||
+      aircraft.isFromRemote == 'Opensky'
+    ) {
       this.createEmptyTrailForRemoteAircraft(aircraft);
       return;
     }
