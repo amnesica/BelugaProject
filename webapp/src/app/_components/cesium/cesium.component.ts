@@ -115,7 +115,7 @@ export class CesiumComponent implements OnInit {
 
     this.createCesiumViewer();
 
-    this.createAirplanePicking();
+    this.removeEntityPicking();
 
     this.enableMoonSunOnMap();
 
@@ -195,21 +195,16 @@ export class CesiumComponent implements OnInit {
     );
   }
 
-  createAirplanePicking() {
+  removeEntityPicking() {
     if (!this.viewer) return;
 
-    this.viewer.screenSpaceEventHandler.setInputAction((movement) => {
-      if (!this.viewer) return;
+    this.viewer.screenSpaceEventHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+    );
 
-      // Picken eines Features
-      const pickedFeature = this.viewer?.scene.pick(movement.position);
-      if (!Cesium.defined(pickedFeature)) {
-        this.viewer?.screenSpaceEventHandler.getInputAction(
-          Cesium.ScreenSpaceEventType.LEFT_CLICK
-        );
-        return;
-      }
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    this.viewer.screenSpaceEventHandler.removeInputAction(
+      Cesium.ScreenSpaceEventType.LEFT_CLICK
+    );
   }
 
   setOsmAsDefaultMapForCesium() {
