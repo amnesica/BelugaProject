@@ -95,7 +95,7 @@ public class FeederService {
 
         // Füge Remote-Flugzeuge hinzu
         if (("Opensky".equals(fetchRemote) || "Airplanes-Live".equals(fetchRemote))) {
-          getPlanesFromRemote(lomin, lamin, lomax, lamax, showOnlyMilitary, mapAircraftRaw, aircraftSet, fetchRemote);
+          getPlanesFromRemote(lomin, lamin, lomax, lamax, showOnlyMilitary, mapAircraftRaw, aircraftSet, fetchRemote, markedHex);
         }
       } catch (Exception e) {
         log.error("Server - DB error when fetching and converting planes : Exception = " + e);
@@ -113,15 +113,24 @@ public class FeederService {
   private void getPlanesFromRemote(double lomin, double lamin, double lomax, double lamax, boolean showOnlyMilitary,
                                    HashMap<String, AircraftSuperclass> mapAircraftRaw,
                                    LinkedHashSet<AircraftSuperclass> aircraftSet,
-                                   String fetchRemote) {
+                                   String fetchRemote,
+                                   String markedHex) {
     List<RemoteAircraft> listRemotePlanes = remoteService
         .getRemotePlanesWithinExtent(lomin, lamin, lomax, lamax, showOnlyMilitary, fetchRemote);
+
     if (listRemotePlanes != null) {
       // Prüfe für jedes Remote-Flugzeug, ob bereits ein lokales Flugzeug mit
-      // demselben Hex existiert
+      // demselben Hex existiert (priorisiere lokale Feeder!)
       for (RemoteAircraft remoteAircraft : listRemotePlanes) {
         if (!mapAircraftRaw.containsKey(remoteAircraft.getHex())) {
           aircraftSet.add(remoteAircraft);
+        } else {
+          // Priorisiere Remote-Flugzeug, wenn dies neuer ist als markiertes lokales Flugzeug
+          final Aircraft localAircraft = (Aircraft) mapAircraftRaw.get(remoteAircraft.getHex());
+          if (localAircraft.getHex().equals(markedHex) && localAircraft.getLastUpdate() < remoteAircraft.getLastUpdate()) {
+            aircraftSet.remove(localAircraft);
+            aircraftSet.add(remoteAircraft);
+          }
         }
       }
     }
