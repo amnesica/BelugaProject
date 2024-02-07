@@ -1,13 +1,13 @@
 package com.amnesica.belugaproject.services.helper;
 
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,13 +39,14 @@ public class NetworkHandlerService {
           .header("User-Agent", userAgentBelugaProject)
           .build();
 
-      try (Response response = client.newCall(request).execute()) {
-        return response.body().string();
-      }
+      CallbackFuture future = new CallbackFuture();
+      client.newCall(request).enqueue(future);
+      Response response = future.get();
+      return response.body().string();
+
     } catch (Exception e) {
       log.error("Server - Error when retrieving information from url " + url + ": Exception = " + e);
     }
-
     return null;
   }
 
@@ -74,9 +75,12 @@ public class NetworkHandlerService {
           .header("User-Agent", userAgentBelugaProject)
           .addHeader("Authorization", credential)
           .build();
-      try (Response response = client.newCall(request).execute()) {
-        return response.body().string();
-      }
+
+      CallbackFuture future = new CallbackFuture();
+      client.newCall(request).enqueue(future);
+      Response response = future.get();
+      return response.body().string();
+
     } catch (Exception e) {
       log.error("Server - Error when retrieving information from url " + url + ": Exception = " + e);
     }
@@ -109,13 +113,25 @@ public class NetworkHandlerService {
             .header("User-Agent", userAgentBelugaProject)
             .build();
 
-        try (Response response = client.newCall(request).execute()) {
-          return response.body().string();
-        }
+        CallbackFuture future = new CallbackFuture();
+        client.newCall(request).enqueue(future);
+        Response response = future.get();
+        return response.body().string();
+
       } catch (Exception e) {
         log.error("Server - Error when retrieving information from url " + url + ": Exception = " + e);
       }
     }
     return null;
+  }
+}
+
+class CallbackFuture extends CompletableFuture<Response> implements Callback {
+  public void onResponse(Call call, Response response) {
+    super.complete(response);
+  }
+
+  public void onFailure(Call call, IOException e) {
+    super.completeExceptionally(e);
   }
 }
