@@ -80,8 +80,8 @@
         *ngIf="
           aircraft &&
           aircraft.hex != 'ISS' &&
-          aircraft.urlPhotoDirect != null &&
-          aircraft.urlPhotoDirect == 'noPhotoFound'
+          (aircraft.urlPhotoDirect == null ||
+            aircraft.urlPhotoDirect == 'noPhotoFound')
         "
         mat-card-image
         src="../../../assets/placeholder_aircraft_photo.jpg"
@@ -503,7 +503,9 @@
               }}
               nm)</span
             >
-            <span>{{ roundValue(aircraft.travelDistanceRemainingInKm) }} km</span>
+            <span
+              >{{ roundValue(aircraft.travelDistanceRemainingInKm) }} km</span
+            >
           </div>
         </div>
 
