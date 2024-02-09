@@ -1076,7 +1076,7 @@ export class CesiumComponent implements OnInit {
     if (!this.viewer || !this.scene || !entity) return;
 
     if (isPlaneUpdate) {
-      if (!this.cameraFollowsPlaneInitial) {
+      if (!this.cameraFollowsPlaneInitial && this.aircraft?.hex != 'ISS') {
         const hpRange = new Cesium.HeadingPitchRange();
         hpRange.heading = Cesium.Math.toRadians(track - 90);
         hpRange.pitch = pitch;
