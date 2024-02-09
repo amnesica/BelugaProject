@@ -451,6 +451,18 @@ export class CesiumComponent implements OnInit {
     // Überspringe aircraft, wenn altitude nicht gesetzt ist
     if (aircraft.altitude == undefined || aircraft.altitude == null) return;
 
+    if (aircraft.track3d.trailPoints.length <= 1) {
+      aircraft.addTrack3D(
+        aircraft.longitude,
+        aircraft.latitude,
+        aircraft.altitude,
+        new Date().getTime(),
+        aircraft.track,
+        aircraft.roll,
+        false
+      );
+    }
+
     const lastIndex = aircraft.track3d.trailPoints.length - 1;
     let lastTrail3d = aircraft.track3d.trailPoints[lastIndex];
 
