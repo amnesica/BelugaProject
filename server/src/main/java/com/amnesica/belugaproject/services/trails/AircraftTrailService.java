@@ -110,7 +110,7 @@ public class AircraftTrailService {
    * @return boolean
    */
   public boolean getIsReenteredAircraft(String hex, String selectedFeeder) {
-    if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
+    if (selectedFeeder != null && !selectedFeeder.isEmpty() && !selectedFeeder.equals("Opensky") && !selectedFeeder.equals("Airplanes-Live")) {
       try {
         long time = System.currentTimeMillis();
 
