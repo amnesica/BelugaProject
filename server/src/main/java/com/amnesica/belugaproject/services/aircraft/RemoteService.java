@@ -193,4 +193,8 @@ public class RemoteService {
   public void addRequest(Request request) {
     requestQueueRemote.add(request);
   }
+
+  public void deleteAllRequests() {
+    requestQueueRemote.clear();
+  }
 }

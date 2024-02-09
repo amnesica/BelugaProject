@@ -187,6 +187,8 @@ public class FeederService {
     if (("Opensky".equals(fetchRemote) || "Airplanes-Live".equals(fetchRemote))) {
       // Packe Request in Opensky-Queue
       remoteService.addRequest(request);
+    } else if (fetchRemote == null) {
+      remoteService.deleteAllRequests();
     }
 
     if (showIss) {
