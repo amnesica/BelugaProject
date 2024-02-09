@@ -16,7 +16,7 @@ Additional information about the aircraft are added through a PostgreSQL databas
 
 The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
 
-The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1).
+The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1). 3D models from [this](https://github.com/amnesica/BelugaProject-3D-Models) repository are used.
 
 ## Motivation
 
@@ -25,14 +25,23 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 ## Features
 
 - View the application on your desktop or mobile (for the android app see folder "android_app")
-- Display on a map in the browser
+- Display aircraft and airports on a 2D map in the browser
   - aircraft from your local ADS-B feeders (like tar1090, AirSquitter, fr24feeder, vrs)
   - aircraft from [OpenSky-Network](https://opensky-network.org/) (update interval is 5 seconds)
   - aircraft from [Airplanes.live](https://airplanes.live/) (update interval is 5 seconds)
   - the ISS (International Space Station)
+- Display selected aircraft on a 3D map ([Cesium Ion](https://cesium.com/))
+  - Show animated aircraft model and flight path
+  - Show Google photogrammetry or OSM 3D buildings
+  - Cockpit mode, Follow-Plane mode
+  - High Quality mode, HDR, clouds
 - See additional information about tracked aircraft like model and type, country of registration, operator callsign and more
+- Track flight progress with route information (origin, destination)
 - Display aircraft picture from planespotters.net
 - Show range data of your feeders on the map
+- Show weather information (current, forecast, clouds) from [Rainviewer](https://www.rainviewer.com/)
+- Filter option for military planes
+- Choose one of several map styles (2D/3D map, for some of the 2D maps an API key from [Geoapify](https://www.geoapify.com/) is required)
 - Display aircraft in a sortable table
 - Display a list of photos for selected aircraft in your webbrowser (by generated Search-URL)
 - Show server logfiles
@@ -63,9 +72,9 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 
 ### Frontend
 
-- [Angular](https://angular.io)
-  - [Angular Material Design](https://material.angular.io/)
+- [Angular](https://angular.io) with [Angular Material Design](https://material.angular.io/)
 - [OpenLayers](https://openlayers.org/)
+- [Cesium](https://cesium.com/)
 
 ## Our Setup
 
