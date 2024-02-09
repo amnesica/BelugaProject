@@ -1100,7 +1100,7 @@ export class CesiumComponent implements OnInit {
     if (this.enableClouds) {
       const equatorialRadius = 6378137.0;
       const polarRadius = 6356752.3142;
-      const cloudAltitude = 3500;
+      const cloudAltitude = 11000;
 
       this.viewer.entities.add({
         id: 'clouds',
