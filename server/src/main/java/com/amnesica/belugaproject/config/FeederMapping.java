@@ -35,4 +35,5 @@ public class FeederMapping {
   private String lastSeen;
   private String source;
   private String roll;
+  private String lastUpdate;
 }

@@ -150,9 +150,11 @@ public class OpenskyService {
         JSONObject jsonObject = new JSONObject(jsonStr);
         // Hinweis: jsonArray ist ein Array aus Arrays
         // und muss daher für weitere Bearbeitung konvertiert werden
-        JSONArray jsonArrayStates = jsonObject.getJSONArray("states");
+        final JSONArray jsonArrayStates = jsonObject.getJSONArray("states");
+        final Integer lastUpdate = jsonObject.getInt("time");
+
         if (jsonArrayStates != null) {
-          jsonArray = convertOpenskyDataJsonArrayToArrayOfObjects(jsonArrayStates);
+          jsonArray = convertOpenskyDataJsonArrayToArrayOfObjects(jsonArrayStates, lastUpdate);
         } else {
           throw new Exception();
         }
@@ -173,7 +175,7 @@ public class OpenskyService {
    * @param jsonArray JSONArray
    * @return JSONArray
    */
-  private JSONArray convertOpenskyDataJsonArrayToArrayOfObjects(JSONArray jsonArray) {
+  private JSONArray convertOpenskyDataJsonArrayToArrayOfObjects(JSONArray jsonArray, Integer lastUpdate) {
     JSONArray arrayWithObjects = new JSONArray();
     Double conversionValueDouble;
 
@@ -191,6 +193,12 @@ public class OpenskyService {
         innerObject.put("onGround", innerArray.get(8));
         innerObject.put("squawk", innerArray.get(14));
         innerObject.put("source", innerArray.get(16));
+
+        if (lastUpdate != null) {
+          // Berechne lastSeen-Wert (in Sekunden)
+          int lastSeen = lastUpdate - (int) innerArray.get(4);
+          innerObject.put("lastSeen", lastSeen);
+        }
 
         if (innerArray.get(5) instanceof BigDecimal) {
           innerObject.put("lon", innerArray.getDouble(5));
@@ -357,6 +365,7 @@ public class OpenskyService {
     mapping.setElipsoidalAltitude("elipsoidalAltitude");
     mapping.setFeeder("feeder");
     mapping.setSource("source");
+    mapping.setLastSeen("lastSeen");
 
     // Setze Mapping
     feeder.setMapping(mapping);
