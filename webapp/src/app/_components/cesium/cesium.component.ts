@@ -473,6 +473,9 @@ export class CesiumComponent implements OnInit {
       aircraft.onGround
     );
 
+    if (lastTrail3d.track == 0) {
+      lastTrail3d.track = 1;
+    }
     const lastTrack = lastTrail3d.track ? lastTrail3d.track + 90 : 0;
     // Ändere Vorzeichen von roll-Wert, damit Winkel richtig dargestellt wird
     const lastRoll = lastTrail3d.roll ? lastTrail3d.roll * -1 : 0;
