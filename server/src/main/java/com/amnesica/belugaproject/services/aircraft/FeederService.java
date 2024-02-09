@@ -179,13 +179,13 @@ public class FeederService {
     if (ipAddress == null || ipAddress.isEmpty())
       return;
 
-    // Erstelle Request für ISS- und Opensky-Update mit Extent
+    // Erstelle Request für ISS- und Remote-Update mit Extent
     Request request = new Request("Request: " + requestCounter, System.currentTimeMillis(), ipAddress,
         lomin, lamin, lomax, lamax, markedHex, fetchRemote);
     requestCounter++;
 
     if (("Opensky".equals(fetchRemote) || "Airplanes-Live".equals(fetchRemote))) {
-      // Packe Request in Opensky-Queue
+      // Packe Request in Remote-Queue
       remoteService.addRequest(request);
     } else if (fetchRemote == null) {
       remoteService.deleteAllRequests();
