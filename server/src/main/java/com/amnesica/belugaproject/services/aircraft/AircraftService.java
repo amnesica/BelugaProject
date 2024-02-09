@@ -58,10 +58,10 @@ public class AircraftService {
     Aircraft aircraftNew;
     if (feeder.getType().equals("vrs")) {
       aircraftNew = new Aircraft(element.getString("Icao").toLowerCase().trim(), element.getDouble("Lat"),
-              element.getDouble("Long"));
+          element.getDouble("Long"));
     } else {
       aircraftNew = new Aircraft(element.getString("hex").toLowerCase().trim(), element.getDouble("lat"),
-              element.getDouble("lon"));
+          element.getDouble("lon"));
     }
 
     // Setze spezifische Werte der Feeder
@@ -108,7 +108,7 @@ public class AircraftService {
    * @param aircraftNew Aircraft
    */
   public void updateValuesOfAircraft(AircraftSuperclass aircraftToUpdate, AircraftSuperclass aircraftNew,
-                                     Feeder feeder, boolean isLocalFeederService) {
+                                     String feederName, boolean isLocalFeederService) {
     // Merken vorherige Position für nachfolgende Trackberechnung
     double prevLatitude = aircraftToUpdate.getLatitude();
     double prevLongitude = aircraftToUpdate.getLongitude();
@@ -117,7 +117,7 @@ public class AircraftService {
     if (isLocalFeederService) {
       // Setze 'reentered'-Zustand, damit später eine schwarze Linie gezeichnet wird
       boolean isAircraftReentered = aircraftTrailService.getIsReenteredAircraft(aircraftToUpdate.getHex(),
-          feeder.getName());
+          feederName);
       aircraftToUpdate.setReenteredAircraft(isAircraftReentered);
       aircraftNew.setReenteredAircraft(isAircraftReentered);
     }
@@ -143,12 +143,12 @@ public class AircraftService {
     aircraftToUpdate.setRoll(aircraftNew.getRoll());
 
     // Schreibe aktuellen Feeder als Feeder in Liste
-    if (!aircraftToUpdate.getFeederList().contains(feeder.getName())) {
-      aircraftToUpdate.addFeederToFeederList(feeder.getName());
+    if (!aircraftToUpdate.getFeederList().contains(feederName)) {
+      aircraftToUpdate.addFeederToFeederList(feederName);
     }
 
     // Schreibe aktuellen Feeder und dessen Source in Liste
-    aircraftToUpdate.addSourceToSourceList(feeder.getName());
+    aircraftToUpdate.addSourceToSourceList(feederName);
 
     // Prüfe bei zu aktualisierenden Werten, ob neue Werte überhaupt gesetzt sind
     if (aircraftNew.getType() != null && !aircraftNew.getType().isEmpty()) {
@@ -192,7 +192,7 @@ public class AircraftService {
 
     if (isLocalFeederService) {
       // Aktualisiere Trail des Flugzeugs mit neuer Position und Höhe
-      aircraftTrailService.addTrail(aircraftNew, feeder.getName());
+      aircraftTrailService.addTrail(aircraftNew, feederName);
     }
 
     // Track berechnen, wenn nicht vom Feeder geliefert und sich die Position
@@ -335,7 +335,7 @@ public class AircraftService {
     // Virtual Radar Server liefert Origin/Destination im Format IATA-Code plus Airportbezeichnung
     // Nur der IATA-Code wird extrahiert und über die Datenbank nach ICAO gemappt
     if (feeder.getType().equals("vrs") && destination != null && element.has(destination) && !element.isNull(destination)) {
-      String iataCode = element.getString(destination).substring(0,3);
+      String iataCode = element.getString(destination).substring(0, 3);
       String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
       if (icaoCode != null) {
         element.put(destination, icaoCode);
@@ -347,7 +347,7 @@ public class AircraftService {
       }
     }
     if (feeder.getType().equals("vrs") && origin != null && element.has(origin) && !element.isNull(origin)) {
-      String iataCode = element.getString(origin).substring(0,3);
+      String iataCode = element.getString(origin).substring(0, 3);
       String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
       if (icaoCode != null) {
         element.put(origin, icaoCode);

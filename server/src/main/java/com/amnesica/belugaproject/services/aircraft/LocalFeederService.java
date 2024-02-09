@@ -109,7 +109,7 @@ public class LocalFeederService {
             }
 
             // Update Werte des Flugzeugs mit Werten von aircraftNew
-            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, feeder, true);
+            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, feeder.getName(), true);
 
             try {
               // Schreibe Flugzeug in aircraft-Tabelle
@@ -146,8 +146,8 @@ public class LocalFeederService {
         // Prüfe, ob element alle Basis-Eigenschaften erfüllt (bspw. 'lat','lon' sind vorhanden)
         // TODO: separate Abfrage für feeder vrs vermeiden
         if (element != null && element.has("Icao") && element.has("Lat") && element.has("Long")
-                && !element.isNull("Lat") && !element.isNull("Long")
-                && element.getDouble("Lat") != 0 && element.getDouble("Long") != 0) {
+            && !element.isNull("Lat") && !element.isNull("Long")
+            && element.getDouble("Lat") != 0 && element.getDouble("Long") != 0) {
 
           // Erstelle aus Daten des Feeders ein neues Flugzeug
           Aircraft aircraftNew = aircraftService.createNewAircraft(element, feeder);
@@ -172,14 +172,14 @@ public class LocalFeederService {
             }
 
             // Update Werte des Flugzeugs mit Werten von aircraftNew
-            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, feeder, true);
+            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, feeder.getName(), true);
 
             try {
               // Schreibe Flugzeug in aircraft-Tabelle
               aircraftRepository.save(aircraftInDb);
             } catch (Exception e) {
               log.error("Server - DB error when writing aircraftInDb for hex " + aircraftInDb.getHex()
-                      + ": Exception = " + e);
+                  + ": Exception = " + e);
             }
           } else {
             // Füge Informationen aus aircraftData hinzu
@@ -202,7 +202,7 @@ public class LocalFeederService {
               aircraftRepository.save(aircraftNew);
             } catch (Exception e) {
               log.error("Server - DB error when writing aircraftNew for hex " + aircraftNew.getHex()
-                      + ": Exception = " + e);
+                  + ": Exception = " + e);
             }
           }
         }

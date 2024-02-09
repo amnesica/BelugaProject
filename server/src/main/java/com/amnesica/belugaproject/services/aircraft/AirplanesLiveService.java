@@ -87,7 +87,7 @@ public class AirplanesLiveService {
     aircraftInDb.clearFeederList();
     aircraftInDb.clearSourceList();
 
-    aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, airplanesLiveFeeder, false);
+    aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, airplanesLiveFeeder.getName(), false);
 
     try {
       remoteAircraftRepository.save(aircraftInDb);

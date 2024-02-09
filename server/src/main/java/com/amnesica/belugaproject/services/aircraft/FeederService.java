@@ -27,6 +27,8 @@ public class FeederService {
   private RemoteService remoteService;
   @Autowired
   private SpacecraftService spacecraftService;
+  @Autowired
+  private AircraftService aircraftService;
 
   @Autowired
   private MapCatToShapeDataService mapCatToShapeDataService;
@@ -125,11 +127,14 @@ public class FeederService {
         if (!mapAircraftRaw.containsKey(remoteAircraft.getHex())) {
           aircraftSet.add(remoteAircraft);
         } else {
+          if (!remoteAircraft.getHex().equals(markedHex)) continue;
+
           // Priorisiere Remote-Flugzeug, wenn dies neuer ist als markiertes lokales Flugzeug
           final Aircraft localAircraft = (Aircraft) mapAircraftRaw.get(remoteAircraft.getHex());
-          if (localAircraft.getHex().equals(markedHex) && localAircraft.getLastUpdate() < remoteAircraft.getLastUpdate()) {
+          if (localAircraft.getHex().equals(markedHex) && localAircraft.getLastSeen() > remoteAircraft.getLastSeen()) {
             aircraftSet.remove(localAircraft);
-            aircraftSet.add(remoteAircraft);
+            aircraftService.updateValuesOfAircraft(localAircraft, remoteAircraft, remoteAircraft.getIsFromRemote(), false);
+            aircraftSet.add(localAircraft);
           }
         }
       }

@@ -92,7 +92,7 @@ public class OpenskyService {
             aircraftInDb.clearSourceList();
 
             // Update Werte des Flugzeugs mit Werten von aircraftNew
-            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, openskyFeeder, false);
+            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, openskyFeeder.getName(), false);
 
             try {
               // Schreibe Flugzeug in OpenskyAircraft-Tabelle
