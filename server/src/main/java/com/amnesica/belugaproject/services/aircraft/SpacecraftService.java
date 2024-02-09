@@ -115,6 +115,11 @@ public class SpacecraftService {
       // Setze velocity
       iss.setSpeed((int) HelperService.convertKilometerPerHour2Knots(jsonObject.getDouble("velocity")));
 
+      // Default-Werte für ISS
+      iss.setOnGround(false);
+      iss.setLastSeen(0);
+      iss.setRoll(0.0);
+
       // Aktualisiere Trail des Flugzeugs mit neuer Position und Höhe
       spacecraftTrailService.addTrail(iss, FEEDER_NAME_ISS);
 
