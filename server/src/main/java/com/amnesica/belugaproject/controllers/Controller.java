@@ -136,12 +136,13 @@ public class Controller {
                            @RequestParam(value = "registration") String registration,
                            @RequestParam(value = "isFromRemote") boolean isFromRemote) {
 
-    if (isFromRemote) {
-      return remoteService.getAllAircraftData(hex, registration);
-    } else if (!hex.equals("ISS")) {
-      return localFeederService.getAllAircraftData(hex, registration);
-    }
-    return null;
+    if (hex.equals("ISS")) return null;
+    // Update local + remote Flugzeug, um bei Wechsel remote -> local keine Daten zu verlieren
+    final Object[] remoteAircraft = remoteService.getAllAircraftData(hex, registration);
+    final Object[] localAircraft = localFeederService.getAllAircraftData(hex, registration);
+
+    if (isFromRemote) return remoteAircraft;
+    return localAircraft;
   }
 
   /**
