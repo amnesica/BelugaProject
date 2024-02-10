@@ -122,6 +122,8 @@ export class CesiumComponent implements OnInit {
 
     this.setupMapProviders();
 
+    this.enableCollisionDetection();
+
     // TODO debug
     if (this.viewer) this.viewer.scene.debugShowFramesPerSecond = true;
   }
@@ -215,6 +217,12 @@ export class CesiumComponent implements OnInit {
     let defaultProvider =
       this.viewer.baseLayerPicker.viewModel.imageryProviderViewModels;
     this.viewer.baseLayerPicker.viewModel.selectedImagery = defaultProvider[6];
+  }
+
+  enableCollisionDetection() {
+    if (!this.viewer) return;
+    this.viewer.scene.screenSpaceCameraController.enableCollisionDetection =
+      true;
   }
 
   createCesiumViewer() {
