@@ -608,7 +608,7 @@ export class CesiumComponent implements OnInit {
         model: {
           uri: this.createUriForModel(aircraft.type),
           minimumPixelSize: 20,
-          scale: 2,
+          scale: 1,
         },
         label: {
           text: aircraft.flightId + '\n' + aircraft.hex + '\n' + aircraft.type,
