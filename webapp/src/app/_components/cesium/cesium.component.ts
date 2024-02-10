@@ -481,7 +481,7 @@ export class CesiumComponent implements OnInit {
     const lastRoll = lastTrail3d.roll ? lastTrail3d.roll * -1 : 0;
 
     const lastHeadingRad = Cesium.Math.toRadians(lastTrack);
-    const lastPitchRad = Cesium.Math.toRadians(aircraft.hex == 'ISS' ? 20 : 0);
+    const lastPitchRad = Cesium.Math.toRadians(aircraft.hex == 'ISS' ? 40 : 0);
     const lastRollRad = Cesium.Math.toRadians(lastRoll);
     const hpr = new Cesium.HeadingPitchRoll(
       lastHeadingRad,
