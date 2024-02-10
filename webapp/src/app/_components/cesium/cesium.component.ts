@@ -1091,7 +1091,7 @@ export class CesiumComponent implements OnInit {
         const hpRange = new Cesium.HeadingPitchRange();
         hpRange.heading = Cesium.Math.toRadians(track - 90);
         hpRange.pitch = pitch;
-        hpRange.range = 100;
+        hpRange.range = 80;
 
         this.viewer.camera.lookAt(this.aircraftPosition, hpRange);
 
