@@ -81,7 +81,7 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 The application runs on a Raspberry Pi 4B in the local network. We can access the map in the browser on desktop computers (Windows and Linux) and on mobile devices. For our mobile devices we use the mobile app.
 
 <p align="center">
-<img alt="App View" src="assets/images/setup.png" width="60%" />
+<img alt="App View" src="assets/images/setupV4.png" width="60%" />
 </p>
 
 ## Install and run

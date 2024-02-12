@@ -202,7 +202,7 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 
 10. Update database
 
-      To update aircraft and airport data use this command:
+      To update aircraft, route and airport data use this command:
       ```
       $ ./run.sh update-db
       ```

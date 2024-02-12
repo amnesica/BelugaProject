@@ -16,6 +16,8 @@ First hint: doublecheck your `.env` file. All entries with TODO have to be repla
 
 #### Build docker containers
 
+   The process starts with building the `postgres` container. After that the containers `server` and `webapp` will be created simultanously.
+
    Possible errors:
 
    Sometimes we got error messages like this in the container build process:
@@ -30,6 +32,21 @@ First hint: doublecheck your `.env` file. All entries with TODO have to be repla
    $ ./run.sh install
    ```
    until container build was finished. We guess that timeouts occured while downloading objects from repositories. 
+
+   Sometimes the simultanous container build process for containers `webapp` and `server` failed with timeout or network error messages. Repeating
+   ```
+   $ ./run.sh install
+   ```
+   did not work. In this case we build the containers one after one with
+   ```
+   $ ./run.sh docker-build server
+   $ ./run.sh docker-build webapp
+   ```
+   When both containers were built, proceed with
+   ```
+   $ ./run.sh install
+   ```
+   to finish installation.
 
 #### Populating database with data
 
@@ -48,14 +65,7 @@ First hint: doublecheck your `.env` file. All entries with TODO have to be repla
 
    In this case try execute `./run.sh load-db`.
 
-   The following error might appear if you don't specify a flightroute.csv file:
-
-   > ERROR: missing data for column "flight_route"
-   >
-   > CONTEXT: COPY flightroute_data, line 2: ""SAMPLE,EDDH-EDDF,1257415993"")
-
-   You can ignore this error if you don't have a flightroute.csv file.
-
+   
 ### Running BelugaProject
 
    When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser.
