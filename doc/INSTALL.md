@@ -125,7 +125,7 @@ If you don't have a ADS-B receiver you can use the [Opensky-Network](https://ope
 
    If you get error messages please take a look into [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).  
 
-5. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. On first run after installation it may take up to about 3 minutes until all aircrafts are visible. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed). 
+5. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. On first run after installation it may take up to about 3 minutes until all aircrafts are visible. If you just want to test the project, enable the [OpenSky-Network](https://opensky-network.org/) functionality in the settings menu (an Opensky-Network account is needed) or enable [Airplanes.live](https://airplanes.live/) functionality instead. 
 
 6. Operation and Maintenance
 
