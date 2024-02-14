@@ -145,6 +145,8 @@ export class CesiumComponent implements OnInit {
 
     this.enableCollisionDetection();
 
+    this.removeInstructionHintAtStart();
+
     // TODO debug
     if (this.viewer) this.viewer.scene.debugShowFramesPerSecond = true;
   }
@@ -244,6 +246,11 @@ export class CesiumComponent implements OnInit {
     if (!this.viewer) return;
     this.viewer.scene.screenSpaceCameraController.enableCollisionDetection =
       true;
+  }
+
+  removeInstructionHintAtStart() {
+    if (!this.viewer) return;
+    this.viewer.navigationHelpButton.viewModel.showInstructions = false;
   }
 
   createCesiumViewer() {
