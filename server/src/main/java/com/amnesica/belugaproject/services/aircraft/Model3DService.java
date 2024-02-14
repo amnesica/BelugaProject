@@ -25,6 +25,8 @@ public class Model3DService {
     byte[] model;
     final String pathTo3dModels = configuration.getConfigFilesDirectory() + File.separator + modelDirectory + File.separator;
 
+    if (type.contains("..")) return null;
+
     try {
       type = getTypeForModelFromResources(type, pathTo3dModels);
       model = getModelFromResources(pathTo3dModels + type + ".glb");
