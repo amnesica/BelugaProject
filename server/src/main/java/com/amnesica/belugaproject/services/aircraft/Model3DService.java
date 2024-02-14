@@ -28,8 +28,13 @@ public class Model3DService {
     try {
       type = getTypeForModelFromResources(type, pathTo3dModels);
       model = getModelFromResources(pathTo3dModels + type + ".glb");
-      if (model == null) {
+      if (model == null && !type.contains("_cockpit")) {
+        // Default plane
         type = "Cesium_Air";
+        model = getModelFromResources(pathTo3dModels + type + ".glb");
+      } else if (model == null && type.contains("_cockpit")) {
+        // Default plane for cockpit
+        type = "A320_cockpit";
         model = getModelFromResources(pathTo3dModels + type + ".glb");
       }
     } catch (IOException e) {
