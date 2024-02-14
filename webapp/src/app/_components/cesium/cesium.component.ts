@@ -141,6 +141,8 @@ export class CesiumComponent implements OnInit {
 
     this.setupMapProviders();
 
+    this.setDevicePixelRatio();
+
     this.enableCollisionDetection();
 
     // TODO debug
@@ -262,6 +264,12 @@ export class CesiumComponent implements OnInit {
     });
     this.scene = this.viewer.scene;
     this.camera = this.viewer.camera;
+  }
+
+  setDevicePixelRatio() {
+    if (!this.viewer) return;
+    this.viewer.resolutionScale = window.devicePixelRatio;
+    this.viewer.useBrowserRecommendedResolution = true;
   }
 
   setHomeToSitePosition() {
@@ -1096,6 +1104,8 @@ export class CesiumComponent implements OnInit {
       this.widthMap3d = '40rem';
       if (cesiumMap) cesiumMap.style.width = '40rem';
     }
+
+    this.setDevicePixelRatio();
   }
 
   enableHdr3dOnMap() {
