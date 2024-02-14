@@ -1163,6 +1163,7 @@ export class CesiumComponent implements OnInit {
       globe.showGroundAtmosphere = true;
       this.scene.msaaSamples = 8;
       this.scene.postProcessStages.fxaa.enabled = true;
+      this.scene.postProcessStages.ambientOcclusion.enabled = true;
     } else {
       this.viewer.shadows = false;
       this.viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
@@ -1175,6 +1176,7 @@ export class CesiumComponent implements OnInit {
       globe.showGroundAtmosphere = false;
       this.scene.msaaSamples = 1;
       this.scene.postProcessStages.fxaa.enabled = false;
+      this.scene.postProcessStages.ambientOcclusion.enabled = false;
     }
   }
 
