@@ -58,8 +58,19 @@
     (click)="showCockpitView3d()"
     title="Enable/Disable cockpit mode"
   >
+    <mat-icon aria-hidden="false" aria-label="close window">joystick</mat-icon>
+  </button>
+
+  <button
+    mat-button
+    class="button-3d-map"
+    id="showCockpitModel3d"
+    *ngIf="displayCockpitView3d"
+    (click)="showCockpitModel3d()"
+    title="Enable/Disable cockpit model"
+  >
     <mat-icon aria-hidden="false" aria-label="close window"
-      >flight_class</mat-icon
+      >deployed_code</mat-icon
     >
   </button>
 

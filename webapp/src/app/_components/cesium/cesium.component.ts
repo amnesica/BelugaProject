@@ -84,13 +84,14 @@ export class CesiumComponent implements OnInit {
     looking: false,
   };
   initFirstPersonView = true;
-  x: number | undefined;
-  y: number | undefined;
+  cockpitViewXDirection: number | undefined;
+  cockpitViewYDirection: number | undefined;
   leftDownInputAction: any;
   mouseMoveInputAction: any;
   leftUpInputAction: any;
   movementFactor: number = 0.1;
   showCockpitViewEventListener: Cesium.Event.RemoveCallback | undefined;
+  displayCockpitModel3d: boolean = false;
 
   // Subscriptions
   private ngUnsubscribe = new Subject();
@@ -758,15 +759,24 @@ export class CesiumComponent implements OnInit {
     this.pathPositions = undefined;
     this.pathPositionsColor = undefined;
     this.startTime = undefined;
-    if (this.showCockpitViewEventListener)
-      this.viewer?.clock.onTick.removeEventListener(
-        this.showCockpitViewEventListener
-      );
     this.endTime = undefined;
     this.orientationProperty = undefined;
     this.lastPathPositionSample = undefined;
-
     this.initViewOnAircraft = false;
+
+    if (this.showCockpitViewEventListener != undefined)
+      this.showCockpitViewEventListener();
+
+    this.EntityCockpitPositions[this.aircraft!.hex] = undefined;
+    this.planeEntityCenter = undefined;
+    this.startMousePosition = undefined;
+    this.mousePosition = undefined;
+    this.flags = {
+      looking: false,
+    };
+    this.initFirstPersonView = true;
+    this.cockpitViewXDirection = undefined;
+    this.cockpitViewYDirection = undefined;
   }
 
   close3dMap() {
@@ -896,6 +906,9 @@ export class CesiumComponent implements OnInit {
   showCockpitView3d() {
     if (!this.viewer) return;
 
+    // Resette Camera
+    this.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+
     if (this.displayCockpitView3d) {
       this.displayCockpitView3d = false;
       this.resetCockpitView3d();
@@ -913,8 +926,28 @@ export class CesiumComponent implements OnInit {
     this.addAircraftAndTrailTo3DMap();
   }
 
+  showCockpitModel3d() {
+    if (!this.viewer || !this.displayCockpitView3d) return;
+
+    this.displayCockpitModel3d = !this.displayCockpitModel3d;
+
+    if (!this.displayCockpitModel3d) {
+      this.removeCockpitModelEntity();
+    }
+
+    // Resette Camera
+    this.viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+
+    this.showClickedBehaviourOnButton(
+      'showCockpitModel3d',
+      this.displayCockpitModel3d
+    );
+  }
+
   setCockpitView3d() {
     if (!this.viewer) return;
+
+    if (this.showCockpitViewEventListener != undefined) return;
 
     this.showCockpitViewEventListener =
       this.viewer.clock.onTick.addEventListener((clock) => {
@@ -924,6 +957,56 @@ export class CesiumComponent implements OnInit {
 
   setCockpitViewEventListener(clock: any) {
     if (!this.viewer || !this.aircraft || !this.entityGroupModel) return;
+
+    if (!this.displayCockpitModel3d) {
+      this.showCockpitViewWithoutCockpitModel(clock);
+    } else {
+      this.showCockpitViewWithCockpitModel(clock);
+    }
+  }
+
+  removeCockpitModelEntity() {
+    if (!this.viewer || !this.aircraft || !this.entityGroupModel) return;
+
+    const cockpitEntityId = this.aircraft.hex + '_cockpit';
+    this.entityGroupModel.entities.removeById(cockpitEntityId);
+
+    this.displayCockpitModel3d = false;
+    this.showClickedBehaviourOnButton(
+      'showCockpitModel3d',
+      this.displayCockpitModel3d
+    );
+  }
+
+  showCockpitViewWithoutCockpitModel(clock) {
+    if (!this.viewer) return;
+
+    let entity = this.entityGroupModel!.entities.getById(
+      this.aircraft!.hex + '_model'
+    );
+    if (!entity) return;
+
+    entity.show = false;
+    let center = entity.position!.getValue(clock.currentTime);
+    if (!center) return;
+    center!.z = center!.z + 6;
+    let orientation = entity.orientation!.getValue(clock.currentTime);
+
+    if (!center || !orientation) return;
+
+    let transform = Cesium.Matrix4.fromRotationTranslation(
+      Cesium.Matrix3.fromQuaternion(orientation),
+      center
+    );
+
+    this.viewer.camera.lookAtTransform(
+      transform,
+      new Cesium.Cartesian3(0.1, 0, 0)
+    );
+  }
+
+  showCockpitViewWithCockpitModel(clock: any) {
+    if (!this.viewer || !this.aircraft || !this.displayCockpitModel3d) return;
 
     let entityCockpit = this.createCockpitEntity(
       this.entityGroupModel,
@@ -962,8 +1045,8 @@ export class CesiumComponent implements OnInit {
         const width = this.viewer.canvas.clientWidth;
         const height = this.viewer.canvas.clientHeight;
 
-        this.x = this.calculateCockpitXDirection(width);
-        this.y = this.calculateCockpitYDirection(height);
+        this.cockpitViewXDirection = this.calculateCockpitXDirection(width);
+        this.cockpitViewYDirection = this.calculateCockpitYDirection(height);
       }
 
       this.setFirstPersonCockpitView(cockpitCenter);
@@ -975,18 +1058,19 @@ export class CesiumComponent implements OnInit {
   resetCockpitView3d() {
     if (!this.viewer) return;
 
-    let entity = this.entityGroupModel!.entities.getById(
-      this.aircraft!.hex + '_model'
-    );
-    if (!entity) return;
+    this.removeCockpitModelEntity();
 
-    if (this.showCockpitViewEventListener)
-      this.viewer.clock.onTick.removeEventListener(
-        this.showCockpitViewEventListener
-      );
+    const planeEntityId = this.aircraft!.hex + '_model';
+    let planeEntity = this.entityGroupModel!.entities.getById(planeEntityId);
+    if (!planeEntity) return;
 
-    entity.show = true;
+    planeEntity.show = true;
     this.viewer.trackedEntity = undefined;
+
+    if (this.showCockpitViewEventListener != undefined) {
+      this.showCockpitViewEventListener();
+      this.showCockpitViewEventListener = undefined;
+    }
 
     this.setCameraToAircraftPosition(this.aircraft!);
   }
@@ -998,10 +1082,10 @@ export class CesiumComponent implements OnInit {
     camera.setView({
       destination: center,
       orientation: {
-        heading: this.x
-          ? this.x
+        heading: this.cockpitViewXDirection
+          ? this.cockpitViewXDirection
           : Cesium.Math.toRadians(this.aircraftTrack - 90),
-        pitch: this.y ? this.y : 0,
+        pitch: this.cockpitViewYDirection ? this.cockpitViewYDirection : 0,
         roll: -this.aircraftRoll,
       },
     });
@@ -1023,8 +1107,8 @@ export class CesiumComponent implements OnInit {
   calculateCockpitYDirection(height: number): number | undefined {
     if (!this.mousePosition || !this.startMousePosition || !this.movementFactor)
       return;
-    return this.y
-      ? this.y +
+    return this.cockpitViewYDirection
+      ? this.cockpitViewYDirection +
           (-(this.mousePosition.y - this.startMousePosition.y) / height) *
             this.movementFactor
       : (-(this.mousePosition.y - this.startMousePosition.y) / height) *
@@ -1034,8 +1118,8 @@ export class CesiumComponent implements OnInit {
   calculateCockpitXDirection(width): number | undefined {
     if (!this.mousePosition || !this.startMousePosition || !this.movementFactor)
       return;
-    return this.x
-      ? this.x +
+    return this.cockpitViewXDirection
+      ? this.cockpitViewXDirection +
           ((this.mousePosition.x - this.startMousePosition.x) / width) *
             this.movementFactor
       : Cesium.Math.toRadians(this.aircraftTrack - 90);
