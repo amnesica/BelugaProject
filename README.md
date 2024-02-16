@@ -49,6 +49,12 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 <p align="center">
 <img alt="POMD feature" src="assets/images/POMD_feature.png" width="50%"/>
 
+---
+
+**Note**: At the moment The Beluga Project is meant to be used in a local network. It is not recommended to publish it on the web due to security and performance reasons.
+
+---
+
 ## Screenshots
 
 ### Web view
