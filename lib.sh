@@ -260,7 +260,7 @@ _download_mictronics_aircraft_database() {
 _download_flightroute_database() {
   echo "Download $flightroute_database_filename from Github repository VRS standing-data ..."
   docker exec -ti $container_name_db bash -c "wget $flightroute_database_url -O $flightroute_database_zipfilename"
-  docker exec -ti $container_name_db bash -c "unzip $flightroute_database_zipfilename -o"
+  docker exec -ti $container_name_db bash -c "unzip $flightroute_database_zipfilename -o -q"
   echo "-> Download $flightroute_database_zipfilename from Github repository VRS standing-data. Done."
 
   _copy_flightroute_create_csv_script_to_container
