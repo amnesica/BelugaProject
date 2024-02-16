@@ -862,14 +862,7 @@ export class CesiumComponent implements OnInit {
     // Füge Photorealistic 3D Tiles hinzu
     try {
       this.googlePhotorealisticTileset =
-        await Cesium.Cesium3DTileset.fromIonAssetId(2275207, {
-          preloadWhenHidden: true,
-          dynamicScreenSpaceError: true,
-          skipLevelOfDetail: true,
-          immediatelyLoadDesiredLevelOfDetail: true,
-          projectTo2D: false,
-          loadSiblings: true,
-        });
+        await Cesium.Cesium3DTileset.fromIonAssetId(2275207, {});
       this.scene.primitives.add(this.googlePhotorealisticTileset);
       this.displayGooglePhotorealistic3D = true;
       // Globe muss nicht angezeigt werden, da die Photorealistic 3D Tiles das Terrain beinhalten
