@@ -95,6 +95,8 @@
 ::ng-deep .cesium-baseLayerPicker-dropDown {
   background-color: black !important;
   border: 0 !important;
+  z-index: 50 !important;
+  margin-right: -3.5rem !important;
 }
 
 ::ng-deep .cesium-baseLayerPicker-choices {
@@ -223,4 +225,8 @@
 
 ::ng-deep .cesium-animation-shuttleRingSwoosh {
   fill: #f8c023 !important;
+}
+
+::ng-deep .cesium-navigationHelpButton-wrapper {
+  display: none !important;
 }
