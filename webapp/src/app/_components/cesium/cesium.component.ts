@@ -148,6 +148,8 @@ export class CesiumComponent implements OnInit {
 
     this.removeInstructionHintAtStart();
 
+    this.enableDefaultQualitySettings();
+
     // TODO debug
     if (this.viewer) this.viewer.scene.debugShowFramesPerSecond = true;
   }
@@ -252,6 +254,18 @@ export class CesiumComponent implements OnInit {
   removeInstructionHintAtStart() {
     if (!this.viewer) return;
     this.viewer.navigationHelpButton.viewModel.showInstructions = false;
+  }
+
+  enableDefaultQualitySettings() {
+    if (!this.scene) return;
+    this.scene.globe.atmosphereLightIntensity = 20.0;
+    this.scene.globe.dynamicAtmosphereLighting = true;
+    this.scene.globe.dynamicAtmosphereLightingFromSun = true;
+    this.scene.globe.showGroundAtmosphere = true;
+    this.scene.fog.enabled = true;
+    this.scene.fog.minimumBrightness = 0.3;
+    this.scene.fog.density = 2.0e-4 * 1.0;
+    this.scene.globe.depthTestAgainstTerrain = true;
   }
 
   createCesiumViewer() {
@@ -1230,27 +1244,13 @@ export class CesiumComponent implements OnInit {
       this.viewer.shadows = true;
       this.viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
       globe.enableLighting = true;
-      globe.atmosphereLightIntensity = 20.0;
-      globe.dynamicAtmosphereLighting = true;
-      globe.dynamicAtmosphereLightingFromSun = true;
-      this.scene.fog.enabled = true;
-      this.scene.fog.minimumBrightness = 0.3;
-      this.scene.fog.density = 2.0e-4 * 1.0;
-      globe.depthTestAgainstTerrain = true;
-      globe.showGroundAtmosphere = true;
-      this.scene.msaaSamples = 8;
+      this.scene.msaaSamples = 4;
       this.scene.postProcessStages.fxaa.enabled = true;
       this.scene.postProcessStages.ambientOcclusion.enabled = true;
     } else {
       this.viewer.shadows = false;
       this.viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
       globe.enableLighting = false;
-      globe.atmosphereLightIntensity = 10.0;
-      globe.dynamicAtmosphereLighting = false;
-      globe.dynamicAtmosphereLightingFromSun = false;
-      this.scene.fog.enabled = false;
-      globe.depthTestAgainstTerrain = false;
-      globe.showGroundAtmosphere = false;
       this.scene.msaaSamples = 1;
       this.scene.postProcessStages.fxaa.enabled = false;
       this.scene.postProcessStages.ambientOcclusion.enabled = false;
