@@ -65,7 +65,7 @@
     mat-button
     class="button-3d-map"
     id="showCockpitModel3d"
-    *ngIf="displayCockpitView3d"
+    *ngIf="displayCockpitView3d && aircraft != null && aircraft.hex != 'ISS'"
     (click)="showCockpitModel3d()"
     title="Enable/Disable cockpit model"
   >

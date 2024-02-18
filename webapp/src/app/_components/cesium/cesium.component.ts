@@ -1028,7 +1028,7 @@ export class CesiumComponent implements OnInit {
       let entityPlane = this.entityGroupModel!.entities.getById(
         this.aircraft!.hex + '_model'
       );
-      if (!entityPlane) return;
+      if (!entityPlane || !entityCockpit) return;
 
       if (entityCockpit) entityCockpit.orientation = this.orientationProperty;
 
@@ -1155,6 +1155,8 @@ export class CesiumComponent implements OnInit {
   }
 
   createCockpitEntity(entityGroup: any, aircraft: Aircraft) {
+    if (aircraft.hex == 'ISS') return undefined;
+
     let entity = entityGroup.entities.getById(aircraft.hex + '_cockpit');
     if (!entity) {
       entity = entityGroup.entities.add({
