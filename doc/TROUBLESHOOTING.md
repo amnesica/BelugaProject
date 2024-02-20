@@ -82,6 +82,12 @@ First hint: doublecheck your `.env` file. All entries with TODO have to be repla
    > Configuration could not be loaded. Is the server online? Program will not be executed further.
 
    Have you set the right IP adress at PROD_BASE_URL_WEBAPP in your .env file? It must be the IP-adress of your server.
+   
+   Are all 3 containers (postgres, server and webapp) running? Maybe containers are restarted permanently because of configuration errors or missing entries / lines in `.env` file? 
+   Check status of docker containers with command (sudo may be required)
+   ```
+   $ docker ps
+   ```
 
 
 ### Opensky Network

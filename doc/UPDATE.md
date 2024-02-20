@@ -130,27 +130,38 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
     </details>
 
 
-6. Build the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
+6. Rebuild the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
 
    `Important:` If you installed docker only for root user, you need to execute the command below with `sudo` privilege
 
+  	Rebuild images and containers
+   ```
+   $ ./run.sh docker-build postgres
+   $ ./run.sh docker-build server
+   $ ./run.sh docker-build webapp
+   ```
+
+   This will take some time. On an RaspberryPi 4B container build takes about 20 minutes.
+
+   Proceed with next steps (loading database, start containers)
    ```
    $ ./run.sh install
    ```
 
    This will take some time. On an RaspberryPi 4B
-
-    - container build takes about 14 minutes
     - loading database takes about 10 minutes
     - first start in browser takes about 3 minutes until all aircrafts are visible
 
    If you get error messages please take a look into [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).  
 
-7. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project, enable the Opensky-Network functionality in the settings menu (an Opensky-Network account is needed).
+7. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project, enable the [OpenSky-Network](https://opensky-network.org/) functionality in the settings menu (an Opensky-Network account is needed) or enable [Airplanes.live](https://airplanes.live/) functionality instead.
+
 
 8. Check Version of BelugaProject in browser
 
-	If you don't see the expected (new) version, clean browser cache and try again.
+	Open Settings/About. Check BuildTime, value should be approximately current date/time.
+   
+   If you don't see the expected (new) version and BuildTime, clean browser cache and try again.
 
    If you have not stopped and removed existing docker-images and containers before, do it now:
 
@@ -172,8 +183,18 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
    ```
 	
 	Check version in browser again. 
+
+9. Update database
+
+      To update aircraft, route and airport data use this command:
+      ```
+      $ ./run.sh update-db
+      ```
+      You will be asked, whether you want to download current version of aircraftData, airportData and flightrouteData.
+
+      It may take some time to prepare and upload the data to the postgres database. Be patient.
    
-9. Operation and Maintenance
+10. Operation and Maintenance
 
    Executing 
    ```
@@ -200,13 +221,6 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
       install                               Install project (build docker images and populate database)
    ```
 
-10. Update database
-
-      To update aircraft, route and airport data use this command:
-      ```
-      $ ./run.sh update-db
-      ```
-      It may take some time to prepare and upload the data to the postgres database. Be patient.
 
    
 
