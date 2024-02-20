@@ -69,6 +69,14 @@ export class Aircraft {
   aircraftState!: any;
   isFromRemote!: string;
   roll: any;
+  ias: any;
+  tas: any;
+  mach: any;
+  magHeading!: any;
+  trueHeading!: any;
+  messages: any;
+  emergency: any;
+  navModes: any;
 
   // Daten für Info-Abschnitt PositionOfMinimumDistance
   pomdLatitude!: any;
@@ -233,7 +241,15 @@ export class Aircraft {
     isFromRemote: string,
     lastUpdate: any,
     isMilitary: any,
-    roll: any
+    roll: any,
+    ias: any,
+    tas: any,
+    mach: any,
+    magHeading: any,
+    trueHeading: any,
+    messages: any,
+    emergency: any,
+    navModes: any
   ) {
     this.hex = hex;
     this.latitude = latitude;
@@ -266,6 +282,14 @@ export class Aircraft {
     this.lastUpdate = lastUpdate;
     this.isMilitary = isMilitary;
     this.roll = roll;
+    this.ias = ias;
+    this.tas = tas;
+    this.mach = mach;
+    this.magHeading = magHeading;
+    this.trueHeading = trueHeading;
+    this.messages = messages;
+    this.emergency = emergency;
+    this.navModes = navModes;
   }
 
   /**
@@ -305,7 +329,15 @@ export class Aircraft {
       aircraftJSONElement.isFromRemote,
       aircraftJSONElement.lastUpdate,
       aircraftJSONElement.isMilitary,
-      aircraftJSONElement.roll
+      aircraftJSONElement.roll,
+      aircraftJSONElement.ias,
+      aircraftJSONElement.tas,
+      aircraftJSONElement.mach,
+      aircraftJSONElement.magHeading,
+      aircraftJSONElement.trueHeading,
+      aircraftJSONElement.messages,
+      aircraftJSONElement.emergency,
+      aircraftJSONElement.navModes
     );
   }
 
@@ -580,6 +612,14 @@ export class Aircraft {
     this.isFromRemote = listElement.isFromRemote;
     this.lastUpdate = listElement.lastUpdate;
     this.roll = listElement.roll;
+    this.ias = listElement.ias;
+    this.tas = listElement.tas;
+    this.mach = listElement.mach;
+    this.magHeading = listElement.magHeading;
+    this.trueHeading = listElement.trueHeading;
+    this.messages = listElement.messages;
+    this.emergency = listElement.emergency;
+    this.navModes = listElement.navModes;
 
     // Generell: Berechne POMD-Point nur, wenn dieser auch angefragt wird
     // Ausnahme: Flugzeug ist das aktuell markierte, dann aktualisiere Werte,

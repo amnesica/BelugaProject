@@ -811,7 +811,7 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            Speed
+            Ground Speed
           </p>
           <tr *ngIf="aircraft && aircraft.speed != null">
             <th style="font-size: larger; font-weight: bold">
@@ -1800,7 +1800,7 @@
       <!-- space at left side -->
       <mat-grid-tile
         colspan="1"
-        rowspan="12"
+        rowspan="20"
         [ngClass]="
           darkMode ? 'background-and-color-dark' : 'background-and-color-light'
         "
@@ -1817,6 +1817,156 @@
           "
         >
           <mat-icon aria-hidden="false">flight_takeoff</mat-icon>
+        </div>
+      </mat-grid-tile>
+
+      <!-- latitude -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Latitude
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.latitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.latitude }}°
+          </p>
+          <p
+            *ngIf="aircraft && !aircraft.latitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- longitude -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Longitude
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.longitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.longitude }}°
+          </p>
+          <p
+            *ngIf="aircraft && !aircraft.longitude"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- distance zur Antennen-Position (Site-position) -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Distance (Antenna)
+          </p>
+          <tr *ngIf="aircraft && aircraft.distance != null">
+            <th style="font-size: larger; font-weight: bold">
+              {{ aircraft.distance }} km
+            </th>
+            <th
+              style="
+                font-size: smaller;
+                font-weight: lighter;
+                padding-left: 0.2rem;
+              "
+            >
+              ({{ roundValue(aircraft.distance / 1.852) }} nm)
+            </th>
+          </tr>
+
+          <p
+            *ngIf="aircraft && aircraft.distance == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- distance zur Geräte-Position -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Distance (Device)
+          </p>
+          <tr *ngIf="aircraft && aircraft.distanceDevicePos != null">
+            <th style="font-size: larger; font-weight: bold">
+              {{ aircraft.distanceDevicePos }} km
+            </th>
+            <th
+              style="
+                font-size: smaller;
+                font-weight: lighter;
+                padding-left: 0.2rem;
+              "
+            >
+              ({{ roundValue(aircraft.distanceDevicePos / 1.852) }} nm)
+            </th>
+          </tr>
+
+          <p
+            *ngIf="aircraft && aircraft.distanceDevicePos == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
         </div>
       </mat-grid-tile>
 
@@ -1976,6 +2126,72 @@
         </div>
       </mat-grid-tile>
 
+      <!-- Magnetic Heading -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Magnetic Heading
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.magHeading != null"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.magHeading }}°
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.magHeading == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- True Heading -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            True Heading
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.trueHeading != null"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.trueHeading }}°
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.trueHeading == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
       <!-- speed -->
       <mat-grid-tile
         colspan="4"
@@ -1992,7 +2208,7 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            Speed
+            Ground Speed
           </p>
           <tr *ngIf="aircraft && aircraft.speed != null">
             <th style="font-size: larger; font-weight: bold">
@@ -2010,6 +2226,120 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.speed == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- Indicated Air Speed -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Indicated Air Speed
+          </p>
+          <tr *ngIf="aircraft && aircraft.ias != null">
+            <th style="font-size: larger; font-weight: bold">
+              {{ aircraft.ias }} kn
+            </th>
+            <th
+              style="
+                font-size: smaller;
+                font-weight: lighter;
+                padding-left: 0.2rem;
+              "
+            >
+              ({{ roundValue(aircraft.ias * 1.852) }} km/h)
+            </th>
+          </tr>
+          <p
+            *ngIf="aircraft && aircraft.ias == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- True Air Speed -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            True Air Speed
+          </p>
+          <tr *ngIf="aircraft && aircraft.tas != null">
+            <th style="font-size: larger; font-weight: bold">
+              {{ aircraft.tas }} kn
+            </th>
+            <th
+              style="
+                font-size: smaller;
+                font-weight: lighter;
+                padding-left: 0.2rem;
+              "
+            >
+              ({{ roundValue(aircraft.tas * 1.852) }} km/h)
+            </th>
+          </tr>
+          <p
+            *ngIf="aircraft && aircraft.tas == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- Mach -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Mach
+          </p>
+          <tr *ngIf="aircraft && aircraft.mach != null">
+            <th style="font-size: larger; font-weight: bold">
+              {{ aircraft.mach }}
+            </th>
+          </tr>
+          <p
+            *ngIf="aircraft && aircraft.mach == null"
             style="font-size: larger; font-weight: bold"
           >
             N/A
@@ -2132,39 +2462,6 @@
         </div>
       </mat-grid-tile>
 
-      <!-- squawk -->
-      <mat-grid-tile
-        colspan="4"
-        rowspan="2"
-        [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
-        "
-      >
-        <div>
-          <p
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
-            "
-          >
-            Squawk
-          </p>
-          <p
-            *ngIf="aircraft && aircraft.squawk"
-            style="font-size: larger; font-weight: bold"
-          >
-            {{ aircraft.squawk }}
-          </p>
-          <p
-            *ngIf="aircraft && !aircraft.squawk"
-            style="font-size: larger; font-weight: bold"
-          >
-            N/A
-          </p>
-        </div>
-      </mat-grid-tile>
-
       <!-- on ground -->
       <mat-grid-tile
         colspan="4"
@@ -2234,7 +2531,7 @@
       <!-- space at left side -->
       <mat-grid-tile
         colspan="1"
-        rowspan="4"
+        rowspan="6"
         [ngClass]="
           darkMode ? 'background-and-color-dark' : 'background-and-color-light'
         "
@@ -2394,6 +2691,39 @@
         </div>
       </mat-grid-tile>
 
+      <!-- Nav Modes -->
+      <mat-grid-tile
+        colspan="8"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Nav Modes
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.navModes != null"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.navModes }}
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.navModes == null"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
       <!-- adsb label -->
       <mat-grid-tile
         colspan="9"
@@ -2422,7 +2752,7 @@
       <!-- space at left side -->
       <mat-grid-tile
         colspan="1"
-        rowspan="10"
+        rowspan="8"
         [ngClass]="
           darkMode ? 'background-and-color-dark' : 'background-and-color-light'
         "
@@ -2442,7 +2772,7 @@
         </div>
       </mat-grid-tile>
 
-      <!-- latitude -->
+      <!-- hex -->
       <mat-grid-tile
         colspan="4"
         rowspan="2"
@@ -2458,16 +2788,16 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            Latitude
+            ICAO 24-bit address
           </p>
           <p
-            *ngIf="aircraft && aircraft.latitude"
+            *ngIf="aircraft && aircraft.hex"
             style="font-size: larger; font-weight: bold"
           >
-            {{ aircraft.latitude }}°
+            {{ aircraft.hex }}
           </p>
           <p
-            *ngIf="aircraft && !aircraft.latitude"
+            *ngIf="aircraft && !aircraft.hex"
             style="font-size: larger; font-weight: bold"
           >
             N/A
@@ -2475,7 +2805,7 @@
         </div>
       </mat-grid-tile>
 
-      <!-- longitude -->
+      <!-- last Seen -->
       <mat-grid-tile
         colspan="4"
         rowspan="2"
@@ -2491,16 +2821,16 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            Longitude
+            Last Seen
           </p>
           <p
-            *ngIf="aircraft && aircraft.longitude"
+            *ngIf="aircraft && aircraft.lastSeen != null"
             style="font-size: larger; font-weight: bold"
           >
-            {{ aircraft.longitude }}°
+            {{ aircraft.lastSeen }} s
           </p>
           <p
-            *ngIf="aircraft && !aircraft.longitude"
+            *ngIf="aircraft && aircraft.lastSeen == null"
             style="font-size: larger; font-weight: bold"
           >
             N/A
@@ -2508,7 +2838,7 @@
         </div>
       </mat-grid-tile>
 
-      <!-- distance zur Antennen-Position (Site-position) -->
+      <!-- squawk -->
       <mat-grid-tile
         colspan="4"
         rowspan="2"
@@ -2524,25 +2854,16 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            Distance (Antenna)
+            Squawk
           </p>
-          <tr *ngIf="aircraft && aircraft.distance != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.distance }} km
-            </th>
-            <th
-              style="
-                font-size: smaller;
-                font-weight: lighter;
-                padding-left: 0.2rem;
-              "
-            >
-              ({{ roundValue(aircraft.distance / 1.852) }} nm)
-            </th>
-          </tr>
-
           <p
-            *ngIf="aircraft && aircraft.distance == null"
+            *ngIf="aircraft && aircraft.squawk"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.squawk }}
+          </p>
+          <p
+            *ngIf="aircraft && !aircraft.squawk"
             style="font-size: larger; font-weight: bold"
           >
             N/A
@@ -2550,7 +2871,7 @@
         </div>
       </mat-grid-tile>
 
-      <!-- distance zur Geräte-Position -->
+      <!-- emergency -->
       <mat-grid-tile
         colspan="4"
         rowspan="2"
@@ -2566,133 +2887,16 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            Distance (Device)
+            Emergency
           </p>
-          <tr *ngIf="aircraft && aircraft.distanceDevicePos != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.distanceDevicePos }} km
-            </th>
-            <th
-              style="
-                font-size: smaller;
-                font-weight: lighter;
-                padding-left: 0.2rem;
-              "
-            >
-              ({{ roundValue(aircraft.distanceDevicePos / 1.852) }} nm)
-            </th>
-          </tr>
-
           <p
-            *ngIf="aircraft && aircraft.distanceDevicePos == null"
+            *ngIf="aircraft && aircraft.emergency"
             style="font-size: larger; font-weight: bold"
           >
-            N/A
-          </p>
-        </div>
-      </mat-grid-tile>
-
-      <!-- rssi -->
-      <mat-grid-tile
-        colspan="4"
-        rowspan="2"
-        [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
-        "
-      >
-        <div>
-          <p
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
-            "
-          >
-            RSSI
+            {{ aircraft.emergency }}
           </p>
           <p
-            *ngIf="aircraft && aircraft.rssi"
-            style="font-size: larger; font-weight: bold"
-          >
-            {{ aircraft.rssi }}
-          </p>
-          <p
-            *ngIf="aircraft && !aircraft.rssi"
-            style="font-size: larger; font-weight: bold"
-          >
-            N/A
-          </p>
-        </div>
-      </mat-grid-tile>
-
-      <!-- Track -->
-      <mat-grid-tile
-        colspan="4"
-        rowspan="2"
-        [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
-        "
-      >
-        <div>
-          <p
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
-            "
-          >
-            Track
-          </p>
-          <p
-            *ngIf="aircraft && aircraft.track != null"
-            style="font-size: larger; font-weight: bold"
-          >
-            {{ aircraft.track }}°
-          </p>
-          <p
-            *ngIf="aircraft && aircraft.track == null"
-            style="font-size: larger; font-weight: bold"
-          >
-            N/A
-          </p>
-        </div>
-      </mat-grid-tile>
-
-      <!-- speed -->
-      <mat-grid-tile
-        colspan="4"
-        rowspan="2"
-        [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
-        "
-      >
-        <div>
-          <p
-            [ngClass]="
-              darkMode
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
-            "
-          >
-            Speed
-          </p>
-          <tr *ngIf="aircraft && aircraft.speed != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.speed }} kn
-            </th>
-            <th
-              style="
-                font-size: smaller;
-                font-weight: lighter;
-                padding-left: 0.2rem;
-              "
-            >
-              ({{ roundValue(aircraft.speed * 1.852) }} km/h)
-            </th>
-          </tr>
-
-          <p
-            *ngIf="aircraft && aircraft.speed == null"
+            *ngIf="aircraft && !aircraft.emergency"
             style="font-size: larger; font-weight: bold"
           >
             N/A
@@ -2771,7 +2975,7 @@
         </div>
       </mat-grid-tile>
 
-      <!-- last Seen -->
+      <!-- rssi -->
       <mat-grid-tile
         colspan="4"
         rowspan="2"
@@ -2787,16 +2991,49 @@
                 : 'background-and-color-light color-grey'
             "
           >
-            Last Seen
+            RSSI
           </p>
           <p
-            *ngIf="aircraft && aircraft.lastSeen != null"
+            *ngIf="aircraft && aircraft.rssi"
             style="font-size: larger; font-weight: bold"
           >
-            {{ aircraft.lastSeen }} s
+            {{ aircraft.rssi }}
           </p>
           <p
-            *ngIf="aircraft && aircraft.lastSeen == null"
+            *ngIf="aircraft && !aircraft.rssi"
+            style="font-size: larger; font-weight: bold"
+          >
+            N/A
+          </p>
+        </div>
+      </mat-grid-tile>
+
+      <!-- Messages -->
+      <mat-grid-tile
+        colspan="4"
+        rowspan="2"
+        [ngClass]="
+          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+        "
+      >
+        <div>
+          <p
+            [ngClass]="
+              darkMode
+                ? 'background-and-color-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            Messages
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.messages != null"
+            style="font-size: larger; font-weight: bold"
+          >
+            {{ aircraft.messages }}
+          </p>
+          <p
+            *ngIf="aircraft && aircraft.messages == null"
             style="font-size: larger; font-weight: bold"
           >
             N/A
@@ -3423,7 +3660,7 @@
             "
             style="font-size: small"
           >
-            Speed
+            Ground Speed
           </p>
           <p
             *ngIf="aircraft && aircraft.speed != null"
