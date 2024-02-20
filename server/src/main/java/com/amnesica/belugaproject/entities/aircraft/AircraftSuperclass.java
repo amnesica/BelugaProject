@@ -41,6 +41,14 @@ public class AircraftSuperclass {
   private Double selectedQnh;
   private Integer selectedAltitude;
   private Integer selectedHeading;
+  private Integer ias;
+  private Integer tas;
+  private Double mach;
+  private Double magHeading;
+  private Double trueHeading;
+  private Integer messages;
+  private String emergency;
+  private String navModes;
 
   // Liste mit Feeder, welches Flugzeug zur Zeit empfangen
   @Type(ListArrayType.class)

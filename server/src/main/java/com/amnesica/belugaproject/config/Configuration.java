@@ -305,6 +305,30 @@ public class Configuration {
       if (propsFeeder.getProperty("roll") != null) {
         mapping.setRoll(propsFeeder.getProperty("roll"));
       }
+      if (propsFeeder.getProperty("ias") != null) {
+        mapping.setIas(propsFeeder.getProperty("ias"));
+      }
+      if (propsFeeder.getProperty("tas") != null) {
+        mapping.setTas(propsFeeder.getProperty("tas"));
+      }
+      if (propsFeeder.getProperty("mach") != null) {
+        mapping.setMach(propsFeeder.getProperty("mach"));
+      }
+      if (propsFeeder.getProperty("magHeading") != null) {
+        mapping.setMagHeading(propsFeeder.getProperty("magHeading"));
+      }
+      if (propsFeeder.getProperty("trueHeading") != null) {
+        mapping.setTrueHeading(propsFeeder.getProperty("trueHeading"));
+      }
+      if (propsFeeder.getProperty("emergency") != null) {
+        mapping.setEmergency(propsFeeder.getProperty("emergency"));
+      }
+      if (propsFeeder.getProperty("messages") != null) {
+        mapping.setMessages(propsFeeder.getProperty("messages"));
+      }
+      if (propsFeeder.getProperty("navModes") != null) {
+        mapping.setNavModes(propsFeeder.getProperty("navModes"));
+      }
     }
     return mapping;
   }

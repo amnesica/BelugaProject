@@ -141,6 +141,14 @@ public class AircraftService {
     aircraftToUpdate.setLastSeen(aircraftNew.getLastSeen());
     aircraftToUpdate.setSourceCurrentFeeder(aircraftNew.getSourceCurrentFeeder());
     aircraftToUpdate.setRoll(aircraftNew.getRoll());
+    aircraftToUpdate.setIas(aircraftNew.getIas());
+    aircraftToUpdate.setTas(aircraftNew.getTas());
+    aircraftToUpdate.setMach(aircraftNew.getMach());
+    aircraftToUpdate.setMagHeading(aircraftNew.getMagHeading());
+    aircraftToUpdate.setTrueHeading(aircraftNew.getTrueHeading());
+    aircraftToUpdate.setMessages(aircraftNew.getMessages());
+    aircraftToUpdate.setEmergency(aircraftNew.getEmergency());
+    aircraftToUpdate.setNavModes(aircraftNew.getNavModes());
 
     // Schreibe aktuellen Feeder als Feeder in Liste
     if (!aircraftToUpdate.getFeederList().contains(feederName)) {
@@ -264,6 +272,14 @@ public class AircraftService {
     String rssi = feeder.getMapping().getRssi();
     String source = feeder.getMapping().getSource();
     String roll = feeder.getMapping().getRoll();
+    String ias = feeder.getMapping().getIas();
+    String tas = feeder.getMapping().getTas();
+    String mach = feeder.getMapping().getMach();
+    String magHeading = feeder.getMapping().getMagHeading();
+    String trueHeading = feeder.getMapping().getTrueHeading();
+    String messages = feeder.getMapping().getMessages();
+    String emergency = feeder.getMapping().getEmergency();
+    String navModes = feeder.getMapping().getNavModes();
 
     // Setze Werte nach Mapping
     if (altitude != null && element.has(altitude) && !element.isNull(altitude)
@@ -396,6 +412,46 @@ public class AircraftService {
 
     if (rssi != null && element.has(rssi) && !element.isNull(rssi)) {
       aircraft.setRssi(element.getDouble(rssi));
+    }
+
+    if (ias != null && element.has(ias)) {
+      aircraft.setIas(element.getInt(ias));
+    }
+
+    if (tas != null && element.has(tas)) {
+      aircraft.setTas(element.getInt(tas));
+    }
+
+    if (mach != null && element.has(mach)) {
+      aircraft.setMach(element.getDouble(mach));
+    }
+
+    if (magHeading != null && element.has(magHeading)) {
+      aircraft.setMagHeading(element.getDouble(magHeading));
+    }
+
+    if (trueHeading != null && element.has(trueHeading)) {
+      aircraft.setTrueHeading(element.getDouble(trueHeading));
+    }
+
+    if (messages != null && element.has(messages)) {
+      aircraft.setMessages(element.getInt(messages));
+    }
+
+    if (emergency != null && element.has(emergency) && !element.isNull(emergency)) {
+      aircraft.setEmergency(element.getString(emergency));
+    }
+
+    if (navModes != null && element.has(navModes) && !element.isNull(navModes)) {
+      JSONArray navModesArray = element.getJSONArray(navModes);
+      if (navModesArray != null && navModesArray.length() > 0) {
+        String navModesString = navModesArray.toString();
+        navModesString = navModesString.replace("[","");
+        navModesString = navModesString.replace("]","");
+        navModesString = navModesString.replaceAll("\"", "");
+        aircraft.setNavModes(navModesString);
+        aircraft.setAutopilotEngaged(true);
+      }
     }
 
     if (source != null && element.has(source) && !element.isNull(source)) {

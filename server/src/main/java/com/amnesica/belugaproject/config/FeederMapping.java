@@ -36,4 +36,12 @@ public class FeederMapping {
   private String source;
   private String roll;
   private String lastUpdate;
+  private String ias;
+  private String tas;
+  private String mach;
+  private String magHeading;
+  private String trueHeading;
+  private String messages;
+  private String emergency;
+  private String navModes;
 }
