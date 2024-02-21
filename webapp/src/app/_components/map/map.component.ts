@@ -46,7 +46,10 @@ import XYZ from 'ol/source/XYZ';
 import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
 import { Maps } from 'src/app/_classes/maps';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
-import { dummyParentAnimation } from 'src/app/_common/animations';
+import {
+  dummyParentAnimation,
+  slideInOutRight,
+} from 'src/app/_common/animations';
 import { Storage } from 'src/app/_classes/storage';
 import { Trail } from 'src/app/_classes/trail';
 
@@ -55,7 +58,7 @@ import { Trail } from 'src/app/_classes/trail';
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
-  animations: [dummyParentAnimation],
+  animations: [dummyParentAnimation, slideInOutRight],
 })
 export class MapComponent implements OnInit {
   // Openlayers Karte
