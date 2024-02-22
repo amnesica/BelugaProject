@@ -89,6 +89,9 @@ export class CesiumComponent implements OnInit {
   leftDownInputAction: any;
   mouseMoveInputAction: any;
   leftUpInputAction: any;
+  zoomInputAction: any;
+  zoomAmountCockpitViewFov: number = 59.12719755119661;
+  zoomAmountCockpitView: number = 0;
   movementFactor: number = 0.1;
   showCockpitViewEventListener: Cesium.Event.RemoveCallback | undefined;
   displayCockpitModel3d: boolean = false;
@@ -1096,6 +1099,8 @@ export class CesiumComponent implements OnInit {
         roll: -this.aircraftRoll,
       },
     });
+
+    camera.zoomIn(this.zoomAmountCockpitView);
   }
 
   resetFirstPersonCockpitView(entityCockpit) {
@@ -1106,6 +1111,8 @@ export class CesiumComponent implements OnInit {
         this.handler.removeInputAction(this.mouseMoveInputAction);
       if (this.leftUpInputAction)
         this.handler.removeInputAction(this.leftUpInputAction);
+      if (this.zoomInputAction)
+        this.handler.removeInputAction(this.zoomInputAction);
       entityCockpit.show = false;
       this.initFirstPersonView = true;
     }
@@ -1152,6 +1159,51 @@ export class CesiumComponent implements OnInit {
     this.leftUpInputAction = this.handler.setInputAction((position) => {
       this.flags.looking = false;
     }, Cesium.ScreenSpaceEventType.LEFT_UP);
+
+    this.zoomInputAction = this.handler.setInputAction((zoomScalar) => {
+      if (!this.viewer) return;
+      this.changeCameraZoomFov(zoomScalar);
+      this.changeCameraZoom(zoomScalar);
+    }, Cesium.ScreenSpaceEventType.WHEEL);
+  }
+
+  changeCameraZoom(initialZoomScalar: number) {
+    const maxZoom = 0.6;
+    const minZoom = -0.2;
+    const sensitivityFactor = 0.0001;
+    const zoomScalar = initialZoomScalar * sensitivityFactor;
+
+    let zoomAmountNow = this.zoomAmountCockpitView;
+    const nextZoomAmount = (zoomAmountNow += zoomScalar);
+
+    if (nextZoomAmount <= maxZoom && nextZoomAmount >= minZoom) {
+      this.zoomAmountCockpitView += zoomScalar;
+    }
+  }
+
+  changeCameraZoomFov(initialZoomScalar: number) {
+    if (!this.viewer) return;
+
+    const sensitivityFactorFov = 0.01;
+    let zoomAmountFovNow = this.zoomAmountCockpitViewFov;
+    const zoomScalar = initialZoomScalar * sensitivityFactorFov;
+    const nextZoomAmountFov = (zoomAmountFovNow -= zoomScalar);
+    const nextZoomAmountRadians = Cesium.Math.toRadians(nextZoomAmountFov);
+
+    if (
+      nextZoomAmountRadians >= 0.3 &&
+      nextZoomAmountRadians <= Cesium.Math.PI_OVER_THREE
+    ) {
+      this.zoomAmountCockpitViewFov = nextZoomAmountFov;
+      const currentFrustum = this.viewer.scene.camera.frustum;
+      this.viewer.scene.camera.frustum = new Cesium.PerspectiveFrustum({
+        fov: Cesium.Math.toRadians(this.zoomAmountCockpitViewFov),
+        aspectRatio:
+          this.viewer.canvas.clientWidth / this.viewer.canvas.clientHeight,
+        near: currentFrustum.near,
+        far: currentFrustum.far,
+      });
+    }
   }
 
   createCockpitEntity(entityGroup: any, aircraft: Aircraft) {
