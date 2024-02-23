@@ -295,6 +295,14 @@ export class SettingsComponent implements OnInit {
       1.0
     );
     this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
+
+    this.toggleOpenskyPlanes(
+      Storage.getPropertyFromLocalStorage('showOpenskyPlanes', false)
+    );
+
+    this.toggleAirplanesLivePlanes(
+      Storage.getPropertyFromLocalStorage('showAirplanesLive', false)
+    );
   }
 
   ngOnInit(): void {
@@ -648,6 +656,11 @@ export class SettingsComponent implements OnInit {
   toggleOpenskyPlanes(checked: boolean) {
     this.showOpenskyPlanes = checked;
 
+    Storage.savePropertyInLocalStorage(
+      'showOpenskyPlanes',
+      this.showOpenskyPlanes
+    );
+
     // Kontaktiere Map-Component und übergebe showOpenskyPlanes-Boolean
     this.settingsService.toggleOpenskyPlanes(this.showOpenskyPlanes);
   }
@@ -955,6 +968,11 @@ export class SettingsComponent implements OnInit {
 
   toggleAirplanesLivePlanes(checked: boolean) {
     this.showAirplanesLivePlanes = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showAirplanesLive',
+      this.showAirplanesLivePlanes
+    );
 
     // Kontaktiere Map-Component und übergebe showAirplanesLivePlanes-Boolean
     this.settingsService.toggleAirplanesLivePlanes(
