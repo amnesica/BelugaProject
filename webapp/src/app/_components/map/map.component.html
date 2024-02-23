@@ -165,16 +165,29 @@
     <div *ngIf="airportDataPoint">
       <mat-card-header id="airportDataPopupHeader">
         <!-- airport icao -->
-        <mat-card-title *ngIf="airportDataPoint.icao" style="color: #f8c023; font-size: 1.2rem; display: flex; align-self: center">
-          {{ airportDataPoint.icao }} 
-        <a
-          href="{{ 'https://ourairports.com/airports/' + airportDataPoint.icao }}"
-          target="_blank"
+        <mat-card-title
+          *ngIf="airportDataPoint.icao"
+          style="
+            color: #f8c023;
+            font-size: 1.2rem;
+            display: flex;
+            align-self: center;
+          "
         >
-          <mat-icon aria-hidden="false" style="color: #f8c023">link</mat-icon></a
-        >
-      </mat-card-title>
- 
+          {{ airportDataPoint.icao }}
+          <a
+            *ngIf="airportDataPoint.icao"
+            id="airportDataLinkOurAirports"
+            href="{{
+              'https://ourairports.com/airports/' + airportDataPoint.icao
+            }}"
+            target="_blank"
+          >
+            <mat-icon aria-hidden="false" style="color: #f8c023"
+              >link</mat-icon
+            ></a
+          >
+        </mat-card-title>
       </mat-card-header>
 
       <table>

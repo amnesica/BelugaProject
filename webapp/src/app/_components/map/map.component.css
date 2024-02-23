@@ -92,6 +92,15 @@ mat-card-header {
   flex-direction: column;
 }
 
+#airportDataLinkOurAirports {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 6px;
+  line-height: 14px;
+  min-width: auto;
+}
+
 table,
 th,
 td {
