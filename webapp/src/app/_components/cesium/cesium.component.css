@@ -20,33 +20,23 @@
   left: 0rem;
 }
 
-#showTerrain {
+#showSettings {
   top: 9rem;
-  left: 0;
-}
-
-#show3dBuildings {
-  top: 12rem;
-  left: 0rem;
-}
-
-#showGooglePhotorealistic3D {
-  top: 15rem;
   left: 0rem;
 }
 
 #followPlane3d {
-  top: 18rem;
+  top: 12rem;
   left: 0rem;
 }
 
 #showCockpitView3d {
-  top: 24rem;
+  top: 15rem;
   left: 0rem;
 }
 
 #showCockpitModel3d {
-  top: 27rem;
+  top: 18rem;
   left: 0rem;
 }
 
@@ -55,24 +45,69 @@
   left: 0rem;
 }
 
-#enableHdr3dMap {
-  top: 12rem;
-  right: 0;
+#settings3dDiv {
+  height: auto;
+  bottom: 0;
+  z-index: 110;
+  position: fixed;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 0;
+  font-weight: 500;
+  overflow: auto;
+  padding-bottom: 1rem;
 }
 
-#enableHighQualityMap {
-  top: 15rem;
+#closeButton {
+  position: absolute;
+  color: white;
+  top: 0;
   right: 0;
+  padding: 4px;
+  line-height: 14px;
+  min-width: auto;
 }
 
-#enableCloudsMap {
-  top: 18rem;
-  right: 0;
+.background-and-color-light {
+  background-color: #efeff4;
+  color: black;
 }
 
-#enableDayNightMap {
-  top: 21rem;
-  right: 0;
+.background-and-color-dark {
+  background-color: #383838;
+  color: white;
+}
+
+::ng-deep .mat-slide-toggle {
+  margin: 0.2rem !important;
+  display: block !important;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #f8c023;
+}
+
+.mat-mdc-slider {
+  margin: 0.2rem !important;
+  height: 1rem !important;
+
+  --mdc-slider-handle-color: #f8c023;
+  --mdc-slider-focus-handle-color: #f8c023;
+  --mdc-slider-hover-handle-color: #f8c02333;
+  --mdc-slider-active-track-color: #f8c023;
+  --mdc-slider-inactive-track-color: #232323;
+  --mat-mdc-slider-ripple-color: #f8c023;
+  --mat-mdc-slider-hover-ripple-color: #ffffff00;
+  --mat-mdc-slider-focus-ripple-color: #ffffff00;
+
+  --mdc-slider-label-container-color: #949498;
+  --mdc-slider-label-label-text-color: white;
+  --mat-mdc-slider-value-indicator-opacity: 1;
+}
+
+::ng-deep mat-slider-visual-thumb {
+  height: 1rem !important;
 }
 
 ::ng-deep .cesium-credit-textContainer {

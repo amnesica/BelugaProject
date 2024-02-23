@@ -13,12 +13,15 @@ import { Globals } from 'src/app/_common/globals';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { takeUntil } from 'rxjs/operators';
+import { slideInOutBottom } from 'src/app/_common/animations';
+import { Storage } from 'src/app/_classes/storage';
 
 @Component({
   selector: 'app-cesium',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cesium.component.html',
   styleUrls: ['./cesium.component.css'],
+  animations: [slideInOutBottom],
 })
 export class CesiumComponent implements OnInit {
   // Flugzeug, wofür die 3d-Komponente angezeigt wird (Eingabeparameter)
@@ -26,6 +29,8 @@ export class CesiumComponent implements OnInit {
 
   // Cesium Ion Default Access Token (Eingabeparameter)
   @Input() cesiumIonDefaultAccessToken: any;
+
+  @Input() darkMode: boolean = false;
 
   isDesktop: boolean | undefined;
   widthMap3d: string | undefined;
@@ -37,15 +42,14 @@ export class CesiumComponent implements OnInit {
   camera: Cesium.Camera | undefined;
 
   // Settings
-  display3dBuildings: boolean = false;
+  displayOsmBuildings3d: boolean = false;
   osmBuildingsTileset: Cesium.Cesium3DTileset | undefined;
-  displayGooglePhotorealistic3D: boolean = false;
+  displayGooglePhotorealistic3d: boolean = false;
   googlePhotorealisticTileset: any;
   displayCockpitView3d: boolean = false;
   display3dMapFullscreen: boolean = false;
   displayTerrain: boolean = false;
   enableHdr3dMap: boolean = false;
-  enableHighQuality: boolean = false;
   enableDayNightMap: boolean = false;
   followPlane3d: boolean = false;
   earthAtNightLayer: Cesium.ImageryLayer | undefined;
@@ -96,6 +100,19 @@ export class CesiumComponent implements OnInit {
   showCockpitViewEventListener: Cesium.Event.RemoveCallback | undefined;
   displayCockpitModel3d: boolean = false;
 
+  displaySettings: boolean = false;
+  enableShadows3dMap: boolean = false;
+  enableTerrainShadows3dMap: boolean = false;
+  enableLighting3dMap: boolean = false;
+  enableMsaa3dMap: boolean = false;
+  enableFxaa3dMap: boolean = false;
+  enableAmbientOcclusion3dMap: boolean = false;
+  enableAthmosphereLight3dMap: boolean = false;
+  enableFog3dMap: boolean = false;
+  enableDebugInfo3dMap: boolean = false;
+  sliderMsaa3dValue: any;
+  enableDefaultResolution3dMap: boolean = true;
+
   // Subscriptions
   private ngUnsubscribe = new Subject();
 
@@ -145,16 +162,11 @@ export class CesiumComponent implements OnInit {
 
     this.setupMapProviders();
 
-    this.setDevicePixelRatio();
-
     this.enableCollisionDetection();
 
     this.removeInstructionHintAtStart();
 
     this.enableDefaultQualitySettings();
-
-    // TODO debug
-    if (this.viewer) this.viewer.scene.debugShowFramesPerSecond = true;
   }
 
   initSubscriptions() {
@@ -261,14 +273,63 @@ export class CesiumComponent implements OnInit {
 
   enableDefaultQualitySettings() {
     if (!this.scene) return;
-    this.scene.globe.atmosphereLightIntensity = 20.0;
-    this.scene.globe.dynamicAtmosphereLighting = true;
-    this.scene.globe.dynamicAtmosphereLightingFromSun = true;
-    this.scene.globe.showGroundAtmosphere = true;
-    this.scene.fog.enabled = true;
-    this.scene.fog.minimumBrightness = 0.3;
-    this.scene.fog.density = 2.0e-4 * 1.0;
     this.scene.globe.depthTestAgainstTerrain = true;
+    this.setQualitySettingsFromLocalStorage();
+  }
+
+  setQualitySettingsFromLocalStorage() {
+    if (!this.viewer || !this.scene) return;
+
+    this.toggleHdrOnMap(
+      Storage.getPropertyFromLocalStorage('showHdr3d', false)
+    );
+    this.toggleShadowsOnMap(
+      Storage.getPropertyFromLocalStorage('showShadows3d', false)
+    );
+    this.toggleTerrainShadowsOnMap(
+      Storage.getPropertyFromLocalStorage('showTerrainShadows3d', false)
+    );
+    this.toggleLightingOnMap(
+      Storage.getPropertyFromLocalStorage('showLighting3d', false)
+    );
+    this.toggleMsaaOnMap(
+      Storage.getPropertyFromLocalStorage('showMsaa3d', false)
+    );
+    this.toggleFxaaOnMap(
+      Storage.getPropertyFromLocalStorage('showFxaa3d', false)
+    );
+    this.toggleAmbientOcclusionOnMap(
+      Storage.getPropertyFromLocalStorage('showAmbientOcclusion3d', false)
+    );
+    this.sliderMsaa3dValue = Storage.getPropertyFromLocalStorage(
+      'sliderMsaa3d',
+      0
+    );
+    this.scene.msaaSamples = this.sliderMsaa3dValue;
+    this.toggleAthmosphereLightOnMap(
+      Storage.getPropertyFromLocalStorage('showAthmosphereLight3d', false)
+    );
+    this.toggleFogOnMap(
+      Storage.getPropertyFromLocalStorage('showFog3d', false)
+    );
+    this.toggleDebugInfoOnMap(
+      Storage.getPropertyFromLocalStorage('showDebugInfo3d', false)
+    );
+    this.toggleDefaultResolutionOnMap(
+      Storage.getPropertyFromLocalStorage('showDefaultResolution3d', true)
+    );
+    this.toggleOsmBuildingsOnMap(
+      Storage.getPropertyFromLocalStorage('showOsmBuildings3d', false)
+    );
+    this.toggleGooglePhotogrammatryOnMap(
+      Storage.getPropertyFromLocalStorage('showGooglePhotorealistic3d', false)
+    );
+    this.toggleCloudsOnMap(
+      Storage.getPropertyFromLocalStorage('showClouds3d', false)
+    );
+    this.toggleDayNightLayerOnMap(
+      Storage.getPropertyFromLocalStorage('showDayNightLayer3d', false)
+    );
   }
 
   createCesiumViewer() {
@@ -289,12 +350,6 @@ export class CesiumComponent implements OnInit {
     });
     this.scene = this.viewer.scene;
     this.camera = this.viewer.camera;
-  }
-
-  setDevicePixelRatio() {
-    if (!this.viewer) return;
-    this.viewer.resolutionScale = window.devicePixelRatio;
-    this.viewer.useBrowserRecommendedResolution = true;
   }
 
   setHomeToSitePosition() {
@@ -495,7 +550,7 @@ export class CesiumComponent implements OnInit {
     }
 
     // Google Photogrammetrie ist höher als normales OSM-Terrain
-    if (this.displayGooglePhotorealistic3D) {
+    if (this.displayGooglePhotorealistic3d) {
       altitude += 5;
     }
 
@@ -762,8 +817,10 @@ export class CesiumComponent implements OnInit {
 
     this.removeOsm3dBuildings();
     this.removeGooglePhotorealistic3D();
+    this.removeDayNightLayerOnMap();
     this.osmBuildingsTileset = undefined;
     this.googlePhotorealisticTileset = undefined;
+    this.earthAtNightLayer = undefined;
 
     this.aircraft = null;
   }
@@ -809,35 +866,19 @@ export class CesiumComponent implements OnInit {
     });
   }
 
-  show3dBuildings() {
-    if (!this.viewer) return;
-
-    if (!this.display3dBuildings) {
-      if (!this.osmBuildingsTileset) {
-        this.createOsmBuildings();
-      }
-    } else {
-      this.removeOsm3dBuildings();
-    }
-  }
-
   async createOsmBuildings() {
     if (!this.viewer) return;
 
     try {
       const scene = this.viewer?.scene;
 
-      // Füge OSM Buildings Tileset hinzu
-      await Cesium.createOsmBuildingsAsync().then((osmBuildingsTileset) => {
-        this.osmBuildingsTileset = osmBuildingsTileset;
-        scene.primitives.add(this.osmBuildingsTileset);
-        this.display3dBuildings = true;
-      });
-
-      this.showClickedBehaviourOnButton(
-        'show3dBuildings',
-        this.display3dBuildings
-      );
+      if (!this.osmBuildingsTileset) {
+        // Füge OSM Buildings Tileset hinzu
+        await Cesium.createOsmBuildingsAsync().then((osmBuildingsTileset) => {
+          this.osmBuildingsTileset = osmBuildingsTileset;
+          scene.primitives.add(this.osmBuildingsTileset);
+        });
+      }
     } catch (error) {
       this.openSnackBar(
         `Error loading OSM 3D Building Tiles tileset. ${error}`,
@@ -853,24 +894,6 @@ export class CesiumComponent implements OnInit {
     if (this.osmBuildingsTileset)
       scene.primitives.remove(this.osmBuildingsTileset);
     this.osmBuildingsTileset = undefined;
-    this.display3dBuildings = false;
-
-    this.showClickedBehaviourOnButton(
-      'show3dBuildings',
-      this.display3dBuildings
-    );
-  }
-
-  showGooglePhotorealistic3D() {
-    if (!this.viewer) return;
-
-    if (!this.displayGooglePhotorealistic3D) {
-      if (!this.googlePhotorealisticTileset) {
-        this.createGooglePhotorealistic3D();
-      }
-    } else {
-      this.removeGooglePhotorealistic3D();
-    }
   }
 
   async createGooglePhotorealistic3D() {
@@ -878,17 +901,14 @@ export class CesiumComponent implements OnInit {
 
     // Füge Photorealistic 3D Tiles hinzu
     try {
-      this.googlePhotorealisticTileset =
-        await Cesium.Cesium3DTileset.fromIonAssetId(2275207, {});
-      this.scene.primitives.add(this.googlePhotorealisticTileset);
-      this.displayGooglePhotorealistic3D = true;
+      if (!this.googlePhotorealisticTileset) {
+        this.googlePhotorealisticTileset =
+          await Cesium.Cesium3DTileset.fromIonAssetId(2275207, {});
+        this.scene.primitives.add(this.googlePhotorealisticTileset);
+      }
+
       // Globe muss nicht angezeigt werden, da die Photorealistic 3D Tiles das Terrain beinhalten
       this.scene.globe.show = false;
-
-      this.showClickedBehaviourOnButton(
-        'showGooglePhotorealistic3D',
-        this.displayGooglePhotorealistic3D
-      );
     } catch (error) {
       this.openSnackBar(
         `Error loading Photorealistic 3D Tiles tileset. ${error}`,
@@ -905,12 +925,6 @@ export class CesiumComponent implements OnInit {
       this.scene.primitives.remove(this.googlePhotorealisticTileset);
     this.scene.globe.show = true;
     this.googlePhotorealisticTileset = undefined;
-    this.displayGooglePhotorealistic3D = false;
-
-    this.showClickedBehaviourOnButton(
-      'showGooglePhotorealistic3D',
-      this.displayGooglePhotorealistic3D
-    );
   }
 
   showCockpitView3d() {
@@ -1256,17 +1270,6 @@ export class CesiumComponent implements OnInit {
       this.widthMap3d = '40rem';
       if (cesiumMap) cesiumMap.style.width = '40rem';
     }
-
-    this.setDevicePixelRatio();
-  }
-
-  enableHdr3dOnMap() {
-    if (!this.viewer || !this.scene) return;
-    this.enableHdr3dMap = !this.enableHdr3dMap;
-
-    this.showClickedBehaviourOnButton('enableHdr3dMap', this.enableHdr3dMap);
-
-    this.scene.highDynamicRange = this.enableHdr3dMap;
   }
 
   enableMoonSunOnMap() {
@@ -1283,36 +1286,29 @@ export class CesiumComponent implements OnInit {
     );
   }
 
-  enableHighQualityOnMap() {
+  toggleDayNightLayerOnMap(checked: boolean) {
     if (!this.viewer || !this.scene) return;
 
-    this.enableHighQuality = !this.enableHighQuality;
+    this.enableDayNightMap = checked;
 
-    this.showClickedBehaviourOnButton(
-      'enableHighQualityMap',
-      this.enableHighQuality
+    Storage.savePropertyInLocalStorage(
+      'showDayNightLayer3d',
+      this.enableDayNightMap
     );
 
-    const globe = this.scene.globe;
-    if (this.enableHighQuality) {
-      this.viewer.shadows = true;
-      this.viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
-      globe.enableLighting = true;
-      this.scene.msaaSamples = 4;
-      this.scene.postProcessStages.fxaa.enabled = true;
-      this.scene.postProcessStages.ambientOcclusion.enabled = true;
+    if (this.enableDayNightMap) {
+      this.enableDayNightLayerOnMap();
     } else {
-      this.viewer.shadows = false;
-      this.viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
-      globe.enableLighting = false;
-      this.scene.msaaSamples = 1;
-      this.scene.postProcessStages.fxaa.enabled = false;
-      this.scene.postProcessStages.ambientOcclusion.enabled = false;
+      this.removeDayNightLayerOnMap();
     }
   }
 
-  async enableDayNightOnMap() {
+  async enableDayNightLayerOnMap() {
     if (!this.viewer || !this.scene) return;
+
+    if (!Storage.getPropertyFromLocalStorage('showLighting3d', false)) {
+      this.toggleLightingOnMap(true);
+    }
 
     if (!this.earthAtNightLayer) {
       this.earthAtNightLayer = Cesium.ImageryLayer.fromProviderAsync(
@@ -1323,36 +1319,32 @@ export class CesiumComponent implements OnInit {
 
     if (!this.earthAtNightLayer) return;
 
-    this.enableDayNightMap = !this.enableDayNightMap;
+    // Entferne terrain, da ansonsten Layer nicht richtig angezeigt werden
+    this.viewer.scene.terrainProvider = new Cesium.EllipsoidTerrainProvider();
 
-    this.showClickedBehaviourOnButton(
-      'enableDayNightMap',
-      this.enableDayNightMap
-    );
-
-    if (this.enableDayNightMap) {
-      // Entferne terrain, da ansonsten Layer nicht richtig angezeigt werden
-      this.viewer.scene.terrainProvider = new Cesium.EllipsoidTerrainProvider();
-
-      const imagerLayers = this.viewer.imageryLayers;
-      if (imagerLayers.length > 1) {
-        // Verstecke den Layer, wenn dieser bereits hinzugefügt wurde
-        this.earthAtNightLayer.show = true;
-        return;
-      }
-
-      this.addEarthAtNightLayerToLayers();
-    } else {
-      if (!this.earthAtNightLayer) return;
-      this.earthAtNightLayer.show = false;
-      this.viewer.scene.globe.enableLighting = this.enableHighQuality;
-      this.viewer.scene.setTerrain(
-        Cesium.Terrain.fromWorldTerrain({
-          requestVertexNormals: true,
-          requestWaterMask: false,
-        })
-      );
+    const imagerLayers = this.viewer.imageryLayers;
+    if (imagerLayers.length > 1) {
+      // Verstecke den Layer, wenn dieser bereits hinzugefügt wurde
+      this.earthAtNightLayer.show = true;
+      return;
     }
+
+    this.addEarthAtNightLayerToLayers();
+  }
+
+  removeDayNightLayerOnMap() {
+    if (!this.viewer || !this.scene) return;
+
+    if (!this.earthAtNightLayer) return;
+    this.earthAtNightLayer.show = false;
+    this.viewer.scene.globe.enableLighting =
+      Storage.getPropertyFromLocalStorage('showLighting3d', false);
+    this.viewer.scene.setTerrain(
+      Cesium.Terrain.fromWorldTerrain({
+        requestVertexNormals: true,
+        requestWaterMask: false,
+      })
+    );
   }
 
   showClickedBehaviourOnButton(buttonId: string, isClicked: boolean) {
@@ -1435,11 +1427,74 @@ export class CesiumComponent implements OnInit {
     this.viewer.trackedEntity = entity;
   }
 
-  enableCloudsOnMap() {
+  computeCloudOrientation(): any {
     if (!this.viewer) return;
 
-    this.enableClouds = !this.enableClouds;
-    this.showClickedBehaviourOnButton('enableCloudsMap', this.enableClouds);
+    const position = Cesium.Cartesian3.ZERO;
+    const timestamp = Cesium.JulianDate.toDate(
+      this.viewer.clock.currentTime
+    ).getTime();
+    const heading = Cesium.Math.toRadians(timestamp / 1000);
+    const pitch = Cesium.Math.toRadians(0);
+    const roll = 0;
+    const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
+    const orientation = Cesium.Transforms.headingPitchRollQuaternion(
+      position,
+      hpr
+    );
+    return orientation;
+  }
+
+  showSettingsOnMap() {
+    this.displaySettings = !this.displaySettings;
+    this.showClickedBehaviourOnButton('showSettings', this.displaySettings);
+  }
+
+  closeSettings3d() {
+    this.displaySettings = false;
+    this.showClickedBehaviourOnButton('showSettings', this.displaySettings);
+  }
+
+  toggleOsmBuildingsOnMap(checked: boolean) {
+    if (!this.viewer) return;
+
+    this.displayOsmBuildings3d = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showOsmBuildings3d',
+      this.displayOsmBuildings3d
+    );
+
+    if (this.displayOsmBuildings3d) {
+      this.createOsmBuildings();
+    } else {
+      this.removeOsm3dBuildings();
+    }
+  }
+
+  toggleGooglePhotogrammatryOnMap(checked: boolean) {
+    if (!this.viewer) return;
+
+    this.displayGooglePhotorealistic3d = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showGooglePhotorealistic3d',
+      this.displayGooglePhotorealistic3d
+    );
+
+    if (this.displayGooglePhotorealistic3d) {
+      this.createGooglePhotorealistic3D();
+    } else {
+      this.removeGooglePhotorealistic3D();
+    }
+  }
+
+  toggleCloudsOnMap(checked: boolean) {
+    if (!this.viewer) return;
+
+    this.enableClouds = checked;
+
+    Storage.savePropertyInLocalStorage('showClouds3d', this.enableClouds);
 
     if (this.enableClouds) {
       const equatorialRadius = 6378137.0;
@@ -1473,21 +1528,195 @@ export class CesiumComponent implements OnInit {
     }
   }
 
-  computeCloudOrientation(): any {
-    if (!this.viewer) return;
+  toggleHdrOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableHdr3dMap = checked;
 
-    const position = Cesium.Cartesian3.ZERO;
-    const timestamp = Cesium.JulianDate.toDate(
-      this.viewer.clock.currentTime
-    ).getTime();
-    const heading = Cesium.Math.toRadians(timestamp / 1000);
-    const pitch = Cesium.Math.toRadians(0);
-    const roll = 0;
-    const hpr = new Cesium.HeadingPitchRoll(heading, pitch, roll);
-    const orientation = Cesium.Transforms.headingPitchRollQuaternion(
-      position,
-      hpr
+    Storage.savePropertyInLocalStorage('showHdr3d', this.enableHdr3dMap);
+
+    this.scene.highDynamicRange = this.enableHdr3dMap;
+  }
+
+  toggleShadowsOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableShadows3dMap = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showShadows3d',
+      this.enableShadows3dMap
     );
-    return orientation;
+
+    this.viewer.shadows = this.enableShadows3dMap;
+  }
+
+  toggleTerrainShadowsOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableTerrainShadows3dMap = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showTerrainShadows3d',
+      this.enableTerrainShadows3dMap
+    );
+
+    if (this.enableTerrainShadows3dMap) {
+      this.viewer.terrainShadows = Cesium.ShadowMode.ENABLED;
+    } else {
+      this.viewer.terrainShadows = Cesium.ShadowMode.DISABLED;
+    }
+  }
+
+  toggleLightingOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableLighting3dMap = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showLighting3d',
+      this.enableLighting3dMap
+    );
+
+    this.scene.globe.enableLighting = this.enableLighting3dMap;
+  }
+
+  toggleMsaaOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableMsaa3dMap = checked;
+
+    Storage.savePropertyInLocalStorage('showMsaa3d', this.enableMsaa3dMap);
+
+    if (this.enableMsaa3dMap) {
+      this.scene.msaaSamples = 4;
+    } else {
+      this.scene.msaaSamples = 1;
+    }
+  }
+
+  toggleFxaaOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableFxaa3dMap = checked;
+
+    Storage.savePropertyInLocalStorage('showFxaa3d', this.enableFxaa3dMap);
+
+    this.scene.postProcessStages.fxaa.enabled = this.enableFxaa3dMap;
+  }
+
+  toggleAmbientOcclusionOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableAmbientOcclusion3dMap = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showAmbientOcclusion3d',
+      this.enableAmbientOcclusion3dMap
+    );
+
+    this.scene.postProcessStages.ambientOcclusion.enabled =
+      this.enableAmbientOcclusion3dMap;
+  }
+
+  toggleAthmosphereLightOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableAthmosphereLight3dMap = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showAthmosphereLight3d',
+      this.enableAthmosphereLight3dMap
+    );
+
+    this.scene.globe.atmosphereLightIntensity = 20.0;
+    this.scene.globe.dynamicAtmosphereLighting =
+      this.enableAthmosphereLight3dMap;
+    this.scene.globe.dynamicAtmosphereLightingFromSun =
+      this.enableAthmosphereLight3dMap;
+    this.scene.globe.showGroundAtmosphere = this.enableAthmosphereLight3dMap;
+  }
+
+  toggleFogOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableFog3dMap = checked;
+
+    Storage.savePropertyInLocalStorage('showFog3d', this.enableFog3dMap);
+
+    this.scene.fog.enabled = this.enableFog3dMap;
+    this.scene.fog.minimumBrightness = 0.3;
+    this.scene.fog.density = 2.0e-4 * 1.0;
+  }
+
+  onInputChangeMsaa3dSize(event: any) {
+    if (!this.viewer || !this.scene) return;
+
+    this.sliderMsaa3dValue = event.target.valueAsNumber;
+
+    Storage.savePropertyInLocalStorage('sliderMsaa3d', this.sliderMsaa3dValue);
+
+    this.scene.msaaSamples = this.sliderMsaa3dValue;
+  }
+
+  toggleDefaultResolutionOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableDefaultResolution3dMap = checked;
+    Storage.savePropertyInLocalStorage(
+      'showDefaultResolution3d',
+      this.enableDefaultResolution3dMap
+    );
+    if (this.enableDefaultResolution3dMap) {
+      this.viewer.resolutionScale = window.devicePixelRatio;
+      this.viewer.useBrowserRecommendedResolution = true;
+    } else {
+      this.viewer.resolutionScale = 1;
+      this.viewer.useBrowserRecommendedResolution = false;
+    }
+  }
+
+  toggleDebugInfoOnMap(checked: boolean) {
+    if (!this.viewer || !this.scene) return;
+    this.enableDebugInfo3dMap = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showDebugInfo3d',
+      this.enableDebugInfo3dMap
+    );
+
+    this.viewer.scene.debugShowFramesPerSecond = this.enableDebugInfo3dMap;
+  }
+
+  showLowGraphicSettings() {
+    if (!this.viewer || !this.scene) return;
+    this.toggleHdrOnMap(false);
+    this.toggleShadowsOnMap(false);
+    this.toggleTerrainShadowsOnMap(false);
+    this.toggleLightingOnMap(false);
+    this.toggleMsaaOnMap(false);
+    this.toggleFxaaOnMap(false);
+    this.toggleAmbientOcclusionOnMap(false);
+    this.scene.msaaSamples = this.sliderMsaa3dValue = 0;
+    this.toggleAthmosphereLightOnMap(false);
+    this.toggleFogOnMap(false);
+  }
+
+  showMediumGraphicSettings() {
+    if (!this.viewer || !this.scene) return;
+    this.toggleHdrOnMap(false);
+    this.toggleShadowsOnMap(true);
+    this.toggleTerrainShadowsOnMap(false);
+    this.toggleLightingOnMap(true);
+    this.toggleMsaaOnMap(false);
+    this.toggleFxaaOnMap(true);
+    this.toggleAmbientOcclusionOnMap(false);
+    this.scene.msaaSamples = this.sliderMsaa3dValue = 0;
+    this.toggleAthmosphereLightOnMap(true);
+    this.toggleFogOnMap(true);
+  }
+
+  showHighGraphicSettings() {
+    if (!this.viewer || !this.scene) return;
+    this.toggleHdrOnMap(true);
+    this.toggleShadowsOnMap(true);
+    this.toggleTerrainShadowsOnMap(true);
+    this.toggleLightingOnMap(true);
+    this.toggleMsaaOnMap(true);
+    this.toggleFxaaOnMap(true);
+    this.toggleAmbientOcclusionOnMap(true);
+    this.scene.msaaSamples = this.sliderMsaa3dValue = 8;
+    this.toggleAthmosphereLightOnMap(true);
+    this.toggleFogOnMap(true);
   }
 }

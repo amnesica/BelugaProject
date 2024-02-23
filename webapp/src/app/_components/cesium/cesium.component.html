@@ -26,34 +26,6 @@
   <button
     mat-button
     class="button-3d-map"
-    id="show3dBuildings"
-    (click)="show3dBuildings()"
-  >
-    <mat-icon
-      aria-hidden="false"
-      aria-label="close window"
-      title="Enable/Disable OSM 3D buildings"
-      >domain</mat-icon
-    >
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
-    id="showGooglePhotorealistic3D"
-    (click)="showGooglePhotorealistic3D()"
-  >
-    <mat-icon
-      aria-hidden="false"
-      aria-label="close window"
-      title="Enable/Disable Google Maps Photogrammatry"
-      >photo_camera</mat-icon
-    >
-  </button>
-
-  <button
-    mat-button
-    class="button-3d-map"
     id="showCockpitView3d"
     (click)="showCockpitView3d()"
     title="Enable/Disable cockpit mode"
@@ -112,56 +84,210 @@
   <button
     mat-button
     class="button-3d-map"
-    id="enableHdr3dMap"
-    (click)="enableHdr3dOnMap()"
+    id="showSettings"
+    (click)="showSettingsOnMap()"
   >
     <mat-icon
       aria-hidden="false"
       aria-label="close window"
-      title="Enable/Disable HDR, allow anisotropic filter, max msaaSample value (requires high performance!)"
-      >hdr_on</mat-icon
+      title="Show/Hide settings for 3d map"
+      >settings</mat-icon
     >
   </button>
 
-  <button
-    mat-button
-    class="button-3d-map"
-    id="enableHighQualityMap"
-    (click)="enableHighQualityOnMap()"
+  <div
+    *ngIf="displaySettings"
+    [@slideInOutBottom]
+    [style.width]="widthMap3d"
+    [ngClass]="
+      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+    "
+    id="settings3dDiv"
   >
-    <img
-      src="../../../assets/hq.svg"
-      aria-hidden="false"
-      aria-label="close window"
-      title="Enable/Disable shadows, lighting"
-    />
-  </button>
+    <div style="width: 100%; height: 2rem">
+      <div
+        style="
+          height: 1.8rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: large;
+          font-weight: bold;
+          background-color: #327db6;
+          border-top-right-radius: 15px;
+          border-bottom-right-radius: 0;
+          border-top-left-radius: 15px;
+          border-bottom-left-radius: 0;
+        "
+      >
+        <p>Settings for 3D map</p>
+      </div>
+      <!-- close button -->
+      <button mat-button id="closeButton" (click)="closeSettings3d()">
+        <mat-icon aria-hidden="false" aria-label="close window">close</mat-icon>
+      </button>
+    </div>
 
-  <button
-    mat-button
-    class="button-3d-map"
-    id="enableCloudsMap"
-    (click)="enableCloudsOnMap()"
-  >
-    <mat-icon
-      aria-hidden="false"
-      aria-label="close window"
-      title="Enable/Disable clouds"
-      >cloud</mat-icon
-    >
-  </button>
+    <div style="padding-left: 1.5rem">
+      <mat-slide-toggle
+        [checked]="displayGooglePhotorealistic3d"
+        (click)="$event.stopPropagation()"
+        (change)="toggleGooglePhotogrammatryOnMap($event.checked)"
+        >Google Photogrammatry</mat-slide-toggle
+      >
 
-  <button
-    mat-button
-    class="button-3d-map"
-    id="enableDayNightMap"
-    (click)="enableDayNightOnMap()"
-  >
-    <mat-icon
-      aria-hidden="false"
-      aria-label="close window"
-      title="Enable/Disable day/night imaginery"
-      >dark_mode</mat-icon
-    >
-  </button>
+      <mat-slide-toggle
+        [checked]="displayOsmBuildings3d"
+        (click)="$event.stopPropagation()"
+        (change)="toggleOsmBuildingsOnMap($event.checked)"
+        >OSM Buildings</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableClouds"
+        (click)="$event.stopPropagation()"
+        (change)="toggleCloudsOnMap($event.checked)"
+        >Clouds</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableDayNightMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleDayNightLayerOnMap($event.checked)"
+        >Day/Night Layer</mat-slide-toggle
+      >
+
+      <mat-divider></mat-divider>
+
+      <!-- Button-Toggles, um vordefinierte Grafik-Einstellungen für Cesium auszuwählen -->
+      <div
+        style="
+          display: flex;
+          justify-content: left;
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+        "
+      >
+        <button
+          mat-button
+          style="background-color: gray; color: white; margin-right: 0.5rem"
+          (click)="showLowGraphicSettings()"
+        >
+          Low
+        </button>
+        <button
+          mat-button
+          style="background-color: gray; color: white; margin-right: 0.5rem"
+          (click)="showMediumGraphicSettings()"
+        >
+          Medium
+        </button>
+        <button
+          mat-button
+          style="background-color: gray; color: white"
+          (click)="showHighGraphicSettings()"
+        >
+          High
+        </button>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <mat-slide-toggle
+        [checked]="enableHdr3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleHdrOnMap($event.checked)"
+        >HDR</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableLighting3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleLightingOnMap($event.checked)"
+        >Lighting</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableAthmosphereLight3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleAthmosphereLightOnMap($event.checked)"
+        >Athmosphere Lighting</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableShadows3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleShadowsOnMap($event.checked)"
+        >Shadows</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableTerrainShadows3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleTerrainShadowsOnMap($event.checked)"
+        >Terrain Shadows</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableAmbientOcclusion3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleAmbientOcclusionOnMap($event.checked)"
+        >Ambient Occlusion</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableFog3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleFogOnMap($event.checked)"
+        >Fog</mat-slide-toggle
+      >
+
+      <mat-slide-toggle
+        [checked]="enableFxaa3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleFxaaOnMap($event.checked)"
+        >FXAA (Fast Anti-aliasing)</mat-slide-toggle
+      >
+
+      <div style="display: flex; justify-content: start; max-height: 2rem">
+        <mat-slider min="0" max="8" step="2">
+          <input
+            matSliderThumb
+            [(ngModel)]="sliderMsaa3dValue"
+            (input)="onInputChangeMsaa3dSize($event)"
+          />
+        </mat-slider>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-height: 2rem;
+            padding-left: 1rem;
+          "
+        >
+          <p *ngIf="sliderMsaa3dValue > 0">
+            MSAA (Anti-aliasing) {{ sliderMsaa3dValue }}x
+          </p>
+          <p *ngIf="sliderMsaa3dValue == 0">MSAA (Anti-aliasing) off</p>
+        </div>
+      </div>
+
+      <mat-slide-toggle
+        [checked]="enableDefaultResolution3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleDefaultResolutionOnMap($event.checked)"
+        >Default Graphical Resolution</mat-slide-toggle
+      >
+
+      <mat-divider></mat-divider>
+
+      <mat-slide-toggle
+        [checked]="enableDebugInfo3dMap"
+        (click)="$event.stopPropagation()"
+        (change)="toggleDebugInfoOnMap($event.checked)"
+        >Debug Info</mat-slide-toggle
+      >
+    </div>
+  </div>
 </div>

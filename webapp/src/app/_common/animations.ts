@@ -17,6 +17,16 @@ export const slideInOutRight = trigger('slideInOutRight', [
   ]),
 ]);
 
+export const slideInOutBottom = trigger('slideInOutBottom', [
+  transition(':enter', [
+    style({ transform: 'translateY(100%)' }),
+    animate('200ms ease-out', style({ transform: 'translateY(0)' })),
+  ]),
+  transition(':leave', [
+    animate('200ms ease-out', style({ transform: 'translateY(100%)' })),
+  ]),
+]);
+
 export const dummyParentAnimation = trigger('dummyParentAnimation', [
   transition('* => void', [query('@*', [animateChild()], { optional: true })]),
 ]);
