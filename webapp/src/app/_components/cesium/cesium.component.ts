@@ -1670,7 +1670,7 @@ export class CesiumComponent implements OnInit {
       this.viewer.resolutionScale = window.devicePixelRatio;
       this.viewer.useBrowserRecommendedResolution = true;
     } else {
-      this.viewer.resolutionScale = 1;
+      this.viewer.resolutionScale = 0.9;
       this.viewer.useBrowserRecommendedResolution = false;
     }
   }
