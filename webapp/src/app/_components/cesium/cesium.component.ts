@@ -94,6 +94,7 @@ export class CesiumComponent implements OnInit {
   mouseMoveInputAction: any;
   leftUpInputAction: any;
   zoomInputAction: any;
+  zoomInputActionPinch: any;
   zoomAmountCockpitViewFov: number = 59.12719755119661;
   zoomAmountCockpitView: number = 0;
   movementFactor: number = 0.1;
@@ -1127,6 +1128,8 @@ export class CesiumComponent implements OnInit {
         this.handler.removeInputAction(this.leftUpInputAction);
       if (this.zoomInputAction)
         this.handler.removeInputAction(this.zoomInputAction);
+      if (this.zoomInputActionPinch)
+        this.handler.removeInputAction(this.zoomInputActionPinch);
       entityCockpit.show = false;
       this.initFirstPersonView = true;
     }
@@ -1179,6 +1182,12 @@ export class CesiumComponent implements OnInit {
       this.changeCameraZoomFov(zoomScalar);
       this.changeCameraZoom(zoomScalar);
     }, Cesium.ScreenSpaceEventType.WHEEL);
+
+    this.zoomInputActionPinch = this.handler.setInputAction((zoomScalar) => {
+      if (!this.viewer) return;
+      this.changeCameraZoomFov(zoomScalar);
+      this.changeCameraZoom(zoomScalar);
+    }, Cesium.ScreenSpaceEventType.PINCH_START);
   }
 
   changeCameraZoom(initialZoomScalar: number) {
