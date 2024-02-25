@@ -4,6 +4,8 @@ This is a description of the **update** process for the Beluga Project running i
 
 For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because BelugaProject is running significantly faster than on 32 bit OS version.
 
+If you want to use the 3D view, follow the instructions in the [INSTALL.md](./INSTALL.md) first.
+
 1. Backup your `.env` file from your existing BelugaProject before proceeding.
 
    (here for example to folder ~/Documents)
@@ -126,7 +128,7 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 
    10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex
 
-   11. Add your API-Keys for additional maps and the 3D view (**Optional**). For the 3D view follow the instructions at "Preparations" in the INSTALL.md (without these API-Keys you cannot use the 3D view and cannot use all available maps in settings)
+   11. Add your API-Keys for additional maps and the 3D view (**Optional**). For the 3D view follow the instructions at "Preparations" in the [INSTALL.md](./INSTALL.md) (without these API-Keys you cannot use the 3D view and cannot use all available maps in settings)
 
        ```
        GEOAPIFY_API_KEY=
