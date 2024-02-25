@@ -7,12 +7,14 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 1. Backup your `.env` file from your existing BelugaProject before proceeding.
 
    (here for example to folder ~/Documents)
+
    ```
    $ cd BelugaProject/
    $ cp .env ~/Documents/mybackup.env
    ```
 
 2. Stop and remove all containers and images
+
    ```
    $ cd BelugaProject/
    $ sudo ./run.sh docker-stop
@@ -22,6 +24,7 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 3. Remove existing BelugaProject directory
 
    (here assuming it is in your home directory)
+
    ```
    $ cd ~
    $ sudo rm -r BelugaProject
@@ -37,17 +40,20 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 5. Compare your backup `.env` file with the current template file `.env.template`
 
    `.env.template` may have been changed since last version. If there are no changes, you can restore your backup file with
+
    ```
    $ cd BelugaProject/
    $ cp ~/Documents/mybackup.env .env
-	```
+   ```
 
-	If there are changes, you have to copy the new template and replace the TODO-Entries with the values of your backup file using an editor like nano.
+   If there are changes, you have to copy the new template and replace the TODO-Entries with the values of your backup file using an editor like nano.
+
    ```
    $ cp .env.template .env
    $ nano .env
-	```
-	Important: doublecheck your IP-adress!!!
+   ```
+
+   **Important**: doublecheck your IP-adress!!!
 
    For further information on how to configure the `.env` file expand the following section
    <details>
@@ -77,16 +83,16 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 
    2. Enter the **URLs** of your feeders with an json output seperated by comma (If you do not have a local feeder, just leave the value empty)
 
-    - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
-    - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
-    - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
-    - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
-    - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
-    - for vrs use the URL `http://XXX.XXX.XXX.XX/VirtualRadar/AircraftList.json`
+   - for AirSquitter use the URL `http://XXX.XXX.XXX.XX/aircraftlist.json`
+   - for tar1090 use the URL `http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json`
+   - for adsbx use the URL `http://XXX.XXX.XXX.XX/adsbx/data/aircraft.json`
+   - for fr24feeder (dump1090) use the URL `http://XXX.XXX.XXX.XX/dump1090/data/aircraft.json`
+   - for dump1090-fa use the URL `http://XXX.XXX.XXX.XX/dump1090-fa/data/aircraft.json`
+   - for vrs use the URL `http://XXX.XXX.XXX.XX/VirtualRadar/AircraftList.json`
 
-      ```
-      ipFeeder=URL1,URL2
-      ```
+     ```
+     ipFeeder=URL1,URL2
+     ```
 
    3. Enter the **type** of your feeders. Currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder, vrs (If you do not have a local feeder, just leave the value empty)
 
@@ -103,7 +109,7 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
    5. Enter the **color** of your feeders seperated by comma. This color is used later in statistical views (if you do not have a local feeder, set `colorFeeder=red` (valid color is needed here!)
 
       ```
-      colorFeeder=red, blue
+      colorFeeder=red,blue
       ```
 
    6. Enter the **amount** of your feeders. This value must match with the amount of feeder configuration entries (If you do not have a local feeder set `amountFeeder=1`)
@@ -120,21 +126,21 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
 
    10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex
 
-   11. Add your API-Keys for additional maps (**Optional**)
-      ```
-      GEOAPIFY_API_KEY=
-      CESIUM_ION_DEFAULTACCESSTOKEN=
-      CESIUM_GOOGLEMAPS_API_KEY=
-      ```
-      (without these API-Keys you cannot see all availible maps in settings)
-    </details>
+   11. Add your API-Keys for additional maps and the 3D view (**Optional**). For the 3D view follow the instructions at "Preparations" in the INSTALL.md (without these API-Keys you cannot use the 3D view and cannot use all available maps in settings)
 
+       ```
+       GEOAPIFY_API_KEY=
+       CESIUM_ION_DEFAULTACCESSTOKEN=
+       ```
+
+   </details>
 
 6. Rebuild the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
 
    `Important:` If you installed docker only for root user, you need to execute the command below with `sudo` privilege
 
-  	Rebuild images and containers
+   Rebuild images and containers
+
    ```
    $ ./run.sh docker-build postgres
    $ ./run.sh docker-build server
@@ -144,83 +150,88 @@ For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because Bel
    This will take some time. On an RaspberryPi 4B container build takes about 20 minutes.
 
    Proceed with next steps (loading database, start containers)
+
    ```
    $ ./run.sh install
    ```
 
    This will take some time. On an RaspberryPi 4B
-    - loading database takes about 10 minutes
-    - first start in browser takes about 3 minutes until all aircrafts are visible
 
-   If you get error messages please take a look into [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).  
+   - loading database takes about 10 minutes
+   - first start in browser takes about 3 minutes until all aircrafts are visible
+
+   If you get error messages please take a look into [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
 
 7. When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. If you just want to test the project, enable the [OpenSky-Network](https://opensky-network.org/) functionality in the settings menu (an Opensky-Network account is needed) or enable [Airplanes.live](https://airplanes.live/) functionality instead.
 
-
 8. Check Version of BelugaProject in browser
 
-	Open Settings/About. Check BuildTime, value should be approximately current date/time.
-   
+   Open Settings/About. Check BuildTime, value should be approximately current date/time.
+
    If you don't see the expected (new) version and BuildTime, clean browser cache and try again.
 
    If you have not stopped and removed existing docker-images and containers before, do it now:
 
-	Stop running containers
+   Stop running containers
+
    ```
    $ ./run.sh docker-stop server
    $ ./run.sh docker-stop webapp
    ```
-	
-	Rebuild images and containers
+
+   Rebuild images and containers
+
    ```
    $ ./run.sh docker-build server
    $ ./run.sh docker-build webapp
    ```
 
-	Restart with
+   Restart with
+
    ```
    $ ./run.sh install
    ```
-	
-	Check version in browser again. 
+
+   Check version in browser again.
 
 9. Update database
 
-      To update aircraft, route and airport data use this command:
-      ```
-      $ ./run.sh update-db
-      ```
-      You will be asked, whether you want to download current version of aircraftData, airportData and flightrouteData.
+   To update aircraft, route and airport data use this command:
 
-      It may take some time to prepare and upload the data to the postgres database. Be patient.
-   
+   ```
+   $ ./run.sh update-db
+   ```
+
+   You will be asked, whether you want to download current version of aircraftData, airportData and flightrouteData.
+
+   It may take some time to prepare and upload the data to the postgres database. Be patient.
+
 10. Operation and Maintenance
 
-   Executing 
-   ```
-   $ ./run.sh
-   ```
-   will show some options for troubleshooting, operation and database maintanance. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.
-   ```
-   Usage: ./run.sh command
-   commands:
-      run                                   Run project with docker compose
-      run-bg                                Run project with docker compose (in background)
-      docker-build <image_name>             Build docker images (all when empty or specific image)
-      docker-start <container_name>         Start container (all when empty or specific container)
-      docker-stop <container_name>          Stop container (all when empty or specific container)
-      docker-rm-container <container_name>  Remove container (all when empty or specific container)
-      docker-rm-image <image_name>          Remove image (all when empty or specific container)
-      docker-rm                             Remove all containers and images of Beluga Project
-      download-mictronics                   Download mictronics db and convert jsons to csv files
-      load-db                               Fill database in postgres container if tables were created
-      update-db                             Update database in postgres container (db maintenance)
-      tables-exist                          Check if tables in postgres container were created by spring
-      stat-db                               Show BelugaDB statistics                              
-      env                                   Show current environment variables in .env file
-      install                               Install project (build docker images and populate database)
-   ```
+Executing
 
+```
+$ ./run.sh
+```
 
-   
+will show some options for troubleshooting, operation and database maintanance. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.
 
+```
+Usage: ./run.sh command
+commands:
+   run                                   Run project with docker compose
+   run-bg                                Run project with docker compose (in background)
+   docker-build <image_name>             Build docker images (all when empty or specific image)
+   docker-start <container_name>         Start container (all when empty or specific container)
+   docker-stop <container_name>          Stop container (all when empty or specific container)
+   docker-rm-container <container_name>  Remove container (all when empty or specific container)
+   docker-rm-image <image_name>          Remove image (all when empty or specific container)
+   docker-rm                             Remove all containers and images of Beluga Project
+   download-mictronics                   Download mictronics db and convert jsons to csv files
+   load-db                               Fill database in postgres container if tables were created
+   update-db                             Update database in postgres container (db maintenance)
+   tables-exist                          Check if tables in postgres container were created by spring
+   stat-db                               Show BelugaDB statistics
+   env                                   Show current environment variables in .env file
+   install                               Install project (build docker images and populate database)
+```
