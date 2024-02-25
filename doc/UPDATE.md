@@ -37,6 +37,7 @@ If you want to use the 3D view, follow the instructions in the [INSTALL.md](./IN
    ```
    $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/master.zip -O BelugaProject.zip
    $ unzip BelugaProject.zip
+   $ mv BelugaProject-master/ BelugaProject
    ```
 
 5. Compare your backup `.env` file with the current template file `.env.template`
