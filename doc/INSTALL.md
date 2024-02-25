@@ -133,7 +133,7 @@ If you want to use the 3D view, follow these steps:
 
     This will take some time. On an RaspberryPi 4B
 
-    - container build takes about 14 minutes
+    - container build takes about 20 minutes
     - load database takes about 10 minutes
     - first start in browser takes about 3 minutes until all aircrafts are visible
 
