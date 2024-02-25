@@ -33,8 +33,8 @@ If you want to use the 3D view, follow these steps:
 
     ```
     $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/master.zip -O BelugaProject.zip
-    $ mv BelugaProject-master/ BelugaProject
     $ unzip BelugaProject.zip
+    $ mv BelugaProject-master/ BelugaProject
     ```
 
 3.  Rename the environment variables template file `.env.template` in `.env` and configure the environment variables in the `.env` file. You can use `nano` for editing the config file.
