@@ -29,10 +29,11 @@ If you want to use the 3D view, follow these steps:
 
 1.  Install docker and docker compose (at least version 2) from [here](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi. Check the version of docker compose with `docker compose version` (needs to be >=2)
 
-2.  Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP and extract it
+2.  Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP, rename and extract it
 
     ```
     $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/master.zip -O BelugaProject.zip
+    $ mv BelugaProject-master/ BelugaProject
     $ unzip BelugaProject.zip
     ```
 
