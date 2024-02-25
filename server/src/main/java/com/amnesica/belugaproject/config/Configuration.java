@@ -32,7 +32,7 @@ public class Configuration {
   private BuildProperties buildProperties;
 
   // Version der App
-  private final String appStage = "master";
+  private final String appStage = "dev";
 
   // Angezeigte Feeder-Position auf der Karte
   @Value("${location.latitude}")
