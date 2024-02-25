@@ -9,7 +9,7 @@ import * as olProj from 'ol/proj';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import TileLayer from 'ol/layer/Tile';
-import { Group as LayerGroup, WebGLPoints } from 'ol/layer';
+import { Layer, Group as LayerGroup, WebGLPoints } from 'ol/layer';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { Aircraft } from 'src/app/_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
@@ -33,21 +33,32 @@ import {
   Attribution,
 } from 'ol/control';
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
-import { SymbolType } from 'ol/style/LiteralStyle';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
-import GeometryType from 'ol/geom/GeometryType';
-import { asString } from 'ol/color';
+import VectorSource from 'ol/source/Vector';
+import { Geometry } from 'ol/geom';
+import WebGLPointsLayer from 'ol/layer/WebGLPoints';
+import XYZ from 'ol/source/XYZ';
+import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
+import { Maps } from 'src/app/_classes/maps';
+import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
+import {
+  dummyParentAnimation,
+  slideInOutRight,
+} from 'src/app/_common/animations';
+import { Storage } from 'src/app/_classes/storage';
+import { Trail } from 'src/app/_classes/trail';
 
 @Component({
   selector: 'app-map',
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css'],
+  animations: [dummyParentAnimation, slideInOutRight],
 })
 export class MapComponent implements OnInit {
   // Openlayers Karte
@@ -60,10 +71,10 @@ export class MapComponent implements OnInit {
   osmLayer: any;
 
   // Layer für Range Data
-  rangeDataLayer!: VectorLayer;
+  rangeDataLayer!: VectorLayer<VectorSource<Geometry>>;
 
   // Layer für Flugzeuge (kein WebGL)
-  planesLayer!: VectorLayer;
+  planesLayer!: VectorLayer<VectorSource<Geometry>>;
 
   // Entfernungs-Ringe und Feeder-Position als Features
   StaticFeatures = new Vector();
@@ -84,7 +95,7 @@ export class MapComponent implements OnInit {
   aircraft: Aircraft | null = null;
 
   // Aktuell gehovertes Aircraft
-  hoveredAircraft!: Aircraft;
+  hoveredAircraftObject: any;
 
   // Distanzen fuer darzustellende Ringe (in nm)
   circleDistancesInNm: number[] = [];
@@ -97,15 +108,17 @@ export class MapComponent implements OnInit {
   infoConfigurationFailureMessage;
 
   // Boolean, in welchem Modus sich die Anwendung befindet
-  isDesktop: boolean | undefined;
+  isDesktop!: boolean;
 
   // Ausgewählter Feeder im Select
-  selectedFeederUpdate: string = 'AllFeeder';
+  selectedFeederUpdate: string[] = [];
 
   // Default-Werte für Fetch-Booleans
   showAirportsUpdate: boolean = true;
   showOpenskyPlanes: boolean = false;
+  showAirplanesLivePlanes: boolean = false;
   showIss: boolean = true;
+  showOnlyMilitary: boolean = false;
 
   // Anzahl der momentan laufenden Fetches (Flugzeuge) an den Server
   pendingFetchesPlanes = 0;
@@ -117,7 +130,10 @@ export class MapComponent implements OnInit {
   darkMode: boolean = false;
 
   // Boolean, ob Flugzeug-Label angezeigt werden sollen
-  toggleShowAircraftLabels: boolean = false;
+  showAircraftLabel: boolean = false;
+
+  // Boolean, ob Flugzeug-Positionen angezeigt werden sollen
+  toggleShowAircraftPositions: boolean = true;
 
   // Zeige Route zwischen Start-Flugzeug-Ziel an
   showRoute: any;
@@ -165,10 +181,10 @@ export class MapComponent implements OnInit {
   rangeDataPopupBottomValue: any = 0;
 
   // Selektierte Feeder, nachdem Range Data selektiert werden soll
-  selectedFeederRangeData: any;
+  selectedFeederRangeData: string[] = [];
 
   // Layer für WebGL-Features
-  webglLayer: WebGLPoints | undefined;
+  webglLayer: WebGLPoints<VectorSource<Point>> | undefined;
 
   private ngUnsubscribe = new Subject();
 
@@ -188,11 +204,99 @@ export class MapComponent implements OnInit {
   // Aktuelle Geräte-Position als Feature
   DrawFeature = new Vector();
 
+  // Boolean, ob RainViewer (Rain) Data sichtbar ist
+  showRainViewerRain: boolean = false;
+
+  // Boolean, ob RainViewer (Clouds) Data sichtbar ist
+  showRainViewerClouds: boolean = false;
+
+  // Boolean, ob RainViewer Forecast (Rain) Data sichtbar ist
+  showRainViewerRainForecast: boolean = false;
+
+  // Layer für die Rainviewer Daten (Regen)
+  rainviewerRainLayer: TileLayer<XYZ> = new TileLayer();
+
+  // Layer für die Rainviewer Daten (Clouds)
+  rainviewerCloudsLayer: TileLayer<XYZ> = new TileLayer();
+
+  // Urls für RainViewer Forecast
+  forecastRainPathAndTime: any[] = [];
+
+  // Id des Refresh-Intervals für Rainviewer-Daten
+  refreshIntervalIdRainviewer: any;
+
+  // Id des Refresh-Intervals für Rainviewer-Daten (Forecast Animation)
+  refreshIntervalIdRainviewerForecast: any;
+
+  // Ids für timeouts zum Anzeigen der Forecast-Animation-Frames
+  timeoutHandlerForecastAnimation: any;
+
+  // Aktuell angeklickter AirportDataPoint (Feature)
+  airportDataPoint: any;
+
+  // Positionswerte für das Popup zum Anzeigen der
+  // AirportData-Informationen
+  leftValueAirporteData!: number;
+  topValueAirportData!: number;
+
+  // Popup für AirportData-Punkte
+  airportDataPopup: any;
+
+  // Bottom-Wert für AirportDataPopup
+  // (wenn dieser angezeigt wird, soll dieser auf 10px gesetzt werden)
+  airportDataPopupBottomValue: any = 0;
+
+  // Layer für Airports
+  airportLayer!: VectorLayer<VectorSource<Geometry>>;
+
+  // Liste an verfügbaren Map-Stilen
+  listAvailableMaps: any;
+
+  // API-Key für Geoapify
+  geoapifyApiKey: any;
+
+  // Aktuell ausgewählter Map-Stil
+  currentSelectedMapStyle: any;
+
+  // Boolean, ob Map gedimmt werden soll
+  dimMap: boolean = true;
+
+  // Boolean, ob dunkle Range Ringe und dunkles Antenna-Icon gezeigt werden soll
+  darkStaticFeatures: boolean = true;
+
+  // Access Token für Cesium Ion für 3d-Komponente
+  cesiumIonDefaultAccessToken: any;
+
+  // API-Key für Google Maps
+  cesiumGoogleMapsApiKey: any;
+
+  // Boolean, ob Map gerade bewegt wird
+  mapIsBeingMoved: boolean = false;
+
+  // Breite der Cesium-Map-Komponente
+  cesiumMapWidth: string = '';
+
+  // Boolean, um alle gespeicherten Trails anzuzeigen
+  showTrailData: boolean = false;
+
+  // Layer für alle Trails vom Server
+  allTrailsLayer: LayerGroup | undefined;
+
+  // Boolean, ob Altitude Chart angezeigt werden soll
+  showAltitudeChart: boolean = true;
+
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
   // werden soll und der Aufruf aus der Info-Komponente geschehen soll)
   get displayAircraftInfo() {
     return Globals.displayAircraftInfoLarge;
+  }
+
+  // Boolean, um 3d-Map anzuzeigen (in Globals, da ein
+  // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
+  // werden soll und der Aufruf aus der 3d-Map-Komponente geschehen soll)
+  get display3dMap() {
+    return Globals.display3dMap;
   }
 
   constructor(
@@ -202,13 +306,18 @@ export class MapComponent implements OnInit {
     private settingsService: SettingsService,
     private toolbarService: ToolbarService,
     private aircraftTableService: AircraftTableService,
-    private snackBar: MatSnackBar
-  ) { }
+    private snackBar: MatSnackBar,
+    private rainviewerService: RainviewerService,
+    private cesiumService: CesiumService
+  ) {}
 
   /**
    * Einstiegspunkt
    */
   ngOnInit(): void {
+    // Init Default-Settings Values
+    Storage.setDefaultSettingsValues();
+
     // Hole Konfiguration vom Server, wenn diese nicht vorhanden ist, breche ab
     this.getConfiguration();
   }
@@ -223,7 +332,7 @@ export class MapComponent implements OnInit {
       .subscribe((timesAsTimestamps) => {
         if (timesAsTimestamps) {
           this.datesCustomRangeData = timesAsTimestamps;
-          this.receiveShowAllCustomRangeData();
+          this.updateRangeDataFromServer();
         }
       });
 
@@ -254,8 +363,8 @@ export class MapComponent implements OnInit {
     // Toggle zeige Flugzeug-Labels
     this.settingsService.toggleShowAircraftLabels$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((toggleShowAircraftLabels) => {
-        this.toggleShowAircraftLabels = toggleShowAircraftLabels;
+      .subscribe((showAircraftLabel) => {
+        this.showAircraftLabel = showAircraftLabel;
         this.receiveToggleShowAircraftLabels();
       });
 
@@ -279,24 +388,7 @@ export class MapComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((selectedFeederUpdate) => {
         this.selectedFeederUpdate = selectedFeederUpdate;
-
-        // Entferne alle Flugzeuge, die nicht vom ausgewählten Feeder kommen
-        if (this.selectedFeederUpdate != 'AllFeeder') {
-          this.removeAllNotSelectedFeederPlanes(selectedFeederUpdate);
-        }
-
-        // Aktualisiere Flugzeuge vom Server
-        this.updatePlanesFromServer(
-          this.selectedFeederUpdate,
-          this.showOpenskyPlanes,
-          this.showIss
-        );
-
-        // Aktualisiere Daten des markierten Flugzeugs
-        if (this.aircraft) {
-          this.getAllAircraftData(this.aircraft);
-          this.getTrailToAircraft(this.aircraft, this.selectedFeederUpdate);
-        }
+        this.showAircraftFromFeeder(selectedFeederUpdate);
       });
 
     // Toggle Flughäfen auf der Karte
@@ -323,8 +415,8 @@ export class MapComponent implements OnInit {
           // Aktualisiere Flugzeuge vom Server
           this.updatePlanesFromServer(
             this.selectedFeederUpdate,
-            this.showOpenskyPlanes,
-            this.showIss
+            this.showIss,
+            this.showOnlyMilitary
           );
 
           // Aktualisiere Daten des markierten Flugzeugs
@@ -332,12 +424,34 @@ export class MapComponent implements OnInit {
             this.getAllAircraftData(this.aircraft);
           }
         } else {
-          // Lösche alle bisherigen Opensky-Flugzeuge
-          this.removeAllOpenskyPlanes();
+          // Lösche alle bisherigen Remote-Flugzeuge
+          this.removeAllRemotePlanes();
         }
       });
 
-    // Zeige ISS und Opensky Flugzeuge und Flugzeuge nach selektiertem Feeder an
+    // Zeige Airplanes-Live Flugzeuge und Flugzeuge nach selektiertem Feeder an
+    this.settingsService.showAirplanesLivePlanesSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showAirplanesLivePlanes) => {
+        this.showAirplanesLivePlanes = showAirplanesLivePlanes;
+
+        if (this.showAirplanesLivePlanes) {
+          // Aktualisiere Flugzeuge vom Server
+          this.updatePlanesFromServer(
+            this.selectedFeederUpdate,
+            this.showIss,
+            this.showOnlyMilitary
+          );
+
+          // Aktualisiere Daten des markierten Flugzeugs
+          if (this.aircraft) this.getAllAircraftData(this.aircraft);
+        } else {
+          // Lösche alle bisherigen Remote-Flugzeuge
+          this.removeAllRemotePlanes();
+        }
+      });
+
+    // Zeige ISS und Remote Flugzeuge und Flugzeuge nach selektiertem Feeder an
     this.settingsService.showISS$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showIss) => {
@@ -351,8 +465,8 @@ export class MapComponent implements OnInit {
         // Aktualisiere Flugzeuge vom Server
         this.updatePlanesFromServer(
           this.selectedFeederUpdate,
-          this.showOpenskyPlanes,
-          this.showIss
+          this.showIss,
+          this.showOnlyMilitary
         );
 
         // Aktualisiere Daten des markierten Flugzeugs
@@ -362,14 +476,37 @@ export class MapComponent implements OnInit {
         }
       });
 
+    // Zeige nur militärische Flugzeuge an
+    this.settingsService.showOnlyMilitaryPlanesSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showMilitaryPlanes) => {
+        this.showOnlyMilitary = showMilitaryPlanes;
+
+        if (this.showOnlyMilitary) {
+          this.removeAllNotMilitaryPlanes();
+
+          // Aktualisiere Flugzeuge vom Server
+          this.updatePlanesFromServer(
+            this.selectedFeederUpdate,
+            this.showIss,
+            this.showOnlyMilitary
+          );
+
+          // Aktualisiere Daten des markierten Flugzeugs
+          if (this.aircraft) {
+            this.getAllAircraftData(this.aircraft);
+          }
+        } else {
+          this.removeAllNotSelectedPlanes();
+        }
+      });
+
     // Toggle DarkMode
     this.settingsService.showDarkMode$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showDarkMode) => {
         this.darkMode = showDarkMode;
-        this.setLightDarkModeInMap();
         this.setCenterOfRangeRings(Globals.useDevicePositionForDistance);
-        this.toggleDarkModeInRangeData();
       });
 
     // Toggle POMD-Point
@@ -403,8 +540,12 @@ export class MapComponent implements OnInit {
     // Bestimme aktuellen Geräte-Standort
     this.settingsService.setCurrentDevicePositionSource$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(() => {
-        this.setCurrentDevicePosition();
+      .subscribe((setDevicePosition) => {
+        if (setDevicePosition) {
+          this.setCurrentDevicePosition();
+        } else {
+          this.deleteDevicePosition();
+        }
       });
 
     // Toggle Geräte-Standort als Basis für versch. Berechnungen (Zentrum für Range-Ringe,
@@ -417,6 +558,112 @@ export class MapComponent implements OnInit {
 
         // Setze Zentrum der Range-Ringe
         this.setCenterOfRangeRings(devicePositionAsBasis);
+      });
+
+    // Toggle Rainviewer (Rain)
+    this.settingsService.rainViewerRain$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((rainViewerRain) => {
+        // Setze showRainViewerRain-Boolean
+        this.showRainViewerRain = rainViewerRain;
+
+        // Zeigt oder versteckt RainViewer (Rain)
+        this.createOrHideRainViewerRain();
+      });
+
+    // Toggle Rainviewer (Clouds)
+    this.settingsService.rainViewerClouds$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((rainViewerClouds) => {
+        // Setze showRainViewerClouds-Boolean
+        this.showRainViewerClouds = rainViewerClouds;
+
+        // Zeigt oder versteckt RainViewer (Clouds)
+        this.createOrHideRainViewerClouds();
+      });
+
+    // Toggle Rainviewer Forecast (Rain)
+    this.settingsService.rainViewerRainForecast$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((rainViewerRainForecast) => {
+        // Setze showRainViewerRainForecast-Boolean
+        this.showRainViewerRainForecast = rainViewerRainForecast;
+
+        // Zeigt oder versteckt RainViewer Forecast (Rain)
+        this.createOrHideRainViewerRain();
+      });
+
+    // Toggle zeige/verstecke Flugzeug-Positionen
+    this.settingsService.toggleShowAircraftPositions$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((toggleShowAircraftPositions) => {
+        this.toggleShowAircraftPositions = toggleShowAircraftPositions;
+        this.receiveToggleShowAircraftPositions();
+      });
+
+    // Callback für anderen Map-Stil
+    this.settingsService.selectMapStyleSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((selectedMapStyle) => {
+        this.saveMapStyleInLocalStorage(selectedMapStyle);
+        this.createBaseLayer();
+      });
+
+    // Toggle dimme Map
+    this.settingsService.dimMapSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((dimMap) => {
+        this.dimMap = dimMap;
+        this.dimMapOrRemoveFilter();
+      });
+
+    // Toggle dunkle Range Ringe und dunkles Antenna-Icon
+    this.settingsService.darkStaticFeaturesSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((darkStaticFeatures) => {
+        this.darkStaticFeatures = darkStaticFeatures;
+        this.createRangeRingsAndSitePos(
+          Globals.DevicePosition ? Globals.DevicePosition : Globals.SitePosition
+        );
+        this.toggleDarkModeInRangeData();
+      });
+
+    // Setze Global icon size der Planes
+    this.settingsService.setIconGlobalSizeSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((globalIconSizeFactor) => {
+        Globals.globalScaleFactorIcons = globalIconSizeFactor;
+        this.setNewIconSizeScaleAndRedrawPlanes(
+          Globals.globalScaleFactorIcons,
+          Globals.smallScaleFactorIcons
+        );
+      });
+
+    // Setze icon size für small Planes
+    this.settingsService.setIconSmallSizeSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((smallIconSizeFactor) => {
+        Globals.smallScaleFactorIcons = smallIconSizeFactor;
+        this.setNewIconSizeScaleAndRedrawPlanes(
+          Globals.globalScaleFactorIcons,
+          Globals.smallScaleFactorIcons
+        );
+      });
+
+    // Zeige oder verstecke Altitude-Chart
+    this.settingsService.showAltitudeChartSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showAltitudeChart) => {
+        this.showAltitudeChart = showAltitudeChart;
+        this.showHideAltitudeChartElement();
+      });
+
+    // Zeige oder verstecke Altitude-Chart
+    this.settingsService.showTrailDataSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showTrailData) => {
+        this.showTrailData = showTrailData;
+        this.showAllTrailsOnMap(this.showTrailData);
       });
   }
 
@@ -474,11 +721,14 @@ export class MapComponent implements OnInit {
           // Setze Werte aus Konfiguration
           Globals.latFeeder = configuration.latFeeder;
           Globals.lonFeeder = configuration.lonFeeder;
-          Globals.scaleIcons = configuration.scaleIcons;
+          Globals.globalScaleFactorIcons = configuration.scaleIcons;
+          Globals.smallScaleFactorIcons = configuration.smallScaleIcons;
 
-          // Setze App-Name und App-Version
+          // Setze App-Daten (App-Name, App-Version, App-Stage (dev/Master) und App-Buildtime
           Globals.appName = configuration.appName;
           Globals.appVersion = configuration.appVersion;
+          Globals.appStage = configuration.appStage;
+          Globals.appBuildTime = configuration.appBuildTime;
 
           // Setze SitePosition aus neu zugewiesenen Werten
           Globals.SitePosition = [Globals.lonFeeder, Globals.latFeeder];
@@ -516,7 +766,44 @@ export class MapComponent implements OnInit {
                 )
               );
             }
+            this.selectedFeederUpdate = this.listFeeder.map((f) => f.name);
+            this.selectedFeederRangeData = this.listFeeder.map((f) => f.name);
           }
+
+          // Setze Geoapify-API-Key (nicht mandatory)
+          if (configuration.geoapifyApiKey) {
+            this.geoapifyApiKey = configuration.geoapifyApiKey;
+          }
+
+          // Setze Cesium Ion-Default Access Token (nicht mandatory)
+          if (configuration.cesiumIonDefaultAccessToken) {
+            this.cesiumIonDefaultAccessToken =
+              configuration.cesiumIonDefaultAccessToken;
+          }
+
+          // Setze Cesium.GoogleMaps-API-Key (nicht mandatory)
+          if (configuration.cesiumGoogleMapsApiKey) {
+            this.cesiumGoogleMapsApiKey = configuration.cesiumGoogleMapsApiKey;
+          }
+
+          if (localStorage.getItem('globalIconSize') == null) {
+            Storage.savePropertyInLocalStorage(
+              'globalIconSize',
+              Globals.globalScaleFactorIcons
+            );
+          }
+
+          Globals.defaultGlobalScaleFactorIcons =
+            Globals.globalScaleFactorIcons;
+
+          if (localStorage.getItem('smallIconSize') == null) {
+            Storage.savePropertyInLocalStorage(
+              'smallIconSize',
+              Globals.smallScaleFactorIcons
+            );
+          }
+
+          Globals.defaultSmallScaleFactorIcons = Globals.smallScaleFactorIcons;
         },
         (error) => {
           console.log(
@@ -529,17 +816,19 @@ export class MapComponent implements OnInit {
           // Überprüfe gesetzte Werte und starte Programm
           if (
             (Globals.latFeeder,
-              Globals.lonFeeder,
-              Globals.scaleIcons,
-              Globals.SitePosition,
-              Globals.appName,
-              Globals.appVersion,
-              this.circleDistancesInNm.length != 0,
-              this.listFeeder.length != 0,
-              Globals.shapesMap,
-              Globals.catMap,
-              Globals.typesMap,
-              Globals.clientIp)
+            Globals.lonFeeder,
+            Globals.globalScaleFactorIcons,
+            Globals.SitePosition,
+            Globals.appName,
+            Globals.appVersion,
+            Globals.appStage,
+            Globals.appBuildTime,
+            this.circleDistancesInNm.length != 0,
+            this.listFeeder.length != 0,
+            Globals.shapesMap,
+            Globals.catMap,
+            Globals.typesMap,
+            Globals.clientIp)
           ) {
             this.startProgram();
           } else {
@@ -562,7 +851,7 @@ export class MapComponent implements OnInit {
     this.createLayer();
 
     // Erstelle Map
-    this.createMap();
+    this.createBaseMap();
 
     // Erstelle Entfernungs-Ringe und Feeder-Position
     // (Default-Zentrum: Site-Position)
@@ -573,21 +862,29 @@ export class MapComponent implements OnInit {
    * Erstellt den Basis OSM-Layer
    */
   createBaseLayer() {
-    this.layers = new Collection();
-    let url = 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    this.currentSelectedMapStyle = this.getMapStyleFromLocalStorage();
+
+    if (this.layers == undefined) {
+      this.layers = new Collection();
+    }
+
+    if (this.layers.getLength() > 0) {
+      // Remove old osmLayer to improve performance when changing maps
+      this.layers.removeAt(0);
+    }
 
     this.osmLayer = new TileLayer({
       source: new OSM({
-        url: url,
-        imageSmoothing: false,
+        url: this.currentSelectedMapStyle.url,
+        attributions: this.currentSelectedMapStyle.attribution,
       }),
-      preload: Infinity,
-      useInterimTilesOnError: true,
+      preload: 0,
+      useInterimTilesOnError: false,
     });
 
-    this.setLightDarkModeInMap();
+    this.dimMapOrRemoveFilter();
 
-    this.layers.push(this.osmLayer);
+    this.layers.insertAt(0, this.osmLayer);
   }
 
   /**
@@ -602,16 +899,17 @@ export class MapComponent implements OnInit {
         if (state.matches) {
           // Setze Variable auf 'Mobile'
           this.isDesktop = false;
-
-          // Ändere Modus der Flugzeug-Tabelle
-          this.aircraftTableService.updateWindowMode(this.isDesktop);
+          this.cesiumMapWidth = '100vw';
         } else {
           // Setze Variable auf 'Desktop'
           this.isDesktop = true;
-
-          // Ändere Modus der Flugzeug-Tabelle
-          this.aircraftTableService.updateWindowMode(this.isDesktop);
+          this.cesiumMapWidth = '40rem';
         }
+        // Ändere Modus der Flugzeug-Tabelle
+        this.aircraftTableService.updateWindowMode(this.isDesktop);
+
+        // Zeige/Verstecke Altitude Chart HTML Element
+        this.showHideAltitudeChartElement();
       });
   }
 
@@ -645,6 +943,12 @@ export class MapComponent implements OnInit {
           this.darkMode = false;
         }
       });
+
+    // Setze default-Value für darkMode
+    Storage.savePropertyInLocalStorage(
+      'darkMode',
+      Storage.getPropertyFromLocalStorage('darkMode', this.darkMode)
+    );
   }
 
   /**
@@ -669,8 +973,8 @@ export class MapComponent implements OnInit {
       // Style des Rings
       let circleStyle = new Style({
         stroke: new Stroke({
-          color: this.darkMode ? 'white' : 'black',
-          width: this.darkMode ? 0.4 : 1,
+          color: this.darkStaticFeatures ? 'black' : 'white',
+          width: this.darkStaticFeatures ? 1 : 0.4,
         }),
       });
 
@@ -683,9 +987,9 @@ export class MapComponent implements OnInit {
     // fuege Marker zu StaticFeatures hinzu
     const antennaStyle = new Style({
       image: new Icon({
-        src: this.darkMode
-          ? '../../assets/antenna_dark.svg'
-          : '../../assets/antenna.svg',
+        src: this.darkStaticFeatures
+          ? '../../assets/antenna.svg'
+          : '../../assets/antenna_dark.svg',
         offset: [0, 0],
         opacity: 1,
         scale: 0.7,
@@ -706,7 +1010,7 @@ export class MapComponent implements OnInit {
    * Erstellt die Map mit der aktuellen Feeder-Position
    * als Mittelpunkt
    */
-  createMap() {
+  createBaseMap() {
     // Verhindere Rotation beim Pinch to Zoom-Gesten
     let interactions = olInteraction.defaults({
       altShiftDragRotate: false,
@@ -735,11 +1039,11 @@ export class MapComponent implements OnInit {
       ]),
       target: 'map_canvas',
       layers: this.layers,
-      maxTilesLoading: Infinity,
+      maxTilesLoading: 16,
       view: new View({
         center: olProj.fromLonLat(Globals.SitePosition),
         zoom: Globals.zoomLevel,
-        minZoom: 2,
+        multiWorld: true,
       }),
     });
   }
@@ -776,7 +1080,7 @@ export class MapComponent implements OnInit {
     this.layers.push(trailLayers);
 
     // Fuege Layer fuer POMDs hinzu
-    let pomdLayer: VectorLayer = new VectorLayer({
+    let pomdLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
       source: Globals.POMDFeatures,
       zIndex: 130,
     });
@@ -788,7 +1092,7 @@ export class MapComponent implements OnInit {
     // Fuege Layer fuer Linie vom Zielort
     // zum Flugzeug und vom Flugzeug zum
     // Herkunftsort hinzu
-    let routeLayer: VectorLayer = new VectorLayer({
+    let routeLayer: VectorLayer<VectorSource<Geometry>> = new VectorLayer({
       source: this.RouteFeatures,
       renderOrder: undefined,
       style: new Style({
@@ -808,6 +1112,7 @@ export class MapComponent implements OnInit {
     // Geräte-Position hinzu
     this.drawLayer = new VectorLayer({
       source: this.DrawFeature,
+      style: new Style({}),
       renderOrder: undefined,
       zIndex: 110,
     });
@@ -818,12 +1123,13 @@ export class MapComponent implements OnInit {
 
     // Fuege Layer fuer Range-Ringe
     // und Feeder-Position hinzu
-    let staticFeaturesLayer: VectorLayer = new VectorLayer({
-      source: this.StaticFeatures,
-      zIndex: 100,
-      renderBuffer: renderBuffer,
-      renderOrder: undefined,
-    });
+    let staticFeaturesLayer: VectorLayer<VectorSource<Geometry>> =
+      new VectorLayer({
+        source: this.StaticFeatures,
+        zIndex: 100,
+        renderBuffer: renderBuffer,
+        renderOrder: undefined,
+      });
     staticFeaturesLayer.set('name', 'site_pos');
     staticFeaturesLayer.set('type', 'overlay');
     staticFeaturesLayer.set('title', 'site position and range rings');
@@ -840,17 +1146,16 @@ export class MapComponent implements OnInit {
     routeLayer.set('type', 'overlay');
     this.layers.push(this.rangeDataLayer);
 
-    // Fuege Layer fuer Icons
-    // der Flughäfen hinzu
-    let airportLayer: VectorLayer = new VectorLayer({
+    // Fuege Layer fuer Icons der Flughäfen hinzu
+    this.airportLayer = new VectorLayer({
       source: this.AirportFeatures,
       renderOrder: undefined,
       zIndex: 10,
     });
-    airportLayer.set('name', 'ap_positions');
-    airportLayer.set('type', 'overlay');
-    airportLayer.set('title', 'airport positions');
-    this.layers.push(airportLayer);
+    this.airportLayer.set('name', 'ap_positions');
+    this.airportLayer.set('type', 'overlay');
+    this.airportLayer.set('title', 'airport positions');
+    this.layers.push(this.airportLayer);
   }
 
   /**
@@ -916,7 +1221,7 @@ export class MapComponent implements OnInit {
       // Definiere WebGL-Style
       let glStyle = {
         symbol: {
-          symbolType: SymbolType.IMAGE,
+          symbolType: 'image',
           src: '../../../assets/beluga_sprites.png',
           size: ['get', 'size'],
           offset: [0, 0],
@@ -934,7 +1239,7 @@ export class MapComponent implements OnInit {
       };
 
       // Erstelle WebGL-Layer
-      this.webglLayer = new WebGLPoints({
+      this.webglLayer = new WebGLPointsLayer({
         source: Globals.WebglFeatures,
         zIndex: 200,
         style: glStyle,
@@ -987,7 +1292,6 @@ export class MapComponent implements OnInit {
         continue;
       }
       if (!element.complete) {
-        console.log('moep');
         tryAgain.push(item);
         continue;
       }
@@ -1002,19 +1306,19 @@ export class MapComponent implements OnInit {
    */
   initAircraftFetching() {
     // Entfernen aller nicht geupdateten Flugzeuge alle 30 Sekunden
-    setInterval(this.removeNotUpdatedPlanes, 30000, this);
+    window.setInterval(this.removeNotUpdatedPlanes, 30000, this);
 
     // Aufruf der Update-Methode für Flugzeuge alle zwei Sekunden
-    setInterval(() => {
+    window.setInterval(() => {
       this.updatePlanesFromServer(
         this.selectedFeederUpdate,
-        this.showOpenskyPlanes,
-        this.showIss
+        this.showIss,
+        this.showOnlyMilitary
       );
     }, 2000);
 
     // Update des Icon-Caches alle 850 ms
-    setInterval(this.updateIconCache, 850);
+    window.setInterval(this.updateIconCache, 850);
   }
 
   /**
@@ -1022,12 +1326,24 @@ export class MapComponent implements OnInit {
    */
   fetchAircraftAfterMapMove() {
     if (this.OLMap) {
+      this.OLMap.on('movestart', () => {
+        this.mapIsBeingMoved = true;
+
+        Globals.webgl &&
+          Globals.amountDisplayedAircraft > 500 &&
+          this.webglLayer?.setOpacity(0.25);
+      });
+
       this.OLMap.on('moveend', () => {
+        this.mapIsBeingMoved = false;
+
+        Globals.webgl && this.webglLayer?.setOpacity(1);
+
         // Aktualisiere Flugzeuge auf der Karte
         this.updatePlanesFromServer(
           this.selectedFeederUpdate,
-          this.showOpenskyPlanes,
-          this.showIss
+          this.showIss,
+          this.showOnlyMilitary
         );
 
         if (this.showAirportsUpdate) {
@@ -1038,40 +1354,57 @@ export class MapComponent implements OnInit {
     }
   }
 
-  /**
-   * Berechnet aktuellen Extent der Karte
-   */
+  myExtent(extent): any {
+    let bottomLeft = olProj.toLonLat([extent[0], extent[1]]);
+    let topRight = olProj.toLonLat([extent[2], extent[3]]);
+
+    return {
+      extent: extent,
+      minLon: bottomLeft[0],
+      maxLon: topRight[0],
+      minLat: bottomLeft[1],
+      maxLat: topRight[1],
+    };
+  }
+
+  getRenderExtent(extra): any {
+    extra || (extra = 0);
+    let renderBuffer = 60;
+    const mapSize = this.OLMap.getSize();
+    const over = renderBuffer + extra;
+    const size = [mapSize[0] + over, mapSize[1] + over];
+    return this.myExtent(this.OLMap.getView().calculateExtent(size));
+  }
+
   calcCurrentMapExtent(): any {
-    // Berechne bounding extent des aktuellen Views
-    var extentRaw = this.OLMap.getView().calculateExtent(this.OLMap.getSize());
+    const size = this.OLMap.getSize();
+    let extent = this.getRenderExtent(80);
 
-    // Transformiere bounding extent in Koordinaten
-    let extent = olProj.transformExtent(extentRaw, 'EPSG:3857', 'EPSG:4326');
+    let minLon = extent.minLon.toFixed(6);
+    let maxLon = extent.maxLon.toFixed(6);
+    const minLat = extent.minLat.toFixed(6);
+    const maxLat = extent.maxLat.toFixed(6);
 
-    // unten links
-    let x1 = extent[0];
-    let y1 = extent[1];
-
-    // oben rechts
-    let x2 = extent[2];
-    let y2 = extent[3];
-
-    // Prüfe, ob Werte zu groß sind und die initiale Karte somit verlassen wurde
-    if (x1 < -179 || x2 > 190) {
-      this.openSnackbar(
-        'You leaved the initial map. Aircraft and points are not shown at all or only partially on the map.'
-      );
+    if (Math.abs(extent.extent[2] - extent.extent[0]) > 40075016) {
+      // Alle Longitudes im View
+      minLon = -180;
+      maxLon = 180;
+      return [minLon, minLat, maxLon, maxLat];
     }
 
-    // debug only
-    //var zoomLevel = this.OLMap.getView().getZoom();
-    // console.log('Zoom: ' + zoomLevel);
-    // console.log('x1: ' + x1);
-    // console.log('y1: ' + y1);
-    // console.log('x2: ' + x2);
-    // console.log('y2: ' + y2);
+    // Checke 180 Longitude Übergang und wähle größeren Bereich bis +-180
+    if (+minLon > +maxLon) {
+      let d1 = 180 - +minLon;
+      let d2 = +maxLon + 180;
 
-    return extent;
+      if (d1 > d2) {
+        maxLon = 180;
+      } else {
+        minLon = -180;
+      }
+    }
+
+    return [minLon, minLat, maxLon, maxLat];
   }
 
   /**
@@ -1079,7 +1412,7 @@ export class MapComponent implements OnInit {
    */
   updateAirportsFromServer() {
     // Wenn noch auf Fetches gewartet wird, breche ab
-    if (this.pendingFetchesAirports > 0) return;
+    if (this.pendingFetchesAirports > 0 || this.mapIsBeingMoved) return;
 
     // Berechne extent und zoomLevel
     let extent = this.calcCurrentMapExtent();
@@ -1123,12 +1456,13 @@ export class MapComponent implements OnInit {
                 let airportFeature: any = new Feature(airportPoint);
                 airportFeature.longitude = airport.longitude_deg;
                 airportFeature.latitude = airport.latitude_deg;
-                airportFeature.altitude = airport.elevation_ft;
+                airportFeature.elevation_ft = airport.elevation_ft;
                 airportFeature.icao = airport.ident;
                 airportFeature.iata = airport.iata_code;
                 airportFeature.name = airport.name;
                 airportFeature.city = airport.municipality;
                 airportFeature.type = airport.type;
+                airportFeature.featureName = 'AirportDataPoint';
 
                 // Setze Style des Features
                 if (airport.type) {
@@ -1149,7 +1483,8 @@ export class MapComponent implements OnInit {
             'Error updating the airports from the server. Is the server running?'
           );
           this.openSnackbar(
-            'Error updating the airports from the server. Is the server running?'
+            'Error updating the airports from the server. Is the server running?',
+            2000
           );
 
           // Fetch wurde erfolgreich durchgeführt und ist nicht mehr 'pending'
@@ -1159,12 +1494,12 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Öffnet eine Snackbar mit einem Text für zwei Sekunden
+   * Öffnet eine Snackbar mit einem Text
    * @param message Text, der als Titel angezeigt werden soll
    */
-  openSnackbar(message: string) {
+  openSnackbar(message: string, duration: number) {
     this.snackBar.open(message, 'OK', {
-      duration: 2000,
+      duration: duration,
     });
   }
 
@@ -1202,6 +1537,8 @@ export class MapComponent implements OnInit {
    * verschiedenen Listen und Datenstrukturen
    */
   removeNotUpdatedPlanes(that: any) {
+    if (this.mapIsBeingMoved) return;
+
     let timeNow = new Date().getTime();
     let aircraft: Aircraft | undefined;
     let length = Globals.PlanesOrdered.length;
@@ -1228,11 +1565,11 @@ export class MapComponent implements OnInit {
    */
   updatePlanesFromServer(
     selectedFeeder: any,
-    fetchFromOpensky: boolean,
-    showIss: boolean
+    showIss: boolean,
+    showOnlyMilitary: boolean
   ) {
     // Wenn noch auf Fetches gewartet wird, breche ab
-    if (this.pendingFetchesPlanes > 0) return;
+    if (this.pendingFetchesPlanes > 0 || this.mapIsBeingMoved) return;
 
     // Berechne extent
     let extent = this.calcCurrentMapExtent();
@@ -1243,6 +1580,8 @@ export class MapComponent implements OnInit {
     // Starte Fetch
     this.pendingFetchesPlanes += 1;
 
+    const fetchRemote = this.getRemoteNetworkParamter();
+
     // Mache Server-Aufruf und subscribe (0: lomin, 1: lamin, 2: lomax, 3: lamax)
     this.serverService
       .getPlanesUpdate(
@@ -1251,8 +1590,12 @@ export class MapComponent implements OnInit {
         extent[2],
         extent[3],
         selectedFeeder,
-        fetchFromOpensky,
-        showIss
+        fetchRemote,
+        showIss,
+        this.aircraft && this.aircraft.isFromRemote == null
+          ? this.aircraft.hex
+          : null, // hex des markierten Flugzeugs
+        showOnlyMilitary
       )
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
@@ -1278,16 +1621,21 @@ export class MapComponent implements OnInit {
           // Mache Update der angezeigten Flugzeuge
           this.processPlanesUpdate(planesJSONArray);
 
-          // Aktualisiere Flugzeug-Tabelle mit der globalen Flugzeug-Liste
-          this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
-
           // Entferne alle nicht ausgewählten Flugzeuge, wenn eine Route angezeigt wird
           if (this.showRoute) {
             this.removeAllNotSelectedPlanes();
+          } else {
+            this.removePlanesNotInCurrentExtent(extent);
           }
 
+          // Aktualisiere Flugzeug-Tabelle mit der globalen Flugzeug-Liste
+          if (Globals.aircraftTableIsVisible)
+            this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
+
+          this.updateCesiumComponentWithAircraft();
+
           // Aktualisiere angezeigte Flugzeug-Zähler
-          this.updatePlanesCounter(planesJSONArray.length);
+          this.updatePlanesCounter(Globals.PlanesOrdered.length);
 
           // Fetch wurde erfolgreich durchgeführt und ist nicht mehr 'pending'
           this.pendingFetchesPlanes--;
@@ -1297,7 +1645,8 @@ export class MapComponent implements OnInit {
             'Error updating the planes from the server. Is the server running?'
           );
           this.openSnackbar(
-            'Error updating the planes from the server. Is the server running?'
+            'Error updating the planes from the server. Is the server running?',
+            2000
           );
 
           // Aktualisiere angezeigte Flugzeug-Zähler
@@ -1376,14 +1725,23 @@ export class MapComponent implements OnInit {
 
     // Wenn Flugzeug das aktuell ausgewählte/markierte Flugzeug ist
     if (this.aircraft && aircraft.hex == this.aircraft.hex) {
-      // Aktualisiere Trail mit momentaner Position, nur wenn alle Feeder
-      // ausgewählt sind und bereits Trails vom Server bezogen wurden
-      if (!this.aircraft.isFromOpensky) {
-        this.aircraft.updateTrail(this.selectedFeederUpdate);
-      }
+      // Aktualisiere Trail mit momentaner Position, nur wenn
+      // bereits Trails vom Server bezogen wurden
+      this.aircraft.updateTrail();
 
       // Update Route, da sich Flugzeug bewegt hat
       this.updateShowRoute();
+
+      // Update Daten des Altitude Charts mit aktueller Altitude
+      this.updateAltitudeChart();
+    }
+
+    // Wenn Flugzeug das ist, worüber die Mouse hovert
+    if (
+      this.hoveredAircraftObject &&
+      aircraft.hex == this.hoveredAircraftObject.hex
+    ) {
+      this.createHoveredAircraft(aircraft);
     }
   }
 
@@ -1397,7 +1755,7 @@ export class MapComponent implements OnInit {
         .getAllAircraftData(
           aircraft.hex,
           aircraft.registration,
-          aircraft.isFromOpensky
+          aircraft.isFromRemote == null ? false : true
         )
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
@@ -1475,6 +1833,9 @@ export class MapComponent implements OnInit {
                   ];
                 }
               }
+
+              // Setze Information über gesamte Länge der Strecke
+              this.aircraft.calcFlightPathLength();
             }
           },
           (error) => {
@@ -1482,7 +1843,8 @@ export class MapComponent implements OnInit {
               'Error fetching further aircraft information from the server. Is the server running?'
             );
             this.openSnackbar(
-              'Error fetching further aircraft information from the server. Is the server running?'
+              'Error fetching further aircraft information from the server. Is the server running?',
+              2000
             );
           }
         );
@@ -1491,14 +1853,27 @@ export class MapComponent implements OnInit {
 
   /**
    * Holt den Trail zu einem Flugzeug vom Server,
-   * wenn es kein Flugzeug von Opensky ist
+   * wenn es kein Flugzeug von Airplanes-Live ist
    * @param aircraft Aircraft
    * @param selectedFeeder Ausgewählter Feeder
    */
   getTrailToAircraft(aircraft: Aircraft, selectedFeeder: any) {
-    if (aircraft && !aircraft.isFromOpensky) {
+    // TODO: Opensky schickt falsche Trails momentan zurück
+    if (
+      aircraft.isFromRemote == 'Airplanes-Live' ||
+      aircraft.isFromRemote == 'Opensky'
+    ) {
+      this.createEmptyTrailForRemoteAircraft(aircraft);
+      return;
+    }
+
+    if (aircraft) {
       this.serverService
-        .getTrail(aircraft.hex, selectedFeeder)
+        .getTrail(
+          aircraft.hex,
+          selectedFeeder,
+          this.showOpenskyPlanes ? 'Opensky' : null
+        )
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           (trailDataJSONObject) => {
@@ -1511,10 +1886,12 @@ export class MapComponent implements OnInit {
               this.aircraft.hex == aircraft.hex
             ) {
               // Weise Trail-Liste zu, erstelle Trails und mache diese sichtbar
-              if (!this.aircraft.isFromOpensky && trailData[0]) {
+              if (trailData[0]) {
                 this.aircraft.aircraftTrailList = trailData[0];
                 this.aircraft.makeTrail();
-                this.aircraft.makeTrailVisible();
+                this.aircraft.setTrailVisibility2d(true);
+                this.updateAltitudeChart();
+                this.updateCesiumComponentWithAircraft();
               }
             }
           },
@@ -1524,10 +1901,28 @@ export class MapComponent implements OnInit {
             );
 
             this.openSnackbar(
-              'Error fetching trail of aircraft from the server. Is the server running?'
+              'Error fetching trail of aircraft from the server. Is the server running?',
+              2000
             );
           }
         );
+    }
+  }
+
+  private createEmptyTrailForRemoteAircraft(aircraft: Aircraft) {
+    aircraft.makeTrail();
+    aircraft.setTrailVisibility2d(true);
+    this.updateCesiumComponentWithAircraft();
+  }
+
+  /**
+   * Update Daten des Altitude Charts mit Daten des aktuell markierten Flugzeugs
+   */
+  updateAltitudeChart() {
+    if (this.aircraft) {
+      this.settingsService.sendAircraftAltitudeData(
+        this.aircraft.aircraftTrailAltitudes
+      );
     }
   }
 
@@ -1551,7 +1946,7 @@ export class MapComponent implements OnInit {
       // Suche nur in planesLayer oder webglLayer
       const hex = evt.map.forEachFeatureAtPixel(
         evt.pixel,
-        (feature, layer) => {
+        (feature) => {
           return feature.hex;
         },
         {
@@ -1576,13 +1971,31 @@ export class MapComponent implements OnInit {
         );
       }
 
+      // Hole Feature zur Bestimmung eines AirportPoints
+      let airportPoint;
+      airportPoint = evt.map.forEachFeatureAtPixel(
+        evt.pixel,
+        function (feature: any) {
+          return feature;
+        },
+        {
+          layerFilter: (layer) => layer == this.airportLayer,
+          hitTolerance: 5,
+        }
+      );
+
       // Setze Boolean 'showRoute' auf false zurück
       this.showRoute = false;
 
       if (hex) {
         this.markOrUnmarkAircraft(hex, false);
       } else if (rangePoint && rangePoint.name == 'RangeDataPoint') {
-        this.createAndShowRangeDataPopup(rangePoint);
+        this.createAndShowRangeDataPopup(rangePoint, evt);
+      } else if (
+        airportPoint &&
+        airportPoint.featureName == 'AirportDataPoint'
+      ) {
+        this.createAndShowAirportDataPopup(airportPoint, evt);
       } else {
         this.resetAllMarkedPlanes();
         this.resetAllTrails();
@@ -1591,6 +2004,8 @@ export class MapComponent implements OnInit {
         this.resetRangeDataPopup();
         this.unselectAllPlanesInTable();
         this.resetAllDrawnPOMDPoints();
+        this.resetAirportDataPopup();
+        this.show3dMap(false);
       }
     });
   }
@@ -1629,11 +2044,12 @@ export class MapComponent implements OnInit {
         // Verstecke große Info-Component
         this.hideLargeAircraftInfoComponent();
       } else {
-        // Setze Zustand auf 'unmarkiert'
+        // Setze Zustand auf 'markiert'
         this.resetAllMarkedPlanes();
         this.resetAllTrails();
         this.resetAllDrawnCircles();
         this.resetAllDrawnPOMDPoints();
+        this.reset3dEntityCesium();
 
         // Toggle markiere Flugzeug
         aircraft.toggleMarkPlane();
@@ -1643,7 +2059,7 @@ export class MapComponent implements OnInit {
 
         // Prüfe, ob Photo-Url bereits vorhanden ist,
         // wenn nicht starte Anfrage an Server
-        if (!this.aircraft.allDataWasRequested && this.aircraft.hex != 'ISS') {
+        if (!this.aircraft.allDataWasRequested) {
           // Setze intiales Flugzeug-Photo
           this.aircraft.urlPhotoDirect =
             '../../../assets/placeholder_loading_aircraft_photo.jpg';
@@ -1651,13 +2067,14 @@ export class MapComponent implements OnInit {
           // Mache Server-Aufruf um alle Flugzeug-Informationen zu erhalten
           this.getAllAircraftData(aircraft);
 
-          // Hole Trail
+          // Hole Trail und update 3d-Komponente
           this.getTrailToAircraft(aircraft, this.selectedFeederUpdate);
 
           // Merke am Flugzeug, dass Aufruf bereits getätigt wurde
           this.aircraft.allDataWasRequested = true;
         } else {
-          // Hole nur Trail
+          // Hole nur Trail und update 3d-Komponente
+
           this.getTrailToAircraft(aircraft, this.selectedFeederUpdate);
         }
 
@@ -1682,12 +2099,15 @@ export class MapComponent implements OnInit {
       }
     }
   }
+  reset3dEntityCesium() {
+    this.cesiumService.unmarkAircraft();
+  }
 
   /**
    * Erstellt zu einem rangePoint ein Popup-Fenster mit
    * Informationen über diesen RangePoint
    */
-  createAndShowRangeDataPopup(rangePoint: any) {
+  createAndShowRangeDataPopup(rangePoint: any, evt: any) {
     // Formatiere Timestamp in deutschen LocaleString
     let dateFromTimestamp = new Date(rangePoint.timestamp);
     let dateToShow = dateFromTimestamp.toLocaleString('de-DE', {
@@ -1700,18 +2120,78 @@ export class MapComponent implements OnInit {
 
     // Erstelle aktuell angeklicktes RangeDataPoint aus Feature
     this.rangeDataPoint = {
-      x: rangePoint.x,
-      y: rangePoint.y,
-      timestamp: dateToShow,
-      distance: rangePoint.distance,
-      feederList: rangePoint.feederList,
-      sourceList: rangePoint.sourceList,
-      altitude: rangePoint.altitude,
-      hex: rangePoint.hexAircraft,
-      flightId: rangePoint.flightId,
-      registration: rangePoint.registration,
-      type: rangePoint.type,
-      category: rangePoint.category,
+      flightId:
+        typeof rangePoint.flightId !== 'undefined'
+          ? rangePoint.flightId
+          : 'N/A',
+      hex:
+        typeof rangePoint.hexAircraft !== 'undefined'
+          ? rangePoint.hexAircraft
+          : 'N/A',
+      attributes: [
+        {
+          key: 'Latitude',
+          value:
+            typeof rangePoint.x !== 'undefined' ? rangePoint.x + '°' : 'N/A',
+        },
+        {
+          key: 'Longitude',
+          value:
+            typeof rangePoint.y !== 'undefined' ? rangePoint.y + '°' : 'N/A',
+        },
+        {
+          key: 'Type',
+          value:
+            typeof rangePoint.type !== 'undefined' ? rangePoint.type : 'N/A',
+        },
+        {
+          key: 'Category',
+          value:
+            typeof rangePoint.category !== 'undefined'
+              ? rangePoint.category
+              : 'N/A',
+        },
+        {
+          key: 'Registration',
+          value:
+            typeof rangePoint.xregistration !== 'undefined'
+              ? rangePoint.registration
+              : 'N/A',
+        },
+        {
+          key: 'Altitude',
+          value:
+            typeof rangePoint.altitude !== 'undefined'
+              ? rangePoint.altitude + ' ft'
+              : 'N/A',
+        },
+        {
+          key: 'Distance',
+          value:
+            typeof rangePoint.distance !== 'undefined'
+              ? rangePoint.distance + ' km'
+              : 'N/A',
+        },
+        {
+          key: 'Feeder',
+          value:
+            typeof rangePoint.feederList !== 'undefined'
+              ? rangePoint.feederList
+              : 'N/A',
+        },
+        {
+          key: 'Source',
+          value:
+            typeof rangePoint.sourceList !== 'undefined'
+              ? rangePoint.sourceList
+              : 'N/A',
+        },
+        {
+          key: 'Timestamp',
+          value:
+            typeof rangePoint.timestamp !== 'undefined' ? dateToShow : 'N/A',
+        },
+      ],
     };
 
     // Weise popup als overlay zu (Hinweis: Hier ist 'document.getElementById'
@@ -1722,8 +2202,11 @@ export class MapComponent implements OnInit {
     });
 
     // Setze Position des Popups und füge Overlay zur Karte hinzu
-    let coordinate = rangePoint.getGeometry().getCoordinates();
-    this.rangeDataPopup.setPosition(coordinate);
+    const coordinate = rangePoint.getGeometry().getCoordinates();
+    this.rangeDataPopup.setPosition([
+      coordinate[0] + Math.round(evt.coordinate[0] / 40075016) * 40075016,
+      coordinate[1],
+    ]);
     this.OLMap.addOverlay(this.rangeDataPopup);
 
     // Verändere Bottom-Wert für Popup,
@@ -1734,12 +2217,99 @@ export class MapComponent implements OnInit {
     this.showPopupRangeDataPoint = true;
   }
 
+  createAndShowAirportDataPopup(airportPoint: any, evt: any) {
+    if (airportPoint == undefined) return;
+
+    // Erstelle aktuell angeklicktes AirportDataPoint aus Feature
+    let elevation;
+
+    if (typeof airportPoint.elevation_ft !== 'undefined') {
+      elevation =
+        airportPoint.elevation_ft +
+        ' ft / ' +
+        (airportPoint.elevation_ft * 0.328084).toFixed(0) +
+        ' m';
+    }
+
+    this.airportDataPoint = {
+      icao:
+        typeof airportPoint.icao !== 'undefined' ? airportPoint.icao : 'N/A',
+      featureName: airportPoint.featureName,
+      attributes: [
+        {
+          key: 'Elevation',
+          value: typeof elevation !== 'undefined' ? elevation : 'N/A',
+        },
+        {
+          key: 'IATA',
+          value:
+            typeof airportPoint.iata !== 'undefined'
+              ? airportPoint.iata
+              : 'N/A',
+        },
+        {
+          key: 'City',
+          value:
+            typeof airportPoint.city !== 'undefined'
+              ? airportPoint.city
+              : 'N/A',
+        },
+        {
+          key: 'Type',
+          value:
+            typeof airportPoint.type !== 'undefined'
+              ? airportPoint.type
+              : 'N/A',
+        },
+        {
+          key: 'Name',
+          value:
+            typeof airportPoint.name !== 'undefined'
+              ? airportPoint.name
+              : 'N/A',
+        },
+      ],
+    };
+
+    // Weise popup als overlay zu (Hinweis: Hier ist 'document.getElementById'
+    // nötig, da mit OpenLayers Overlays gearbeitet werden muss, damit Popup
+    // an einer Koordinaten-Position bleibt)
+    this.airportDataPopup = new Overlay({
+      element: document.getElementById('airportDataPopup')!,
+    });
+
+    const coordinate = airportPoint.getGeometry().getCoordinates();
+    this.airportDataPopup.setPosition([
+      coordinate[0] + Math.round(evt.coordinate[0] / 40075016) * 40075016,
+      coordinate[1],
+    ]);
+    this.OLMap.addOverlay(this.airportDataPopup);
+
+    // Verändere Bottom-Wert für Popup,
+    // damit dieser richtig angezeigt wird
+    this.airportDataPopupBottomValue = '10px';
+  }
+
+  resetAirportDataPopup() {
+    if (this.airportDataPopup) {
+      this.airportDataPopup.setPosition(undefined);
+      this.airportDataPopup.dispose();
+      this.airportDataPoint = undefined;
+    }
+
+    // Verändere Bottom-Wert für Popup,
+    // damit dieser wieder ausgeblendet wird
+    this.airportDataPopupBottomValue = '0px';
+  }
+
   /**
    * Setzt RangeData-Popups zurück und versteckt diese
    */
   resetRangeDataPopup() {
     if (this.rangeDataPopup) {
       this.rangeDataPopup.setPosition(undefined);
+      this.rangeDataPopup.dispose();
+      this.rangeDataPopup = undefined;
     }
 
     // Verändere Bottom-Wert für Popup,
@@ -1787,10 +2357,10 @@ export class MapComponent implements OnInit {
 
       // Hole hex von Feature (bei Flugzeugen)
       // Suche nur in planesLayer oder webglLayer
-      const hex = evt.map.forEachFeatureAtPixel(
+      const feature = evt.map.forEachFeatureAtPixel(
         evt.pixel,
         (feature) => {
-          return feature.hex;
+          return feature;
         },
         {
           layerFilter: (layer) =>
@@ -1799,7 +2369,9 @@ export class MapComponent implements OnInit {
         }
       );
 
-      if (hex) {
+      if (feature && feature.hex) {
+        const hex = feature.hex;
+
         this.OLMap.getTargetElement().style.cursor = hex ? 'pointer' : '';
 
         // Finde gehovertes Flugzeug aus Liste mit Hex
@@ -1808,15 +2380,19 @@ export class MapComponent implements OnInit {
         // Zeige Daten des aktuellen Flugzeugs in Small Info-Box
         if (aircraft) {
           // Setze Flugzeug als das aktuell gehoverte
-          this.hoveredAircraft = aircraft;
+          this.createHoveredAircraft(aircraft);
 
-          let markerCoordinates;
-          markerCoordinates = Globals.webgl
-            ? aircraft.glMarker.getGeometry().getCoordinates()
-            : aircraft.marker.getGeometry().getCoordinates();
+          // Berechne richtige Position, wenn andere Welt gehovert wird
+          const featureCoordinates = feature.getGeometry().getCoordinates();
+          const coordinatesNormalized = [
+            featureCoordinates[0] +
+              Math.round(evt.coordinate[0] / 40075016) * 40075016,
+            featureCoordinates[1],
+          ];
 
-          let markerPosition =
-            this.OLMap.getPixelFromCoordinate(markerCoordinates);
+          const markerPosition = this.OLMap.getPixelFromCoordinate(
+            coordinatesNormalized
+          );
           if (!markerPosition) return;
 
           // Setze richtige Position
@@ -1835,10 +2411,76 @@ export class MapComponent implements OnInit {
         // Setze Cursor auf 'normal' zurück
         this.OLMap.getTargetElement().style.cursor = '';
 
+        this.hoveredAircraftObject = undefined;
+
         // Verstecke kleine Info-Box
         this.showSmallInfo = false;
       }
     });
+  }
+
+  createHoveredAircraft(aircraft: Aircraft) {
+    this.hoveredAircraftObject = {
+      flightId:
+        typeof aircraft.flightId !== 'undefined' ? aircraft.flightId : 'N/A',
+      hex: typeof aircraft.hex !== 'undefined' ? aircraft.hex : 'N/A',
+      attributes: [
+        {
+          key: 'Altitude',
+          value:
+            typeof aircraft.altitude !== 'undefined'
+              ? aircraft.altitude + ' ft'
+              : 'N/A',
+        },
+        {
+          key: 'Speed',
+          value:
+            typeof aircraft.speed !== 'undefined'
+              ? aircraft.speed + ' kn'
+              : 'N/A',
+        },
+        { key: 'Type', value: aircraft.type ? aircraft.type : 'N/A' },
+        {
+          key: 'Registration',
+          value: aircraft.registration ? aircraft.registration : 'N/A',
+        },
+        {
+          key: 'Track',
+          value:
+            typeof aircraft.track !== 'undefined'
+              ? aircraft.track + '°'
+              : 'N/A',
+        },
+        {
+          key: 'Last Seen',
+          value:
+            typeof aircraft.lastSeen !== 'undefined'
+              ? aircraft.lastSeen + ' s'
+              : 'N/A',
+        },
+        {
+          key: 'Feeder',
+          value: aircraft.feederList ? aircraft.feederList : 'N/A',
+        },
+      ],
+    };
+
+    if (Globals.useDevicePositionForDistance && Globals.DevicePosition) {
+      this.hoveredAircraftObject.attributes.push({
+        key: 'Dist. (Dev)',
+        value: aircraft.distanceDevicePos
+          ? aircraft.distanceDevicePos + ' km'
+          : 'N/A',
+      });
+    } else {
+      this.hoveredAircraftObject.attributes.push({
+        key: 'Dist. (Ant)',
+        value:
+          typeof aircraft.distance !== 'undefined'
+            ? aircraft.distance + ' km'
+            : 'N/A',
+      });
+    }
   }
 
   /**
@@ -1968,10 +2610,13 @@ export class MapComponent implements OnInit {
   extentMapViewToFitCoordiates(positionOrg: [], positionDest: []) {
     // Setze neuen Center der Karte
     let boundingExtent = olExtent.boundingExtent([positionOrg, positionDest]);
+    let source: any = olProj.get('EPSG:4326');
+    let destination: any = olProj.get('EPSG:3857');
+
     boundingExtent = olProj.transformExtent(
       boundingExtent,
-      olProj.get('EPSG:4326'),
-      olProj.get('EPSG:3857')
+      source,
+      destination
     );
     this.OLMap.getView().fit(boundingExtent, this.OLMap.getSize());
 
@@ -2046,53 +2691,41 @@ export class MapComponent implements OnInit {
    * @param rangeDataJSON rangeDataJSON
    */
   drawRangeDataJSONOnMap(rangeDataJSON: any) {
+    if (
+      !rangeDataJSON ||
+      rangeDataJSON.length == 0 ||
+      this.selectedFeederRangeData == undefined ||
+      this.selectedFeederRangeData.length == 0
+    ) {
+      // Leere RangeDataFeatures
+      this.resetAllDrawnRangeDataPoints();
+      return;
+    }
+
     // Array an Point-Objekten
     let points: any = [];
 
     // Selektiere Feeder, wenn selectedFeederRangeData gesetzt ist und
     // formatiere JSON-Data in arrayOfObjectPoints, damit Sortier-Algorithmus
     // von https://stackoverflow.com/a/54727356 genutzt werden kann
-    if (
-      this.selectedFeederRangeData == undefined ||
-      this.selectedFeederRangeData.length == 0
-    ) {
-      // Zeige Range-Data aller Feeder an
+    // Selektiere nach ausgewählten Feedern
+    for (let feeder of this.selectedFeederRangeData) {
       for (let i = 0; i < rangeDataJSON.length; i++) {
-        points.push({
-          x: rangeDataJSON[i].longitude,
-          y: rangeDataJSON[i].latitude,
-          timestamp: rangeDataJSON[i].timestamp,
-          feederList: rangeDataJSON[i].feederList,
-          sourceList: rangeDataJSON[i].sourceList,
-          altitude: rangeDataJSON[i].altitude,
-          hex: rangeDataJSON[i].hex,
-          distance: rangeDataJSON[i].distance,
-          flightId: rangeDataJSON[i].flightId,
-          registration: rangeDataJSON[i].registration,
-          type: rangeDataJSON[i].type,
-          category: rangeDataJSON[i].category,
-        });
-      }
-    } else {
-      // Selektiere nach ausgewählten Feedern
-      for (let feeder of this.selectedFeederRangeData) {
-        for (let i = 0; i < rangeDataJSON.length; i++) {
-          if (rangeDataJSON[i].feederList.includes(feeder)) {
-            points.push({
-              x: rangeDataJSON[i].longitude,
-              y: rangeDataJSON[i].latitude,
-              timestamp: rangeDataJSON[i].timestamp,
-              feederList: rangeDataJSON[i].feederList,
-              sourceList: rangeDataJSON[i].sourceList,
-              altitude: rangeDataJSON[i].altitude,
-              hex: rangeDataJSON[i].hex,
-              distance: rangeDataJSON[i].distance,
-              flightId: rangeDataJSON[i].flightId,
-              registration: rangeDataJSON[i].registration,
-              type: rangeDataJSON[i].type,
-              category: rangeDataJSON[i].category,
-            });
-          }
+        if (rangeDataJSON[i].feederList.includes(feeder)) {
+          points.push({
+            x: rangeDataJSON[i].longitude,
+            y: rangeDataJSON[i].latitude,
+            timestamp: rangeDataJSON[i].timestamp,
+            feederList: rangeDataJSON[i].feederList,
+            sourceList: rangeDataJSON[i].sourceList,
+            altitude: rangeDataJSON[i].altitude,
+            hex: rangeDataJSON[i].hex,
+            distance: rangeDataJSON[i].distance,
+            flightId: rangeDataJSON[i].flightId,
+            registration: rangeDataJSON[i].registration,
+            type: rangeDataJSON[i].type,
+            category: rangeDataJSON[i].category,
+          });
         }
       }
     }
@@ -2164,9 +2797,9 @@ export class MapComponent implements OnInit {
     let feature = new Feature(polygon);
     feature.set('name', 'RangeDataPolygon');
     feature.setStyle(
-      this.darkMode
-        ? Styles.RangeDataPolygonStyleDark
-        : Styles.RangeDataPolygonStyle
+      this.darkStaticFeatures
+        ? Styles.RangeDataPolygonStyle
+        : Styles.RangeDataPolygonStyleWhite
     );
     this.RangeDataFeatures.addFeature(feature);
 
@@ -2194,9 +2827,9 @@ export class MapComponent implements OnInit {
 
         // Setze Style RangeDataPointStyle
         feature.setStyle(
-          this.darkMode
-            ? Styles.RangeDataPointStyleDark
-            : Styles.RangeDataPointStyle
+          this.darkStaticFeatures
+            ? Styles.RangeDataPointStyle
+            : Styles.RangeDataPointStyleWhite
         );
 
         // Füge Feature zu RangeDataFeatures hinzu
@@ -2222,10 +2855,10 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Fragt alle Range-Data-Datensätze innerhalb einer Zeitspanne
+   * Fragt Range-Data-Datensätze innerhalb einer Zeitspanne und abhängig von einem oder meheren Feedern
    * vom Server ab und stellt diese dar
    */
-  receiveShowAllCustomRangeData() {
+  updateRangeDataFromServer() {
     if (this.datesCustomRangeData) {
       this.serverService
         .getRangeDataBetweenTimestamps(
@@ -2242,13 +2875,17 @@ export class MapComponent implements OnInit {
               'Error fetching custom Range-Data from the server. Is the server running?'
             );
             this.openSnackbar(
-              'Error fetching custom Range-Data from the server. Is the server running?'
+              'Error fetching custom Range-Data from the server. Is the server running?',
+              2000
             );
           },
           () => {
             // Stelle gefundene Range-Data auf der Karte dar
             if (this.rangeDataJSON) {
               this.drawRangeDataJSONOnMap(this.rangeDataJSON);
+            } else {
+              // Leere RangeDataFeatures
+              this.resetAllDrawnRangeDataPoints();
             }
           }
         );
@@ -2277,7 +2914,7 @@ export class MapComponent implements OnInit {
   markRangeDataByFeeder() {
     // Setze neue Stylings, wenn toggleFilterRangeDataByFeeder true ist
     if (this.bMarkRangeDataByFeeder && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
 
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
@@ -2302,7 +2939,7 @@ export class MapComponent implements OnInit {
 
     // Setze default-Styling, wenn toggleFilterRangeDataByFeeder false ist
     if (!this.bMarkRangeDataByFeeder && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
 
@@ -2321,7 +2958,7 @@ export class MapComponent implements OnInit {
   markRangeDataByHeight() {
     // Setze neue Stylings, wenn bfilterRangeDataByHeight true ist
     if (this.bMarkRangeDataByHeight && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
 
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
@@ -2334,6 +2971,8 @@ export class MapComponent implements OnInit {
             altitude,
             false,
             true,
+            false,
+            false,
             false
           );
 
@@ -2358,7 +2997,7 @@ export class MapComponent implements OnInit {
 
     // Setze default-Styling, wenn bfilterRangeDataByHeight false ist
     if (!this.bMarkRangeDataByHeight && this.rangeDataLayer) {
-      var RangeDataFeatures = this.rangeDataLayer.getSource().getFeatures();
+      var RangeDataFeatures = this.rangeDataLayer.getSource()!.getFeatures();
       for (var i in RangeDataFeatures) {
         var feature: any = RangeDataFeatures[i];
 
@@ -2379,15 +3018,15 @@ export class MapComponent implements OnInit {
       this.RangeDataFeatures.getFeatures().forEach((feature) => {
         if (feature.get('name') != 'RangeDataPolygon') {
           feature.setStyle(
-            this.darkMode
-              ? Styles.RangeDataPointStyleDark
-              : Styles.RangeDataPointStyle
+            this.darkStaticFeatures
+              ? Styles.RangeDataPointStyle
+              : Styles.RangeDataPointStyleWhite
           );
         } else if (feature.get('name') == 'RangeDataPolygon') {
           feature.setStyle(
-            this.darkMode
-              ? Styles.RangeDataPolygonStyleDark
-              : Styles.RangeDataPolygonStyle
+            this.darkStaticFeatures
+              ? Styles.RangeDataPolygonStyle
+              : Styles.RangeDataPolygonStyleWhite
           );
         }
       });
@@ -2404,10 +3043,10 @@ export class MapComponent implements OnInit {
 
   /**
    * Erstellt und zeigt die Flugzeug-Label an,
-   * je nach Wert des Booleans toggleShowAircraftLabels
+   * je nach Wert des Booleans showAircraftLabel
    */
   receiveToggleShowAircraftLabels() {
-    if (this.toggleShowAircraftLabels) {
+    if (this.showAircraftLabel) {
       Globals.showAircraftLabel = true;
 
       // Erstelle für jedes Flugzeug aus Planes das Label
@@ -2454,11 +3093,41 @@ export class MapComponent implements OnInit {
     this.settingsService.sendReceiveAppNameAndVersion([
       Globals.appName,
       Globals.appVersion,
+      Globals.appStage,
+      Globals.appBuildTime,
     ]);
     this.settingsService.sendReceiveClientIp(Globals.clientIp);
     this.settingsService.sendReceiveOpenskyCredentialsExist(
       Globals.openskyCredentials
     );
+    this.sendAvailableMapsToSettings();
+  }
+
+  /**
+   * Prüfe auf Geoapify-API-Key und gebe Liste an verfügbaren Maps
+   * an Settings weiter
+   */
+  sendAvailableMapsToSettings() {
+    this.listAvailableMaps = Maps.listAvailableFreeMaps;
+    if (this.geoapifyApiKey) {
+      let listGeoapifyWithApiKey: any[] = [];
+      for (let i = 0; i < Maps.listAvailableGeoapifyMaps.length; i++) {
+        let element = Maps.listAvailableGeoapifyMaps[i];
+        element.url = element.url.concat(this.geoapifyApiKey);
+        listGeoapifyWithApiKey.push(element);
+      }
+      this.listAvailableMaps.push(...listGeoapifyWithApiKey);
+    }
+    this.markSelectedMapInAvailableMaps(this.listAvailableMaps);
+    this.settingsService.sendReceiveListAvailableMaps(this.listAvailableMaps);
+  }
+
+  markSelectedMapInAvailableMaps(listMaps: any) {
+    for (let i = 0; i < listMaps.length; i++) {
+      let element = listMaps[i];
+      if (this.currentSelectedMapStyle.name == element.name)
+        element.isSelected = true;
+    }
   }
 
   /**
@@ -2500,17 +3169,20 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Entfernt alle Flugzeuge von Opensky
+   * Entfernt alle Remote-Flugzeuge
    */
-  removeAllOpenskyPlanes() {
+  removeAllRemotePlanes() {
     let length = Globals.PlanesOrdered.length;
     let aircraft: Aircraft | undefined;
     for (let i = 0; i < length; i++) {
       aircraft = Globals.PlanesOrdered.shift();
       if (aircraft == null || aircraft == undefined) continue;
 
-      // Wenn Flugzeug von Opensky ist, wird das Flugzeug entfernt
-      if (!aircraft.isMarked && aircraft.isFromOpensky) {
+      // Wenn Flugzeug von Remote ist, wird das Flugzeug entfernt
+      if (
+        !aircraft.isMarked &&
+        (aircraft.isFromRemote != undefined || aircraft.isFromRemote != null)
+      ) {
         // Entferne Flugzeug
         this.removeAircraft(aircraft);
       } else {
@@ -2586,6 +3258,53 @@ export class MapComponent implements OnInit {
   }
 
   /**
+   * Entfernt alle nicht markierten Flugzeuge, die
+   * nicht im momentanen Extent sind
+   */
+  removePlanesNotInCurrentExtent(extent) {
+    let length = Globals.PlanesOrdered.length;
+    let aircraft: Aircraft | undefined;
+    for (let i = 0; i < length; i++) {
+      aircraft = Globals.PlanesOrdered.shift();
+      if (aircraft == null || aircraft == undefined) continue;
+
+      // Wenn Flugzeug nicht im momentanem extent ist, wird das Flugzeug entfernt
+      if (!aircraft.isMarked && !this.planeInView(aircraft.position, extent)) {
+        // Entferne Flugzeug
+        this.removeAircraft(aircraft);
+      } else {
+        // Behalte Flugzeug und pushe es zurück in die Liste
+        Globals.PlanesOrdered.push(aircraft);
+      }
+    }
+  }
+
+  planeInView(position: number[], extent: any): boolean {
+    if (position == null) return false;
+
+    let lon = position[0];
+    let lat = position[1];
+
+    let minLon = extent[0];
+    let minLat = extent[1];
+    let maxLon = extent[2];
+    let maxLat = extent[3];
+
+    if (lat < minLat || lat > maxLat) return false;
+
+    if (extent[2] - extent[0] > 40075016) {
+      // all longtitudes in view, only check latitude
+      return true;
+    } else if (minLon < maxLon) {
+      // no wraparound: view not crossing 179 to -180 transition line
+      return lon > minLon && lon < maxLon;
+    } else {
+      // wraparound: view crossing 179 to -180 transition line
+      return lon > minLon || lon < maxLon;
+    }
+  }
+
+  /**
    * Zentriert die Karte über der ISS wenn centerMapOnIss true ist.
    * Ansonsten wird die vorherige Kartenposition als Zentrum genommen
    * @param centerMapOnIss boolean
@@ -2640,13 +3359,17 @@ export class MapComponent implements OnInit {
 
           // Zentriere Karte auf ISS
           this.centerMap(issPosition[0], issPosition[1], Globals.zoomLevel);
+
+          // Merke am Flugzeug, dass Aufruf bereits getätigt wurde (ISS ist Sonderfall)
+          iss.allDataWasRequested = true;
         },
         (error) => {
           console.log(
             'Error updating the iss without extent from the server. Is the server running?'
           );
           this.openSnackbar(
-            'Error updating the iss without extent from the server. Is the server running?'
+            'Error updating the iss without extent from the server. Is the server running?',
+            2000
           );
         }
       );
@@ -2661,7 +3384,7 @@ export class MapComponent implements OnInit {
     // Erstelle Interaktion, um einen Point zu zeichnen
     let draw = new Draw({
       source: this.DrawFeature,
-      type: GeometryType.POINT,
+      type: 'Point',
       style: Styles.DevicePositionStyle,
     });
     this.OLMap.addInteraction(draw);
@@ -2677,9 +3400,9 @@ export class MapComponent implements OnInit {
       // Transformiere Koordinaten in EPSG:3857
       Globals.DevicePosition = olProj.toLonLat(coordinates, 'EPSG:3857');
 
-      localStorage.setItem(
+      Storage.savePropertyInLocalStorage(
         'coordinatesDevicePosition',
-        JSON.stringify(Globals.DevicePosition)
+        Globals.DevicePosition
       );
 
       this.DrawFeature.clear();
@@ -2698,24 +3421,56 @@ export class MapComponent implements OnInit {
       Globals.DevicePosition !== null ||
       localStorage.getItem('coordinatesDevicePosition') !== null
     ) {
-      let coordinates;
+      let coordinatesDevicePosition = Storage.getPropertyFromLocalStorage(
+        'coordinatesDevicePosition',
+        null
+      );
 
-      if (localStorage.getItem('coordinatesDevicePosition') !== null) {
-        let coordinatesDevicePositionString = localStorage.getItem(
-          'coordinatesDevicePosition'
-        );
-        if (coordinatesDevicePositionString === null) return;
-
-        coordinates = JSON.parse(coordinatesDevicePositionString);
-
+      if (coordinatesDevicePosition) {
         // Speichere Koordinaten in globaler Variable ab (lon, lat)
-        Globals.DevicePosition = coordinates;
+        Globals.DevicePosition = coordinatesDevicePosition;
       } else if (Globals.DevicePosition !== null) {
-        coordinates = Globals.DevicePosition;
+        coordinatesDevicePosition = Globals.DevicePosition;
       }
 
-      if (coordinates === undefined) return;
+      if (
+        coordinatesDevicePosition == undefined ||
+        coordinatesDevicePosition == null
+      )
+        return;
 
+      // Lösche bisherige Geräte-Position, wenn diese existiert
+      this.removeDevicePositionFromStaticFeatures();
+
+      let feature = new Feature(
+        new Point(olProj.fromLonLat(coordinatesDevicePosition))
+      );
+      feature.setStyle(Styles.DevicePositionStyle);
+      feature.set('name', 'devicePosition');
+      this.StaticFeatures.addFeature(feature);
+    }
+  }
+
+  deleteDevicePosition() {
+    if (
+      Globals.DevicePosition !== null ||
+      localStorage.getItem('coordinatesDevicePosition') !== null
+    ) {
+      // Lösche bisherige Geräte-Position, wenn diese existiert
+      this.removeDevicePositionFromStaticFeatures();
+
+      localStorage.removeItem('coordinatesDevicePosition');
+
+      // reset
+      Globals.DevicePosition = null;
+    }
+  }
+
+  removeDevicePositionFromStaticFeatures() {
+    if (
+      Globals.DevicePosition !== null ||
+      localStorage.getItem('coordinatesDevicePosition') !== null
+    ) {
       // Lösche bisherige Geräte-Position, wenn diese existiert
       let staticFeatures = this.StaticFeatures.getFeatures();
       for (let i in staticFeatures) {
@@ -2729,11 +3484,6 @@ export class MapComponent implements OnInit {
           this.StaticFeatures.removeFeature(feature);
         }
       }
-
-      let feature = new Feature(new Point(olProj.fromLonLat(coordinates)));
-      feature.setStyle(Styles.DevicePositionStyle);
-      feature.set('name', 'devicePosition');
-      this.StaticFeatures.addFeature(feature);
     }
   }
 
@@ -2759,32 +3509,8 @@ export class MapComponent implements OnInit {
    */
   setLightDarkModeInMap() {
     if (!this.osmLayer) return;
-
-    var currentFilters = this.osmLayer.getFilters();
-    this.enableDisableCurrentFilters(currentFilters, false);
-
-    // Custom filter, damit osmLayer dunkler wird
-    // (ehem. in CSS filter: brightness(55%))
-    if (this.osmLayer.getFilters().length == 3) {
-      if (this.darkMode) {
-        this.enableDisableCurrentFilters(currentFilters, true);
-      } else {
-        if (this.osmLayer.getFilters()[2]) {
-          // enable only luminosity filter for light mode
-          this.osmLayer.getFilters()[2].setActive(true);
-        } else {
-          console.log("No need for resetting filters. osmLayer.getFilters()[2] does not exist");
-        }
-      }
-    } else {
-      if (this.darkMode) {
-        this.createNewSepiaFilter();
-        this.createNewInvertFilter();
-        this.createNewLuminosityFilter('0.25');
-      } else {
-        this.createNewLuminosityFilter(Globals.luminosityValueMap.toString());
-      }
-    }
+    this.resetCurrentCSSFilter();
+    this.createNewLuminosityFilter(Globals.luminosityValueMap.toString());
   }
 
   private createNewLuminosityFilter(brightnessValue: string) {
@@ -2796,21 +3522,480 @@ export class MapComponent implements OnInit {
     this.osmLayer.addFilter(filter);
   }
 
-  private createNewInvertFilter() {
-    var filter = new Colorize();
-    filter.setFilter('invert');
-    this.osmLayer.addFilter(filter);
-  }
-
-  private createNewSepiaFilter() {
-    var filter = new Colorize();
-    filter.setFilter('sepia');
-    this.osmLayer.addFilter(filter);
-  }
-
   enableDisableCurrentFilters(filters: [], enable: boolean) {
     for (let i = 0; i < filters.length; i++) {
       this.osmLayer.getFilters()[i].setActive(enable);
+    }
+  }
+
+  createOrHideRainViewerRain() {
+    if (this.showRainViewerRain || this.showRainViewerRainForecast) {
+      this.createRainViewerRainLayer();
+
+      if (this.refreshIntervalIdRainviewer == undefined) {
+        this.initUpdateRainViewerData();
+      }
+
+      // initial data request
+      this.makeRequestRainviewerApi();
+    } else {
+      this.removeRainViewerRainLayer();
+    }
+
+    // Stoppe forecast animation
+    if (!this.showRainViewerRainForecast) {
+      this.stopRainForecastAnimation();
+    }
+
+    // Stoppe requests nach rainviewer, wenn weder rain noch clouds angezeigt werden sollen
+    if (
+      !this.showRainViewerRain &&
+      !this.showRainViewerClouds &&
+      !this.showRainViewerRainForecast
+    ) {
+      this.stopRequestsToRainviewer();
+    }
+
+    this.rainviewerRainLayer?.set(
+      'visible',
+      this.showRainViewerRain || this.showRainViewerRainForecast
+    );
+  }
+
+  createOrHideRainViewerClouds() {
+    if (this.showRainViewerClouds) {
+      this.createRainViewerCloudsLayer();
+
+      if (this.refreshIntervalIdRainviewer == undefined) {
+        this.initUpdateRainViewerData();
+      }
+
+      // initial data request
+      this.makeRequestRainviewerApi();
+    } else {
+      this.removeRainViewerCloudsLayer();
+    }
+
+    // Stoppe requests nach rainviewer, wenn weder rain noch clouds angezeigt werden sollen
+    if (!this.showRainViewerRain && !this.showRainViewerClouds) {
+      this.stopRequestsToRainviewer();
+    }
+
+    this.rainviewerCloudsLayer?.set('visible', this.showRainViewerClouds);
+  }
+
+  removeRainViewerCloudsLayer() {
+    this.layers?.remove(this.rainviewerCloudsLayer);
+  }
+
+  createRainViewerCloudsLayer() {
+    if (this.layers == undefined) return;
+
+    this.rainviewerCloudsLayer = new TileLayer({
+      source: new XYZ({
+        url: '',
+      }),
+      opacity: 0.4,
+    });
+
+    this.layers.push(this.rainviewerCloudsLayer);
+  }
+
+  initUpdateRainViewerData() {
+    // Update der Rainviewer-Daten alle zwanzig Sekunden automatisch,
+    // auch wenn sich Map nicht bewegt
+    this.refreshIntervalIdRainviewer = window.setInterval(() => {
+      this.makeRequestRainviewerApi();
+    }, 20000);
+  }
+
+  stopRequestsToRainviewer() {
+    clearInterval(this.refreshIntervalIdRainviewer);
+    this.refreshIntervalIdRainviewer = undefined;
+  }
+
+  createRainViewerRainLayer() {
+    if (this.layers == undefined) return;
+
+    this.rainviewerRainLayer = new TileLayer({
+      source: new XYZ({
+        url: '',
+      }),
+      opacity: 0.4,
+    });
+
+    this.layers.push(this.rainviewerRainLayer);
+  }
+
+  removeRainViewerRainLayer() {
+    this.layers?.remove(this.rainviewerRainLayer);
+  }
+
+  makeRequestRainviewerApi() {
+    this.rainviewerService
+      .getRainviewerUrlData()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (rainviewerUrlData) => {
+          if (rainviewerUrlData === undefined) return;
+
+          // rain
+          let pastRadar: Array<any> = rainviewerUrlData.radar.past;
+          // rain (forecast)
+          let nowcastRadar: Array<any> = rainviewerUrlData.radar.nowcast;
+          // clouds
+          let infraredSatellite: Array<any> =
+            rainviewerUrlData.satellite.infrared;
+
+          // reset array
+          this.forecastRainPathAndTime = [];
+
+          let nowRain;
+          if (pastRadar) {
+            // rain
+            let lastIndex = pastRadar.length - 1;
+            nowRain = pastRadar[lastIndex];
+            const updatedUrlRainNow = this.buildRainViewerUrlRain(nowRain.path);
+
+            if (this.showRainViewerRain) {
+              this.rainviewerRainLayer.getSource()?.setUrl(updatedUrlRainNow);
+            }
+          }
+
+          if (pastRadar && nowcastRadar) {
+            // rain (past + forecast)
+            for (let i = 0; i < pastRadar.length; i++) {
+              this.forecastRainPathAndTime.push(pastRadar[i]);
+            }
+
+            for (let j = 0; j < nowcastRadar.length; j++) {
+              this.forecastRainPathAndTime.push(nowcastRadar[j]);
+            }
+
+            if (this.showRainViewerRainForecast) {
+              this.stopRainForecastAnimation();
+              this.updateRainViewerRainForecastLayerUrl();
+            }
+          }
+
+          if (infraredSatellite) {
+            // clouds
+            let lastIndex = infraredSatellite.length - 1;
+            let newestTimestampCloudsUrl = infraredSatellite[lastIndex].path;
+
+            const updatedUrlClouds = this.buildRainViewerUrlClouds(
+              newestTimestampCloudsUrl
+            );
+            this.rainviewerCloudsLayer.getSource()?.setUrl(updatedUrlClouds);
+          }
+        },
+        (error) => {
+          console.log('Error loading rainviewer data');
+          this.openSnackbar('Error loading rainviewer data', 2000);
+        }
+      );
+  }
+
+  buildRainViewerUrlRain(pathFromApi: string) {
+    return this.buildRainViewerUrl(pathFromApi, 512, 4, 1, 1);
+  }
+
+  buildRainViewerUrlClouds(pathFromApi: string) {
+    return this.buildRainViewerUrl(pathFromApi, 512, 0, 0, 0);
+  }
+
+  buildRainViewerUrl(
+    pathFromApi: string,
+    size: number,
+    color: number,
+    smoothImage: number,
+    displaySnowInSeperateColor: number
+  ) {
+    const baseUrl = 'https://tilecache.rainviewer.com';
+    return (
+      baseUrl +
+      pathFromApi +
+      '/' +
+      size +
+      '/{z}/{x}/{y}/' +
+      color +
+      '/' +
+      smoothImage +
+      '_' +
+      displaySnowInSeperateColor +
+      '.png'
+    );
+  }
+
+  updateRainViewerRainForecastLayerUrl() {
+    if (this.showRainViewerRainForecast && this.forecastRainPathAndTime) {
+      // initial
+      this.playRainViewerForecastAnimation();
+
+      this.refreshIntervalIdRainviewerForecast = window.setInterval(() => {
+        this.playRainViewerForecastAnimation();
+      }, 18000);
+    }
+  }
+
+  async playRainViewerForecastAnimation() {
+    this.timeoutHandlerForecastAnimation = [];
+    const intervalMs = 1000;
+
+    for (let i = 0; i < this.forecastRainPathAndTime.length; i++) {
+      let timeoutHandler = window.setTimeout(
+        () =>
+          this.showRainViewerForecastAnimationFrame(
+            this.forecastRainPathAndTime[i]
+          ),
+        i * intervalMs
+      );
+      this.timeoutHandlerForecastAnimation.push(timeoutHandler);
+    }
+  }
+
+  showRainViewerForecastAnimationFrame(forecastRainPathAndTimeFrame) {
+    if (this.showRainViewerRainForecast && this.forecastRainPathAndTime) {
+      this.rainviewerRainLayer
+        .getSource()
+        ?.setUrl(
+          this.buildRainViewerUrlRain(forecastRainPathAndTimeFrame.path)
+        );
+      this.showForecastHintSnackbar(forecastRainPathAndTimeFrame.time);
+    }
+  }
+
+  showForecastHintSnackbar(timestampUTC: any) {
+    this.openSnackbar(new Date(timestampUTC * 1000).toLocaleTimeString(), 1000);
+  }
+
+  stopRainForecastAnimation() {
+    clearInterval(this.refreshIntervalIdRainviewerForecast);
+    this.refreshIntervalIdRainviewerForecast = undefined;
+    if (this.timeoutHandlerForecastAnimation) {
+      for (let i = 0; i < this.timeoutHandlerForecastAnimation.length; i++) {
+        clearInterval(this.timeoutHandlerForecastAnimation[i]);
+      }
+      this.timeoutHandlerForecastAnimation = [];
+    }
+  }
+
+  receiveToggleShowAircraftPositions() {
+    if (this.OLMap && this.layers && (this.planesLayer || this.webglLayer)) {
+      if (this.planesLayer)
+        this.planesLayer.setVisible(this.toggleShowAircraftPositions);
+      if (this.webglLayer)
+        this.webglLayer.setVisible(this.toggleShowAircraftPositions);
+    }
+  }
+
+  /**
+   * Hole gewünschte Karte aus LocalStorage, ansonsten nehme default
+   * @returns object mit MapStyle
+   */
+  getMapStyleFromLocalStorage() {
+    let mapStyle = Storage.getPropertyFromLocalStorage('mapStyle', null);
+    return mapStyle !== null
+      ? mapStyle[0] // ist object in array
+      : Maps.listAvailableFreeMaps[0];
+  }
+
+  /**
+   * Speichere gewünschte Karte in LocalStorage
+   */
+  saveMapStyleInLocalStorage(selectedMapStyle: any) {
+    let mapStyle = this.listAvailableMaps.filter(
+      (mapStyle) => mapStyle.name == selectedMapStyle
+    );
+    Storage.savePropertyInLocalStorage('mapStyle', mapStyle);
+  }
+
+  resetCurrentCSSFilter() {
+    var currentFilters = this.osmLayer.getFilters();
+    this.enableDisableCurrentFilters(currentFilters, false);
+  }
+
+  dimMapOrRemoveFilter() {
+    if (this.dimMap) {
+      this.setLightDarkModeInMap();
+    } else {
+      this.resetCurrentCSSFilter();
+    }
+  }
+
+  showAircraftFromFeeder(selectedFeederUpdate: string[]) {
+    // Entferne alle Flugzeuge, die nicht vom ausgewählten Feeder kommen
+    if (this.selectedFeederUpdate && this.selectedFeederUpdate.length != 0) {
+      for (var selectedFeeder in selectedFeederUpdate) {
+        this.removeAllNotSelectedFeederPlanes(selectedFeeder);
+      }
+    } else if (this.selectedFeederUpdate) {
+      this.removeAllNotSelectedPlanes();
+    }
+
+    // Aktualisiere Flugzeuge vom Server
+    this.updatePlanesFromServer(
+      this.selectedFeederUpdate,
+      this.showIss,
+      this.showOnlyMilitary
+    );
+
+    // Aktualisiere Daten des markierten Flugzeugs
+    if (this.aircraft) {
+      this.getAllAircraftData(this.aircraft);
+      this.getTrailToAircraft(this.aircraft, this.selectedFeederUpdate);
+    }
+  }
+
+  // TODO test method for changing icon scale dynamically
+  setNewIconSizeScaleAndRedrawPlanes(
+    globalIconSizeFactor: number,
+    smallIconScaleFactor: number
+  ) {
+    // Leere webglFeatures
+    if (Globals.webgl) {
+      Globals.WebglFeatures.clear();
+    }
+
+    // Erstelle Marker neu von jedem Flugzeug
+    for (let i in Globals.PlanesOrdered) {
+      const aircraft = Globals.PlanesOrdered[i];
+      aircraft.clearMarker();
+      aircraft.updateMarker(false);
+    }
+  }
+
+  /**
+   * Triggert das Zeigen oder Verstecken der 3d-Map aus der Info-Komponente heraus
+   */
+  receiveToggleShow3dMap() {
+    let show3dMap = !this.display3dMap;
+    if (show3dMap && !this.cesiumIonDefaultAccessToken) {
+      this.openSnackbar(
+        `Cesium Ion Default Access Token is not available. 3D-Map cannot be used!`,
+        3000
+      );
+      show3dMap = !this.display3dMap;
+      return;
+    }
+    this.show3dMap(show3dMap);
+  }
+
+  /**
+   * Zeigt oder versteckt die 3d-Map, indem globaler Boolean gesetzt wird
+   */
+  show3dMap(show: boolean) {
+    Globals.display3dMap = show;
+  }
+
+  /**
+   * Update Aircraft in der Cesium-Component, nachdem der Trail geholt wurde
+   */
+  updateCesiumComponentWithAircraft() {
+    if (this.aircraft && Globals.display3dMap) {
+      this.cesiumService.updateAircraft(this.aircraft);
+    }
+  }
+
+  removeAllNotMilitaryPlanes() {
+    let length = Globals.PlanesOrdered.length;
+    let aircraft: Aircraft | undefined;
+    for (let i = 0; i < length; i++) {
+      aircraft = Globals.PlanesOrdered.shift();
+      if (aircraft == null || aircraft == undefined) continue;
+
+      // Wenn Flugzeug nicht militär ist und nicht markiert ist, wird das Flugzeug entfernt
+      if (!aircraft.isMarked && aircraft.isMilitary != 'Y') {
+        // Entferne Flugzeug
+        this.removeAircraft(aircraft);
+      } else {
+        // Behalte Flugzeug und pushe es zurück in die Liste
+        Globals.PlanesOrdered.push(aircraft);
+      }
+    }
+  }
+
+  showAllTrailsOnMap(showTrailData: boolean) {
+    if (this.showTrailData) {
+      new Promise(() => this.getAllTrailsFromServer());
+    } else {
+      if (this.allTrailsLayer) this.removeAllTrailsLayer();
+    }
+  }
+
+  removeAllTrailsLayer() {
+    this.layers?.remove(this.allTrailsLayer);
+    this.allTrailsLayer = undefined;
+    Globals.allTrailsGroup.clear();
+  }
+
+  createAllTrailsLayer() {
+    if (this.layers == undefined) return;
+
+    this.allTrailsLayer = new LayerGroup({
+      layers: Globals.allTrailsGroup,
+      zIndex: 140,
+    });
+    this.allTrailsLayer.set('name', 'all_ac_trail');
+    this.allTrailsLayer.set('title', 'all aircraft trails');
+    this.allTrailsLayer.set('type', 'overlay');
+    this.layers.push(this.allTrailsLayer);
+  }
+
+  getAllTrailsFromServer() {
+    this.serverService
+      .getAllTrails()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (trailsByHexArray) => {
+          if (!trailsByHexArray || trailsByHexArray.length == 0) return;
+          new Promise(() => this.processAllTrailsFromServer(trailsByHexArray));
+        },
+        (error) => {
+          console.log(
+            'Error getting all trails from the server. Is the server running?'
+          );
+          this.openSnackbar(
+            'Error getting all trails from the server. Is the server running?',
+            2000
+          );
+        }
+      );
+  }
+
+  processAllTrailsFromServer(trailsByHexArray: any): Promise<void> {
+    this.createAllTrailsLayer();
+
+    for (let trailsByHex of trailsByHexArray) {
+      if (!trailsByHex) return Promise.reject();
+
+      let trail = new Trail();
+      trail.makeTrail(trailsByHex);
+      trail.setTrailVisibility2d(true);
+    }
+
+    return Promise.resolve();
+  }
+
+  showHideAltitudeChartElement() {
+    if (!this.isDesktop) {
+      document.getElementById('altitude_chart')!.style.visibility = 'hidden';
+    } else {
+      if (this.showAltitudeChart) {
+        document.getElementById('altitude_chart')!.style.visibility = 'visible';
+      } else {
+        document.getElementById('altitude_chart')!.style.visibility = 'hidden';
+      }
+    }
+  }
+
+  getRemoteNetworkParamter(): string | null {
+    if (this.showOpenskyPlanes) {
+      return 'Opensky';
+    } else if (this.showAirplanesLivePlanes) {
+      return 'Airplanes-Live';
+    } else {
+      return null;
     }
   }
 }

@@ -1,21 +1,21 @@
 package com.amnesica.belugaproject.entities.trails;
 
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(indexes = {@Index(name = "idx_sc_trail_hex_timestampAsc", columnList = "hex, timestamp ASC"),
-        @Index(name = "idx_sc_trail_timestamp", columnList = "timestamp"),
-        @Index(name = "idx_sc_trail_hex", columnList = "hex"),
-        @Index(name = "idx_sc_trail_hex_feeder_timestampAsc", columnList = "hex, feeder, timestamp ASC")})
+    @Index(name = "idx_sc_trail_timestamp", columnList = "timestamp"),
+    @Index(name = "idx_sc_trail_hex", columnList = "hex"),
+    @Index(name = "idx_sc_trail_hex_feeder_timestampAsc", columnList = "hex, feeder, timestamp ASC")})
 public class SpacecraftTrail extends TrailSuperclass {
-    public SpacecraftTrail() {
-        // Benötiger, leerer Konstruktor
-    }
+  public SpacecraftTrail() {
+    // Benötiger, leerer Konstruktor
+  }
 
-    public SpacecraftTrail(String hex, Double longitude, Double latitude, Integer altitude, Boolean reenteredAircraft,
-                           Long timestamp, String feeder, String source) {
-        super(hex, longitude, latitude, altitude, reenteredAircraft, timestamp, feeder, source);
-    }
+  public SpacecraftTrail(String hex, Double longitude, Double latitude, Integer altitude, Boolean reenteredAircraft,
+                         Long timestamp, String feeder, String source, Integer track, Double roll) {
+    super(hex, longitude, latitude, altitude, reenteredAircraft, timestamp, feeder, source, track, roll);
+  }
 }

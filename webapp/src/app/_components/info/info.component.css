@@ -1,11 +1,17 @@
 #largeInfo {
   position: fixed;
   display: flex;
-  z-index: 2000;
+  z-index: 15;
   bottom: 0;
   flex-direction: column;
   margin: 0;
   padding: 0;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  overflow: hidden;
+  background: transparent;
 }
 
 #closeButton {
@@ -20,7 +26,6 @@
 
 #smallInfo {
   position: fixed;
-  border-radius: 0rem;
   width: 100%;
   bottom: 0%;
   padding: 0%;
@@ -28,6 +33,12 @@
   display: flex;
   flex-direction: column;
   z-index: 10;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 0;
+  overflow: hidden;
+  background: transparent;
 }
 
 .buttonFooter {
@@ -74,6 +85,54 @@ mat-card-footer {
   width: 100%;
   padding: 0%;
   margin: 0%;
+}
+
+:host ::ng-deep .mat-expansion-panel {
+  border-radius: 0;
+}
+
+::ng-deep .my-expansion-class-1 .mat-expansion-panel-body {
+  padding: 0;
+}
+
+:host ::ng-deep .mat-expansion-panel-header {
+  height:1.75rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 24px;
+  border-radius: 0;
+  transition: height 225ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:host ::ng-deep .mat-expansion-panel-header-description {
+  color: white;
+  display: flex;
+  flex-grow: 1;
+  flex-basis: 0;
+  margin-right: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .mat-expansion-indicator::after {
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  content: "";
+  display: block;
+  padding: 3px;
+  transform: rotate(45deg);
+  color: white;
+}
+
+.chart-light {
+  background-color: lightgrey;
+  color: black;
+}
+
+.chart-dark {
+  background-color: #383838;
+  color: white;
 }
 
 .background-and-color-light {

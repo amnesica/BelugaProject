@@ -16,6 +16,7 @@
   "
   *ngIf="showSettingsDiv"
   [style.width]="settingsDivWidth"
+  [@slideInOutRight]
 >
   <mat-tab-group
     [disablePagination]="true"
@@ -29,48 +30,27 @@
       <div style="padding: 0.5rem">
         <h3>Planes</h3>
 
-        <mat-slide-toggle
-          [checked]="showAircraftLabels"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAircraftLabels($event)"
-          >Aircraft Labels</mat-slide-toggle
-        >
-
-        <div>
-          <mat-slide-toggle
-            [checked]="showPOMDPoint"
-            (click)="$event.stopPropagation()"
-            (change)="togglePOMDPoint($event)"
-            >Toggle POMD-Feature</mat-slide-toggle
-          >
-        </div>
-
         <!-- Select, um Flugzeuge nach Feeder zu selektieren (default: Alle Feeder) -->
-        <p class="info-text">
-          Select planes by feeder: (By default all feeders are displayed)
-        </p>
         <div style="display: flex; justify-content: center">
-          <mat-form-field appearance="fill">
-            <mat-label>Feeder</mat-label>
+          <mat-form-field
+            appearance="fill"
+            style="width: 100%; margin-left: 1rem"
+          >
+            <mat-label>Select planes by feeder</mat-label>
             <mat-select
-              multiple
-              [formControl]="selectedFeederArray"
-              [disableRipple]="true"
+              [(ngModel)]="selectedFeeder"
               (selectionChange)="selectPlanesByFeeder()"
-              [multiple]="false"
-              [value]="0"
+              multiple
             >
-              <mat-option value="AllFeeder">All feeder</mat-option>
-              <mat-option
-                *ngFor="let feeder of listFeeder"
-                [value]="feeder.name"
-                [disabled]="feeder.disabled"
-                >{{ feeder.name }}</mat-option
-              >
+              <mat-option *ngFor="let feeder of listFeeder" [value]="feeder">{{
+                feeder.name
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
 
-          <div>
+          <div
+            style="display: flex; justify-content: center; margin-top: 0.3rem"
+          >
             <button
               mat-icon-button
               (click)="refreshSelectedFeeder()"
@@ -81,73 +61,163 @@
           </div>
         </div>
 
-        <h3 style="padding-top: 0rem">Airports</h3>
         <mat-slide-toggle
-          [checked]="showAirports"
+          [checked]="showAircraftPositions"
           (click)="$event.stopPropagation()"
-          (change)="toggleAirports($event)"
-          >Airport Labels</mat-slide-toggle
+          (change)="toggleAircraftPositions($event.checked)"
+          >Aircraft Positions</mat-slide-toggle
         >
 
-        <h3 style="padding-top: 1rem">Opensky-Network</h3>
+        <mat-slide-toggle
+          [checked]="showAircraftLabels"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAircraftLabels($event.checked)"
+          >Aircraft Labels</mat-slide-toggle
+        >
+
         <mat-slide-toggle
           [checked]="showOpenskyPlanes"
-          [disabled]="!openskyCredentialsExist"
+          [disabled]="!openskyCredentialsExist || showAirplanesLivePlanes"
           (click)="$event.stopPropagation()"
-          (change)="toggleOpenskyPlanes($event)"
+          (change)="toggleOpenskyPlanes($event.checked)"
           >Fetch from Opensky-Network</mat-slide-toggle
         >
 
-        <h3 style="padding-top: 1rem">ISS</h3>
         <mat-slide-toggle
-          [checked]="showIss"
+          [checked]="showAirplanesLivePlanes"
+          [disabled]="showOpenskyPlanes"
           (click)="$event.stopPropagation()"
-          (change)="toggleIss($event)"
-          >ISS</mat-slide-toggle
+          (change)="toggleAirplanesLivePlanes($event.checked)"
+          >Fetch from Airplanes-Live (250nm max)</mat-slide-toggle
         >
-        <div mat-dialog-actions>
-          <button
-            mat-button
-            [disabled]="!showIss"
-            style="background-color: gray; color: white"
-            (click)="toggleCenterMapOnIss()"
-          >
-            Show ISS
-          </button>
-        </div>
 
-        <h3 style="padding-top: 1rem">General</h3>
-
-        <!-- Aktuelle Geräte-Position -->
-        <p class="info-text">
-          Click on the button to set the current device position to use it for
-          distance and POMD results
-        </p>
-        <div
-          mat-dialog-actions
-          style="margin-top: 0.5rem; margin-bottom: 0.5rem"
-        >
-          <button
-            mat-button
-            style="background-color: gray; color: white"
-            (click)="setCurrentDevicePosition()"
-          >
-            Set Device Position
-          </button>
-        </div>
-
-        <!-- Toggle Geräte-Position als Basis für Berechnungen -->
-        <div>
-          <p class="info-text">
-            Set device position as basis for range rings, distance calculation
-            and POMD-feature
-          </p>
+        <div style="display: flex; justify-content: start; align-items: center">
           <mat-slide-toggle
-            [checked]="devicePositionAsBasis"
+            [checked]="showIss"
             (click)="$event.stopPropagation()"
-            (change)="toggleDevicePositionAsBasis($event)"
-            >Device Position as basis for calculations</mat-slide-toggle
+            (change)="toggleIss($event.checked)"
+            >ISS</mat-slide-toggle
           >
+          <div mat-dialog-actions style="margin-left: 8.5rem">
+            <button
+              mat-button
+              [disabled]="!showIss"
+              style="background-color: gray; color: white"
+              (click)="toggleCenterMapOnIss()"
+            >
+              Show ISS
+            </button>
+          </div>
+        </div>
+
+        <mat-slide-toggle
+          [checked]="showOnlyMilitaryPlanes"
+          (click)="$event.stopPropagation()"
+          (change)="toggleShowOnlyMilitaryPlanes($event.checked)"
+          >Show only military</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
+          [checked]="showPOMDPoint"
+          (click)="$event.stopPropagation()"
+          (change)="togglePOMDPoint($event.checked)"
+          >Toggle POMD-Feature</mat-slide-toggle
+        >
+
+        <!-- WebGL -->
+        <mat-slide-toggle
+          [checked]="webgl"
+          [disabled]="webglNotSupported"
+          (click)="$event.stopPropagation()"
+          (change)="toggleWebgl($event.checked)"
+          >WebGL</mat-slide-toggle
+        >
+
+        <mat-divider style="margin-bottom: 0"></mat-divider>
+
+        <div style="display: flex; justify-content: start; max-height: 2rem">
+          <mat-slider min="0.5" max="10" step="0.1">
+            <input
+              matSliderThumb
+              [(ngModel)]="sliderGlobalIconSizeValue"
+              (input)="onInputChangeGlobalIconSize($event)"
+            />
+          </mat-slider>
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              max-height: 2rem;
+              padding-top: 0.6rem;
+            "
+          >
+            Global Icon Size ({{ sliderGlobalIconSizeValue }})
+          </p>
+        </div>
+
+        <div style="display: flex; justify-content: start; max-height: 2rem">
+          <mat-slider min="0.1" max="10" step="0.1">
+            <input
+              matSliderThumb
+              [(ngModel)]="sliderSmallIconSizeValue"
+              (input)="onInputChangeSmallIconSize($event)"
+            />
+          </mat-slider>
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              max-height: 2rem;
+              padding-top: 0.6rem;
+            "
+          >
+            Small Icon Size ({{ sliderSmallIconSizeValue }})
+          </p>
+        </div>
+
+        <div
+          style="
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 0.7rem;
+            margin-left: 0.4rem;
+          "
+        >
+          <button
+            mat-button
+            style="background-color: gray; color: white"
+            (click)="resetIconSizeSlider()"
+          >
+            Reset Icon Sizes
+          </button>
+        </div>
+
+        <h3 style="margin-top: 1rem">General</h3>
+
+        <!-- Select, um Map-Stil auszuwählen (default: OSM) -->
+        <div style="display: flex; justify-content: center">
+          <mat-form-field
+            appearance="fill"
+            style="width: 100%; margin-left: 1rem; margin-right: 1rem"
+          >
+            <mat-label>Map style</mat-label>
+            <mat-select
+              multiple
+              [formControl]="selectedMapsArray"
+              [disableRipple]="true"
+              (selectionChange)="changeMapStyle()"
+              [multiple]="false"
+              [(ngModel)]="selectedMapStyleValue"
+            >
+              <mat-option
+                *ngFor="let map of listAvailableMaps"
+                [value]="map.name"
+                >{{ map.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <!-- Dark mode -->
@@ -155,19 +225,119 @@
           <mat-slide-toggle
             [checked]="darkMode"
             (click)="$event.stopPropagation()"
-            (change)="toggleDarkMode($event)"
+            (change)="toggleDarkMode($event.checked)"
             >Dark Mode</mat-slide-toggle
           >
         </div>
 
-        <!-- WebGL -->
+        <!-- Dim map -->
         <div>
           <mat-slide-toggle
-            [checked]="webgl"
-            [disabled]="webglNotSupported"
+            [checked]="dimMap"
             (click)="$event.stopPropagation()"
-            (change)="toggleWebgl($event)"
-            >WebGL</mat-slide-toggle
+            (change)="toggleDimMap($event.checked)"
+            >Dim Map</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Dark static features -->
+        <div>
+          <mat-slide-toggle
+            [checked]="darkStaticFeatures"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDarkStaticFeatures($event.checked)"
+            >Dark Static Features</mat-slide-toggle
+          >
+        </div>
+
+        <mat-slide-toggle
+          [checked]="showAltitudeChart"
+          [disabled]="!isDesktop"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAltitudeChart($event.checked)"
+          >Show Altitude Chart</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
+          [checked]="showAirports"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAirports($event.checked)"
+          >Airport Labels</mat-slide-toggle
+        >
+
+        <mat-divider></mat-divider>
+
+        <!-- Aktuelle Geräte-Position -->
+        <div
+          mat-dialog-actions
+          style="
+            display: flex;
+            justify-content: space-around;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+          "
+        >
+          <button
+            mat-button
+            style="background-color: gray; color: white"
+            (click)="setCurrentDevicePosition()"
+          >
+            Set Device Pos.
+          </button>
+          <button
+            mat-button
+            style="background-color: gray; color: white"
+            (click)="deleteCurrentDevicePosition()"
+          >
+            Delete Device Pos.
+          </button>
+        </div>
+
+        <!-- Toggle Geräte-Position als Basis für Berechnungen -->
+        <div>
+          <mat-slide-toggle
+            [checked]="devicePositionAsBasis"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDevicePositionAsBasis($event.checked, false)"
+          >
+            <p class="info-text">
+              Device Position as basis for range rings, distance calculation and
+              POMD-feature
+            </p>
+          </mat-slide-toggle>
+        </div>
+
+        <h3 style="margin-top: 1rem">Weather</h3>
+
+        <!-- Rainviewer (Rain) -->
+        <div>
+          <mat-slide-toggle
+            [checked]="rainViewerRain"
+            [disabled]="rainViewerRainForecast"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRainViewerRain($event.checked)"
+            >Radar (Rainviewer)</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Rainviewer (Rain forecast) -->
+        <div>
+          <mat-slide-toggle
+            [checked]="rainViewerRainForecast"
+            [disabled]="rainViewerRain"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRainViewerRainForecast($event.checked)"
+            >Radar Forecast (Rainviewer)</mat-slide-toggle
+          >
+        </div>
+
+        <!-- Rainviewer (Clouds) -->
+        <div>
+          <mat-slide-toggle
+            [checked]="rainViewerClouds"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRainViewerClouds($event.checked)"
+            >Clouds (Rainviewer)</mat-slide-toggle
           >
         </div>
       </div>
@@ -184,7 +354,7 @@
             [checked]="hideRangeData"
             (click)="$event.stopPropagation()"
             (change)="toggleHideRangeData($event)"
-            >hide range data</mat-slide-toggle
+            >Hide range data</mat-slide-toggle
           >
         </div>
 
@@ -194,7 +364,7 @@
             [checked]="markRangeDataByFeeder"
             (click)="$event.stopPropagation()"
             (change)="toggleMarkRangeDataByFeeder($event)"
-            >mark range data by feeder</mat-slide-toggle
+            >Mark range data by feeder</mat-slide-toggle
           >
         </div>
 
@@ -204,34 +374,27 @@
             [checked]="markRangeDataByHeight"
             (click)="$event.stopPropagation()"
             (change)="toggleMarkRangeDataByHeight($event)"
-            >mark range data by height</mat-slide-toggle
+            >Mark range data by height</mat-slide-toggle
           >
         </div>
 
-        <!-- Select, um Range Data nach Feeder zu selektieren (default: Alle Feeder)-->
-        <p class="info-text">
-          Select range data by feeder: (If no feeder is selected range data of
-          all feeder are shown)
-        </p>
+        <!-- Select, um Range Data nach Feeder zu selektieren -->
         <div style="display: flex; justify-content: center">
           <mat-form-field appearance="fill">
-            <mat-label>Feeder</mat-label>
+            <mat-label>Select range data by feeder</mat-label>
             <mat-select
-              multiple
-              [formControl]="selectedFeederArray"
-              [disabled]="disableRangeData"
-              [disableRipple]="true"
+              [(ngModel)]="selectedFeederRangeData"
               (selectionChange)="selectRangeDataByFeeder()"
+              multiple
             >
-              <mat-option
-                *ngFor="let feeder of listFeeder"
-                [value]="feeder.name"
-                [disabled]="feeder.disabled"
-                >{{ feeder.name }}</mat-option
-              >
+              <mat-option *ngFor="let feeder of listFeeder" [value]="feeder">{{
+                feeder.name
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
+
+        <mat-divider></mat-divider>
 
         <!-- Info-Text -->
         <p class="info-text">
@@ -254,23 +417,23 @@
         <!-- Button-Toggles, um vordefinierte Zeiträume für die Range Data auszuwählen -->
         <div style="display: flex; justify-content: center">
           <button
-            mat-stroked-button
-            style="background-color: white; color: black; font-style: normal"
+            mat-button
+            style="background-color: gray; color: white; margin-right: 0.5rem"
             value="current-hour"
             (click)="showRangeDataLastHour()"
           >
             Last Hour
           </button>
           <button
-            mat-stroked-button
-            style="background-color: white; color: black; font-style: normal"
+            mat-button
+            style="background-color: gray; color: white; margin-right: 0.5rem"
             (click)="showRangeDataToday()"
           >
             Today
           </button>
           <button
-            mat-stroked-button
-            style="background-color: white; color: black; font-style: normal"
+            mat-button
+            style="background-color: gray; color: white"
             (click)="showRangeDataLastSevenDays()"
           >
             Last 7 Days
@@ -285,81 +448,79 @@
           anzuzeigenden Range Data auszuwählen -->
         <div class="time-picker">
           <!-- Starttime -->
-          <mat-form-field style="width: 80%">
-            <input
-              matInput
-              [(ngModel)]="times[0]"
-              [ngxMatDatetimePicker]="picker"
-              placeholder="Starttime"
-              [formControl]="dateControlStart"
-              [min]="minDate"
-              [max]="maxDate"
-              [disabled]="disabled"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="$any(picker)"
-            ></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker
-              #picker
-              [showSpinners]="showSpinners"
-              [showSeconds]="showSeconds"
-              [stepHour]="stepHour"
-              [stepMinute]="stepMinute"
-              [stepSecond]="stepSecond"
+          <mat-form-field>
+            <mat-label>Starttime</mat-label>
+            <mtx-datetimepicker
+              #datetimeStart
+              [type]="type"
+              [mode]="mode"
+              [multiYearSelector]="multiYearSelector"
+              [startView]="startView"
+              [twelvehour]="twelvehour"
+              [timeInterval]="timeInterval"
               [touchUi]="touchUi"
-              [color]="color"
-              [enableMeridian]="enableMeridian"
-              [disableMinute]="disableMinute"
-              [hideTime]="hideTime"
-            >
-            </ngx-mat-datetime-picker>
+              [timeInput]="timeInput"
+              (selectedChanged)="selectedStarttime = $event"
+            ></mtx-datetimepicker>
+            <input [mtxDatetimepicker]="datetimeStart" matInput required />
+            <mtx-datetimepicker-toggle
+              [for]="datetimeStart"
+              matSuffix
+            ></mtx-datetimepicker-toggle>
           </mat-form-field>
         </div>
 
         <div class="time-picker">
           <!-- Endtime -->
-          <mat-form-field style="width: 80%">
-            <input
-              matInput
-              [(ngModel)]="times[1]"
-              [ngxMatDatetimePicker]="picker2"
-              placeholder="Endtime"
-              [formControl]="dateControlEnd"
-              [min]="minDate"
-              [max]="maxDate"
-              [disabled]="disabled"
-            />
-            <mat-datepicker-toggle
-              matSuffix
-              [for]="$any(picker2)"
-            ></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker
-              #picker2
-              [showSpinners]="showSpinners"
-              [showSeconds]="showSeconds"
-              [stepHour]="stepHour"
-              [stepMinute]="stepMinute"
-              [stepSecond]="stepSecond"
+          <mat-form-field>
+            <mat-label>Endtime</mat-label>
+            <mtx-datetimepicker
+              #datetimeEnd
+              [type]="type"
+              [mode]="mode"
+              [multiYearSelector]="multiYearSelector"
+              [startView]="startView"
+              [twelvehour]="twelvehour"
+              [timeInterval]="timeInterval"
               [touchUi]="touchUi"
-              [color]="color"
-              [enableMeridian]="enableMeridian"
-              [disableMinute]="disableMinute"
-              [hideTime]="hideTime"
-            >
-            </ngx-mat-datetime-picker>
+              [timeInput]="timeInput"
+              (selectedChanged)="selectedEndtime = $event"
+            ></mtx-datetimepicker>
+            <input [mtxDatetimepicker]="datetimeEnd" matInput required />
+            <mtx-datetimepicker-toggle
+              [for]="datetimeEnd"
+              matSuffix
+            ></mtx-datetimepicker-toggle>
           </mat-form-field>
         </div>
 
-        <!-- Endtime -->
+        <!-- Submit chosen date and time -->
         <div mat-dialog-actions>
           <button
             mat-button
-            style="background-color: gray; color: white"
+            style="
+              background-color: gray;
+              color: white;
+              margin-left: 0.5rem;
+              margin-top: 0.2rem;
+            "
             (click)="showRangeDataBetweenCustomTimestamps()"
           >
             Show data
           </button>
+        </div>
+
+        <mat-divider style="margin-bottom: 0"></mat-divider>
+
+        <h3>Trail Data</h3>
+        <!-- Toggle, um alle gespeicherten Trails aus- oder einzublenden -->
+        <div>
+          <mat-slide-toggle
+            [checked]="showTrailData"
+            (click)="$event.stopPropagation()"
+            (change)="toggleTrailData($event.checked)"
+            >Show all trails of last hour (slow!)</mat-slide-toggle
+          >
         </div>
       </div>
     </mat-tab>
@@ -397,6 +558,30 @@
           >
             <!-- App-Version -->
             Version {{ appVersion }}
+          </p>
+
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              height: 1.5rem;
+              font-size: 0.8rem;
+            "
+          >
+            <!-- App-Stage (dev / Master) -->
+            Stage {{ appStage }}
+          </p>
+
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              height: 1.5rem;
+              font-size: 0.8rem;
+            "
+          >
+            <!-- App-BuildTime -->
+            BuildTime {{ appBuildTime *1000 | date: 'yyyy-MM-dd HH:mm:ss'}}
           </p>
 
           <p

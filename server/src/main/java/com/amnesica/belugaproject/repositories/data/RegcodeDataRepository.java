@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RegcodeDataRepository extends CrudRepository<RegcodeData, String> {
-    RegcodeData findByRegcodePrefix(String regcodePrefix);
+  RegcodeData findByRegcodePrefix(String regcodePrefix);
 }

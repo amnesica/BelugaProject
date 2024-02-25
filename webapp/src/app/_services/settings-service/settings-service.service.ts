@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Feeder } from '../../_classes/feeder';
 
 @Injectable({
@@ -13,9 +13,9 @@ export class SettingsService {
   private toggleMarkRangeDataByHeightSource = new Subject<boolean>();
   private toggleShowAircraftLabelsSource = new Subject<boolean>();
   private listFeederSource = new Subject<Feeder[]>();
-  private selectedFeederSource = new Subject<string>();
+  private selectedFeederSource = new Subject<string[]>();
   private appNameAndVersionSource = new Subject<string[]>();
-  private selectedFeederUpdateSource = new Subject<string>();
+  private selectedFeederUpdateSource = new Subject<string[]>();
   private showAirportsSource = new Subject<boolean>();
   private showOpenskyPlanesSource = new Subject<boolean>();
   private showISSSource = new Subject<boolean>();
@@ -27,6 +27,21 @@ export class SettingsService {
   private setCurrentDevicePositionSource = new Subject<boolean>();
   private devicePositionAsBasisSource = new Subject<boolean>();
   private openskyCredentialsExistSource = new Subject<boolean>();
+  aircraftTrailAltitudeData$ = new BehaviorSubject({});
+  private rainViewerRainSource = new Subject<boolean>();
+  private rainViewerCloudsSource = new Subject<boolean>();
+  private rainViewerRainForecastSource = new Subject<boolean>();
+  private toggleShowAircraftPositionsSource = new Subject<boolean>();
+  private selectMapStyleSource = new Subject<string>();
+  private listAvailableMapsSource = new Subject<object[]>();
+  private dimMapSource = new Subject<boolean>();
+  private darkStaticFeaturesSource = new Subject<boolean>();
+  private setIconGlobalSizeSource = new Subject<number>();
+  private setIconSmallSizeSource = new Subject<number>();
+  private showAltitudeChartSource = new Subject<boolean>();
+  private showOnlyMilitaryPlanesSource = new Subject<boolean>();
+  private showTrailDataSource = new Subject<boolean>();
+  private showAirplanesLivePlanesSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -55,11 +70,32 @@ export class SettingsService {
     this.devicePositionAsBasisSource.asObservable();
   openskyCredentialsExistSource$ =
     this.openskyCredentialsExistSource.asObservable();
+  rainViewerRain$ = this.rainViewerRainSource.asObservable();
+  rainViewerClouds$ = this.rainViewerCloudsSource.asObservable();
+  rainViewerRainForecast$ = this.rainViewerRainForecastSource.asObservable();
+  toggleShowAircraftPositions$ =
+    this.toggleShowAircraftPositionsSource.asObservable();
+  selectMapStyleSource$ = this.selectMapStyleSource.asObservable();
+  listAvailableMapsSource$ = this.listAvailableMapsSource.asObservable();
+  dimMapSource$ = this.dimMapSource.asObservable();
+  darkStaticFeaturesSource$ = this.darkStaticFeaturesSource.asObservable();
+  setIconGlobalSizeSource$ = this.setIconGlobalSizeSource.asObservable();
+  setIconSmallSizeSource$ = this.setIconSmallSizeSource.asObservable();
+  showAltitudeChartSource$ = this.showAltitudeChartSource.asObservable();
+  showOnlyMilitaryPlanesSource$ =
+    this.showOnlyMilitaryPlanesSource.asObservable();
+  showTrailDataSource$ = this.showTrailDataSource.asObservable();
+  showAirplanesLivePlanesSource$ =
+    this.showAirplanesLivePlanesSource.asObservable();
 
   constructor() {}
 
-  showRangeDataBetweenTimestamps(timesAsTimestamps: number[]) {
+  showRangeDataBetweenTimestamps(
+    selectedFeederRangeData: string[],
+    timesAsTimestamps: number[]
+  ) {
     this.timesAsTimestampsSource.next(timesAsTimestamps);
+    this.selectedFeederSource.next(selectedFeederRangeData);
     return this.timesAsTimestampsSource;
   }
 
@@ -88,7 +124,7 @@ export class SettingsService {
     return this.listFeederSource;
   }
 
-  selectRangeDataByFeeder(selectedFeederArray: string) {
+  selectRangeDataByFeeder(selectedFeederArray: string[]) {
     this.selectedFeederSource.next(selectedFeederArray);
     return this.selectedFeederSource;
   }
@@ -98,7 +134,7 @@ export class SettingsService {
     return this.appNameAndVersionSource;
   }
 
-  selectPlanesByFeeder(selectedFeederArray: string) {
+  selectPlanesByFeeder(selectedFeederArray: string[]) {
     this.selectedFeederUpdateSource.next(selectedFeederArray);
     return this.selectedFeederUpdateSource;
   }
@@ -156,5 +192,79 @@ export class SettingsService {
   sendReceiveOpenskyCredentialsExist(openskyCredentialsExist: boolean) {
     this.openskyCredentialsExistSource.next(openskyCredentialsExist);
     return this.openskyCredentialsExistSource;
+  }
+
+  sendAircraftAltitudeData(aircraftTrailAltitudeData: Object) {
+    this.aircraftTrailAltitudeData$.next(aircraftTrailAltitudeData);
+  }
+
+  toggleRainViewerRain(rainViewerRain: boolean) {
+    this.rainViewerRainSource.next(rainViewerRain);
+    return this.rainViewerRainSource;
+  }
+
+  toggleRainViewerClouds(rainViewerClouds: boolean) {
+    this.rainViewerCloudsSource.next(rainViewerClouds);
+    return this.rainViewerCloudsSource;
+  }
+
+  toggleRainViewerRainForecast(rainViewerRainForecast: boolean) {
+    this.rainViewerRainForecastSource.next(rainViewerRainForecast);
+    return this.rainViewerRainForecastSource;
+  }
+
+  toggleAircraftPositions(showAircraftPositions: boolean) {
+    this.toggleShowAircraftPositionsSource.next(showAircraftPositions);
+    return this.toggleShowAircraftPositionsSource;
+  }
+
+  selectMapStyle(mapStyle: any) {
+    this.selectMapStyleSource.next(mapStyle);
+    return this.selectMapStyleSource;
+  }
+
+  sendReceiveListAvailableMaps(listAvailableMaps: object[]) {
+    this.listAvailableMapsSource.next(listAvailableMaps);
+    return this.listAvailableMapsSource;
+  }
+
+  toggleDimMap(dimMap: boolean) {
+    this.dimMapSource.next(dimMap);
+    return this.dimMapSource;
+  }
+
+  toggleDarkStaticFeatures(darkStaticFeatures: boolean) {
+    this.darkStaticFeaturesSource.next(darkStaticFeatures);
+    return this.darkStaticFeaturesSource;
+  }
+
+  setGlobalIconSize(value: number) {
+    this.setIconGlobalSizeSource.next(value);
+    return this.setIconGlobalSizeSource;
+  }
+
+  setSmallIconSize(value: number) {
+    this.setIconSmallSizeSource.next(value);
+    return this.setIconSmallSizeSource;
+  }
+
+  toggleAltitudeChart(showAltitudeChart: boolean) {
+    this.showAltitudeChartSource.next(showAltitudeChart);
+    return this.showAltitudeChartSource;
+  }
+
+  toggleOnlyMilitaryPlanes(showOnlyMilitaryPlanes: boolean) {
+    this.showOnlyMilitaryPlanesSource.next(showOnlyMilitaryPlanes);
+    return this.showOnlyMilitaryPlanesSource;
+  }
+
+  toggleTrailData(showTrailData: boolean) {
+    this.showTrailDataSource.next(showTrailData);
+    return this.showTrailDataSource;
+  }
+
+  toggleAirplanesLivePlanes(showAirplanesLivePlanes: boolean) {
+    this.showAirplanesLivePlanesSource.next(showAirplanesLivePlanes);
+    return this.showAirplanesLivePlanesSource;
   }
 }

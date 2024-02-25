@@ -8,17 +8,20 @@ import {
 } from '@angular/core';
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
 import { Aircraft } from 'src/app/_classes/aircraft';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Globals } from 'src/app/_common/globals';
+import { slideInOutRight } from 'src/app/_common/animations';
 
 @Component({
   selector: 'app-aircraft-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './aircraft-table.component.html',
   styleUrls: ['./aircraft-table.component.css'],
+  animations: [slideInOutRight],
 })
 export class AircraftTableComponent implements OnInit {
   // Boolean, ob System im DarkMode ist
@@ -49,6 +52,7 @@ export class AircraftTableComponent implements OnInit {
     'lastSeen',
     'feeder',
     'distance',
+    'dummy',
   ];
 
   // Parameter für Checkboxen zur Auswahl einzelner Zeilen
@@ -56,7 +60,9 @@ export class AircraftTableComponent implements OnInit {
   allowMultiSelect = false;
   selection = new SelectionModel<Aircraft>(this.allowMultiSelect, []);
 
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatSort, { static: false }) set content(sort: MatSort) {
+    this.aircraftList.sort = sort;
+  }
 
   private ngUnsubscribe = new Subject();
 
@@ -65,15 +71,11 @@ export class AircraftTableComponent implements OnInit {
     private changeDetectorRefs: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    // Initiiere Abonnements
-    this.initSubscriptions();
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
-    // Sortiere Liste an Flugzeugen entsprechend
-    // der aktuellen Sortier-Vorgabe
-    this.aircraftList.sort = this.sort;
+    // Initiiere Abonnements
+    this.initSubscriptions();
   }
 
   ngOnDestroy() {
@@ -87,7 +89,7 @@ export class AircraftTableComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isDesktop) => {
         if (isDesktop == true) {
-          this.showAircraftTableWidth = 'auto';
+          this.showAircraftTableWidth = '45rem';
           this.filterFieldWidth = '45rem';
         } else {
           this.showAircraftTableWidth = '100%';
@@ -171,5 +173,10 @@ export class AircraftTableComponent implements OnInit {
       // Markiere Flugzeug auf Karte
       this.aircraftTableService.markOrUnmarkAircraftOnMap(aircraft.hex);
     }
+  }
+
+  toggleShowAircraftTableDiv() {
+    this.showAircraftTableDiv = !this.showAircraftTableDiv;
+    Globals.aircraftTableIsVisible = this.showAircraftTableDiv;
   }
 }

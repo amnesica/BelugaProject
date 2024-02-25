@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AircraftDataRepository extends CrudRepository<AircraftData, String> {
-    AircraftData findByHex(String hex);
+  AircraftData findByHex(String hex);
 }

@@ -7,12 +7,14 @@ import {
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToolbarService } from 'src/app/_services/toolbar-service/toolbar-service.service';
+import { dummyParentAnimation } from 'src/app/_common/animations';
 
 @Component({
   selector: 'app-toolbar',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css'],
+  animations: [dummyParentAnimation],
 })
 export class ToolbarComponent implements OnInit {
   // Boolean, ob System im DarkMode ist

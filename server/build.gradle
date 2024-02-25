@@ -1,0 +1,54 @@
+plugins {
+  id "java"
+  id "idea"
+  id "org.springframework.boot" version "3.2.0"
+}
+
+apply plugin: "io.spring.dependency-management"
+
+springBoot {
+  buildInfo()
+}
+
+ext {
+  postgresqlVersion = "42.6.0"
+  jsonVersion = "20231013"
+  hibernateTypesVersion = "2.21.1"
+  okhttpVersion = "4.12.0"
+  lombokVersion = "1.18.28"
+}
+
+repositories {
+  mavenLocal()
+  maven {
+    url = uri('https://repo.maven.apache.org/maven2/')
+  }
+}
+
+dependencies {
+  implementation "org.springframework.boot:spring-boot-starter"
+  implementation "org.springframework.boot:spring-boot-starter-web"
+  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+  implementation "org.springframework.boot:spring-boot-starter-validation"
+  implementation "org.postgresql:postgresql:${postgresqlVersion}"
+  implementation "org.json:json:${jsonVersion}"
+  implementation "com.vladmihalcea:hibernate-types-60:${hibernateTypesVersion}"
+  implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+  implementation "org.projectlombok:lombok:${lombokVersion}"
+  compileOnly "org.projectlombok:lombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+  testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+
+group = "com.amnesica"
+version = "4-0-0"
+description = "master" // stage (dev/master)
+
+java {
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
+}
+
+bootJar {
+  destinationDirectory.set(file("$rootDir/prod"))
+}

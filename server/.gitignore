@@ -32,3 +32,20 @@ build/
 ### debug logs ###
 *.log
 *.gz
+
+### Gradle template
+.gradle
+**/build/
+!src/**/build/
+
+### Ignore Gradle GUI config ###
+gradle-app.setting
+
+### Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored) ###
+!gradle-wrapper.jar
+
+### Cache of project ###
+.gradletasknamecache
+
+### dev properties ###
+application-dev.properties

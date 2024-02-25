@@ -5,18 +5,30 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ThemePalette } from '@angular/material/core';
+import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 import { Helper } from 'src/app/_classes/helper';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { environment } from 'src/environments/environment';
 import { Globals } from 'src/app/_common/globals';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import {
+  MtxCalendarView,
+  MtxDatetimepickerMode,
+  MtxDatetimepickerType,
+} from '@ng-matero/extensions/datetimepicker';
+import {
+  DatetimeAdapter,
+  MTX_DATETIME_FORMATS,
+} from '@ng-matero/extensions/core';
+import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import { slideInOutRight } from 'src/app/_common/animations';
+import { Feeder } from 'src/app/_classes/feeder';
+import { Storage } from 'src/app/_classes/storage';
 
 export interface DialogData {
   times: string[];
@@ -27,6 +39,36 @@ export interface DialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css'],
+  providers: [
+    {
+      provide: DatetimeAdapter,
+      useClass: MomentDatetimeAdapter,
+    },
+    {
+      provide: MTX_DATETIME_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: 'YYYY-MM-DD',
+          monthInput: 'MMMM',
+          yearInput: 'YYYY',
+          timeInput: 'HH:mm',
+          datetimeInput: 'YYYY-MM-DD HH:mm',
+        },
+        display: {
+          dateInput: 'YYYY-MM-DD',
+          monthInput: 'MMMM',
+          yearInput: 'YYYY',
+          timeInput: 'HH:mm',
+          datetimeInput: 'YYYY-MM-DD HH:mm',
+          monthYearLabel: 'YYYY MMMM',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'MMMM YYYY',
+          popupHeaderDateLabel: 'MMM DD, ddd',
+        },
+      },
+    },
+  ],
+  animations: [slideInOutRight],
 })
 export class SettingsComponent implements OnInit {
   // Boolean, ob System im DarkMode ist
@@ -62,57 +104,48 @@ export class SettingsComponent implements OnInit {
   // Referenz zu DialogCustomRangeDataComponent
   dialogRef;
 
-  // Datetime-Picker
-  @ViewChild('picker1') picker: any;
-  @ViewChild('picker2') picker2: any;
+  // STartzeit vom Datetimepicker
+  @Input() selectedStarttime: Date | null | undefined;
+
+  // STartzeit vom Datetimepicker
+  @Input() selectedEndtime: Date | null | undefined;
 
   // Einstellungen für Datetime-Picker
-  public disabled = false;
-  public showSpinners = true;
-  public showSeconds = false;
-  // Picker wird als Modal-Dialog angezeigt
-  public touchUi = true;
-  public enableMeridian = false;
-  public minDate!: Date;
-  public maxDate!: Date;
-  public stepHour = 1;
-  public stepMinute = 1;
-  public stepSecond = 1;
-  public color: ThemePalette = 'primary';
-  public disableMinute = false;
-  public hideTime = false;
-  public dateControlStart = new FormControl(null);
-  public dateControlEnd = new FormControl(null);
-  public formGroup = new FormGroup({
-    date: new FormControl(null, [Validators.required]),
-    date2: new FormControl(null, [Validators.required]),
-  });
-  public options = [
-    { value: true, label: 'True' },
-    { value: false, label: 'False' },
-  ];
-  public listColors = ['primary', 'accent', 'warn'];
-  public stepHours = [1, 2, 3, 4, 5];
-  public stepMinutes = [1, 5, 10, 15, 20, 25];
-  public stepSeconds = [1, 5, 10, 15, 20, 25];
+  type: MtxDatetimepickerType = 'datetime';
+  mode: MtxDatetimepickerMode = 'auto';
+  startView: MtxCalendarView = 'month';
+  multiYearSelector = false;
+  touchUi = false;
+  twelvehour = false;
+  timeInterval = 1;
+  timeInput = true;
+
+  datetimeStart = new UntypedFormControl();
+  datetimeEnd = new UntypedFormControl();
 
   // Ausgewählte Start- und Endzeit als DateString zur Anzeige im FrontEnd
   timesAsDateStrings: String[] | undefined;
 
   // Booleans für Toggles (mit Default-Werten, wenn nötig)
-  showAircraftLabels: boolean | undefined;
+  showAircraftLabels: boolean = false;
   showAirports: boolean = true;
-  showOpenskyPlanes: boolean | undefined;
+  showOpenskyPlanes: boolean = false;
+  showAirplanesLivePlanes: boolean = false;
   showIss: boolean = true;
+  showAircraftPositions: boolean = true;
+  showOnlyMilitaryPlanes: boolean = false;
 
   // Boolean, ob Range Data verbunden angezeigt werden soll
   showFilteredRangeDatabyFeeder: boolean | undefined;
 
-  // Liste an Feeder (Verlinkung zu Globals)
+  // Liste an Feeder (Verlinkung zu Globals, enthält 'All Feeder'-Feeder)
   listFeeder: any;
 
   // Ausgewählte Feeder in Multi-Select
-  selectedFeederArray = new FormControl();
+  selectedFeeder: Feeder[] = [];
+
+  // Ausgewählte Feeder für Range Data in Multi-Select
+  selectedFeederRangeData: Feeder[] = [];
 
   // App-Name
   appName: any;
@@ -120,8 +153,14 @@ export class SettingsComponent implements OnInit {
   // App-Version
   appVersion: any;
 
+  // App-Stage (dev / Master)
+  appStage: any;
+
+  // App-BuildTime
+  appBuildTime: any;
+
   // Boolean, ob POMD-Point angezeigt werden soll
-  showPOMDPoint: boolean | undefined;
+  showPOMDPoint: boolean = false;
 
   // Boolean, ob WebGL verwendet werden soll
   webgl: boolean = false;
@@ -147,12 +186,124 @@ export class SettingsComponent implements OnInit {
 
   private ngUnsubscribe = new Subject();
 
+  // Boolean, ob Rainviewer (Rain) Daten angezeigt werden sollen
+  rainViewerRain: boolean = false;
+
+  // Boolean, ob Rainviewer (Cloud) Daten angezeigt werden sollen
+  rainViewerClouds: boolean = false;
+
+  // Boolean, ob Rainviewer Forecast (Rain) Daten angezeigt werden sollen
+  rainViewerRainForecast: boolean = false;
+
+  // Liste an Maps (Verlinkung zu Map-Komponente)
+  listAvailableMaps: any;
+
+  // Default-Map-Stil value
+  selectedMapStyleValue: any;
+
+  // Ausgewählte Feeder in Multi-Select
+  selectedMapsArray = new UntypedFormControl();
+
+  // Dimmen der Map
+  dimMap: boolean = true;
+
+  // dunkle Range Ringe und dunkles Antenna-Icon
+  darkStaticFeatures: boolean = true;
+
+  // Global icon size multiplier für Plane-Icons
+  sliderGlobalIconSizeValue: any;
+
+  // Small icon size multiplier für Plane-Icons
+  sliderSmallIconSizeValue: any;
+
+  // Boolean, ob Altitude Chart angezeigt werden soll
+  showAltitudeChart: boolean = Storage.getPropertyFromLocalStorage(
+    'showAltitudeChart',
+    true
+  );
+
+  // Boolean, ob Trail-Data angezeigt werden soll
+  showTrailData: boolean = false;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
     public serverService: ServerService,
     private snackBar: MatSnackBar
   ) {}
+
+  setSettingsFromLocalStorage() {
+    this.toggleAircraftLabels(
+      Storage.getPropertyFromLocalStorage('aircraftLabels', false)
+    );
+
+    this.toggleAircraftPositions(
+      Storage.getPropertyFromLocalStorage('aircraftPositions', true)
+    );
+
+    this.toggleAirports(
+      Storage.getPropertyFromLocalStorage('airportLabels', true)
+    );
+
+    this.toggleDarkMode(Storage.getPropertyFromLocalStorage('darkMode', false));
+
+    this.toggleDarkStaticFeatures(
+      Storage.getPropertyFromLocalStorage('darkStaticFeatures', true)
+    );
+
+    this.toggleDevicePositionAsBasis(
+      Storage.getPropertyFromLocalStorage('devicePosForCalc', false),
+      true
+    );
+
+    this.toggleDimMap(Storage.getPropertyFromLocalStorage('dimMap', true));
+
+    this.toggleIss(Storage.getPropertyFromLocalStorage('ISS', true));
+
+    this.togglePOMDPoint(
+      Storage.getPropertyFromLocalStorage('pomdFeature', false)
+    );
+
+    this.toggleRainViewerRain(
+      Storage.getPropertyFromLocalStorage('rainViewerRadar', false)
+    );
+
+    this.toggleRainViewerClouds(
+      Storage.getPropertyFromLocalStorage('rainViewerClouds', false)
+    );
+
+    this.toggleRainViewerRainForecast(
+      Storage.getPropertyFromLocalStorage('rainViewerForecast', false)
+    );
+
+    this.toggleAltitudeChart(
+      Storage.getPropertyFromLocalStorage('showAltitudeChart', true)
+    );
+
+    this.toggleShowOnlyMilitaryPlanes(
+      Storage.getPropertyFromLocalStorage('showOnlyMilitary', false)
+    );
+
+    this.sliderGlobalIconSizeValue = Storage.getPropertyFromLocalStorage(
+      'globalIconSize',
+      1.3
+    );
+    this.settingsService.setGlobalIconSize(+this.sliderGlobalIconSizeValue);
+
+    this.sliderSmallIconSizeValue = Storage.getPropertyFromLocalStorage(
+      'gsmallIconSize',
+      1.0
+    );
+    this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
+
+    this.toggleOpenskyPlanes(
+      Storage.getPropertyFromLocalStorage('showOpenskyPlanes', false)
+    );
+
+    this.toggleAirplanesLivePlanes(
+      Storage.getPropertyFromLocalStorage('showAirplanesLive', false)
+    );
+  }
 
   ngOnInit(): void {
     // Initiiere Abonnements
@@ -218,17 +369,29 @@ export class SettingsComponent implements OnInit {
           this.settingsDivWidth = '20rem';
         }
       });
+
     // Weise Liste an Feeder zu
     this.settingsService.listFeeder$
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((listFeeder) => (this.listFeeder = listFeeder));
+      .subscribe((listFeeder) => {
+        this.listFeeder = listFeeder;
 
-    // Weise App-Name und App-Version zu
+        // Füge default-Liste an Feedern hinzu
+        this.selectedFeeder.push(...listFeeder);
+        this.selectedFeederRangeData.push(...listFeeder);
+
+        // Map ist fertig mit Initialisierung -> setze Default-werte
+        this.setSettingsFromLocalStorage();
+      });
+
+    // Weise App-Name, App-Version, App-Stage und App-Buildtime zu
     this.settingsService.appNameAndVersion$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((appNameAndVersion) => {
         this.appName = appNameAndVersion[0];
         this.appVersion = appNameAndVersion[1];
+        this.appStage = appNameAndVersion[2];
+        this.appBuildTime = appNameAndVersion[3];
       });
 
     // Weise IP-Adresse des Clients zu
@@ -245,6 +408,14 @@ export class SettingsComponent implements OnInit {
       .subscribe((openskyCredentialsExist) => {
         this.openskyCredentialsExist = openskyCredentialsExist;
       });
+
+    // Weise Liste an verfügbaren Map-Stilen zu
+    this.settingsService.listAvailableMapsSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((listAvailableMaps) => {
+        this.listAvailableMaps = listAvailableMaps;
+        this.selectCurrentlySelectedMapStyle();
+      });
   }
 
   /**
@@ -254,11 +425,11 @@ export class SettingsComponent implements OnInit {
    * aufgerufen
    */
   showRangeDataBetweenCustomTimestamps() {
-    if (this.times[0] && this.times[1]) {
+    if (this.selectedStarttime && this.selectedEndtime) {
       // Wandle Dates in timestamps um
       let timesAsTimestamps = [
-        new Date(this.times[0]).getTime(),
-        new Date(this.times[1]).getTime(),
+        new Date(this.selectedStarttime).getTime(),
+        new Date(this.selectedEndtime).getTime(),
       ];
 
       this.showRangeDataBetweenTimestamps(timesAsTimestamps);
@@ -283,9 +454,14 @@ export class SettingsComponent implements OnInit {
           new Date(timesAsTimestampsArray[1]).toLocaleTimeString(),
       ];
 
+      let selectedFeederNames = this.getNamesOfSelectedFeeder(
+        this.selectedFeederRangeData
+      );
+
       // Kontaktiere Map-Komponente, damit Server-Aufruf
       // gemacht wird mit Start- und Endzeit
       this.settingsService.showRangeDataBetweenTimestamps(
+        selectedFeederNames,
         timesAsTimestampsArray
       );
     }
@@ -293,10 +469,15 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Methode zeigt oder versteckt die Labels der Flugzeuge
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleAircraftLabels(event: MatSlideToggleChange) {
-    this.showAircraftLabels = event.checked;
+  toggleAircraftLabels(checked: boolean) {
+    this.showAircraftLabels = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'aircraftLabels',
+      this.showAircraftLabels
+    );
 
     // Kontaktiere Map-Component und übergebe showAircraftLabels-Boolean
     this.settingsService.toggleAircraftLabels(this.showAircraftLabels);
@@ -418,31 +599,43 @@ export class SettingsComponent implements OnInit {
    * Zeige Range Data der selektierten Feeder an
    */
   selectRangeDataByFeeder() {
-    if (this.selectedFeederArray.value) {
-      // Kontaktiere Map-Component und übergebe
-      // selectFeeder-Name
-      this.settingsService.selectRangeDataByFeeder(
-        this.selectedFeederArray.value
-      );
-    }
+    let selectedFeederNames = this.getNamesOfSelectedFeeder(
+      this.selectedFeederRangeData
+    );
+
+    // Kontaktiere Map-Component und übergebe selectFeeder-Name
+    this.settingsService.selectRangeDataByFeeder(selectedFeederNames);
   }
 
   /**
    * Selektiere Flugzeuge nach dem ausgewählten Feeder
    */
   selectPlanesByFeeder() {
-    // Kontaktiere Map-Component und übergebe
-    // selectFeeder-Name
-    this.settingsService.selectPlanesByFeeder(this.selectedFeederArray.value);
+    let selectedFeederNames = this.getNamesOfSelectedFeeder(
+      this.selectedFeeder
+    );
+
+    // Kontaktiere Map-Component und übergebe selectFeeder-Namen
+    this.settingsService.selectPlanesByFeeder(selectedFeederNames);
+  }
+
+  getNamesOfSelectedFeeder(selectedFeederList: Feeder[]): string[] {
+    let selectedFeederNames: string[] = [];
+    for (let i = 0; i < selectedFeederList.length; i++) {
+      selectedFeederNames.push(selectedFeederList[i].name);
+    }
+    return selectedFeederNames;
   }
 
   /**
    * Methode zeigt oder versteckt die Flughäfen
    * auf der Karte
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleAirports(event: MatSlideToggleChange) {
-    this.showAirports = event.checked;
+  toggleAirports(checked: boolean) {
+    this.showAirports = checked;
+
+    Storage.savePropertyInLocalStorage('airportLabels', this.showAirports);
 
     // Kontaktiere Map-Component und übergebe toggleAirports-Boolean
     this.settingsService.toggleAirports(this.showAirports);
@@ -452,7 +645,7 @@ export class SettingsComponent implements OnInit {
    * Refreshe Flugzeuge nach ausgewähltem Feeder
    */
   refreshSelectedFeeder() {
-    if (this.selectedFeederArray.value) {
+    if (this.selectedFeeder) {
       this.selectPlanesByFeeder();
     }
   }
@@ -460,8 +653,13 @@ export class SettingsComponent implements OnInit {
   /**
    * Toggle Anzeige der Opensky Flugzeuge
    */
-  toggleOpenskyPlanes(event: MatSlideToggleChange) {
-    this.showOpenskyPlanes = event.checked;
+  toggleOpenskyPlanes(checked: boolean) {
+    this.showOpenskyPlanes = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showOpenskyPlanes',
+      this.showOpenskyPlanes
+    );
 
     // Kontaktiere Map-Component und übergebe showOpenskyPlanes-Boolean
     this.settingsService.toggleOpenskyPlanes(this.showOpenskyPlanes);
@@ -470,8 +668,10 @@ export class SettingsComponent implements OnInit {
   /**
    * Toggle Anzeige der ISS
    */
-  toggleIss(event: MatSlideToggleChange) {
-    this.showIss = event.checked;
+  toggleIss(checked: boolean) {
+    this.showIss = checked;
+
+    Storage.savePropertyInLocalStorage('ISS', this.showIss);
 
     // Kontaktiere Map-Component und übergebe showIss-Boolean
     this.settingsService.toggleIss(this.showIss);
@@ -479,10 +679,12 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Dark Mode
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleDarkMode(event: MatSlideToggleChange) {
-    this.darkMode = event.checked;
+  toggleDarkMode(checked: boolean) {
+    this.darkMode = checked;
+
+    Storage.savePropertyInLocalStorage('darkMode', this.darkMode);
 
     // Kontaktiere Map-Component und übergebe showDarkMode-Boolean
     this.settingsService.toggleDarkMode(this.darkMode);
@@ -490,10 +692,10 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle WebGL
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleWebgl(event: MatSlideToggleChange) {
-    this.webgl = event.checked;
+  toggleWebgl(checked: boolean) {
+    this.webgl = checked;
 
     // Kontaktiere Map-Component und übergebe WebGL-Boolean
     this.settingsService.toggleWebgl(this.webgl);
@@ -501,10 +703,12 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle POMD-Point
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  togglePOMDPoint(event: MatSlideToggleChange) {
-    this.showPOMDPoint = event.checked;
+  togglePOMDPoint(checked: boolean) {
+    this.showPOMDPoint = checked;
+
+    Storage.savePropertyInLocalStorage('pomdFeature', this.showPOMDPoint);
 
     // Kontaktiere Map-Component und übergebe showPOMDPoint-Boolean
     this.settingsService.togglePOMDPoint(this.showPOMDPoint);
@@ -532,12 +736,17 @@ export class SettingsComponent implements OnInit {
 
   /**
    * Toggle Geräte-Position als Basis für weitere Berechnungen (Distanz, Range-Ringe)
-   * @param event MatSlideToggleChange
+   * @param checked: boolean
    */
-  toggleDevicePositionAsBasis(event: MatSlideToggleChange) {
-    this.devicePositionAsBasis = event.checked;
+  toggleDevicePositionAsBasis(checked: boolean, isInit: boolean) {
+    this.devicePositionAsBasis = checked;
 
-    if (Globals.DevicePosition === undefined) {
+    if (isInit && checked == false) {
+      this.devicePositionAsBasis = false;
+      return;
+    }
+
+    if (this.devicePositionAsBasis && Globals.DevicePosition === undefined) {
       console.log(
         'Device position needs to be set before enabling this toggle!'
       );
@@ -545,12 +754,18 @@ export class SettingsComponent implements OnInit {
         'Device position needs to be set before enabling this toggle'
       );
       this.devicePositionAsBasis = false;
+      return;
     } else {
       // Kontaktiere Map-Component und übergebe devicePositionAsBasis-Boolean
       this.settingsService.toggleDevicePositionAsBasis(
         this.devicePositionAsBasis
       );
     }
+
+    Storage.savePropertyInLocalStorage(
+      'devicePosForCalc',
+      this.devicePositionAsBasis
+    );
   }
 
   /**
@@ -561,5 +776,207 @@ export class SettingsComponent implements OnInit {
     this.snackBar.open(message, 'OK', {
       duration: 2000,
     });
+  }
+
+  /**
+   * Toggle Rainviewer (Rain)
+   * @param checked: boolean
+   */
+  toggleRainViewerRain(checked: boolean) {
+    this.rainViewerRain = checked;
+
+    Storage.savePropertyInLocalStorage('rainViewerRadar', this.rainViewerRain);
+
+    // Kontaktiere Map-Component und übergebe Rainviewer (Rain) Boolean
+    this.settingsService.toggleRainViewerRain(this.rainViewerRain);
+  }
+
+  /**
+   * Toggle Rainviewer (Clouds)
+   * @param checked: boolean
+   */
+  toggleRainViewerClouds(checked: boolean) {
+    this.rainViewerClouds = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'rainViewerClouds',
+      this.rainViewerClouds
+    );
+
+    // Kontaktiere Map-Component und übergebe Rainviewer (Clouds) Boolean
+    this.settingsService.toggleRainViewerClouds(this.rainViewerClouds);
+  }
+
+  /**
+   * Toggle Rainviewer Forecast(Rain)
+   * @param checked: boolean
+   */
+  toggleRainViewerRainForecast(checked: boolean) {
+    this.rainViewerRainForecast = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'rainViewerForecast',
+      this.rainViewerRainForecast
+    );
+
+    // Kontaktiere Map-Component und übergebe Rainviewer Forecast (Rain) Boolean
+    this.settingsService.toggleRainViewerRainForecast(
+      this.rainViewerRainForecast
+    );
+  }
+
+  /**
+   * Methode zeigt oder versteckt die Flugzeuge
+   * @param checked: boolean
+   */
+  toggleAircraftPositions(checked: boolean) {
+    this.showAircraftPositions = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'aircraftPositions',
+      this.showAircraftPositions
+    );
+
+    // Kontaktiere Map-Component und übergebe showAircraftPositions-Boolean
+    this.settingsService.toggleAircraftPositions(this.showAircraftPositions);
+  }
+
+  changeMapStyle() {
+    if (this.selectedMapsArray.value) {
+      // Kontaktiere Map-Component und übergebe
+      // selectedMapsArray-Name
+      this.settingsService.selectMapStyle(this.selectedMapsArray.value);
+    }
+  }
+
+  selectCurrentlySelectedMapStyle() {
+    for (let i = 0; i < this.listAvailableMaps.length; i++) {
+      if (this.listAvailableMaps[i].isSelected) {
+        this.selectedMapStyleValue = this.listAvailableMaps[i].name;
+      }
+    }
+  }
+
+  /**
+   * Toggle Dimming der Map
+   * @param checked: boolean
+   */
+  toggleDimMap(checked: boolean) {
+    this.dimMap = checked;
+
+    Storage.savePropertyInLocalStorage('dimMap', this.dimMap);
+
+    // Kontaktiere Map-Component und übergebe DimMap-Boolean
+    this.settingsService.toggleDimMap(this.dimMap);
+  }
+
+  /**
+   * Löscht die aktuelle Geräte-Position auf der Map
+   */
+  deleteCurrentDevicePosition() {
+    // Kontaktiere Map-Component
+    this.settingsService.setCurrentDevicePosition(false);
+  }
+
+  /**
+   * Toggle dunkle Range Ringe und dunkles Antenna-Icon
+   * @param checked: boolean
+   */
+  toggleDarkStaticFeatures(checked: boolean) {
+    this.darkStaticFeatures = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'darkStaticFeatures',
+      this.darkStaticFeatures
+    );
+
+    // Kontaktiere Map-Component und übergebe darkStaticFeatures-Boolean
+    this.settingsService.toggleDarkStaticFeatures(this.darkStaticFeatures);
+  }
+
+  onInputChangeGlobalIconSize(event: any) {
+    this.sliderGlobalIconSizeValue = event.target.valueAsNumber;
+
+    Storage.savePropertyInLocalStorage(
+      'globalIconSize',
+      this.sliderGlobalIconSizeValue
+    );
+
+    // Kontaktiere Map-Component
+    this.settingsService.setGlobalIconSize(+this.sliderGlobalIconSizeValue);
+  }
+
+  onInputChangeSmallIconSize(event: any) {
+    this.sliderSmallIconSizeValue = event.target.valueAsNumber;
+
+    Storage.savePropertyInLocalStorage(
+      'smallIconSize',
+      this.sliderSmallIconSizeValue
+    );
+
+    // Kontaktiere Map-Component
+    this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
+  }
+
+  resetIconSizeSlider() {
+    this.sliderGlobalIconSizeValue = Globals.defaultGlobalScaleFactorIcons;
+    this.sliderSmallIconSizeValue = Globals.defaultSmallScaleFactorIcons;
+
+    Storage.savePropertyInLocalStorage(
+      'globalIconSize',
+      this.sliderGlobalIconSizeValue
+    );
+    Storage.savePropertyInLocalStorage(
+      'smallIconSize',
+      this.sliderSmallIconSizeValue
+    );
+
+    // Kontaktiere Map-Component
+    this.settingsService.setGlobalIconSize(this.sliderGlobalIconSizeValue);
+    this.settingsService.setSmallIconSize(this.sliderSmallIconSizeValue);
+  }
+
+  toggleAltitudeChart(checked: boolean) {
+    this.showAltitudeChart = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showAltitudeChart',
+      this.showAltitudeChart
+    );
+
+    // Kontaktiere Map-Component und übergebe showAltitudeChart-Boolean
+    this.settingsService.toggleAltitudeChart(this.showAltitudeChart);
+  }
+
+  toggleShowOnlyMilitaryPlanes(checked: boolean) {
+    this.showOnlyMilitaryPlanes = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showOnlyMilitary',
+      this.showOnlyMilitaryPlanes
+    );
+
+    // Kontaktiere Map-Component und übergebe showOnlyMilitaryPlanes-Boolean
+    this.settingsService.toggleOnlyMilitaryPlanes(this.showOnlyMilitaryPlanes);
+  }
+
+  toggleTrailData(checked: boolean) {
+    this.showTrailData = checked;
+
+    this.settingsService.toggleTrailData(this.showTrailData);
+  }
+
+  toggleAirplanesLivePlanes(checked: boolean) {
+    this.showAirplanesLivePlanes = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showAirplanesLive',
+      this.showAirplanesLivePlanes
+    );
+
+    // Kontaktiere Map-Component und übergebe showAirplanesLivePlanes-Boolean
+    this.settingsService.toggleAirplanesLivePlanes(
+      this.showAirplanesLivePlanes
+    );
   }
 }

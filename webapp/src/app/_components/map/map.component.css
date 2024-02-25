@@ -12,8 +12,17 @@
   cursor: pointer;
   border-radius: 0rem;
   padding: 0%;
-  background-color: #efeff4;
-  width: 10rem;
+  min-width: 10rem;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#hoveredAircraftPopupHeader {
+  height: 3rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
 }
 
 /** Wichtig, damit Schrift richtig angezeigt wird! */
@@ -35,31 +44,68 @@ mat-card-header {
   text-align: left;
 }
 
+#rangeDatPopupHeader {
+  height: 3rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+}
+
 #rangeDataPopup {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
   padding: 0%;
-  position: absolute;
-  left: -49px;
-  min-width: 16rem;
-  z-index: 5;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
 }
 
-#rangeDataPopup:after {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-  z-index: 5;
+::ng-deep .mat-card-header-text {
+  margin: 0 8px !important;
 }
 
-#rangeDataPopup:after {
-  border-top-color: #efeff4;
-  border-width: 10px;
-  left: 48px;
-  margin-left: -10px;
+#airportDataPopup {
+  position: absolute;
   z-index: 5;
+  cursor: pointer;
+  padding: 0%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
+}
+
+#airportDataPopupHeader {
+  height: 1.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+#airportDataLinkOurAirports {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 6px;
+  line-height: 14px;
+  min-width: auto;
+}
+
+table,
+th,
+td {
+  border-collapse: collapse;
+  line-height: 0.8rem;
 }
 
 ::ng-deep .ol-zoom {
@@ -109,4 +155,35 @@ mat-card-header {
 
 .mat-card-content {
   margin-bottom: 0px;
+}
+
+#altitude_chart {
+  position: absolute;
+  z-index: 1;
+  background-color: transparent;
+  bottom: 0;
+  margin-bottom: 1rem;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width: 100vw;
+  pointer-events: none;
+  transform: scale(2);
+  visibility: hidden;
+}
+
+#cesium-map {
+  position: fixed;
+  margin-top: 3.5rem;
+  image-rendering: pixelated;
+  z-index: 20;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-size: 14px;
+  overflow: hidden;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 0;
 }

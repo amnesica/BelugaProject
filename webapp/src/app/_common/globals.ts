@@ -3,14 +3,18 @@ import Collection from 'ol/Collection';
 import { Layer } from 'ol/layer';
 import { environment } from 'src/environments/environment';
 import { Aircraft } from '../_classes/aircraft';
+import VectorSource from 'ol/source/Vector';
+import { Point } from 'ol/geom';
 
 /**
  * Globale Variablen
  */
 export class Globals {
-  // Name und Version der App
+  // Name, Version, Stage und Buildtime der App
   static appName: any;
   static appVersion: any;
+  static appStage: any;
+  static appBuildTime: any;
 
   // Allgemeine Location-Daten und Zoom-Level
   static latFeeder: number;
@@ -25,13 +29,16 @@ export class Globals {
   static PlaneIconFeatures = new Vector();
 
   // Flugzeug-Icons als Features (WebGL)
-  static WebglFeatures = new Vector();
+  static WebglFeatures = new Vector<Point>();
 
   // Liste mit Flugzeugen (sollte immer mit Planes synchron gehalten werden)
   static PlanesOrdered: Aircraft[] = [];
 
   // Group als Sammlung an Trails der Flugzeuge
   static trailGroup = new Collection<Layer>();
+
+  // Group als Sammlung aller Trails
+  static allTrailsGroup = new Collection<Layer>();
 
   // Cache der Icons
   static iconCache = {};
@@ -47,8 +54,19 @@ export class Globals {
   // Hinweis: "kleines" Info-Fenster ist noch die Hover-Info-Box
   static displayAircraftInfoLarge = false;
 
-  // Skalierung der Flugzeug-Icons
-  static scaleIcons;
+  // Globale Skalierung der Flugzeug-Icons (WebGL & Non-WebGL)
+  static globalScaleFactorIcons;
+
+  // Skalierung der kleinen Flugzeug-Icons (WebGL & Non-WebGL)
+  static smallScaleFactorIcons;
+
+  // Default-Wert für globale Skalierung der Flugzeug-Icons (WebGL & Non-WebGL),
+  // um Werte wieder zurückzusetzen auf Wert aus Configuration vom Server
+  static defaultGlobalScaleFactorIcons;
+
+  // Default-Wert für Skalierung der kleinen Flugzeug-Icons (WebGL & Non-WebGL),
+  // um Werte wieder zurückzusetzen auf Wert aus Configuration vom Server
+  static defaultSmallScaleFactorIcons;
 
   // Boolean, ob Flugzeug-Labels angezeigt werden sollen
   static showAircraftLabel: boolean = false;
@@ -93,6 +111,12 @@ export class Globals {
   // Boolean, ob Opensky-Credentials gesetzt wurden
   static openskyCredentials: boolean = false;
 
+  // Boolean, ob 3d-Map angezeigt werden soll (OL-Cesium)
+  static display3dMap: Boolean = false;
+
+  // Boolean, ob aircraft table sichtbar ist
+  static aircraftTableIsVisible: boolean;
+
   // Server-Adresse
   static serverUrl = environment.baseUrl;
 
@@ -126,4 +150,12 @@ export class Globals {
   // URL zum Server zum Holen der ISS ohne Extent
   static urlGetISSWithoutExtent: string =
     'http://' + Globals.serverUrl + ':8080/getIssWithoutExtent';
+
+  // URL zum Server zum Holen der ISS ohne Extent
+  static urlGetModelFromServer: string =
+    'http://' + Globals.serverUrl + ':8080/get3dModel';
+
+  // URL zum Server zum Holen aller Trails
+  static urlGetAllTrailData: string =
+    'http://' + Globals.serverUrl + ':8080/getAllTrails';
 }

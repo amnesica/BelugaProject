@@ -12,10 +12,10 @@ import java.util.List;
 @Repository
 public interface RangeDataRepository extends CrudRepository<RangeData, String> {
 
-    List<RangeData> findAllByTimestampBetween(long startTime, long endTime);
+  List<RangeData> findAllByTimestampBetween(long startTime, long endTime);
 
-    @Transactional
-    @Modifying
-    @Query(value = "delete from range_data rd where rd.timestamp <= (extract('epoch' from (current_timestamp  - interval '?1 days')) * 1000)", nativeQuery = true)
-    void deleteAllByTimestampLessThanEqual(long time);
+  @Transactional
+  @Modifying
+  @Query(value = "delete from range_data rd where rd.timestamp <= (extract('epoch' from (current_timestamp  - interval '?1 days')) * 1000)", nativeQuery = true)
+  void deleteAllByTimestampLessThanEqual(long time);
 }

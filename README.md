@@ -4,17 +4,19 @@
 
 <h1 align="center">The Beluga Project</h1>
 
-![GitHub version](https://img.shields.io/badge/version-v3.1.1-brightgreen)
+![GitHub version](https://img.shields.io/badge/version-v4.0.0-brightgreen)
 
 Spring Boot Angular web application that displays one or multiple, local ADS-B feeders along with additional information on a map interface in the browser.
 
-Currently you can use this application out of the box with [Flightradar24](https://www.flightradar24.com/), [tar1090](https://github.com/wiedehopf/tar1090) or [AirSquitter](https://airsquitter.com/) feeders. Other ADS-B feeder can be added aswell.
+Currently you can use this application out of the box with [Flightradar24](https://www.flightradar24.com/), [tar1090](https://github.com/wiedehopf/tar1090), [AirSquitter](https://airsquitter.com/) or [VirtualRadarServer](https://www.virtualradarserver.co.uk/) (Rebroadcast Server only) feeders. Other ADS-B feeders can be added aswell.
 
-It is possible to run the application only with data from the [OpenSky-Network](https://opensky-network.org/), if you have an account there. So you need no local feeders to try out the app.
+It is possible to run the application only with data from the [OpenSky-Network](https://opensky-network.org/), if you have an account there. Besides you can use data from [Airplanes.live](https://airplanes.live/). So you need no local feeders to try out the app.
 
-Additional information about the aircraft are added through a PostgreSQL database with content from [OpenSky-Network](https://opensky-network.org/) and [OurAirports](https://ourairports.com/data/). The ISS (International Space Station) is displayed by default with information from the [Open-Notify-API](http://open-notify.org/Open-Notify-API/ISS-Location-Now/).
+Additional information about the aircraft are added through a PostgreSQL database with content from [OpenSky-Network](https://opensky-network.org/), [Mictronics](https://www.mictronics.de/aircraft-database/), [OurAirports](https://ourairports.com/data/), [Virtual Radar Server standing-data](https://github.com/vradarserver/standing-data). Mictronics data is used with [Open Data Commons Attribution License (ODC-By) v1.0](http://opendatacommons.org/licenses/by/1.0/).
 
-The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1).
+The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
+
+The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1). 3D models from [this](https://github.com/amnesica/BelugaProject-3D-Models) repository are used.
 
 ## Motivation
 
@@ -23,19 +25,36 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 ## Features
 
 - View the application on your desktop or mobile (for the android app see folder "android_app")
-- Display on a map in the browser
-  - aircraft from your local ADS-B feeders (like tar1090, AirSquitter, fr24feeder)
-  - aircraft from Opensky-Network (update interval is 5 seconds)
+- Display aircraft and airports on a 2D map in the browser
+  - aircraft from your local ADS-B feeders (like tar1090, AirSquitter, fr24feeder, vrs)
+  - aircraft from [OpenSky-Network](https://opensky-network.org/) (update interval is 5 seconds)
+  - aircraft from [Airplanes.live](https://airplanes.live/) (update interval is 5 seconds)
   - the ISS (International Space Station)
+  - airport information from [OurAirports](https://ourairports.com/data/)
+- Display selected aircraft on a 3D map ([Cesium Ion](https://cesium.com/), account registration is required to use this feature)
+  - Show animated aircraft model and flight path
+  - Show Google photogrammetry or OSM 3D buildings
+  - Cockpit mode (with or without cockpit model), Follow-Plane mode
+  - High Quality mode, HDR, clouds
 - See additional information about tracked aircraft like model and type, country of registration, operator callsign and more
+- Track flight progress with route information (origin, destination)
 - Display aircraft picture from planespotters.net
 - Show range data of your feeders on the map
+- Show weather information (current, forecast, clouds) from [Rainviewer](https://www.rainviewer.com/)
+- Filter option for military planes
+- Choose one of several map styles (2D/3D map, for some of the 2D maps an API key from [Geoapify](https://www.geoapify.com/) is required)
 - Display aircraft in a sortable table
 - Display a list of photos for selected aircraft in your webbrowser (by generated Search-URL)
 - Show server logfiles
 - Photographers / Spotters can see the „Point of Minimum Distance“ (POMD) for selected aircraft and get ETA, remaining time, remaining distance, distance to aircraft at POMD and view direction at POMD. The yellow point (see image below) shows the „POMD“. The black point is your current position (or antenna position by default). Calculations are based on current track and speed of selected aircraft and are updated permanently.
 <p align="center">
 <img alt="POMD feature" src="assets/images/POMD_feature.png" width="50%"/>
+
+---
+
+**Note**: At the moment The Beluga Project is meant to be used in a local network. It is not recommended to publish it on the web due to security and performance reasons.
+
+---
 
 ## Screenshots
 
@@ -60,16 +79,18 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 
 ### Frontend
 
-- [Angular](https://angular.io)
-  - [Angular Material Design](https://material.angular.io/)
+- [Angular](https://angular.io) with [Angular Material Design](https://material.angular.io/)
 - [OpenLayers](https://openlayers.org/)
+- [Cesium](https://cesium.com/)
+- [ng-apexcharts](https://github.com/apexcharts/ng-apexcharts)
+- [ng-matero/extensions-moment-adapter](https://github.com/ng-matero/extensions)
 
 ## Our Setup
 
 The application runs on a Raspberry Pi 4B in the local network. We can access the map in the browser on desktop computers (Windows and Linux) and on mobile devices. For our mobile devices we use the mobile app.
 
 <p align="center">
-<img alt="App View" src="assets/images/setup.png" width="60%" />
+<img alt="App View" src="assets/images/setupV4.png" width="70%" />
 </p>
 
 ## Install and run

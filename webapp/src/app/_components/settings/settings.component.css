@@ -6,11 +6,16 @@
   top: 0;
   font-size: 14px;
   bottom: 0;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 0px;
   overflow: auto;
+  background: transparent;
 }
 
 ::ng-deep .cdk-overlay-container {
-  z-index: 1500 !important;
+  z-index: 100 !important;
 }
 
 ::ng-deep .mat-tab-list {
@@ -32,6 +37,11 @@
 
 ::ng-deep .mat-ink-bar {
   background-color: var(--primary-color, #f8c023) !important;
+}
+
+::ng-deep .mat-slide-toggle {
+  margin: 0.2rem !important;
+  display: block !important;
 }
 
 ::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
@@ -62,4 +72,35 @@
 .background-and-color-dark {
   background-color: #383838;
   color: white;
+}
+
+.mat-mdc-slider {
+  margin: 0.8rem !important;
+  height: 1rem !important;
+
+  --mdc-slider-handle-color: #f8c023;
+  --mdc-slider-focus-handle-color: #f8c023;
+  --mdc-slider-hover-handle-color: #f8c02333;
+  --mdc-slider-active-track-color: #f8c023;
+  --mdc-slider-inactive-track-color: #232323;
+  --mat-mdc-slider-ripple-color: #f8c023;
+  --mat-mdc-slider-hover-ripple-color: #ffffff00;
+  --mat-mdc-slider-focus-ripple-color: #ffffff00;
+
+  --mdc-slider-label-container-color: #949498;
+  --mdc-slider-label-label-text-color: white;
+  --mat-mdc-slider-value-indicator-opacity: 1;
+}
+
+::ng-deep mat-slider-visual-thumb {
+  height: 1rem !important;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  margin-bottom: -0.7rem !important;
+}
+
+mat-divider {
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
 }

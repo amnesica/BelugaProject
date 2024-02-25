@@ -1,7 +1,7 @@
 <!-- Button, um Flugzeug-Tabelle anzuzeigen -->
 <button
   mat-icon-button
-  (click)="showAircraftTableDiv = !showAircraftTableDiv"
+  (click)="toggleShowAircraftTableDiv()"
   aria-label="aircraft table icon"
 >
   <mat-icon>table_chart</mat-icon>
@@ -9,13 +9,14 @@
 
 <!-- Flugzeug-Tabelle -->
 <div
-  [hidden]="!showAircraftTableDiv"
+  *ngIf="showAircraftTableDiv"
   [style.width]="showAircraftTableWidth"
   [ngClass]="
     darkMode
       ? 'background-and-color-dark aircraft-table-div'
       : 'background-and-color-light aircraft-table-div'
   "
+  [@slideInOutRight]
 >
   <!-- Feld zum Filtern -->
   <mat-form-field class="form-field-filter" [style.width]="filterFieldWidth">
@@ -291,6 +292,19 @@
         <p *ngIf="aircraft.distance">{{ aircraft.distance }}</p>
         <p *ngIf="!aircraft.distance">N/A</p>
       </td>
+    </ng-container>
+
+    <!-- dummy column -->
+    <ng-container matColumnDef="dummy">
+      <th mat-header-cell *matHeaderCellDef style="line-height: 1rem"></th>
+      <td
+        mat-cell
+        *matCellDef="let aircraft"
+        (click)="$event ? selectRow(aircraft) : null"
+        [class.selected]="aircraft.isMarked"
+        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
+        style="width: 2rem"
+      ></td>
     </ng-container>
 
     <!-- sticky header -->

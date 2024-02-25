@@ -5,21 +5,69 @@ import {
   EventEmitter,
   OnInit,
   ChangeDetectionStrategy,
+  ViewChild,
+  OnDestroy,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Aircraft } from '../../_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {
+  ChartComponent,
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexDataLabels,
+  ApexTitleSubtitle,
+  ApexStroke,
+  ApexGrid,
+  ApexAnnotations,
+  ApexYAxis,
+} from 'ng-apexcharts';
+import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
+import { trigger, style, animate, transition } from '@angular/animations';
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  annotations: ApexAnnotations;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  dataLabels: ApexDataLabels;
+  grid: ApexGrid;
+  labels: string[];
+  stroke: ApexStroke;
+  title: ApexTitleSubtitle;
+  yaxis: ApexYAxis;
+};
 
 @Component({
   selector: 'app-info',
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.css'],
+  animations: [
+    trigger('slideInOutLeft', [
+      transition(':enter', [
+        style({ transform: '{{translateTypeValue}}' }),
+        animate(
+          '200ms ease-out',
+          style({ transform: '{{translateTypeAxis}}(0)' })
+        ),
+      ]),
+      transition(':leave', [
+        animate(
+          '200ms ease-out',
+          style({ transform: '{{translateTypeValue}}' })
+        ),
+      ]),
+    ]),
+  ],
 })
-export class InfoComponent implements OnInit {
+export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   // Flugzeug, wofür die Info angezeigt wird als Eingabeparameter
   @Input() aircraft: Aircraft | null = null;
 
@@ -36,7 +84,7 @@ export class InfoComponent implements OnInit {
   topInfoBox: string | undefined;
 
   // Boolean, ob es sich um einen Desktop-Browser-Fenster handelt
-  isDesktop: boolean | undefined;
+  isDesktop: boolean = true;
 
   // Anzahl der Spalten im Footer der Info-Box
   amountColumnsFooter: number | undefined;
@@ -47,12 +95,73 @@ export class InfoComponent implements OnInit {
   // Boolean, ob Route erstellt und gezeigt werden soll in Map-Component
   showRoute: boolean = false;
 
+  // Altitude Chart
+  @ViewChild('chart') chart!: ChartComponent;
+  public chartOptions: Partial<ChartOptions>;
+
+  // Output-Variable, um Map-Component zu kontaktieren
+  @Output() show3dMapEvent = new EventEmitter<boolean>();
+
+  // Daten für das Altitude Chart
+  altitudeData: any;
+
   private ngUnsubscribe = new Subject();
 
   constructor(
     public breakpointObserver: BreakpointObserver,
-    public snackBar: MatSnackBar
-  ) {}
+    public snackBar: MatSnackBar,
+    private settingsService: SettingsService
+  ) {
+    this.chartOptions = {
+      series: [
+        {
+          name: 'Altitude',
+          data: [],
+        },
+      ],
+      chart: {
+        id: 'mychart',
+        type: 'area',
+        height: '150',
+        parentHeightOffset: 0,
+        toolbar: {
+          show: false,
+          autoSelected: 'selection',
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: 'straight',
+        width: 3,
+      },
+      labels: [],
+      xaxis: {
+        type: 'datetime',
+        labels: {
+          show: true,
+          minHeight: 0,
+          formatter: function (value: any, timestamp: number) {
+            return new Date(timestamp).toLocaleTimeString('de-DE');
+          },
+        },
+      },
+      yaxis: {
+        min: 0,
+      },
+    };
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      changes.darkMode != undefined &&
+      changes.darkMode.previousValue != undefined &&
+      changes.darkMode.previousValue != changes.darkMode.currentValue
+    ) {
+      this.updateThemeColorsInOptions();
+    }
+  }
 
   ngOnInit() {
     // Initiiere Abonnements
@@ -60,11 +169,24 @@ export class InfoComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    if (this.chart != undefined) this.chart.destroy();
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
   initSubscriptions() {
+    this.settingsService.aircraftTrailAltitudeData$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((altitudeData) => {
+        if (altitudeData) {
+          this.altitudeData = altitudeData;
+          this.updateAltitudeData();
+
+          // Update auch text color, wenn view noch nicht initialisiert wurde
+          this.updateThemeColorsInOptions();
+        }
+      });
+
     this.breakpointObserver
       .observe(['(max-width: 599px)'])
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -163,6 +285,8 @@ export class InfoComponent implements OnInit {
         this.aircraft.positionDest
       ) {
         this.showRoute = true;
+      } else {
+        this.openSnackBar('No route info available', 'OK');
       }
     }
 
@@ -172,7 +296,7 @@ export class InfoComponent implements OnInit {
   }
 
   /**
-   * Platzhalter für weitere Funktionalität
+   * Zeige eine Snackbar mit message und action string
    */
   openSnackBar(message: string, action: string) {
     if (this.showInfoLarge) {
@@ -192,5 +316,59 @@ export class InfoComponent implements OnInit {
 
   roundValue(altitude: number) {
     return Math.round(altitude);
+  }
+
+  /**
+   * Updated die Daten (x und y) des Altitude Charts
+   */
+  updateAltitudeData() {
+    if (this.altitudeData == undefined || this.chart == undefined) return;
+    this.chart.updateSeries(this.altitudeData);
+  }
+
+  /**
+   * Updated die Farben des Altitude Charts nach Dark-Mode
+   */
+  updateThemeColorsInOptions(): void {
+    if (this.chart == undefined) return;
+
+    const newTextColor = this.darkMode ? '#fff' : '#000';
+    const newBackgroundColor = this.darkMode ? '#383838' : '#efeff4';
+
+    let newOptions = {
+      chart: {
+        foreColor: newTextColor,
+        background: newBackgroundColor,
+        id: 'mychart',
+      },
+    };
+
+    this.chart.updateOptions(newOptions);
+  }
+
+  /**
+   * Methode, die Map-Component kontaktiert
+   * und anweist die 3d-Map anzuzeigen oder
+   * nicht
+   */
+  toggleShow3dMap() {
+    if (this.aircraft?.altitude == undefined) {
+      this.openSnackBar(
+        'Current aircraft has no altitude. 3D view is not available',
+        'OK'
+      );
+      return;
+    }
+
+    // Kontaktiere Map-Component
+    this.show3dMapEvent.emit();
+  }
+
+  getAnimationTransformAxisValue(): string {
+    return this.isDesktop ? 'translateX' : 'translateY';
+  }
+
+  getAnimationTransformValue(): string {
+    return this.isDesktop ? 'translateX(-100%)' : 'translateY(100%)';
   }
 }

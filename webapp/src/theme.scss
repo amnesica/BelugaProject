@@ -1,5 +1,15 @@
-@import "~@angular/material/theming";
-@include mat-core();
+@use '@angular/material' as mat;
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
+@use '@ng-matero/extensions' as mtx;
+@include mat.all-legacy-component-typographies();
+@include mat.legacy-core();
 
 $custom-blue: (
   50: #e4e6ee,
@@ -67,8 +77,10 @@ $custom-yellow: (
   ),
 );
 
-$my-app-primary: mat-palette($custom-blue);
-$my-app-accent: mat-palette($custom-yellow);
-$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent);
+$my-app-primary: mat.define-palette($custom-blue);
+$my-app-accent: mat.define-palette($custom-yellow);
+$my-app-theme: mat.define-light-theme($my-app-primary, $my-app-accent);
 
-@include angular-material-theme($my-app-theme);
+@include mtx.all-component-themes($my-app-theme);
+@include mat.all-legacy-component-themes($my-app-theme);
+

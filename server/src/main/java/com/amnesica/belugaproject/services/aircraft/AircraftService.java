@@ -4,7 +4,8 @@ import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.config.Feeder;
 import com.amnesica.belugaproject.entities.aircraft.Aircraft;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
-import com.amnesica.belugaproject.entities.aircraft.OpenskyAircraft;
+import com.amnesica.belugaproject.entities.aircraft.RemoteAircraft;
+import com.amnesica.belugaproject.services.data.AirportDataService;
 import com.amnesica.belugaproject.services.data.FlightrouteDataService;
 import com.amnesica.belugaproject.services.data.OperatorDataService;
 import com.amnesica.belugaproject.services.data.RegcodeDataService;
@@ -22,512 +23,604 @@ import java.util.Calendar;
 @Slf4j
 @Service
 public class AircraftService {
-    @Autowired
-    private RegcodeDataService regcodeDataService;
-    @Autowired
-    private OperatorDataService operatorDataService;
-    @Autowired
-    private FlightrouteDataService flightrouteDataService;
+  @Autowired
+  private RegcodeDataService regcodeDataService;
+  @Autowired
+  private AirportDataService airportDataService;
+  @Autowired
+  private OperatorDataService operatorDataService;
+  @Autowired
+  private FlightrouteDataService flightrouteDataService;
 
-    @Autowired
-    private AircraftTrailService aircraftTrailService;
+  @Autowired
+  private AircraftTrailService aircraftTrailService;
 
-    @Autowired
-    private Configuration configuration;
+  @Autowired
+  private Configuration configuration;
 
-    // Networkhandler
-    private static final NetworkHandlerService networkHandler = new NetworkHandlerService();
+  // Networkhandler
+  private static final NetworkHandlerService networkHandler = new NetworkHandlerService();
 
-    // Record mit Informationen von der Planespotters.net API
-    record PlanespottersResponse(String thumbnailLargeUrl, String linkToWebsiteUrl, String photographer) {
+  // Record mit Informationen von der Planespotters.net API
+  record PlanespottersResponse(String thumbnailLargeUrl, String linkToWebsiteUrl, String photographer) {
+  }
+
+  /**
+   * Erstellt ein neues Flugzeug (Aircraft)
+   *
+   * @param element JSONObject
+   * @param feeder  Feeder
+   * @return Aircraft
+   */
+  public Aircraft createNewAircraft(JSONObject element, Feeder feeder) {
+    // Erstelle Flugzeug
+    // TODO: alle Feeder außer vrs arbeiten mit hex, lat, lon
+    Aircraft aircraftNew;
+    if (feeder.getType().equals("vrs")) {
+      aircraftNew = new Aircraft(element.getString("Icao").toLowerCase().trim(), element.getDouble("Lat"),
+          element.getDouble("Long"));
+    } else {
+      aircraftNew = new Aircraft(element.getString("hex").toLowerCase().trim(), element.getDouble("lat"),
+          element.getDouble("lon"));
     }
 
-    /**
-     * Erstellt ein neues Flugzeug (Aircraft)
-     *
-     * @param element JSONObject
-     * @param feeder  Feeder
-     * @return Aircraft
-     */
-    public Aircraft createNewAircraft(JSONObject element, Feeder feeder) {
-        // Erstelle Flugzeug
-        Aircraft aircraftNew = new Aircraft(element.getString("hex").toLowerCase().trim(), element.getDouble("lat"),
-                element.getDouble("lon"));
+    // Setze spezifische Werte der Feeder
+    setValuesToAircraft(feeder, element, aircraftNew);
 
-        // Setze spezifische Werte der Feeder
-        setValuesToAircraft(feeder, element, aircraftNew);
+    return aircraftNew;
+  }
 
-        return aircraftNew;
+  /**
+   * Erstellt ein neues Remote-Flugzeug (von Opensky oder Airplanes-Live)
+   *
+   * @param aircraft JSONObject
+   * @param feeder   Feeder
+   * @return OpenskyAircraft
+   */
+  public RemoteAircraft createNewRemoteAircraft(JSONObject aircraft, Feeder feeder) {
+    // Erstelle Flugzeug
+    RemoteAircraft aircraftNew = new RemoteAircraft(aircraft.getString("hex").toLowerCase().trim(),
+        aircraft.getDouble("lat"), aircraft.getDouble("lon"));
+
+    aircraftNew.setIsFromRemote(feeder.getName());
+
+    // Setze spezifische Werte der Feeder
+    setValuesToAircraft(feeder, aircraft, aircraftNew);
+
+    return aircraftNew;
+  }
+
+  /**
+   * Ruft zusätzliche Informationen aus Datenbank-Tabellen ab
+   *
+   * @param aircraft Aircraft
+   */
+  public void addInformationToAircraft(AircraftSuperclass aircraft) {
+    operatorDataService.addOperatorData(aircraft);
+    regcodeDataService.addRegcodeData(aircraft);
+    flightrouteDataService.addFlightrouteData(aircraft);
+  }
+
+  /**
+   * Aktualisiert ein bestehendes Flugzeug aircraftToUpdate durch Werte eines
+   * neuen Flugzeugs aircraftNew
+   *
+   * @param aircraftNew Aircraft
+   */
+  public void updateValuesOfAircraft(AircraftSuperclass aircraftToUpdate, AircraftSuperclass aircraftNew,
+                                     String feederName, boolean isLocalFeederService) {
+    // Merken vorherige Position für nachfolgende Trackberechnung
+    double prevLatitude = aircraftToUpdate.getLatitude();
+    double prevLongitude = aircraftToUpdate.getLongitude();
+    Integer prevTrack = aircraftToUpdate.getTrack();
+
+    if (isLocalFeederService) {
+      // Setze 'reentered'-Zustand, damit später eine schwarze Linie gezeichnet wird
+      boolean isAircraftReentered = aircraftTrailService.getIsReenteredAircraft(aircraftToUpdate.getHex(),
+          feederName);
+      aircraftToUpdate.setReenteredAircraft(isAircraftReentered);
+      aircraftNew.setReenteredAircraft(isAircraftReentered);
     }
 
-    /**
-     * Erstellt ein neues Flugzeug (OpenskyAircraft)
-     *
-     * @param element JSONObject
-     * @param feeder  Feeder
-     * @return OpenskyAircraft
-     */
-    public OpenskyAircraft createNewOpenskyAircraft(JSONObject element, Feeder feeder) {
-        // Erstelle Flugzeug
-        OpenskyAircraft aircraftNew = new OpenskyAircraft(element.getString("hex").toLowerCase().trim(),
-                element.getDouble("lat"), element.getDouble("lon"));
+    // Aktualisiere Werte von aircraftNew
+    aircraftToUpdate.setLatitude(aircraftNew.getLatitude());
+    aircraftToUpdate.setLongitude(aircraftNew.getLongitude());
+    aircraftToUpdate.setAltitude(aircraftNew.getAltitude());
+    aircraftToUpdate.setOnGround(aircraftNew.getOnGround());
+    aircraftToUpdate.setSpeed(aircraftNew.getSpeed());
+    aircraftToUpdate.setVerticalRate(aircraftNew.getVerticalRate());
+    aircraftToUpdate.setRssi(aircraftNew.getRssi());
+    aircraftToUpdate.setTemperature(aircraftNew.getTemperature());
+    aircraftToUpdate.setWindSpeed(aircraftNew.getWindSpeed());
+    aircraftToUpdate.setWindFromDirection(aircraftNew.getWindFromDirection());
+    aircraftToUpdate.setAutopilotEngaged(aircraftNew.getAutopilotEngaged());
+    aircraftToUpdate.setElipsoidalAltitude(aircraftNew.getElipsoidalAltitude());
+    aircraftToUpdate.setSelectedQnh(aircraftNew.getSelectedQnh());
+    aircraftToUpdate.setSelectedAltitude(aircraftNew.getSelectedAltitude());
+    aircraftToUpdate.setSelectedHeading(aircraftNew.getSelectedHeading());
+    aircraftToUpdate.setLastSeen(aircraftNew.getLastSeen());
+    aircraftToUpdate.setSourceCurrentFeeder(aircraftNew.getSourceCurrentFeeder());
+    aircraftToUpdate.setRoll(aircraftNew.getRoll());
+    aircraftToUpdate.setIas(aircraftNew.getIas());
+    aircraftToUpdate.setTas(aircraftNew.getTas());
+    aircraftToUpdate.setMach(aircraftNew.getMach());
+    aircraftToUpdate.setMagHeading(aircraftNew.getMagHeading());
+    aircraftToUpdate.setTrueHeading(aircraftNew.getTrueHeading());
+    aircraftToUpdate.setMessages(aircraftNew.getMessages());
+    aircraftToUpdate.setEmergency(aircraftNew.getEmergency());
+    aircraftToUpdate.setNavModes(aircraftNew.getNavModes());
 
-        // Setze spezifische Werte der Feeder
-        setValuesToAircraft(feeder, element, aircraftNew);
-
-        return aircraftNew;
+    // Schreibe aktuellen Feeder als Feeder in Liste
+    if (!aircraftToUpdate.getFeederList().contains(feederName)) {
+      aircraftToUpdate.addFeederToFeederList(feederName);
     }
 
-    /**
-     * Ruft zusätzliche Informationen aus Datenbank-Tabellen ab
-     *
-     * @param aircraft Aircraft
-     */
-    public void addInformationToAircraft(AircraftSuperclass aircraft) {
-        operatorDataService.addOperatorData(aircraft);
-        regcodeDataService.addRegcodeData(aircraft);
-        flightrouteDataService.addFlightrouteData(aircraft);
+    // Schreibe aktuellen Feeder und dessen Source in Liste
+    aircraftToUpdate.addSourceToSourceList(feederName);
+
+    // Prüfe bei zu aktualisierenden Werten, ob neue Werte überhaupt gesetzt sind
+    if (aircraftNew.getType() != null && !aircraftNew.getType().isEmpty()) {
+      aircraftToUpdate.setType(aircraftNew.getType().trim());
     }
 
-    /**
-     * Aktualisiert ein bestehendes Flugzeug aircraftToUpdate durch Werte eines
-     * neuen Flugzeugs aircraftNew
-     *
-     * @param aircraftNew Aircraft
-     */
-    public void updateValuesOfAircraft(AircraftSuperclass aircraftToUpdate, AircraftSuperclass aircraftNew,
-                                       Feeder feeder, boolean isLocalFeederService) {
-        // Merken vorherige Position für nachfolgende Trackberechnung
-        double prevLatitude = aircraftToUpdate.getLatitude();
-        double prevLongitude = aircraftToUpdate.getLongitude();
-        Integer prevTrack = aircraftToUpdate.getTrack();
+    if (aircraftNew.getRegistration() != null && !aircraftNew.getRegistration().isEmpty()
+        && aircraftToUpdate.getRegistration() == null) {
+      aircraftToUpdate.setRegistration(aircraftNew.getRegistration().trim());
+    }
 
-        if (isLocalFeederService) {
-            // Setze 'reentered'-Zustand, damit später eine schwarze Linie gezeichnet wird
-            boolean isAircraftReentered = aircraftTrailService.getIsReenteredAircraft(aircraftToUpdate.getHex(),
-                    feeder.getName());
-            aircraftToUpdate.setReenteredAircraft(isAircraftReentered);
-            aircraftNew.setReenteredAircraft(isAircraftReentered);
-        }
+    if (aircraftNew.getSquawk() != null && !aircraftNew.getSquawk().isEmpty()) {
+      aircraftToUpdate.setSquawk(aircraftNew.getSquawk());
+    }
 
-        // Aktualisiere Werte von aircraftNew
-        aircraftToUpdate.setLatitude(aircraftNew.getLatitude());
-        aircraftToUpdate.setLongitude(aircraftNew.getLongitude());
-        aircraftToUpdate.setAltitude(aircraftNew.getAltitude());
-        aircraftToUpdate.setOnGround(aircraftNew.getOnGround());
-        aircraftToUpdate.setSpeed(aircraftNew.getSpeed());
-        aircraftToUpdate.setVerticalRate(aircraftNew.getVerticalRate());
-        aircraftToUpdate.setRssi(aircraftNew.getRssi());
-        aircraftToUpdate.setTemperature(aircraftNew.getTemperature());
-        aircraftToUpdate.setWindSpeed(aircraftNew.getWindSpeed());
-        aircraftToUpdate.setWindFromDirection(aircraftNew.getWindFromDirection());
-        aircraftToUpdate.setAutopilotEngaged(aircraftNew.getAutopilotEngaged());
-        aircraftToUpdate.setElipsoidalAltitude(aircraftNew.getElipsoidalAltitude());
-        aircraftToUpdate.setSelectedQnh(aircraftNew.getSelectedQnh());
-        aircraftToUpdate.setSelectedAltitude(aircraftNew.getSelectedAltitude());
-        aircraftToUpdate.setSelectedHeading(aircraftNew.getSelectedHeading());
-        aircraftToUpdate.setLastSeen(aircraftNew.getLastSeen());
-        aircraftToUpdate.setSourceCurrentFeeder(aircraftNew.getSourceCurrentFeeder());
+    if (aircraftNew.getFlightId() != null && !aircraftNew.getFlightId().isEmpty()
+        && aircraftToUpdate.getFlightId() == null) {
+      aircraftToUpdate.setFlightId(aircraftNew.getFlightId().trim());
 
-        // Schreibe aktuellen Feeder als Feeder in Liste
-        if (!aircraftToUpdate.getFeederList().contains(feeder.getName())) {
-            aircraftToUpdate.addFeederToFeederList(feeder.getName());
-        }
+      if (isLocalFeederService) {
+        flightrouteDataService.addFlightrouteData(aircraftToUpdate);
+        operatorDataService.addOperatorData(aircraftToUpdate);
+      }
+    }
 
-        // Schreibe aktuellen Feeder und dessen Source in Liste
-        aircraftToUpdate.addSourceToSourceList(feeder.getName());
+    if (aircraftNew.getCategory() != null && !aircraftNew.getCategory().isEmpty()) {
+      aircraftToUpdate.setCategory(aircraftNew.getCategory());
+    }
 
-        // Prüfe bei zu aktualisierenden Werten, ob neue Werte überhaupt gesetzt sind
-        if (aircraftNew.getType() != null && !aircraftNew.getType().isEmpty()) {
-            aircraftToUpdate.setType(aircraftNew.getType().trim());
-        }
+    if (aircraftNew.getDestination() != null && !aircraftNew.getDestination().isEmpty()) {
+      aircraftToUpdate.setDestination(aircraftNew.getDestination());
+    }
 
-        if (aircraftNew.getRegistration() != null && !aircraftNew.getRegistration().isEmpty()
-                && aircraftToUpdate.getRegistration() == null) {
-            aircraftToUpdate.setRegistration(aircraftNew.getRegistration().trim());
-        }
+    if (aircraftNew.getOrigin() != null && !aircraftNew.getOrigin().isEmpty()) {
+      aircraftToUpdate.setOrigin(aircraftNew.getOrigin());
+    }
 
-        if (aircraftNew.getSquawk() != null && !aircraftNew.getSquawk().isEmpty()) {
-            aircraftToUpdate.setSquawk(aircraftNew.getSquawk());
-        }
+    if (aircraftNew.getDistance() != 0) {
+      aircraftToUpdate.setDistance(aircraftNew.getDistance());
+    }
 
-        if (aircraftNew.getFlightId() != null && !aircraftNew.getFlightId().isEmpty()
-                && aircraftToUpdate.getFlightId() == null) {
-            aircraftToUpdate.setFlightId(aircraftNew.getFlightId().trim());
+    if (isLocalFeederService) {
+      // Aktualisiere Trail des Flugzeugs mit neuer Position und Höhe
+      aircraftTrailService.addTrail(aircraftNew, feederName);
+    }
 
-            if (isLocalFeederService) {
-                flightrouteDataService.addFlightrouteData(aircraftToUpdate);
-                operatorDataService.addOperatorData(aircraftToUpdate);
-            }
-        }
+    // Track berechnen, wenn nicht vom Feeder geliefert und sich die Position
+    // geändert hat
+    if (aircraftNew.getTrack() == null && prevLatitude != aircraftNew.getLatitude()
+        && prevLongitude != aircraftNew.getLongitude()) {
+      aircraftNew.setTrack((int) HelperService.getAngleBetweenPositions(prevLatitude, prevLongitude,
+          aircraftNew.getLatitude(), aircraftNew.getLongitude()));
+    } else if (aircraftNew.getTrack() == null) {
+      aircraftNew.setTrack(prevTrack);
+    }
 
-        if (aircraftNew.getCategory() != null && !aircraftNew.getCategory().isEmpty()) {
-            aircraftToUpdate.setCategory(aircraftNew.getCategory());
-        }
+    aircraftToUpdate.setTrack(aircraftNew.getTrack());
 
-        if (aircraftNew.getDestination() != null && !aircraftNew.getDestination().isEmpty()) {
-            aircraftToUpdate.setDestination(aircraftNew.getDestination());
-        }
+    // Weise Zustand des Flugzeugs zu
+    if (aircraftNew.getOnGround() != null && !aircraftNew.getOnGround() && aircraftNew.getVerticalRate() != null) {
+      if (aircraftNew.getVerticalRate() < -150) {
+        aircraftToUpdate.setAircraftState(AircraftStates.DOWN.toString());
+      } else if (aircraftNew.getVerticalRate() > 150) {
+        aircraftToUpdate.setAircraftState(AircraftStates.UP.toString());
+      } else {
+        aircraftToUpdate.setAircraftState(AircraftStates.HOLD.toString());
+      }
+    } else if (aircraftNew.getOnGround() != null && aircraftNew.getOnGround()) {
+      // Wenn Flugzeug am Boden ist
+      aircraftToUpdate.setAircraftState(AircraftStates.GROUND.toString());
+    } else {
+      // Zustand unbekannt
+      aircraftToUpdate.setAircraftState(null);
+    }
 
-        if (aircraftNew.getOrigin() != null && !aircraftNew.getOrigin().isEmpty()) {
-            aircraftToUpdate.setOrigin(aircraftNew.getOrigin());
-        }
+    // Füge Timestamp als Zeitpunkt des letzten Updates an
+    aircraftToUpdate.setLastUpdate(System.currentTimeMillis());
+  }
 
-        if (aircraftNew.getDistance() != 0) {
-            aircraftToUpdate.setDistance(aircraftNew.getDistance());
-        }
+  /**
+   * Setze Werte aus JSON-Element an das Flugzeug basierend auf den Mappings des
+   * jeweiligen Feeders
+   *
+   * @param feeder   Feeder
+   * @param element  JSONObject
+   * @param aircraft Aircraft
+   */
+  private void setValuesToAircraft(Feeder feeder, JSONObject element, AircraftSuperclass aircraft) {
+    // Füge Feeder in Liste der Feeder hinzu
+    aircraft.addFeederToFeederList(feeder.getName());
 
-        if (isLocalFeederService) {
-            // Aktualisiere Trail des Flugzeugs mit neuer Position und Höhe
-            aircraftTrailService.addTrail(aircraftNew, feeder.getName());
-        }
+    // Setze Mapping-Werte
+    String altitude = feeder.getMapping().getAltitude();
+    String track = feeder.getMapping().getTrack();
+    String type = feeder.getMapping().getType();
+    String registration = feeder.getMapping().getRegistration();
+    String category = feeder.getMapping().getCategory();
+    String flightId = feeder.getMapping().getFlightId();
+    String speed = feeder.getMapping().getSpeed();
+    String verticalRate = feeder.getMapping().getVerticalRate();
+    String temperature = feeder.getMapping().getTemperature();
+    String windSpeed = feeder.getMapping().getWindSpeed();
+    String windFromDirection = feeder.getMapping().getWindFromDirection();
+    String destination = feeder.getMapping().getDestination();
+    String origin = feeder.getMapping().getOrigin();
+    String squawk = feeder.getMapping().getSquawk();
+    String autopilotEngaged = feeder.getMapping().getAutopilotEngaged();
+    String elipsoidalAltitude = feeder.getMapping().getElipsoidalAltitude();
+    String selectedQnh = feeder.getMapping().getSelectedQnh();
+    String selectedAltitude = feeder.getMapping().getSelectedAltitude();
+    String selectedHeading = feeder.getMapping().getSelectedHeading();
+    String lastSeen = feeder.getMapping().getLastSeen();
+    String rssi = feeder.getMapping().getRssi();
+    String source = feeder.getMapping().getSource();
+    String roll = feeder.getMapping().getRoll();
+    String ias = feeder.getMapping().getIas();
+    String tas = feeder.getMapping().getTas();
+    String mach = feeder.getMapping().getMach();
+    String magHeading = feeder.getMapping().getMagHeading();
+    String trueHeading = feeder.getMapping().getTrueHeading();
+    String messages = feeder.getMapping().getMessages();
+    String emergency = feeder.getMapping().getEmergency();
+    String navModes = feeder.getMapping().getNavModes();
 
-        // Track berechnen, wenn nicht vom Feeder geliefert und sich die Position
-        // geändert hat
-        if (aircraftNew.getTrack() == null && prevLatitude != aircraftNew.getLatitude()
-                && prevLongitude != aircraftNew.getLongitude()) {
-            aircraftNew.setTrack((int) HelperService.getAngleBetweenPositions(prevLatitude, prevLongitude,
-                    aircraftNew.getLatitude(), aircraftNew.getLongitude()));
-        } else if (aircraftNew.getTrack() == null) {
-            aircraftNew.setTrack(prevTrack);
-        }
+    // Setze Werte nach Mapping
+    if (altitude != null && element.has(altitude) && !element.isNull(altitude)
+        && element.get(altitude) instanceof Integer) {
+      aircraft.setAltitude(element.getInt(altitude));
+      aircraft.setOnGround(false);
+    } else if (altitude != null && element.has(altitude) && !element.isNull(altitude)
+        && element.get(altitude) instanceof Double) {
+      aircraft.setAltitude((int) element.getDouble(altitude));
+      aircraft.setOnGround(false);
+      // Pruefe, ob Flugzeug auf dem Boden ist und setze Altitude auf 0
+    } else if (altitude != null && element.has(altitude) && !element.isNull(altitude)
+        && element.get(altitude) instanceof String) {
+      aircraft.setOnGround(true);
+      aircraft.setAltitude(0);
+      // Prüfe, ob asdbx-Feeder baro_alt hat, aber nicht geom_alt,
+      // setze elipsoidalAltitude als altitude (verhindert schwarze Marker!)
+    } else if (feeder.getType().equals("adsbx") && altitude != null && !element.has(altitude) &&
+        elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude) &&
+        element.get(elipsoidalAltitude) instanceof Integer) {
+      aircraft.setOnGround(false);
+      aircraft.setAltitude(element.getInt(elipsoidalAltitude));
+    }
 
-        aircraftToUpdate.setTrack(aircraftNew.getTrack());
+    if (track != null && element.has(track) && !element.isNull(track)) {
+      aircraft.setTrack(element.getInt(track));
+    }
 
-        // Weise Zustand des Flugzeugs zu
-        if (aircraftNew.getOnGround() != null && !aircraftNew.getOnGround() && aircraftNew.getVerticalRate() != null) {
-            if (aircraftNew.getVerticalRate() < -150) {
-                aircraftToUpdate.setAircraftState(AircraftStates.DOWN.toString());
-            } else if (aircraftNew.getVerticalRate() > 150) {
-                aircraftToUpdate.setAircraftState(AircraftStates.UP.toString());
-            } else {
-                aircraftToUpdate.setAircraftState(AircraftStates.HOLD.toString());
-            }
-        } else if (aircraftNew.getOnGround() != null && aircraftNew.getOnGround()) {
-            // Wenn Flugzeug am Boden ist
-            aircraftToUpdate.setAircraftState(AircraftStates.GROUND.toString());
+    if (roll != null && element.has(roll) && !element.isNull(roll)) {
+      aircraft.setRoll(element.getDouble(roll));
+    }
+
+    if (type != null && element.has(type) && !element.isNull(type)) {
+      aircraft.setType(element.get(type).toString().trim());
+    }
+
+    if (registration != null && element.has(registration) && !element.isNull(registration)) {
+      aircraft.setRegistration(element.get(registration).toString().trim());
+    }
+
+    if (category != null && element.has(category) && !element.isNull(category)) {
+      aircraft.setCategory(element.getString(category));
+    }
+
+    if (flightId != null && element.has(flightId) && !element.isNull(flightId)) {
+      aircraft.setFlightId(element.getString(flightId).trim());
+    }
+
+    if (speed != null && element.has(speed) && !element.isNull(speed)) {
+      aircraft.setSpeed(element.getInt(speed));
+    }
+
+    if (verticalRate != null && element.has(verticalRate) && !element.isNull(verticalRate)) {
+      aircraft.setVerticalRate(element.getInt(verticalRate));
+    }
+
+    if (temperature != null && element.has(temperature) && !element.isNull(temperature)) {
+      aircraft.setTemperature(element.getInt(temperature));
+    }
+
+    if (windSpeed != null && element.has(windSpeed) && !element.isNull(windSpeed)) {
+      aircraft.setWindSpeed(element.getInt(windSpeed));
+    }
+
+    if (windFromDirection != null && element.has(windFromDirection) && !element.isNull(windFromDirection)) {
+      aircraft.setWindFromDirection(element.getInt(feeder.getMapping().getWindFromDirection()));
+    }
+
+    // Virtual Radar Server liefert Origin/Destination im Format IATA-Code plus Airportbezeichnung
+    // Nur der IATA-Code wird extrahiert und über die Datenbank nach ICAO gemappt
+    if (feeder.getType().equals("vrs") && destination != null && element.has(destination) && !element.isNull(destination)) {
+      String iataCode = element.getString(destination).substring(0, 3);
+      String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
+      if (icaoCode != null) {
+        element.put(destination, icaoCode);
+        aircraft.setDestination(element.getString(destination));
+      }
+    } else {
+      if (destination != null && element.has(destination) && !element.isNull(destination)) {
+        aircraft.setDestination(element.getString(destination));
+      }
+    }
+    if (feeder.getType().equals("vrs") && origin != null && element.has(origin) && !element.isNull(origin)) {
+      String iataCode = element.getString(origin).substring(0, 3);
+      String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
+      if (icaoCode != null) {
+        element.put(origin, icaoCode);
+        aircraft.setOrigin(element.getString(origin));
+      }
+    } else {
+      if (origin != null && element.has(origin) && !element.isNull(origin)) {
+        aircraft.setOrigin(element.getString(origin));
+      }
+    }
+
+    if (squawk != null && element.has(squawk) && !element.isNull(squawk)) {
+      aircraft.setSquawk(element.getString(squawk));
+    }
+
+    if (autopilotEngaged != null && element.has(autopilotEngaged) && !element.isNull(autopilotEngaged)) {
+      aircraft.setAutopilotEngaged(element.getBoolean(autopilotEngaged));
+    }
+
+    if (elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude)
+        && element.get(elipsoidalAltitude) instanceof Integer) {
+      aircraft.setElipsoidalAltitude(element.getInt(elipsoidalAltitude));
+    } else if (elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude)
+        && element.get(elipsoidalAltitude) instanceof String) {
+      // Wenn adsbx-Feeder "ground" sendet
+      aircraft.setAltitude(0);
+      aircraft.setElipsoidalAltitude(0);
+      aircraft.setOnGround(true);
+    }
+
+    if (selectedQnh != null && element.has(selectedQnh) && !element.isNull(selectedQnh)) {
+      aircraft.setSelectedQnh(element.getDouble(selectedQnh));
+    }
+
+    if (selectedAltitude != null && element.has(selectedAltitude) && !element.isNull(selectedAltitude)) {
+      aircraft.setSelectedAltitude(element.getInt(selectedAltitude));
+    }
+
+    if (selectedHeading != null && element.has(selectedHeading) && !element.isNull(selectedHeading)) {
+      aircraft.setSelectedHeading(element.getInt(selectedHeading));
+    }
+
+    if (lastSeen != null && element.has(lastSeen)) {
+      aircraft.setLastSeen(element.getInt(lastSeen));
+    }
+
+    if (rssi != null && element.has(rssi) && !element.isNull(rssi)) {
+      aircraft.setRssi(element.getDouble(rssi));
+    }
+
+    if (ias != null && element.has(ias)) {
+      aircraft.setIas(element.getInt(ias));
+    }
+
+    if (tas != null && element.has(tas)) {
+      aircraft.setTas(element.getInt(tas));
+    }
+
+    if (mach != null && element.has(mach)) {
+      aircraft.setMach(element.getDouble(mach));
+    }
+
+    if (magHeading != null && element.has(magHeading)) {
+      aircraft.setMagHeading(element.getDouble(magHeading));
+    }
+
+    if (trueHeading != null && element.has(trueHeading)) {
+      aircraft.setTrueHeading(element.getDouble(trueHeading));
+    }
+
+    if (messages != null && element.has(messages)) {
+      aircraft.setMessages(element.getInt(messages));
+    }
+
+    if (emergency != null && element.has(emergency) && !element.isNull(emergency)) {
+      aircraft.setEmergency(element.getString(emergency));
+    }
+
+    if (navModes != null && element.has(navModes) && !element.isNull(navModes)) {
+      JSONArray navModesArray = element.getJSONArray(navModes);
+      if (navModesArray != null && navModesArray.length() > 0) {
+        String navModesString = navModesArray.toString();
+        navModesString = navModesString.replace("[","");
+        navModesString = navModesString.replace("]","");
+        navModesString = navModesString.replaceAll("\"", "");
+        aircraft.setNavModes(navModesString);
+        aircraft.setAutopilotEngaged(true);
+      }
+    }
+
+    if (source != null && element.has(source) && !element.isNull(source)) {
+      if (feeder.getType().equals("fr24feeder")) {
+        JSONArray mlatArray = element.getJSONArray(source);
+        if (mlatArray != null && mlatArray.length() > 0) {
+          aircraft.setSourceCurrentFeeder("M");
         } else {
-            // Zustand unbekannt
-            aircraftToUpdate.setAircraftState(null);
+          aircraft.setSourceCurrentFeeder("A");
         }
+      }
+      if (feeder.getType().equals("airsquitter")) {
+        aircraft.setSourceCurrentFeeder(element.getString(source));
+      }
 
-        // Füge Timestamp als Zeitpunkt des letzten Updates an
-        aircraftToUpdate.setLastUpdate(System.currentTimeMillis());
+      // Füge source zur Liste der Quellen hinzu
+      aircraft.addSourceToSourceList(feeder.getName());
     }
 
-    /**
-     * Setze Werte aus JSON-Element an das Flugzeug basierend auf den Mappings des
-     * jeweiligen Feeders
-     *
-     * @param feeder   Feeder
-     * @param element  JSONObject
-     * @param aircraft Aircraft
-     */
-    private void setValuesToAircraft(Feeder feeder, JSONObject element, AircraftSuperclass aircraft) {
-        // Füge Feeder in Liste der Feeder hinzu
-        aircraft.addFeederToFeederList(feeder.getName());
+    // Berechne und setze distance
+    double distance = HelperService.getDistanceBetweenPositions(aircraft.getLatitude(), aircraft.getLongitude(),
+        configuration.getLatFeeder(), configuration.getLonFeeder());
+    aircraft.setDistance(distance);
 
-        // Setze Mapping-Werte
-        String altitude = feeder.getMapping().getAltitude();
-        String track = feeder.getMapping().getTrack();
-        String type = feeder.getMapping().getType();
-        String registration = feeder.getMapping().getRegistration();
-        String category = feeder.getMapping().getCategory();
-        String flightId = feeder.getMapping().getFlightId();
-        String speed = feeder.getMapping().getSpeed();
-        String verticalRate = feeder.getMapping().getVerticalRate();
-        String temperature = feeder.getMapping().getTemperature();
-        String windSpeed = feeder.getMapping().getWindSpeed();
-        String windFromDirection = feeder.getMapping().getWindFromDirection();
-        String destination = feeder.getMapping().getDestination();
-        String origin = feeder.getMapping().getOrigin();
-        String squawk = feeder.getMapping().getSquawk();
-        String autopilotEngaged = feeder.getMapping().getAutopilotEngaged();
-        String elipsoidalAltitude = feeder.getMapping().getElipsoidalAltitude();
-        String selectedQnh = feeder.getMapping().getSelectedQnh();
-        String selectedAltitude = feeder.getMapping().getSelectedAltitude();
-        String selectedHeading = feeder.getMapping().getSelectedHeading();
-        String lastSeen = feeder.getMapping().getLastSeen();
-        String rssi = feeder.getMapping().getRssi();
-        String source = feeder.getMapping().getSource();
+    // Zustand des Flugzeugs
+    setAircraftState(aircraft);
+  }
 
-        // Setze Werte nach Mapping
-        if (altitude != null && element.has(altitude) && !element.isNull(altitude)
-                && element.get(altitude) instanceof Integer) {
-            aircraft.setAltitude(element.getInt(altitude));
-            aircraft.setOnGround(false);
-        } else if (altitude != null && element.has(altitude) && !element.isNull(altitude)
-                && element.get(altitude) instanceof Double) {
-            aircraft.setAltitude((int) element.getDouble(altitude));
-            aircraft.setOnGround(false);
-            // Pruefe, ob Flugzeug auf dem Boden ist und setze Altitude auf 0
-        } else if (altitude != null && element.has(altitude) && !element.isNull(altitude)
-                && element.get(altitude) instanceof String) {
-            aircraft.setOnGround(true);
-            aircraft.setAltitude(0);
-            // Prüfe, ob asdbx-Feeder baro_alt hat, aber nicht geom_alt,
-            // setze elipsoidalAltitude als altitude (verhindert schwarze Marker!)
-        } else if (feeder.getType().equals("adsbx") && altitude != null && !element.has(altitude) &&
-                elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude) &&
-                element.get(elipsoidalAltitude) instanceof Integer) {
-            aircraft.setOnGround(false);
-            aircraft.setAltitude(element.getInt(elipsoidalAltitude));
-        }
+  /**
+   * Setzt den Zustand des Flugzeugs
+   *
+   * @param aircraft AircraftSuperclass
+   */
+  public void setAircraftState(AircraftSuperclass aircraft) {
+    if (aircraft.getOnGround() != null && !aircraft.getOnGround() && aircraft.getVerticalRate() != null) {
+      if (aircraft.getVerticalRate() < -150) {
+        aircraft.setAircraftState(AircraftStates.DOWN.toString());
+      } else if (aircraft.getVerticalRate() > 150) {
+        aircraft.setAircraftState(AircraftStates.UP.toString());
+      } else {
+        aircraft.setAircraftState(AircraftStates.HOLD.toString());
+      }
+    } else if (aircraft.getOnGround() != null && aircraft.getOnGround()) {
+      // Wenn Flugzeug am Boden ist
+      aircraft.setAircraftState(AircraftStates.GROUND.toString());
+    } else {
+      // Zustand unbekannt
+      aircraft.setAircraftState(null);
+    }
+  }
 
-        if (track != null && element.has(track) && !element.isNull(track)) {
-            aircraft.setTrack(element.getInt(track));
-        }
-
-        if (type != null && element.has(type) && !element.isNull(type)) {
-            aircraft.setType(element.get(type).toString().trim());
-        }
-
-        if (registration != null && element.has(registration) && !element.isNull(registration)) {
-            aircraft.setRegistration(element.get(registration).toString().trim());
-        }
-
-        if (category != null && element.has(category) && !element.isNull(category)) {
-            aircraft.setCategory(element.getString(category));
-        }
-
-        if (flightId != null && element.has(flightId) && !element.isNull(flightId)) {
-            aircraft.setFlightId(element.getString(flightId).trim());
-        }
-
-        if (speed != null && element.has(speed) && !element.isNull(speed)) {
-            aircraft.setSpeed(element.getInt(speed));
-        }
-
-        if (verticalRate != null && element.has(verticalRate) && !element.isNull(verticalRate)) {
-            aircraft.setVerticalRate(element.getInt(verticalRate));
-        }
-
-        if (temperature != null && element.has(temperature) && !element.isNull(temperature)) {
-            aircraft.setTemperature(element.getInt(temperature));
-        }
-
-        if (windSpeed != null && element.has(windSpeed) && !element.isNull(windSpeed)) {
-            aircraft.setWindSpeed(element.getInt(windSpeed));
-        }
-
-        if (windFromDirection != null && element.has(windFromDirection) && !element.isNull(windFromDirection)) {
-            aircraft.setWindFromDirection(element.getInt(feeder.getMapping().getWindFromDirection()));
-        }
-
-        if (destination != null && element.has(destination) && !element.isNull(destination)) {
-            aircraft.setDestination(element.getString(destination));
-        }
-
-        if (origin != null && element.has(origin) && !element.isNull(origin)) {
-            aircraft.setOrigin(element.getString(origin));
-        }
-
-        if (squawk != null && element.has(squawk) && !element.isNull(squawk)) {
-            aircraft.setSquawk(element.getString(squawk));
-        }
-
-        if (autopilotEngaged != null && element.has(autopilotEngaged) && !element.isNull(autopilotEngaged)) {
-            aircraft.setAutopilotEngaged(element.getBoolean(autopilotEngaged));
-        }
-
-        if (elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude)
-                && element.get(elipsoidalAltitude) instanceof Integer) {
-            aircraft.setElipsoidalAltitude(element.getInt(elipsoidalAltitude));
-        } else if (elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude)
-                && element.get(elipsoidalAltitude) instanceof String) {
-            // Wenn adsbx-Feeder "ground" sendet
-            aircraft.setAltitude(0);
-            aircraft.setElipsoidalAltitude(0);
-            aircraft.setOnGround(true);
-        }
-
-        if (selectedQnh != null && element.has(selectedQnh) && !element.isNull(selectedQnh)) {
-            aircraft.setSelectedQnh(element.getDouble(selectedQnh));
-        }
-
-        if (selectedAltitude != null && element.has(selectedAltitude) && !element.isNull(selectedAltitude)) {
-            aircraft.setSelectedAltitude(element.getInt(selectedAltitude));
-        }
-
-        if (selectedHeading != null && element.has(selectedHeading) && !element.isNull(selectedHeading)) {
-            aircraft.setSelectedHeading(element.getInt(selectedHeading));
-        }
-
-        if (lastSeen != null && element.has(lastSeen)) {
-            aircraft.setLastSeen(element.getInt(lastSeen));
-        }
-
-        if (rssi != null && element.has(rssi) && !element.isNull(rssi)) {
-            aircraft.setRssi(element.getDouble(rssi));
-        }
-
-        if (source != null && element.has(source) && !element.isNull(source)) {
-            if (feeder.getType().equals("fr24feeder")) {
-                JSONArray mlatArray = element.getJSONArray(source);
-                if (mlatArray != null && mlatArray.length() > 0) {
-                    aircraft.setSourceCurrentFeeder("M");
-                } else {
-                    aircraft.setSourceCurrentFeeder("A");
-                }
-            }
-            if (feeder.getType().equals("airsquitter")) {
-                aircraft.setSourceCurrentFeeder(element.getString(source));
-            }
-
-            // Füge source zur Liste der Quellen hinzu
-            aircraft.addSourceToSourceList(feeder.getName());
-        }
-
-        // Berechne und setze distance
-        double distance = HelperService.getDistanceBetweenPositions(aircraft.getLatitude(), aircraft.getLongitude(),
-                configuration.getLatFeeder(), configuration.getLonFeeder());
-        aircraft.setDistance(distance);
-
-        // Zustand des Flugzeugs
-        setAircraftState(aircraft);
+  /**
+   * Setzt Flugzeug-Photo, Link zur Website mit dem Photo und dem
+   * Photographen von planespotters.net. Wird nichts gefunden, wird
+   * eine Url zur Bildersuche von Startpage gesetzt
+   */
+  public void setAircraftPhotoUrls(AircraftSuperclass aircraft) {
+    if (aircraft == null) {
+      return;
     }
 
-    /**
-     * Setzt den Zustand des Flugzeugs
-     *
-     * @param aircraft AircraftSuperclass
-     */
-    public void setAircraftState(AircraftSuperclass aircraft) {
-        if (aircraft.getOnGround() != null && !aircraft.getOnGround() && aircraft.getVerticalRate() != null) {
-            if (aircraft.getVerticalRate() < -150) {
-                aircraft.setAircraftState(AircraftStates.DOWN.toString());
-            } else if (aircraft.getVerticalRate() > 150) {
-                aircraft.setAircraftState(AircraftStates.UP.toString());
-            } else {
-                aircraft.setAircraftState(AircraftStates.HOLD.toString());
-            }
-        } else if (aircraft.getOnGround() != null && aircraft.getOnGround()) {
-            // Wenn Flugzeug am Boden ist
-            aircraft.setAircraftState(AircraftStates.GROUND.toString());
-        } else {
-            // Zustand unbekannt
-            aircraft.setAircraftState(null);
-        }
+    String url;
+    PlanespottersResponse planespottersResponse;
+
+    // Hole Photo-Urls von planespotters.net
+    planespottersResponse = getUrlsFromPlanespotters(aircraft.getHex());
+
+    if (planespottersResponse == null) {
+      // Baue Link für Startpage-Bildersuche
+      url = buildStartpagePhotoUrl(aircraft.getHex(), aircraft.getRegistration());
+
+      // Setze Link für Suchergebnisse
+      aircraft.setUrlPhotoWebsite(url);
+
+      // Setze Information, dass Suche bereits stattfand
+      aircraft.setUrlPhotoDirect("noPhotoFound");
+    } else {
+      // Setze Daten von planespotters.net
+      aircraft.setUrlPhotoDirect(planespottersResponse.thumbnailLargeUrl());
+      aircraft.setUrlPhotoWebsite(planespottersResponse.linkToWebsiteUrl());
+      aircraft.setPhotoPhotographer(planespottersResponse.photographer());
+    }
+  }
+
+  /**
+   * Gibt einen Link zur Bildersuche von Startpage mit der registration
+   * oder der hex zurück (registration wird dabei priorisiert)
+   *
+   * @return String
+   */
+  private String buildStartpagePhotoUrl(String hex, String registration) {
+    // Hole Url für Suchmaschinenergebnisse aus Configuration
+    String searchEngineUrl = configuration.getSearchEngineUrl();
+
+    // Prüfe, ob Platzhalter in Url vorhanden ist
+    if (!searchEngineUrl.contains("<PLACEHOLDER>")) {
+      return null;
     }
 
-    /**
-     * Setzt Flugzeug-Photo, Link zur Website mit dem Photo und dem
-     * Photographen von planespotters.net. Wird nichts gefunden, wird
-     * eine Url zur Bildersuche von Startpage gesetzt
-     */
-    public void setAircraftPhotoUrls(AircraftSuperclass aircraft) {
-        if (aircraft == null) {
-            return;
-        }
+    // Baue Link zu Startpage-Suchergebnissen für aircraft
+    if (registration != null && !registration.isEmpty() && !registration.equals("null")) {
+      // Ersetze Leerstellen in der Registration mit "+", wenn militärische
+      // Registrierungen falsch übermittelt wurden
+      if (registration.contains(" ")) {
+        registration = registration.replace(" ", "+").trim();
+      }
 
-        String url;
-        PlanespottersResponse planespottersResponse;
+      // Ersetze Platzhalter in Url mit registration
+      return searchEngineUrl.replace("<PLACEHOLDER>", "\"" + registration + "\"");
+    } else if (hex != null && !hex.isEmpty() && !hex.equals("null")) {
+      hex = hex.trim();
 
-        // Hole Photo-Urls von planespotters.net
-        planespottersResponse = getUrlsFromPlanespotters(aircraft.getHex());
+      // Ersetze Platzhalter in Url mit hex
+      return searchEngineUrl.replace("<PLACEHOLDER>", "\"" + hex + "\"");
+    }
+    return null;
+  }
 
-        if (planespottersResponse == null) {
-            // Baue Link für Startpage-Bildersuche
-            url = buildStartpagePhotoUrl(aircraft.getHex(), aircraft.getRegistration());
-
-            // Setze Link für Suchergebnisse
-            aircraft.setUrlPhotoWebsite(url);
-
-            // Setze Information, dass Suche bereits stattfand
-            aircraft.setUrlPhotoDirect("noPhotoFound");
-        } else {
-            // Setze Daten von planespotters.net
-            aircraft.setUrlPhotoDirect(planespottersResponse.thumbnailLargeUrl());
-            aircraft.setUrlPhotoWebsite(planespottersResponse.linkToWebsiteUrl());
-            aircraft.setPhotoPhotographer(planespottersResponse.photographer());
-        }
+  /**
+   * Fragt Daten mit der hex bei planespotters.net an. Methode gibt die Url zum
+   * Flugzeug-Photo, dem Link zur Website mit dem Photo sowie den Photographen
+   * in einem Record zurück. Wenn Fehler auftreten oder nichts gefunden wird,
+   * wird null zurückgegeben
+   *
+   * @return PlanespottersResponse
+   */
+  private PlanespottersResponse getUrlsFromPlanespotters(String hex) {
+    if (hex == null || hex.isEmpty() || hex.equals("null")) {
+      return null;
     }
 
-    /**
-     * Gibt einen Link zur Bildersuche von Startpage mit der registration
-     * oder der hex zurück (registration wird dabei priorisiert)
-     *
-     * @return String
-     */
-    private String buildStartpagePhotoUrl(String hex, String registration) {
-        // Hole Url für Suchmaschinenergebnisse aus Configuration
-        String searchEngineUrl = configuration.getSearchEngineUrl();
+    final String query = "https://api.planespotters.net/pub/photos/hex/" + hex.trim();
+    PlanespottersResponse response = null;
 
-        // Prüfe, ob Platzhalter in Url vorhanden ist
-        if (!searchEngineUrl.contains("<PLACEHOLDER>")) {
-            return null;
+    // Anfrage an planespotters
+    String jsonStr = networkHandler.makeServiceCall(query);
+
+    try {
+      if (jsonStr != null) {
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        JSONArray photosArray = jsonObject.getJSONArray("photos");
+
+        if (photosArray.length() > 0) {
+          JSONObject photosObject = photosArray.getJSONObject(0);
+
+          String thumbnailLargeUrl = photosObject.getJSONObject("thumbnail_large").getString("src");
+          String linkToWebsiteUrl = photosObject.getString("link");
+          String photographer = photosObject.getString("photographer");
+
+          response = new PlanespottersResponse(thumbnailLargeUrl, linkToWebsiteUrl, photographer);
         }
-
-        // Baue Link zu Startpage-Suchergebnissen für aircraft
-        if (registration != null && !registration.isEmpty() && !registration.equals("null")) {
-            // Ersetze Leerstellen in der Registration mit "+", wenn militärische
-            // Registrierungen falsch übermittelt wurden
-            if (registration.contains(" ")) {
-                registration = registration.replace(" ", "+").trim();
-            }
-
-            // Ersetze Platzhalter in Url mit registration
-            return searchEngineUrl.replace("<PLACEHOLDER>", "\"" + registration + "\"");
-        } else if (hex != null && !hex.isEmpty() && !hex.equals("null")) {
-            hex = hex.trim();
-
-            // Ersetze Platzhalter in Url mit hex
-            return searchEngineUrl.replace("<PLACEHOLDER>", "\"" + hex + "\"");
-        }
-        return null;
+      }
+    } catch (Exception e) {
+      log.info("Server: Error consuming photo urls from planespotters.net. Query: " + query);
     }
 
-    /**
-     * Fragt Daten mit der hex bei planespotters.net an. Methode gibt die Url zum
-     * Flugzeug-Photo, dem Link zur Website mit dem Photo sowie den Photographen
-     * in einem Record zurück. Wenn Fehler auftreten oder nichts gefunden wird,
-     * wird null zurückgegeben
-     *
-     * @return PlanespottersResponse
-     */
-    private PlanespottersResponse getUrlsFromPlanespotters(String hex) {
-        if (hex == null || hex.isEmpty() || hex.equals("null")) {
-            return null;
-        }
+    return response;
+  }
 
-        final String query = "https://api.planespotters.net/pub/photos/hex/" + hex.trim();
-        PlanespottersResponse response = null;
-
-        // Anfrage an planespotters
-        String jsonStr = networkHandler.makeServiceCall(query);
-
-        try {
-            if (jsonStr != null) {
-                JSONObject jsonObject = new JSONObject(jsonStr);
-                JSONArray photosArray = jsonObject.getJSONArray("photos");
-
-                if (photosArray.length() > 0) {
-                    JSONObject photosObject = photosArray.getJSONObject(0);
-
-                    String thumbnailLargeUrl = photosObject.getJSONObject("thumbnail_large").getString("src");
-                    String linkToWebsiteUrl = photosObject.getString("link");
-                    String photographer = photosObject.getString("photographer");
-
-                    response = new PlanespottersResponse(thumbnailLargeUrl, linkToWebsiteUrl, photographer);
-                }
-            }
-        } catch (Exception e) {
-            log.info("Server: Error consuming photo urls from planespotters.net. Query: " + query);
-        }
-
-        return response;
-    }
-
-    /**
-     * Berechnet und setzt das Alter eines Flugzeugs
-     *
-     * @param aircraft AircraftSuperclass
-     * @param built    String with format YYYY-01-01
-     */
-    public void calcAndSetAge(AircraftSuperclass aircraft, String built) {
-        int builtYear = built.length() > 4 ? Integer.parseInt(built.substring(0, 4)) : Integer.parseInt(built);
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        int age = year - builtYear;
-        aircraft.setAge(age);
-    }
+  /**
+   * Berechnet und setzt das Alter eines Flugzeugs
+   *
+   * @param aircraft AircraftSuperclass
+   * @param built    String with format YYYY-01-01
+   */
+  public void calcAndSetAge(AircraftSuperclass aircraft, String built) {
+    int builtYear = built.length() > 4 ? Integer.parseInt(built.substring(0, 4)) : Integer.parseInt(built);
+    int year = Calendar.getInstance().get(Calendar.YEAR);
+    int age = year - builtYear;
+    aircraft.setAge(age);
+  }
 }

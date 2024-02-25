@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShapeDataRepository extends CrudRepository<ShapeData, String> {
-    ShapeData findByDesignator(String designator);
+  ShapeData findByDesignator(String designator);
 }

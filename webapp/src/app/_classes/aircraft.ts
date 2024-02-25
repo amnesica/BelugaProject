@@ -67,7 +67,16 @@ export class Aircraft {
   icaoAircraftType!: any;
   age!: any;
   aircraftState!: any;
-  isFromOpensky!: any;
+  isFromRemote!: string;
+  roll: any;
+  ias: any;
+  tas: any;
+  mach: any;
+  magHeading!: any;
+  trueHeading!: any;
+  messages: any;
+  emergency: any;
+  navModes: any;
 
   // Daten für Info-Abschnitt PositionOfMinimumDistance
   pomdLatitude!: any;
@@ -97,16 +106,25 @@ export class Aircraft {
   iconStyle: any = null;
 
   //Trail des Flugzeugs als Punkte
-  trackLinePoints: any;
+  trackLinePoints: any; // 2D-Karte
+  track3d: any; // Object-Wrapper für 3D-Daten
 
   // Position des Herkunfts-Flughafens
   // und des Zielflughafens
   positionOrg: any;
   positionDest: any;
 
-  // Trail des Flugzeugs als Feature
+  // Trail des Flugzeugs als Feature (2D)
   trail_features: any = null;
   layer: any = null;
+
+  // Trail des Flugzeugs als Feature (Line)
+  trail_features3d_line: any = null;
+  layer3dLine: any = null;
+
+  // Trail des Flugzeugs als Feature (Bar)
+  trail_features3d_bar: any = null;
+  layer3dBar: any = null;
 
   // Url für Flugzeug-Foto
   urlPhotoDirect: any = null;
@@ -175,6 +193,22 @@ export class Aircraft {
   // Distanz zum Device (Device-Position)
   distanceDevicePos: any = null;
 
+  // Altitude-List für Chart
+  aircraftTrailAltitudes: any;
+
+  // Distanzen zum Anzeigen des Flight-Progress
+  totalFlightPathInKm: any;
+  travelledDistanceInKm: any;
+  travelledDistanceInPercent: any;
+
+  // Flight-Progress für 'left' und 'width' css attributes
+  flightProgressFlownPath: any;
+  flightProgressPlaneIconLeft: any;
+  travelDistanceRemainingInKm: any;
+
+  // Special Tags
+  isMilitary: any;
+
   // Konstruktor mit Minimaldaten
   constructor(
     hex: string,
@@ -204,8 +238,18 @@ export class Aircraft {
     selectedHeading: number,
     sourceList: string,
     aircraftState: any,
-    isFromOpensky: any,
-    lastUpdate: any
+    isFromRemote: string,
+    lastUpdate: any,
+    isMilitary: any,
+    roll: any,
+    ias: any,
+    tas: any,
+    mach: any,
+    magHeading: any,
+    trueHeading: any,
+    messages: any,
+    emergency: any,
+    navModes: any
   ) {
     this.hex = hex;
     this.latitude = latitude;
@@ -234,8 +278,18 @@ export class Aircraft {
     this.selectedHeading = selectedHeading;
     this.sourceList = sourceList;
     this.aircraftState = aircraftState;
-    this.isFromOpensky = isFromOpensky;
+    this.isFromRemote = isFromRemote;
     this.lastUpdate = lastUpdate;
+    this.isMilitary = isMilitary;
+    this.roll = roll;
+    this.ias = ias;
+    this.tas = tas;
+    this.mach = mach;
+    this.magHeading = magHeading;
+    this.trueHeading = trueHeading;
+    this.messages = messages;
+    this.emergency = emergency;
+    this.navModes = navModes;
   }
 
   /**
@@ -272,8 +326,18 @@ export class Aircraft {
       aircraftJSONElement.selectedHeading,
       aircraftJSONElement.sourceList,
       aircraftJSONElement.aircraftState,
-      aircraftJSONElement.isFromOpensky,
-      aircraftJSONElement.lastUpdate
+      aircraftJSONElement.isFromRemote,
+      aircraftJSONElement.lastUpdate,
+      aircraftJSONElement.isMilitary,
+      aircraftJSONElement.roll,
+      aircraftJSONElement.ias,
+      aircraftJSONElement.tas,
+      aircraftJSONElement.mach,
+      aircraftJSONElement.magHeading,
+      aircraftJSONElement.trueHeading,
+      aircraftJSONElement.messages,
+      aircraftJSONElement.emergency,
+      aircraftJSONElement.navModes
     );
   }
 
@@ -288,11 +352,13 @@ export class Aircraft {
       this.altitude,
       this.onGround,
       true,
-      this.isMarked
+      this.isMarked,
+      false,
+      false
     );
 
-    // Setze StrokeColor anders, wenn Flugzeug von Opensky kommt
-    if (this.isFromOpensky) {
+    // Setze StrokeColor anders, wenn Flugzeug von Remote kommt
+    if (this.isFromRemote != null || this.isFromRemote != undefined) {
       this.strokeColor = '#fff';
     } else {
       this.strokeColor = '#000';
@@ -337,7 +403,7 @@ export class Aircraft {
 
         if (Globals.amountDisplayedAircraft < 200) {
           this.markerIcon = new Icon({
-            scale: this.shapeScale * Globals.scaleIcons,
+            scale: this.shapeScale * Globals.globalScaleFactorIcons,
             imgSize: [this.shapeData.w, this.shapeData.h],
             src: svgURI,
             rotation: this.shapeData.noRotate
@@ -349,7 +415,7 @@ export class Aircraft {
         }
       } else {
         this.markerIcon = new Icon({
-          scale: this.shapeScale * Globals.scaleIcons,
+          scale: this.shapeScale * Globals.globalScaleFactorIcons,
           imgSize: [this.shapeData.w, this.shapeData.h],
           img: Globals.iconCache[svgKey],
           rotation: this.shapeData.noRotate
@@ -543,8 +609,17 @@ export class Aircraft {
     this.urlPhotoDirect = listElement.urlPhotoDirect;
     this.urlPhotoWebsite = listElement.urlPhotoWebsite;
     this.photoPhotographer = listElement.photoPhotographer;
-    this.isFromOpensky = listElement.isFromOpensky;
+    this.isFromRemote = listElement.isFromRemote;
     this.lastUpdate = listElement.lastUpdate;
+    this.roll = listElement.roll;
+    this.ias = listElement.ias;
+    this.tas = listElement.tas;
+    this.mach = listElement.mach;
+    this.magHeading = listElement.magHeading;
+    this.trueHeading = listElement.trueHeading;
+    this.messages = listElement.messages;
+    this.emergency = listElement.emergency;
+    this.navModes = listElement.navModes;
 
     // Generell: Berechne POMD-Point nur, wenn dieser auch angefragt wird
     // Ausnahme: Flugzeug ist das aktuell markierte, dann aktualisiere Werte,
@@ -589,6 +664,12 @@ export class Aircraft {
       );
     } else {
       this.distanceDevicePos = null;
+    }
+
+    // Berechne Flight-Progress, wenn markiert
+    if (this.isMarked) {
+      this.updateTravelledDistanceInKm();
+      this.updateTravelledDistanceInPercent();
     }
   }
 
@@ -637,8 +718,10 @@ export class Aircraft {
         'size',
         this.shapeScale *
           Math.max(this.shapeData.w, this.shapeData.h) *
-          this.pngScale *
-          (Globals.scaleIcons / 1.3)
+          (this.pngScale < 0.39
+            ? this.pngScale * Globals.smallScaleFactorIcons
+            : this.pngScale) *
+          (Globals.globalScaleFactorIcons / 1.3)
       );
       this.glMarker.set(
         'cx',
@@ -755,8 +838,11 @@ export class Aircraft {
    *              Karte war und nur die Position geaendert wird
    */
   createOrMoveOLPoint(moved: boolean) {
+    let longitude = this.position[0];
+    let latitude = this.position[1];
+
     // Erstelle Projection aus Positions-Daten
-    let proj = olProj.fromLonLat(this.position);
+    const proj = olProj.fromLonLat([longitude, latitude]);
 
     // Erstelle OpenLayers-Point für die Position, wenn es diesen noch nicht gibt
     if (!this.olPoint) {
@@ -776,7 +862,9 @@ export class Aircraft {
       this.altitude,
       this.onGround,
       false,
-      this.isMarked
+      this.isMarked,
+      false,
+      false
     );
 
     this.glMarker.set('r', rgb[0]);
@@ -817,6 +905,8 @@ export class Aircraft {
    */
   createFeatures() {
     this.trail_features = new Vector();
+    this.trail_features3d_line = new Vector();
+    this.trail_features3d_bar = new Vector();
 
     this.layer = new VectorLayer({
       source: this.trail_features,
@@ -827,10 +917,34 @@ export class Aircraft {
     this.layer.set('hex', this.hex);
     this.layer.set('isTrail', true);
 
+    this.layer3dLine = new VectorLayer({
+      source: this.trail_features3d_line,
+      declutter: false,
+      zIndex: 151,
+      visible: false,
+    });
+    this.layer3dLine.set('hex', this.hex);
+    this.layer3dLine.set('isTrail', true);
+
+    this.layer3dBar = new VectorLayer({
+      source: this.trail_features3d_bar,
+      declutter: false,
+      zIndex: 151,
+      visible: false,
+    });
+    this.layer3dBar.set('hex', this.hex);
+    this.layer3dBar.set('isTrail', true);
+
     Globals.trailGroup.push(this.layer);
+    Globals.trailGroup.push(this.layer3dLine);
+    Globals.trailGroup.push(this.layer3dBar);
 
     // initialisiere das Array für die LinienSegmente
     this.trackLinePoints = [];
+
+    this.track3d = {
+      trailPoints: [],
+    };
   }
 
   /**
@@ -842,64 +956,74 @@ export class Aircraft {
   makeTrail(): void {
     if (this.position === null) return;
 
+    // Initialisiere Trail bei Remote-Flugzeuge, da ansonsten kein Trail geupdatet
+    // wird und 3d-Komponente nicht funktioniert
+    if (this.isFromRemote != undefined) this.initTrail();
+
     if (this.aircraftTrailList === null || this.aircraftTrailList === undefined)
       return;
 
-    if (!this.trail_features) this.createFeatures();
-
-    // Setze Trail-Variablen zurück
-    this.trail_features.clear();
-    this.trackLinePoints = [];
+    this.initTrail();
 
     for (let i = 0; i < this.aircraftTrailList.length; i++) {
       let longitude = this.aircraftTrailList[i].longitude;
       let latitude = this.aircraftTrailList[i].latitude;
       let altitude = this.aircraftTrailList[i].altitude;
       let reenteredAircraft = this.aircraftTrailList[i].reenteredAircraft;
+      let timestamp = this.aircraftTrailList[i].timestamp;
+      let track = this.aircraftTrailList[i].track;
+      let roll = this.aircraftTrailList[i].roll;
 
-      this.trackLinePoints.push(
-        olProj.transform([longitude, latitude], 'EPSG:4326', 'EPSG:3857')
+      this.addTrack2D(longitude, latitude);
+
+      this.addTrack3D(
+        longitude,
+        latitude,
+        altitude,
+        timestamp,
+        track,
+        roll,
+        reenteredAircraft
       );
 
+      this.updateAltitudeData(timestamp, reenteredAircraft, altitude);
+
       if (this.trackLinePoints.length > 1) {
-        let featureLine = new Feature({
-          geometry: new LineString([
-            this.trackLinePoints[this.trackLinePoints.length - 1],
-            this.trackLinePoints[this.trackLinePoints.length - 2],
-          ]),
-        });
-
-        let style;
-
-        // Setze Style des LineStrings
-        if (reenteredAircraft) {
-          // Setze gestrichelte Linie als Style des LineString,
-          // sollte Flugzeug ein reeteredAircraft sein
-          style = Styles.DashedLineStyle;
-        } else {
-          // Berechne Farbwert des Trailabschnittes
-          let trailColor = Markers.getColorFromAltitude(
-            altitude,
-            this.onGround,
-            true,
-            false
-          );
-
-          // Erstelle Style des Trailabschnittes
-          let color = trailColor;
-          style = new Style({
-            fill: new Fill({ color: color }),
-            stroke: new Stroke({ color: color, width: 4 }),
-          });
-        }
-
-        // Setze Style
-        featureLine.setStyle(style);
-
-        // Fuege erstellte Linie zu allen
-        // Linien hinzu
-        this.trail_features.addFeature(featureLine);
+        this.addLineFeatureToLayer(reenteredAircraft, altitude);
       }
+    }
+  }
+
+  initTrail() {
+    if (!this.trail_features) this.createFeatures();
+
+    // Setze Trail-Variablen zurück
+    this.trail_features.clear();
+    this.trail_features3d_line.clear();
+    this.trail_features3d_bar.clear();
+    this.trackLinePoints = [];
+    this.track3d = undefined;
+    this.aircraftTrailAltitudes = undefined;
+  }
+
+  /**
+   * Update Datenstruktur für Altitude Chart mit Altitude
+   * @param timestamp any
+   * @param reenteredAircraft any
+   * @param altitude any
+   */
+  updateAltitudeData(timestamp: any, reenteredAircraft: any, altitude: any) {
+    let chartDataPoint = {
+      x: timestamp,
+      y: reenteredAircraft ? null : altitude,
+    };
+
+    if (this.aircraftTrailAltitudes == undefined) {
+      this.aircraftTrailAltitudes = [
+        { data: [{ x: timestamp, y: reenteredAircraft ? null : altitude }] },
+      ];
+    } else {
+      this.aircraftTrailAltitudes[0].data.push(chartDataPoint);
     }
   }
 
@@ -910,52 +1034,52 @@ export class Aircraft {
    *
    * @param selectedFeeder Feeder
    */
-  updateTrail(selectedFeeder: any) {
+  updateTrail() {
     if (
       this.isMarked &&
-      selectedFeeder == 'AllFeeder' &&
       this.allDataWasRequested &&
       this.position &&
       this.trackLinePoints
     ) {
       // Füge neuen Trailpunkt hinzu
-      this.trackLinePoints.push(
-        olProj.transform(
-          [this.longitude, this.latitude],
-          'EPSG:4326',
-          'EPSG:3857'
-        )
-      );
+      this.addTrack2D(this.longitude, this.latitude);
 
-      if (this.trackLinePoints.length > 1) {
-        let featureLine = new Feature({
-          geometry: new LineString([
-            this.trackLinePoints[this.trackLinePoints.length - 1],
-            this.trackLinePoints[this.trackLinePoints.length - 2],
-          ]),
-        });
+      if (this.track3d) {
+        // Verhindere das Position doppelt in trailPoints ist
+        const lastIndex = this.track3d.trailPoints.length;
+        let lastTrack3d = this.track3d.trailPoints[lastIndex - 1];
+        let lastLon = lastTrack3d.longitude;
+        let lastLat = lastTrack3d.latitude;
 
-        // Berechne Farbwert des Trailabschnittes
-        let trailColor = Markers.getColorFromAltitude(
+        if (lastLon != this.longitude && lastLat && this.latitude) {
+          this.addTrack3D(
+            this.longitude,
+            this.latitude,
+            this.altitude,
+            new Date().getTime(),
+            this.track,
+            this.roll,
+            false
+          );
+        }
+      } else {
+        // Füge auch Trail von Remote-Flugzeugen hinzu (haben kein makeTrail() vorher)
+        this.addTrack3D(
+          this.longitude,
+          this.latitude,
           this.altitude,
-          this.onGround,
-          true,
+          new Date().getTime(),
+          this.track,
+          this.roll,
           false
         );
+      }
 
-        // Erstelle Style des Trailabschnittes
-        let color = trailColor;
-        let style = new Style({
-          fill: new Fill({ color: color }),
-          stroke: new Stroke({ color: color, width: 4 }),
-        });
+      if (this.trackLinePoints.length > 1) {
+        this.addLineFeatureToLayer(false, this.altitude);
 
-        // Setze Style
-        featureLine.setStyle(style);
-
-        // Fuege erstellte Linie zu allen
-        // Linien hinzu
-        this.trail_features.addFeature(featureLine);
+        // Aktualisiere Daten für Altitude Chart mit aktueller Höhe
+        this.updateAltitudeData(Math.round(Date.now()), false, this.altitude);
       }
     }
   }
@@ -963,9 +1087,27 @@ export class Aircraft {
   /**
    * Macht den Trail des Flugzeugs sichtbar
    */
-  makeTrailVisible() {
+  setTrailVisibility2d(visible: boolean) {
     if (this.layer) {
-      this.layer.set('visible', true);
+      this.layer.set('visible', visible);
+    }
+  }
+
+  /**
+   * Macht den 3d-Trail (Line) des Flugzeugs sichtbar
+   */
+  setTrailVisibility3dLine(visible: boolean) {
+    if (this.layer3dLine) {
+      this.layer3dLine.set('visible', visible);
+    }
+  }
+
+  /**
+   * Macht den 3d-Trail (Bar) des Flugzeugs sichtbar
+   */
+  setTrailVisibility3dBar(visible: boolean) {
+    if (this.layer3dBar) {
+      this.layer3dBar.set('visible', visible);
     }
   }
 
@@ -1056,6 +1198,18 @@ export class Aircraft {
       this.layer = null;
     }
 
+    if (this.layer3dLine) {
+      Globals.trailGroup.remove(this.layer3dLine);
+      this.trail_features3d_line.clear();
+      this.layer3dLine = null;
+    }
+
+    if (this.layer3dBar) {
+      Globals.trailGroup.remove(this.layer3dBar);
+      this.trail_features3d_bar.clear();
+      this.layer3dBar = null;
+    }
+
     for (let key in Object.keys(this)) {
       delete this[key];
     }
@@ -1074,6 +1228,12 @@ export class Aircraft {
       Globals.WebglFeatures.removeFeature(this.glMarker);
       this.glMarker.visible = false;
     }
+
+    delete this.glMarker;
+    delete this.marker;
+    delete this.olPoint;
+    delete this.markerSvgKey;
+    delete this.styleKey;
   }
 
   /**
@@ -1085,6 +1245,202 @@ export class Aircraft {
     if (this.pomdMarker) {
       Globals.POMDFeatures.removeFeature(this.pomdMarker);
       this.pomdMarker = undefined;
+    }
+  }
+
+  addTrack2D(longitude, latitude) {
+    this.trackLinePoints.push({
+      coordinate: olProj.transform(
+        [longitude, latitude],
+        'EPSG:4326',
+        'EPSG:3857'
+      ),
+    });
+  }
+
+  addTrack3D(
+    longitude,
+    latitude,
+    altitude,
+    timestamp,
+    track,
+    roll,
+    isReentered
+  ) {
+    if (!this.track3d) {
+      this.track3d = {
+        trailPoints: [],
+      };
+    }
+
+    this.track3d.trailPoints.push({
+      longitude: longitude,
+      latitude: latitude,
+      altitude: altitude * 0.3048, // Cesium braucht Meter
+      color: Markers.getColorFromAltitude(
+        altitude,
+        false,
+        false,
+        false,
+        true,
+        isReentered
+      ),
+      timestamp: timestamp,
+      track: track,
+      isReentered: isReentered,
+      roll: roll,
+      hex: this.hex,
+    });
+  }
+
+  trackLinePointsAre180Crosspoints() {
+    if (
+      (this.trackLinePoints[this.trackLinePoints.length - 1].coordinate[0] ==
+        20037508.342789244 &&
+        this.trackLinePoints[this.trackLinePoints.length - 2].coordinate[0] ==
+          -20037508.342789244) ||
+      (this.trackLinePoints[this.trackLinePoints.length - 1].coordinate[0] ==
+        -20037508.342789244 &&
+        this.trackLinePoints[this.trackLinePoints.length - 2].coordinate[0] ==
+          20037508.342789244)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  addLineFeatureToLayer(reenteredAircraft: boolean, altitude: number) {
+    if (this.trackLinePointsAre180Crosspoints()) return;
+
+    let featureLine = new Feature({
+      geometry: new LineString([
+        this.trackLinePoints[this.trackLinePoints.length - 1].coordinate,
+        this.trackLinePoints[this.trackLinePoints.length - 2].coordinate,
+      ]),
+    });
+
+    let style;
+
+    // Setze Style des LineStrings
+    if (reenteredAircraft) {
+      // Setze gestrichelte Linie als Style des LineString,
+      // sollte Flugzeug ein reeteredAircraft sein
+      style = Styles.DashedLineStyle;
+    } else {
+      let onGround = altitude <= 0;
+
+      // Berechne Farbwert des Trailabschnittes
+      let trailColor = Markers.getColorFromAltitude(
+        altitude,
+        onGround,
+        true,
+        false,
+        false,
+        false
+      );
+
+      // Erstelle Style des Trailabschnittes
+      let color = trailColor;
+      style = new Style({
+        fill: new Fill({ color: color }),
+        stroke: new Stroke({ color: color, width: 4 }),
+      });
+    }
+
+    // Setze Style
+    featureLine.setStyle(style);
+
+    // Fuege erstellte Linie zu allen
+    // Linien hinzu
+    this.trail_features.addFeature(featureLine);
+  }
+
+  calcFlightPathLength() {
+    if (!this.positionOrg || !this.positionDest) return;
+
+    this.totalFlightPathInKm = Helper.getDistanceBetweenPositions(
+      this.positionOrg[1],
+      this.positionOrg[0],
+      this.positionDest[1],
+      this.positionDest[0]
+    );
+
+    this.updateTravelledDistanceInKm();
+    this.updateTravelledDistanceInPercent();
+
+    // debug
+    // console.log('totalFlightPathInKm: ' + this.totalFlightPathInKm + ' km');
+    // console.log('travelledDistanceInKm: ' + this.travelledDistanceInKm + ' km');
+    // console.log('travelled: ' + this.travelledDistanceInPercent + ' %');
+    // console.log(
+    //  'travelDistanceRemainingInKm: ' + this.travelDistanceRemainingInKm + ' km'
+    // );
+    // console.log('----');
+  }
+
+  updateTravelledDistanceInKm() {
+    if (
+      !this.positionOrg ||
+      !this.positionDest ||
+      !this.latitude ||
+      !this.longitude
+    )
+      return;
+
+    this.travelDistanceRemainingInKm = Math.abs(
+      Helper.getDistanceBetweenPositions(
+        this.positionDest[1],
+        this.positionDest[0],
+        this.latitude,
+        this.longitude
+      )
+    ).toFixed(1);
+
+    this.travelledDistanceInKm = (
+      this.totalFlightPathInKm - this.travelDistanceRemainingInKm
+    ).toFixed(1);
+  }
+
+  updateTravelledDistanceInPercent() {
+    if (
+      !this.positionOrg ||
+      !this.positionDest ||
+      !this.latitude ||
+      !this.longitude
+    )
+      return;
+    this.travelledDistanceInPercent =
+      (this.travelledDistanceInKm / this.totalFlightPathInKm) * 100;
+
+    this.calcFlightProgressCSSValues();
+  }
+
+  calcFlightProgressCSSValues() {
+    if (
+      !this.positionOrg ||
+      !this.positionDest ||
+      !this.latitude ||
+      !this.longitude ||
+      !this.travelledDistanceInPercent
+    )
+      return;
+
+    this.flightProgressFlownPath = this.travelledDistanceInPercent + '%';
+
+    // Da Flugzeug-Icon im Flight Progress by default in der Mitte den richtigen Wert
+    // hat, muss dieser Wert angepasst werden, damit am Ende das Icon nicht über die
+    // flown path bar hinausschießt
+    if (this.travelledDistanceInPercent <= 8) {
+      this.flightProgressPlaneIconLeft = 8 + '%';
+    } else if (
+      this.travelledDistanceInPercent > 8 &&
+      this.travelledDistanceInPercent < 96
+    ) {
+      this.flightProgressPlaneIconLeft =
+        this.travelledDistanceInPercent + 4 + '%';
+    } else {
+      this.flightProgressPlaneIconLeft = '100%';
     }
   }
 }
