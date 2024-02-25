@@ -42,7 +42,7 @@ dependencies {
 
 group = "com.amnesica"
 version = "4-0-0"
-description = "master" // stage (dev/master)
+description = "dev" // stage (dev/master)
 
 java {
   sourceCompatibility = JavaVersion.VERSION_17
