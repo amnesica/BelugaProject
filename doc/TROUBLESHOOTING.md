@@ -3,94 +3,93 @@
 ### Installation
 
 While running
-   ```
-   $ ./run.sh install
-   ```
+
+```
+$ ./run.sh install
+```
+
 or
-   ```
-   $ sudo ./run.sh install
-   ```
-error messages might appear. Here are some hints to handle them. 
+
+```
+$ sudo ./run.sh install
+```
+
+error messages might appear. Here are some hints to handle them.
 
 First hint: doublecheck your `.env` file. All entries with TODO have to be replaced with your values otherwise the build process may fail.
 
 #### Build docker containers
 
-   The process starts with building the `postgres` container. After that the containers `server` and `webapp` will be created simultanously.
+The process starts with pulling the `postgres`, `belugaproject/belugaproject-server` and `belugaproject/belugaproject-webapp` images.
 
-   Possible errors:
+Possible errors:
 
-   Sometimes we got error messages like this in the container build process:
+Sometimes we got error messages like this in the container build process:
 
-   > - Error response from daemon: Head "https://registry-1.docker.io/v2/library/postgres/manifests/13.1-alpine": net/http: TLS handshake timeout
-   > - ERROR [webapp internal] load metadata for docker.io/library/node:20-alpine                                     0.2s
-   > - Error [server internal] load metadata for docker.io/library/gradle:8.1.1-jdk17-focal:
-   > - failed to solve: rpc error: code = Unknown desc = failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to authorize: rpc error: code = Unknown desc = failed to fetch anonymous token: Get "https://...: read tcp ... -> ... read: connection reset by peer
+> - Error response from daemon: Head "https://registry-1.docker.io/v2/library/postgres/manifests/13.1-alpine": net/http: TLS handshake timeout
+> - ERROR [webapp internal] load metadata for docker.io/library/node:20-alpine 0.2s
+> - Error [server internal] load metadata for docker.io/library/gradle:8.1.1-jdk17-focal:
+> - failed to solve: rpc error: code = Unknown desc = failed to solve with frontend dockerfile.v0: failed to create LLB definition: failed to authorize: rpc error: code = Unknown desc = failed to fetch anonymous token: Get "https://...: read tcp ... -> ... read: connection reset by peer
 
-   In all this cases we simply repeated 
-   ```
-   $ ./run.sh install
-   ```
-   until container build was finished. We guess that timeouts occured while downloading objects from repositories. 
+In all this cases we simply repeated
 
-   Sometimes the simultanous container build process for containers `webapp` and `server` failed with timeout or network error messages. Repeating
-   ```
-   $ ./run.sh install
-   ```
-   did not work. In this case we build the containers one after one with
-   ```
-   $ ./run.sh docker-build server
-   $ ./run.sh docker-build webapp
-   ```
-   When both containers were built, proceed with
-   ```
-   $ ./run.sh install
-   ```
-   to finish installation.
+```
+$ ./run.sh install
+```
+
+until container build was finished. We guess that timeouts occured while downloading objects from repositories.
+
+Sometimes the simultanous container pull process for containers `belugaproject/belugaproject-webapp` and `belugaproject/belugaproject-server` failed with timeout or network error messages. Proceed with
+
+```
+$ ./run.sh install
+```
+
+to finish installation.
 
 #### Populating database with data
 
-   This will take some time. Be patient :-)
+This will take some time. Be patient :-)
 
-   On an RaspberryPi 4B
+On an RaspberryPi 4B
 
-    - container build process takes about 14 minutes
     - load database process takes about 10 minutes
 
-   Our shellscripts report all steps both to terminal and to file. See loadAircraftData-output.txt and loadBelugaDb-output.txt in the BelugaProject root folder.
+Our shellscripts report all steps both to terminal and to file. See loadAircraftData-output.txt and loadBelugaDb-output.txt in the BelugaProject root folder.
 
-   The following errors might appear after container build is finished and database is to be populated with data:
+The following errors might appear after container build is finished and database is to be populated with data:
 
-   > psql: error: FATAL: the database system is in recovery mode
+> psql: error: FATAL: the database system is in recovery mode
 
-   In this case try execute `./run.sh load-db`.
+In this case try execute `./run.sh load-db`.
 
-   
 ### Running BelugaProject
 
-   When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser.
-   
-   `<system-prod-ip>` must be configured in your `.env` file as `PROD_BASE_URL_WEBAPP`.
+When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser.
 
-   On first run after installation it may take up to 3 minutes until all aircraft are visible due to database init processes.
+`<system-prod-ip>` must be configured in your `.env` file as `PROD_BASE_URL_WEBAPP`.
 
-   Some possible error messages:
-   > Whitelabel Error Page - This application has no explicit mapping for /error, so you are seeing this as a fallback. Fri Dec 22 16:02:08 UTC 2023 - There was an unexpected error (type=Not Found, status=404).
+On first run after installation it may take up to 3 minutes until all aircraft are visible due to database init processes.
 
-   Do you use Port 8080 instead of 8090 in URL?
+Some possible error messages:
 
-   > Configuration could not be loaded. Is the server online? Program will not be executed further.
+> Whitelabel Error Page - This application has no explicit mapping for /error, so you are seeing this as a fallback. Fri Dec 22 16:02:08 UTC 2023 - There was an unexpected error (type=Not Found, status=404).
 
-   Have you set the right IP adress at PROD_BASE_URL_WEBAPP in your .env file? It must be the IP-adress of your server.
-   
-   Are all 3 containers (postgres, server and webapp) running? Maybe containers are restarted permanently because of configuration errors or missing entries / lines in `.env` file? 
-   Check status of docker containers with command (sudo may be required)
-   ```
-   $ docker ps
-   ```
+Do you use Port 8080 instead of 8090 in URL?
 
+> Configuration could not be loaded. Is the server online? Program will not be executed further.
+
+Have you set the right IP adress at PROD_BASE_URL_WEBAPP in your .env file? It must be the IP-adress of your server.
+
+Are all 3 containers (postgres, server and webapp) running? Maybe containers are restarted permanently because of configuration errors or missing entries / lines in `.env` file?
+Check status of docker containers with command (sudo may be required)
+
+```
+$ docker ps
+```
 
 ### Opensky Network
+
 BelugaProject can show aircraft from [Opensky network](https://opensky-network.org/) only when you set valid Opensky-Credentials in your .env file. Otherwise option "Fetch from Opensky-Network" is not availible in BelugaProject Map settings.
 
 If you activated option "Fetch from Opensky-Network" but no aircraft are displayed, check if Opensky-Network is availible and active at all. Open [Opensky-Network Explorer](https://opensky-network.org/network/explorer) in another browser tab and check whether aircraft are displayed in your selected region.
@@ -99,4 +98,4 @@ If aircraft are displayed in [Opensky-Network Explorer](https://opensky-network.
 
 Also take a look into the BelugaProject server logfile, which can be displayed via Settings / About / Button "ShowLogs" - or at `<system-prod-ip>:8080/getLogs`. You may find error messages like this in logfile:
 
->    2023-12-21T19:42:47.227Z ERROR 7 --- [scheduling-1] c.a.b.services.aircraft.OpenskyService   : Server: Data from Opensky-Network could not get fetched or there are no planes in this area. Url: https://opensky-network.org/api/states/all?lamin=50.537986&lomin=-1.373059&lamax=57.246463&lomax=21.258777
+> 2023-12-21T19:42:47.227Z ERROR 7 --- [scheduling-1] c.a.b.services.aircraft.OpenskyService : Server: Data from Opensky-Network could not get fetched or there are no planes in this area. Url: https://opensky-network.org/api/states/all?lamin=50.537986&lomin=-1.373059&lamax=57.246463&lomax=21.258777
