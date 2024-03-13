@@ -1,12 +1,12 @@
 version: '2'
 
 services:
-  server:
+  belugaproject-server:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: server
-    container_name: server
+    image: belugaproject/belugaproject-server:4.0.0
+    container_name: belugaproject-server
     depends_on:
       - postgres
     environment:
@@ -39,12 +39,12 @@ services:
       - "8080:8080"
     restart: always
 
-  webapp:
+  belugaproject-webapp:
     build:
       context: .
       dockerfile: webapp/Dockerfile
-    image: webapp
-    container_name: webapp
+    image: belugaproject/belugaproject-webapp:4.0.0
+    container_name: belugaproject-webapp
     environment:
       - PROD_BASE_URL_WEBAPP=${PROD_BASE_URL_WEBAPP}
     ports:
