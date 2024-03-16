@@ -157,7 +157,7 @@ If you want to use the 3D view, follow the instructions in the [INSTALL.md](./IN
 
 8. Check Version of BelugaProject in browser
 
-   Open Settings/About. Check BuildTime, value should be approximately current date/time.
+   Open Settings/About.
 
    If you don't see the expected (new) version and BuildTime, clean browser cache and try again.
 
