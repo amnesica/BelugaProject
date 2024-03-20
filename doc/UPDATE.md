@@ -109,7 +109,7 @@ If you want to use the 3D view, follow the instructions in the [INSTALL.md](./IN
       nameFeeder=Name1,Name2
       ```
 
-   5. Enter the **color** of your feeders seperated by comma. This color is used later in statistical views (if you do not have a local feeder, set `colorFeeder=red` (valid color is needed here!)
+   5. Enter the **color** of your feeders seperated by comma. This color is used later in statistical views (if you do not have a local feeder, set `colorFeeder=red` (valid color is needed here!))
 
       ```
       colorFeeder=red,blue
@@ -138,21 +138,9 @@ If you want to use the 3D view, follow the instructions in the [INSTALL.md](./IN
 
    </details>
 
-6. Rebuild the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
+6. Pull updated docker images and execute the containers (webapp, server, postgres) and load the database in the base path of Beluga Project.
 
    `Important:` If you installed docker only for root user, you need to execute the command below with `sudo` privilege
-
-   Rebuild images and containers
-
-   ```
-   $ ./run.sh docker-build postgres
-   $ ./run.sh docker-build server
-   $ ./run.sh docker-build webapp
-   ```
-
-   This will take some time. On an RaspberryPi 4B container build takes about 20 minutes.
-
-   Proceed with next steps (loading database, start containers)
 
    ```
    $ ./run.sh install
@@ -169,7 +157,7 @@ If you want to use the 3D view, follow the instructions in the [INSTALL.md](./IN
 
 8. Check Version of BelugaProject in browser
 
-   Open Settings/About. Check BuildTime, value should be approximately current date/time.
+   Open Settings/About.
 
    If you don't see the expected (new) version and BuildTime, clean browser cache and try again.
 
@@ -180,13 +168,6 @@ If you want to use the 3D view, follow the instructions in the [INSTALL.md](./IN
    ```
    $ ./run.sh docker-stop server
    $ ./run.sh docker-stop webapp
-   ```
-
-   Rebuild images and containers
-
-   ```
-   $ ./run.sh docker-build server
-   $ ./run.sh docker-build webapp
    ```
 
    Restart with

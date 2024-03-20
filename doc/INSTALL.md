@@ -95,7 +95,7 @@ If you want to use the 3D view, follow these steps:
         nameFeeder=Name1,Name2
         ```
 
-    5.  Enter the **color** of your feeders seperated by comma. This color is used later in statistical views (if you do not have a local feeder, set `colorFeeder=red` (valid color is needed here!)
+    5.  Enter the **color** of your feeders seperated by comma. This color is used later in statistical views (if you do not have a local feeder, set `colorFeeder=red` (valid color is needed here!))
 
         ```
         colorFeeder=red,blue
@@ -124,7 +124,7 @@ If you want to use the 3D view, follow these steps:
 
    </details>
 
-4.  Build the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
+4.  Pull the docker images and execute the containers (webapp, server, postgres) in the base path of Beluga Project.
 
     `Important:` If you installed docker only for root user, you need to execute the command below with `sudo` privilege
 
@@ -134,7 +134,6 @@ If you want to use the 3D view, follow these steps:
 
     This will take some time. On an RaspberryPi 4B
 
-    - container build takes about 20 minutes
     - load database takes about 10 minutes
     - first start in browser takes about 3 minutes until all aircrafts are visible
 

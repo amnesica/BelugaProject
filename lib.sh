@@ -7,6 +7,9 @@ set -euo pipefail
 container_name_db=postgres
 container_name_webapp=webapp
 container_name_server=server
+image_name_db=postgres
+image_name_webapp=belugaproject/belugaproject-webapp
+image_name_server=belugaproject/belugaproject-server
 path_postgresql=/var/lib/postgresql
 path_db_content=$path_postgresql/dbContent
 
@@ -193,9 +196,9 @@ _docker_rm_image() {
 
 _docker_rm_all_images() {
   echo "Remove all images for Beluga Project ..."
-  _docker_rm_image $container_name_webapp
-  _docker_rm_image $container_name_server
-  _docker_rm_image $container_name_db
+  _docker_rm_image $image_name_webapp
+  _docker_rm_image $image_name_server
+  _docker_rm_image $image_name_db
   echo "-> Removed all images for Beluga Project. Done."
 }
 
