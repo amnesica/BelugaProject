@@ -63,11 +63,11 @@ If you want to use the 3D view, follow these steps:
 
     ***
 
-    1. Set your **feeder location**. Replace the values with your antenna position coordinates. Later this will be the shown on the map with an antenna icon.
+    1. Set your **feeder location**. Replace the values with your antenna position coordinates. Later this will be shown on the map with an antenna icon.
 
        ```
-       latitudeLocation=54.1234
-       longitudeLocation=8.1234
+       location_latitude=54.1234
+       location_longitude=8.1234
        ```
 
     2. Enter the **URLs** of your feeders with an json output seperated by comma (If you do not have a local feeder, just leave the value empty)
