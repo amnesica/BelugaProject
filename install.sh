@@ -5,7 +5,7 @@
 set -euo pipefail
 
 REPO_NAME=BelugaProject
-REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/master.zip"
+REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip"
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
 
