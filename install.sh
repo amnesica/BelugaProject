@@ -165,7 +165,7 @@ _set_env_values() {
 }
 
 _run_lib_install_script() {
-  cd $REPO_NAME && ./run.sh install
+  cd $REPO_NAME && ./run.sh install auto
 }
 
 _install() {
