@@ -519,9 +519,12 @@ _get_stat_belugaDb() {
 }
 
 _install() {
-  echo "Install the Beluga Project ..."
+  echo "Installing the Beluga Project ..."
 
-  _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
+  # only ask user if install is not started from ui installer
+  if [[ -z "$1" ]]; then
+    _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
+  fi
 
   _docker_run_background
 
