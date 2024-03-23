@@ -40,7 +40,7 @@ _install_docker_with_progress() {
   {
     sleep 0.5
     echo -e "XXX\n0\nGetting install script from docker.com... \nXXX"
-    curl -fsSL https://get.docker.com -o get-docker.sh
+    wget -qO get-docker.sh https://get.docker.com
     sleep 0.1
     echo -e "XXX\n50\nGetting install script from docker.com... Done.\nXXX"
     sleep 0.5
@@ -187,7 +187,7 @@ _install_entry() {
   \n* Downloading the repository of the Beluga Project\
   \n* Preparing the repository\
   \n* Setting values needed for running the Project (mandatory and optional steps)\
-  \n* Installing the Beluga Project (Running the docker containers with the set values)\
+  \n* Installing the Beluga Project (running the docker containers with the set values)\
   \n\nWould you like to continue?" 16 100
 
   _install
