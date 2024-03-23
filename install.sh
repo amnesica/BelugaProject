@@ -170,7 +170,7 @@ _run_lib_install_script() {
 
 _install() {
   # prerequisite if necessary
-  _install_docker_with_progress
+  _check_for_docker
 
   _download_repo_with_progress
 
