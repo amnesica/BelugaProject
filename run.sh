@@ -50,6 +50,6 @@ case ${CMD} in
   tables-exist) _check_tables_exist ;;
   stat-db) _get_stat_belugaDb ;;
   env) _env ;;
-  install) _install ;;
+  install) _install $@ ;;
   *) _usage ;;
 esac

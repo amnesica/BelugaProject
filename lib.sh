@@ -522,8 +522,9 @@ _install() {
   echo "Installing the Beluga Project ..."
 
   # only ask user if install is not started from ui installer
-  if [[ -z "$1" ]]; then
-    _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
+  if [ $# -eq 0 ]
+    then
+      _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
   fi
 
   _docker_run_background
