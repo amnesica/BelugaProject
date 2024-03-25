@@ -62,7 +62,7 @@ _check_for_docker() {
 }
 
 _download_repo_with_progress() {
-  wget --progress=dot $REPO_URL -O $REPO_ZIP_FILENAME 2>&1 | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | whiptail --title "$WHIPTAIL_TITLE" --gauge "Downloading the Beluga Project..." 8 100 0
+  wget -q --show-progress $REPO_URL -O $REPO_ZIP_FILENAME 2>&1 | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | whiptail --title "$WHIPTAIL_TITLE" --gauge "Downloading the Beluga Project..." 8 100 0
 }
 
 _unzip_repo_with_progress() {
