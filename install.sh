@@ -8,8 +8,7 @@ REPO_NAME=BelugaProject
 REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip"
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
-
-WHIPTAIL_TITLE='Installation of the Beluga Project'
+WHIPTAIL_TITLE="Installation of the Beluga Project"
 
 _show_whiptail_yes_no_box() { # params: $1:msg $2:width $3:height
   if whiptail --title "$WHIPTAIL_TITLE" --yesno "$1" $2 $3; then
@@ -40,13 +39,13 @@ _install_docker_with_progress() {
   {
     sleep 0.5
     echo -e "XXX\n0\nGetting install script from docker.com... \nXXX"
-    wget -qO get-docker.sh https://get.docker.com
+    wget -qO get-docker.sh https://get.docker.com >/dev/null
     sleep 0.1
     echo -e "XXX\n50\nGetting install script from docker.com... Done.\nXXX"
     sleep 0.5
 
     echo -e "XXX\n50\nInstalling docker... \nXXX"
-    sudo sh get-docker.sh
+    sudo sh get-docker.sh >/dev/null
     sleep 0.1
     echo -e "XXX\n100\nInstalling docker... Done.\nXXX"
     sleep 0.5
@@ -62,7 +61,7 @@ _check_for_docker() {
 }
 
 _download_repo_with_progress() {
-  wget -q --show-progress $REPO_URL -O $REPO_ZIP_FILENAME 2>&1 | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | whiptail --title "$WHIPTAIL_TITLE" --gauge "Downloading the Beluga Project..." 8 100 0
+  wget --progress=bar $REPO_URL -O $REPO_ZIP_FILENAME 2>&1 | grep "%" | sed -u -e "s,\.,,g" | awk '{print $2}' | sed -u -e "s,\%,,g" | whiptail --title "$WHIPTAIL_TITLE" --gauge "Downloading the Beluga Project..." 8 100 0
 }
 
 _unzip_repo_with_progress() {
@@ -165,11 +164,13 @@ _set_env_values() {
 }
 
 _run_lib_install_script() {
-  cd $REPO_NAME && ./run.sh install auto
+  pushd $REPO_NAME >/dev/null || exit
+  ./run.sh install auto
+  popd >/dev/null || exit
 }
 
 _install() {
-  # prerequisite if necessary
+  # prerequisite
   _check_for_docker
 
   _download_repo_with_progress
