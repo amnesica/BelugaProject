@@ -39,13 +39,13 @@ _install_docker_with_progress() {
   {
     sleep 0.5
     echo -e "XXX\n0\nGetting install script from docker.com... \nXXX"
-    wget -qO get-docker.sh https://get.docker.com >/dev/null
+    wget -qO get-docker.sh https://get.docker.com >/dev/null 2>&1
     sleep 0.1
     echo -e "XXX\n50\nGetting install script from docker.com... Done.\nXXX"
     sleep 0.5
 
     echo -e "XXX\n50\nInstalling docker... \nXXX"
-    sudo sh get-docker.sh >/dev/null
+    sudo sh get-docker.sh >/dev/null 2>&1
     sleep 0.1
     echo -e "XXX\n100\nInstalling docker... Done.\nXXX"
     sleep 0.5
@@ -82,7 +82,7 @@ _rename_repo_with_progress() {
 
 _rename_env_template_with_progress() {
   echo -e "XXX\n66\nRenaming environment template file... \nXXX"
-  cd $REPO_NAME && cp .env.template .env
+  cp $REPO_NAME/.env.template $REPO_NAME/.env
   sleep 0.1
   echo -e "XXX\n100\nRenaming environment template file... Done.\nXXX"
   sleep 1
@@ -185,7 +185,7 @@ _install() {
 }
 
 _install_entry() {
-  _show_whiptail_yes_no_box "Welcome to the installation of the Beluga Project.\n\nThe installtion consists of:\
+  _show_whiptail_yes_no_box "Welcome to the installation of the Beluga Project.\n\nThe installation consists of:\
   \n* Installing docker/docker compose (if necessary)\
   \n* Downloading the repository of the Beluga Project\
   \n* Preparing the repository\
