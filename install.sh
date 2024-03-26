@@ -2,10 +2,10 @@
 # Install script for the Beluga Project (Raspberry Pi only!)
 # run with sudo privileges
 
-set -euo pipefail
+set -eu pipefail
 
 REPO_NAME=BelugaProject
-REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip"
+REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip" # TODO
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
 WHIPTAIL_TITLE="Installation of the Beluga Project"
@@ -74,7 +74,7 @@ _unzip_repo_with_progress() {
 
 _rename_repo_with_progress() {
   echo -e "XXX\n33\nRenaming directory... \nXXX"
-  mv $REPO_NAME-master/ $REPO_NAME
+  mv $REPO_NAME-dev/ $REPO_NAME # TODO
   sleep 0.1
   echo -e "XXX\n66\nRenaming directory... Done.\nXXX"
   sleep 1
@@ -101,15 +101,17 @@ _prepare_repo_with_progress() {
 }
 
 _set_env_values() {
-  _show_whiptail_yes_no_box "The following will guide you through necessary and optional steps needed for running the Beluga Project." 8 100
+  _show_whiptail_yes_no_box "The following will guide you through necessary and optional steps needed for running the Beluga Project. \
+  \n\nWhen configuring multiple feeders the order of the entries is important. The first entries for ip address, type, name and color belong to the same feeder as well as the second and so on. \
+  \n\nIf you miss to provide mandatory information the application start may fail or some features will not work properly. When you have multiple entries seperated by a comma do not use blank spaces like "entry,␣entry"." 16 100
 
-  _show_whiptail_input_box "Set the LATITUDE of your feeder location. Later this will be the shown on the map with an antenna icon (example: 12.123456)" \
+  _show_whiptail_input_box "1) Set the LATITUDE of your feeder location. Later this will be the shown on the map with an antenna icon (example: 12.123456)" \
     "LOCATION_LATITUDE" 8 100
 
-  _show_whiptail_input_box "Set the LONGITUDE of your feeder location. Later this will be the shown on the map with an antenna icon (example: 8.123456)" \
+  _show_whiptail_input_box "2) Set the LONGITUDE of your feeder location. Later this will be the shown on the map with an antenna icon (example: 8.123456)" \
     "LOCATION_LONGITUDE" 8 100
 
-  _show_whiptail_input_box "Enter the URLs of your feeders with an json output seperated by comma without any whitespace.
+  _show_whiptail_input_box "3) Enter the URLs of your feeders with an json output seperated by comma without any whitespace.
   \nIf you do not have a local feeder and just want to use Opensky-Network or Airplanes.Live leave the field empty and click 'OK'.\
   \n\n* for AirSquitter use the URL http://XXX.XXX.XXX.XX/aircraftlist.json \
   \n* for tar1090 use the URL http://XXX.XXX.XXX.XX/tar1090/data/aircraft.json \
@@ -119,34 +121,34 @@ _set_env_values() {
   \n* for vrs use the URL http://XXX.XXX.XXX.XX/VirtualRadar/AircraftList.json \
   \n\nExample with two feeders: http://192.168.123.10/aircraftlist.json,http://192.168.123.11/tar1090/data/aircraft.json" "FEEDER_IP" 20 100
 
-  _show_whiptail_input_box "Enter the TYPE of your feeders seperated by comma without any whitespace. Currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder, vrs.\
+  _show_whiptail_input_box "4) Enter the TYPE of your feeders seperated by comma without any whitespace. Currently supported: adsbx, airsquitter, dump1090-fa, fr24feeder, vrs.\
    \n\nIf you do not have a local feeder leave the field empty.\
    \n\nExample with two feeders: airsquitter,adsbx" "FEEDER_TYPE" 12 100
 
-  _show_whiptail_input_box "Enter the NAME of your feeders seperated by comma without any whitespace. Name should not be too long to fit well in control elements.\
+  _show_whiptail_input_box "5) Enter the NAME of your feeders seperated by comma without any whitespace. Name should not be too long to fit well in control elements.\
    \n\nIf you do not have a local feeder leave the field empty.\
    \n\nExample with two feeders: home1,home2" "FEEDER_NAME" 12 100
 
-  _show_whiptail_input_box "Enter the COLOR of your feeders seperated by comma without any whitespace. This color is used later in statistical views.\
+  _show_whiptail_input_box "6) Enter the COLOR of your feeders seperated by comma without any whitespace. This color is used later in statistical views.\
    \n\nIf you do not have a local feeder type "red" (or any color). A valid color is needed here! \
    \n\nExample with two feeders: red,blue" "FEEDER_COLOR" 12 100
 
-  _show_whiptail_input_box "Enter the AMOUNT of your feeders seperated by comma without any whitespace.\
+  _show_whiptail_input_box "7) Enter the AMOUNT of your feeders seperated by comma without any whitespace.\
    \n\nThis value must match with the amount of feeder configuration entries.\
    \n\nIf you do not have a local feeder type '1'.\
    \n\nExample with two feeders: 2" "FEEDER_AMOUNT" 14 100
 
-  _show_whiptail_input_box "Enter the PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
+  _show_whiptail_input_box "8) Enter the PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
 
-  _show_whiptail_input_box "Enter the URL of your productive systems ip address (for a simple test you can use 'localhost')." "PROD_BASE_URL_WEBAPP" 8 100
+  _show_whiptail_input_box "9) Enter the URL of your productive systems ip address (for a simple test you can use 'localhost')." "PROD_BASE_URL_WEBAPP" 8 100
 
-  _show_whiptail_input_box "Optional: Enter your Opensky-Network USERNAME to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_USERNAME" 8 100
+  _show_whiptail_input_box "10) Optional: Enter your Opensky-Network USERNAME to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_USERNAME" 8 100
 
-  _show_whiptail_input_box "Optional: Enter your Opensky-Network PASSWORD to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_PASSWORD" 8 100
+  _show_whiptail_input_box "11) Optional: Enter your Opensky-Network PASSWORD to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_PASSWORD" 8 100
 
-  _show_whiptail_input_box "Optional: If you want to use additional 2D maps provide an API-TOKEN for geoapify (https://www.geoapify.com/)." "GEOAPIFY_API_KEY" 8 100
+  _show_whiptail_input_box "12) Optional: If you want to use additional 2D maps provide an API-TOKEN for geoapify (https://www.geoapify.com/)." "GEOAPIFY_API_KEY" 8 100
 
-  _show_whiptail_input_box "Optional: If you want to use the 3D view follow these instructions:\
+  _show_whiptail_input_box "13) Optional: If you want to use the 3D view follow these instructions:\
   \n\n* Create a free cesium account (https://cesium.com/)\
   \n* Search and add the following assets in 'Asset Depot':\
   \n  * 2275207: Google Photorealistic 3D Tiles\
@@ -158,7 +160,7 @@ _set_env_values() {
 
   _show_whiptail_yes_no_box "Values have been configured. The Beluga Project will now be installed.\n\nThis process takes some time. Do not close the console.\
   \n\nOn an RaspberryPi 4B:\
-  \n* load database takes about 10 minutes\
+  \n* load database takes about 10-20 minutes\
   \n* first start in browser takes about 3 minutes until all aircrafts are visible\
   \n\nIf you run into any issues check out our troubleshooting page (https://github.com/amnesica/BelugaProject/blob/master/doc/TROUBLESHOOTING.md) or open up an issue on Github" 14 100
 }
