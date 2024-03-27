@@ -295,7 +295,7 @@ _update_entry() {
   \n* Copy your set values to the new repository\
   \n* Setting values needed for running the Project based on your set values (mandatory and optional steps)\
   \n* Installing the Beluga Project (running the docker containers with the set values)\
-  \n\nWould you like to continue?" 16 100
+  \n\nWould you like to continue?" 20 100
 
   _update
 
