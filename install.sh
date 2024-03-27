@@ -12,7 +12,7 @@ WHIPTAIL_TITLE="Installation of the Beluga Project"
 
 _show_whiptail_yes_no_box() { # params: $1:msg $2:width $3:height
   if whiptail --title "$WHIPTAIL_TITLE" --yesno "$1" $2 $3; then
-    echo "continue" > /dev/null
+    echo "continue" >/dev/null
   else
     echo "Installation process cancelled. If this was a mistake delete all downloaded files and start installation again."
     exit 0
@@ -53,7 +53,7 @@ _install_docker_with_progress() {
 }
 
 _check_for_docker() {
-  if ! command -v docker &> /dev/null; then
+  if ! command -v docker &>/dev/null; then
     _show_whiptail_yes_no_box "The Beluga Project uses docker and docker compose. Click 'yes' to install docker." 8 100
 
     _install_docker_with_progress
