@@ -252,7 +252,7 @@ _backup_env_file_progress() {
 _stop_and_remove_containers_images_with_progress() {
   echo -e "XXX\n33\Stopping and removing all Beluga Project containers and images... \nXXX"
   pushd $REPO_NAME >/dev/null || exit
-  ./run.sh docker-rm
+  sudo ./run.sh docker-rm
   popd >/dev/null || exit
   sleep 0.1
   echo -e "XXX\n66\nStopping and removing all Beluga Project containers and images... Done.\nXXX"
