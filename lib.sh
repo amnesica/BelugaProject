@@ -160,8 +160,6 @@ _docker_rm_container() {
   if [[ $# -eq 0 ]]; then
     _ask_user_with_message "Do you really want to remove all containers for the Beluga Project (y/n)?"
     _docker_rm_all_containers
-  elif [[ "$1" == "update" ]]; then
-    _docker_rm_all_containers
   else
     echo "Remove container $1 ..."
     local container_id=$(docker ps -aqf "name=$1")
@@ -207,7 +205,10 @@ _docker_rm_all_images() {
 }
 
 _docker_rm_project() {
-  _ask_user_with_message "Do you really want to remove all containers and images for the Beluga Project (y/n)?"
+  if [[ $# -eq 0 ]]; then
+    _ask_user_with_message "Do you really want to remove all containers and images for the Beluga Project (y/n)?"
+  fi
+
   _docker_stop_all_containers
   _docker_rm_all_containers
   _docker_rm_all_images

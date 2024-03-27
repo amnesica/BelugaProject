@@ -43,7 +43,7 @@ docker-start) _docker_start_container $@ ;;
 docker-stop) _docker_stop_container $@ ;;
 docker-rm-container) _docker_rm_container $@ ;;
 docker-rm-image) _docker_rm_image $@ ;;
-docker-rm) _docker_rm_project ;;
+docker-rm) _docker_rm_project $@ ;;
 download-mictronics) _download_mictronics_aircraft_database ;;
 load-db) _load_db_content ;;
 update-db) _update_db_content ;;
