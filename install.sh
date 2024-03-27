@@ -1,5 +1,6 @@
 #!/bin/bash
-# Install script for the Beluga Project (Raspberry Pi only!)
+
+# Install script for the Beluga Project
 # run with sudo privileges
 
 set -eu pipefail
@@ -24,10 +25,29 @@ _show_whiptail_msg_box() { # params: $1:msg $2:width $3:height
 }
 
 _show_whiptail_input_box() { # params: $1:msg $2:item_to_set $3:width $4:height
-  INPUT=$(whiptail --inputbox "$1" $3 $4 --title "$WHIPTAIL_TITLE" 3>&1 1>&2 2>&3)
+  INPUT_FROM_ENV_FILE=$(sed -n '/^'"$2"'=/ {s///p;q;}' $REPO_NAME/$ENV_FILENAME)
+  INPUT=$(whiptail --inputbox "$1" $3 $4 $INPUT_FROM_ENV_FILE --title "$WHIPTAIL_TITLE" 3>&1 1>&2 2>&3)
   exitstatus=$?
-  if [ $exitstatus = 0 ]; then
+  if [[ $exitstatus = 0 ]]; then
     sed -i '/'"$2"'/c\'"$2=$INPUT"'' $REPO_NAME/$ENV_FILENAME
+  else
+    echo "Installation process cancelled. If this was a mistake delete all downloaded files and start installation again."
+    exit 0
+  fi
+}
+
+_show_whiptail_menu_box_entry() { # params: $1:msg $2:height $3:width $4:listheight $5:tag items
+  INPUT=$(whiptail --title "$WHIPTAIL_TITLE" --menu "$1" $2 $3 $4 "${@:5:4}" 3>&1 1>&2 2>&3)
+  exitstatus=$?
+  if [[ $exitstatus = 0 ]]; then
+    if [[ $INPUT == "Install" ]]; then
+      _install_entry
+    elif [[ $INPUT == "Update" ]]; then
+      _update_entry
+    else
+      echo "Invalid option. Process cancelled."
+      exit 0
+    fi
   else
     echo "Installation process cancelled. If this was a mistake delete all downloaded files and start installation again."
     exit 0
@@ -39,13 +59,13 @@ _install_docker_with_progress() {
   {
     sleep 0.5
     echo -e "XXX\n0\nGetting install script from docker.com... \nXXX"
-    wget -qO get-docker.sh https://get.docker.com >/dev/null 2>&1
+    wget -qO get-docker.sh https://get.docker.com >/dev/null 2>&1 || exit
     sleep 0.1
     echo -e "XXX\n50\nGetting install script from docker.com... Done.\nXXX"
     sleep 0.5
 
     echo -e "XXX\n50\nInstalling docker... \nXXX"
-    sudo sh get-docker.sh >/dev/null 2>&1
+    sudo sh get-docker.sh >/dev/null 2>&1 || exit
     sleep 0.1
     echo -e "XXX\n100\nInstalling docker... Done.\nXXX"
     sleep 0.5
@@ -82,7 +102,7 @@ _rename_repo_with_progress() {
 
 _rename_env_template_with_progress() {
   echo -e "XXX\n66\nRenaming environment template file... \nXXX"
-  cp $REPO_NAME/.env.template $REPO_NAME/.env
+  cp $REPO_NAME/$ENV_FILENAME.template $REPO_NAME/$ENV_FILENAME
   sleep 0.1
   echo -e "XXX\n100\nRenaming environment template file... Done.\nXXX"
   sleep 1
@@ -138,17 +158,20 @@ _set_env_values() {
    \n\nIf you do not have a local feeder type '1'.\
    \n\nExample with two feeders: 2" "FEEDER_AMOUNT" 14 100
 
-  _show_whiptail_input_box "8) Enter the PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
+  _show_whiptail_input_box "8) Enter the desired amount and distance of RANGE_RINGS (values in nm) that are displayed on the map. Enter values seperated by comma and without any whitespace.\
+   \n\nExample: 25,50,100,150,200" "CIRCLE_DISTANCE_OF_RINGS" 12 100
 
-  _show_whiptail_input_box "9) Enter the URL of your productive systems ip address (for a simple test you can use 'localhost')." "PROD_BASE_URL_WEBAPP" 8 100
+  _show_whiptail_input_box "9) Enter the PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
 
-  _show_whiptail_input_box "10) Optional: Enter your Opensky-Network USERNAME to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_USERNAME" 8 100
+  _show_whiptail_input_box "10) Enter the URL of your productive systems ip address (for a simple test you can use 'localhost')." "PROD_BASE_URL_WEBAPP" 8 100
 
-  _show_whiptail_input_box "11) Optional: Enter your Opensky-Network PASSWORD to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_PASSWORD" 8 100
+  _show_whiptail_input_box "11) Optional: Enter your Opensky-Network USERNAME to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_USERNAME" 8 100
 
-  _show_whiptail_input_box "12) Optional: If you want to use additional 2D maps provide an API-TOKEN for geoapify (https://www.geoapify.com/)." "GEOAPIFY_API_KEY" 8 100
+  _show_whiptail_input_box "12) Optional: Enter your Opensky-Network PASSWORD to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_PASSWORD" 8 100
 
-  _show_whiptail_input_box "13) Optional: If you want to use the 3D view follow these instructions:\
+  _show_whiptail_input_box "13) Optional: If you want to use additional 2D maps provide an API-TOKEN for geoapify (https://www.geoapify.com/)." "GEOAPIFY_API_KEY" 8 100
+
+  _show_whiptail_input_box "14) Optional: If you want to use the 3D view follow these instructions:\
   \n\n* Create a free cesium account (https://cesium.com/)\
   \n* Search and add the following assets in 'Asset Depot':\
   \n  * 2275207: Google Photorealistic 3D Tiles\
@@ -171,6 +194,18 @@ _run_lib_install_script() {
   popd >/dev/null || exit
 }
 
+_copy_existing_env_file_with_progress() {
+  local title="Please wait while set values are being copied to updated Beluga Project"
+  {
+    sleep 0.5
+    echo -e "XXX\n0\nCopying values to new directory... \nXXX"
+    cp $ENV_FILENAME $REPO_NAME/$ENV_FILENAME >/dev/null 2>&1 || exit
+    sleep 0.1
+    echo -e "XXX\n100\nCopying values to new directory... Done.\nXXX"
+    sleep 0.5
+  } | whiptail --title "$WHIPTAIL_TITLE" --gauge "$title" 8 100 0
+}
+
 _install() {
   # prerequisite
   _check_for_docker
@@ -178,6 +213,11 @@ _install() {
   _download_repo_with_progress
 
   _prepare_repo_with_progress
+
+  # copy existing .env file when process is update
+  if [[ ! $# -eq 0 ]]; then
+    _copy_existing_env_file_with_progress
+  fi
 
   _set_env_values
 
@@ -199,4 +239,75 @@ _install_entry() {
   \n\nOn first run after installation it may take up to about 3 minutes until all aircrafts are visible. If you just want to test the project, enable the OpenSky-Network functionality in the settings menu or enable Airplanes.live functionality instead." 13 100
 }
 
-_install_entry
+_backup_env_file_progress() {
+  echo -e "XXX\n0\Backing up env file... \nXXX"
+  pushd $REPO_NAME >/dev/null || exit
+  cp $ENV_FILENAME ../$ENV_FILENAME
+  popd >/dev/null || exit
+  sleep 0.1
+  echo -e "XXX\n33\Backing up env file... Done.\nXXX"
+  sleep 1
+}
+
+_stop_and_remove_containers_images_with_progress() {
+  echo -e "XXX\n33\Stopping and removing all Beluga Project containers and images... \nXXX"
+  pushd $REPO_NAME >/dev/null || exit
+  ./run.sh docker-rm
+  popd >/dev/null || exit
+  sleep 0.1
+  echo -e "XXX\n66\nStopping and removing all Beluga Project containers and images... Done.\nXXX"
+  sleep 1
+}
+
+_remove_existing_project_directory_with_progress() {
+  echo -e "XXX\n66\Removing existing Beluga Project directory... \nXXX"
+  sudo rm -r $REPO_ZIP_FILENAME $REPO_NAME || exit
+  sleep 0.1
+  echo -e "XXX\n100\nRemoving existing Beluga Project directory... Done.\nXXX"
+  sleep 1
+}
+
+_backup_and_remove_old_version() {
+  local title="Please wait while backup is created and old version is removed"
+  {
+    _backup_env_file_progress
+
+    _stop_and_remove_containers_images_with_progress
+
+    _remove_existing_project_directory_with_progress
+
+  } | whiptail --title "$WHIPTAIL_TITLE" --gauge "$title" 8 100 0
+}
+
+_update() {
+  _backup_and_remove_old_version
+
+  _install update
+}
+
+_update_entry() {
+  _show_whiptail_yes_no_box "Let's update the Beluga Project.\n\nThe update process consists of:\
+  \n* Backing up your set values for running the project\
+  \n* Stopping and removing all docker containers of the project
+  \n* Removing the existing project directory
+  \n* Downloading the newer version of the repository\
+  \n* Preparing the repository\
+  \n* Copy your set values to the new repository\
+  \n* Setting values needed for running the Project based on your set values (mandatory and optional steps)\
+  \n* Installing the Beluga Project (running the docker containers with the set values)\
+  \n\nWould you like to continue?" 16 100
+
+  _update
+
+  _show_whiptail_msg_box "Update done. Open a browser and go to your <productive-systems-ip-address>:8090.\
+  \n\nOn first run after installation it may take up to about 3 minutes until all aircrafts are visible." 13 100
+}
+
+_entry() {
+  _show_whiptail_yes_no_box "Welcome to the installation/update process for the Beluga Project.\
+  \n\nWould you like to continue?" 12 100
+
+  _show_whiptail_menu_box_entry "Would you like to install or update the Beluga Project?" 10 100 2 "Install" "Install the Beluga Project." "Update" "Update existing Beluga Project."
+}
+
+_entry
