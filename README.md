@@ -93,20 +93,22 @@ The application runs on a Raspberry Pi 4B in the local network. We can access th
 <img alt="App View" src="assets/images/setupV4.png" width="70%" />
 </p>
 
-## Installation
+## Installation/Update
 
-### New users
-
-Execute the following command on your Raspberry Pi (or debian-based system to test the project). We recommend using a Pi >=4B with 64 bit OS version.
+Execute the following command on your Raspberry Pi. We recommend using a Pi >=4B with 64 bit OS version.
 
 TODO:
 
 ```
-sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/dev/install.sh)"
+$ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/dev/install.sh)"
 ```
 
-If you get error messages have take a look into [TROUBLESHOOTING.md](./doc/TROUBLESHOOTING.md).
+**Important**: If you already have a version < 4.0.0 of the Beluga Project installed, first execute the following commands and then use the install script with the link below
 
-### Already have the project installed?
+```
+$ sudo ./run.sh docker-rm
+$ cd .. && sudo rm -r BelugaProject BelugaProject.zip
 
-If you already have BelugaProject installed in a docker container before, use instructions in [UPDATE.md](./doc/UPDATE.md).
+```
+
+If you get any error messages have take a look into [TROUBLESHOOTING.md](./doc/TROUBLESHOOTING.md).
