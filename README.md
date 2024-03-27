@@ -103,7 +103,7 @@ TODO:
 $ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/dev/install.sh)"
 ```
 
-**Important**: If you already have a version < 4.0.0 of the Beluga Project installed, first execute the following commands and then use the install script with the link below
+**Important**: If you already have a version < 4.0.0 of the Beluga Project installed, first execute the following commands and then use the install script with the link below.
 
 ```
 $ sudo ./run.sh docker-rm
