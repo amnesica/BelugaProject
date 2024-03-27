@@ -240,26 +240,29 @@ _install_entry() {
 }
 
 _backup_env_file_progress() {
+  sleep 0.5
   echo -e "XXX\n0\Backing up env file... \nXXX"
   pushd $REPO_NAME >/dev/null || exit
   sudo cp $ENV_FILENAME ../$ENV_FILENAME
   popd >/dev/null || exit
   sleep 0.1
   echo -e "XXX\n33\Backing up env file... Done.\nXXX"
-  sleep 1
+  sleep 0.5
 }
 
 _stop_and_remove_containers_images_with_progress() {
+  sleep 0.5
   echo -e "XXX\n33\Stopping and removing all Beluga Project containers and images... \nXXX"
   pushd $REPO_NAME >/dev/null || exit
-  sudo ./run.sh docker-rm
+  sudo ./run.sh docker-rm update
   popd >/dev/null || exit
   sleep 0.1
   echo -e "XXX\n66\nStopping and removing all Beluga Project containers and images... Done.\nXXX"
-  sleep 1
+  sleep 0.5
 }
 
 _remove_existing_project_directory_with_progress() {
+  sleep 0.5
   echo -e "XXX\n66\Removing existing Beluga Project directory... \nXXX"
   sudo rm -r $REPO_ZIP_FILENAME $REPO_NAME || exit
   sleep 0.1
