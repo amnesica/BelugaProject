@@ -288,8 +288,8 @@ _update() {
 _update_entry() {
   _show_whiptail_yes_no_box "Let's update the Beluga Project.\n\nThe update process consists of:\
   \n* Backing up your set values for running the project\
-  \n* Stopping and removing all docker containers of the project
-  \n* Removing the existing project directory
+  \n* Stopping and removing all docker containers of the project\
+  \n* Removing the existing project directory\
   \n* Downloading the newer version of the repository\
   \n* Preparing the repository\
   \n* Copy your set values to the new repository\
