@@ -102,7 +102,7 @@ _rename_repo_with_progress() {
 
 _rename_env_template_with_progress() {
   echo -e "XXX\n66\nRenaming environment template file... \nXXX"
-  cp $REPO_NAME/$ENV_FILENAME.template $REPO_NAME/$ENV_FILENAME
+  sudo cp $REPO_NAME/$ENV_FILENAME.template $REPO_NAME/$ENV_FILENAME
   sleep 0.1
   echo -e "XXX\n100\nRenaming environment template file... Done.\nXXX"
   sleep 1
@@ -199,7 +199,7 @@ _copy_existing_env_file_with_progress() {
   {
     sleep 0.5
     echo -e "XXX\n0\nCopying values to new directory... \nXXX"
-    cp $ENV_FILENAME $REPO_NAME/$ENV_FILENAME >/dev/null 2>&1 || exit
+    sudo cp $ENV_FILENAME $REPO_NAME/$ENV_FILENAME >/dev/null 2>&1 || exit
     sleep 0.1
     echo -e "XXX\n100\nCopying values to new directory... Done.\nXXX"
     sleep 0.5
@@ -242,7 +242,7 @@ _install_entry() {
 _backup_env_file_progress() {
   echo -e "XXX\n0\Backing up env file... \nXXX"
   pushd $REPO_NAME >/dev/null || exit
-  cp $ENV_FILENAME ../$ENV_FILENAME
+  sudo cp $ENV_FILENAME ../$ENV_FILENAME
   popd >/dev/null || exit
   sleep 0.1
   echo -e "XXX\n33\Backing up env file... Done.\nXXX"
