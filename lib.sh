@@ -80,9 +80,11 @@ _ask_user_for_decision() {
   case "$choice" in
   y | Y) echo "-> Okay, let's do it ..." ;;
   n | N)
-    echo "-> Okay, we skip that step."  ;;
+    echo "-> Okay, we skip that step."
+    ;;
   *)
-    echo "-> Invalid answer." ;;
+    echo "-> Invalid answer."
+    ;;
   esac
 }
 
@@ -406,7 +408,7 @@ _load_db_content() {
 
 _update_db_content() {
   echo "update ... ask user for download of current version ..."
-  
+
   echo "Download $aircraft_database_filename ... "
 
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $aircraft_database_filename; then echo exists; fi") ]]; then
@@ -415,68 +417,68 @@ _update_db_content() {
     _download_mictronics_aircraft_database
   else
     if [[ $# -eq 0 ]]; then
-        _ask_user_for_decision "Do you want to download current version of $aircraft_database_filename (y/n)?"
-        if [ "$choice" != "${choice#[Yy]}" ] ; then
-          echo "$aircraft_database_filename exists. Download for update requested."
-          _download_aircraft_database
-          _download_mictronics_aircraft_database
+      _ask_user_for_decision "Do you want to download current version of $aircraft_database_filename (y/n)?"
+      if [ "$choice" != "${choice#[Yy]}" ]; then
+        echo "$aircraft_database_filename exists. Download for update requested."
+        _download_aircraft_database
+        _download_mictronics_aircraft_database
+      else
+        if [ "$choice" != "${choice#[Nn]}" ]; then
+          echo "-> $aircraft_database_filename exists. Download for update not requested."
         else
-          if [ "$choice" != "${choice#[Nn]}" ] ;then
-            echo "-> $aircraft_database_filename exists. Download for update not requested."
-          else
-            echo "-> Invalid answer: $choice. Operation cancelled. Try again."
-            exit
-          fi
+          echo "-> Invalid answer: $choice. Operation cancelled. Try again."
+          exit
         fi
+      fi
     fi
   fi
 
-echo "Download $airport_database_filename ... "
+  echo "Download $airport_database_filename ... "
 
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $airport_database_filename; then echo exists; fi") ]]; then
     echo "-> file $airport_database_filename does not exist, download required."
     _download_airport_database
   else
     if [[ $# -eq 0 ]]; then
-        _ask_user_for_decision "Do you want to download current version of $airport_database_filename (y/n)?"
-        if [ "$choice" != "${choice#[Yy]}" ] ; then
-          echo "$airport_database_filename exists. Download for update requested."
-          _download_airport_database
+      _ask_user_for_decision "Do you want to download current version of $airport_database_filename (y/n)?"
+      if [ "$choice" != "${choice#[Yy]}" ]; then
+        echo "$airport_database_filename exists. Download for update requested."
+        _download_airport_database
+      else
+        if [ "$choice" != "${choice#[Nn]}" ]; then
+          echo "-> $airport_database_filename exists. Download for update not requested."
         else
-          if [ "$choice" != "${choice#[Nn]}" ] ;then
-            echo "-> $airport_database_filename exists. Download for update not requested."
-          else
-            echo "-> Invalid answer: $choice. Operation cancelled. Try again."
-            exit
-          fi
+          echo "-> Invalid answer: $choice. Operation cancelled. Try again."
+          exit
         fi
+      fi
     fi
   fi
 
-echo "Download $flightroute_database_filename ... "
+  echo "Download $flightroute_database_filename ... "
 
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $flightroute_database_filename; then echo exists; fi") ]]; then
     echo "-> file $flightroute_database_filename does not exist, download required."
     _download_flightroute_database
   else
     if [[ $# -eq 0 ]]; then
-        _ask_user_for_decision "Do you want to download current version of $flightroute_database_filename (y/n)?"
-        if [ "$choice" != "${choice#[Yy]}" ] ; then
-          echo "$flightroute_database_filename exists. Download for update requested."
-          _download_flightroute_database
+      _ask_user_for_decision "Do you want to download current version of $flightroute_database_filename (y/n)?"
+      if [ "$choice" != "${choice#[Yy]}" ]; then
+        echo "$flightroute_database_filename exists. Download for update requested."
+        _download_flightroute_database
+      else
+        if [ "$choice" != "${choice#[Nn]}" ]; then
+          echo "-> $flightroute_database_filename exists. Download for update not requested."
         else
-          if [ "$choice" != "${choice#[Nn]}" ] ;then
-            echo "-> $flightroute_database_filename exists. Download for update not requested."
-          else
-            echo "-> Invalid answer: $choice. Operation cancelled. Try again."
-            exit
-          fi
+          echo "-> Invalid answer: $choice. Operation cancelled. Try again."
+          exit
         fi
+      fi
     fi
   fi
 
   echo "update ... Loading csv files into postgres database ..."
-  
+
   _copy_db_content_to_container
   _copy_load_aircraftdata_script_to_container
   _copy_load_db_script_to_container
@@ -500,7 +502,7 @@ _check_tables_exist() {
 
   echo "Check if tables in postgres database were created by spring ..."
   while $table_does_not_exist; do
-    if [[ -n $(docker exec $container_name_db psql $postgres_db $postgres_user -c "\dt" | grep $table_to_check ) ]]; then
+    if [[ -n $(docker exec $container_name_db psql $postgres_db $postgres_user -c "\dt" | grep $table_to_check) ]]; then
       echo "-> Check if tables in postgres database were created by spring. Done."
       table_does_not_exist=false
       return 1
@@ -522,9 +524,8 @@ _install() {
   echo "Installing the Beluga Project ..."
 
   # only ask user if install is not started from ui installer
-  if [ $# -eq 0 ]
-    then
-      _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
+  if [ $# -eq 0 ]; then
+    _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
   fi
 
   _docker_run_background
