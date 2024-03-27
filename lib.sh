@@ -160,6 +160,8 @@ _docker_rm_container() {
   if [[ $# -eq 0 ]]; then
     _ask_user_with_message "Do you really want to remove all containers for the Beluga Project (y/n)?"
     _docker_rm_all_containers
+  elif [[ "$1" == "update"]]; then
+    _docker_rm_all_containers
   else
     echo "Remove container $1 ..."
     local container_id=$(docker ps -aqf "name=$1")
