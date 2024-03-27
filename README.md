@@ -95,7 +95,7 @@ The application runs on a Raspberry Pi 4B in the local network. We can access th
 
 ## Installation/Update
 
-Execute the following command on your Raspberry Pi. We recommend using a Pi >=4B with 64 bit OS version.
+Execute the following command on your Raspberry Pi (or any debian-based system). We recommend using a Pi >=4B with 64 bit OS version.
 
 TODO:
 
