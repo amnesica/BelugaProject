@@ -161,7 +161,7 @@ _set_env_values() {
   _show_whiptail_input_box "8) Enter the desired amount and distance of RANGE_RINGS (values in nm) that are displayed on the map. Enter values seperated by comma and without any whitespace.\
    \n\nExample: 25,50,100,150,200" "CIRCLE_DISTANCE_OF_RINGS" 12 100
 
-  _show_whiptail_input_box "9) Enter the PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
+  _show_whiptail_input_box "9) Choose a PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
 
   _show_whiptail_input_box "10) Enter the URL of your productive systems ip address (for a simple test you can use 'localhost')." "PROD_BASE_URL_WEBAPP" 8 100
 
