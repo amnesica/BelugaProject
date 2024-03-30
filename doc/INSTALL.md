@@ -165,6 +165,7 @@ If you want to use the 3D view, follow these steps:
 
 
 6.  Update standing data
+
     BelugaProject comes with standing data (aircraft data, airport data, flightroute data) which may be outdated meanwhile. So you should update them with command
     ```
     $ ./run.sh update-db
