@@ -187,6 +187,8 @@ If you want to use the 3D view, follow these steps:
        download-mictronics                   Download mictronics db and convert jsons to csv files
        load-db                               Fill database in postgres container if tables were created
        update-db                             Update database in postgres container (db maintenance)
+       export-db                             Export standing data to csv-files
+       import-db                             import standing data from csv-files
        tables-exist                          Check if tables in postgres container were created by spring
        stat-db                               Show BelugaDB statistics
        env                                   Show current environment variables in .env file
