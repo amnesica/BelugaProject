@@ -19,6 +19,24 @@ echo $(timestamp) importBelugaDbData.sh Version 4-0-1
 echo ----------------------------------------------------------------------
 
 echo ----------------------------------------------------------------------
+echo $(timestamp) create table version_Info
+echo ----------------------------------------------------------------------
+psql -c "CREATE TABLE IF NOT EXISTS Version_info
+        (
+        table_name character varying(255) NOT NULL,
+        version character varying(255),
+        rows bigint,
+	    csv_created	timestamp with time zone,					  
+	    csv_imported timestamp with time zone,
+        last_updated timestamp with time zone,					  
+        CONSTRAINT Version_info_pkey PRIMARY KEY (table_name)
+        ) 
+        TABLESPACE pg_default;" -U beluga -d belugaDb
+
+psql -c "ALTER TABLE IF EXISTS Version_info
+            OWNER to beluga;" -U beluga -d belugaDb
+
+echo ----------------------------------------------------------------------
 echo $(timestamp) import table version_Info
 echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE Version_info;" -U beluga -d belugaDb
@@ -171,6 +189,12 @@ psql -c "UPDATE version_info
 echo ----------------------------------------------------------------------
 echo $(timestamp) import table map_operator_icao_to_iata
 echo ----------------------------------------------------------------------
+psql -c "CREATE TABLE IF NOT EXISTS map_operator_icao_to_iata(
+    		operator_name character varying(255) COLLATE pg_catalog."default",
+    		operator_icao character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    		operator_iata character varying(255) COLLATE pg_catalog."default",
+    		CONSTRAINT map_operator_icao_to_iata_pkey PRIMARY KEY (operator_icao)
+			);" -U beluga -d belugaDb
 psql -c "TRUNCATE TABLE map_operator_icao_to_iata;" -U beluga -d belugaDb
 psql -c "COPY map_operator_icao_to_iata (operator_name,
 										operator_icao,
@@ -270,6 +294,17 @@ psql -c "UPDATE version_info
 echo ----------------------------------------------------------------------
 echo $(timestamp) import table typecode_tags
 echo ----------------------------------------------------------------------
+psql -c "CREATE TABLE IF NOT EXISTS public.typecode_tags(
+    		typecode character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    		aircraft_description character varying(255) COLLATE pg_catalog."default",
+    		is_military character varying(255) COLLATE pg_catalog."default",
+    		is_historic character varying(255) COLLATE pg_catalog."default",
+    		is_government character varying(255) COLLATE pg_catalog."default",
+    		is_special character varying(255) COLLATE pg_catalog."default",
+    		is_interesting character varying(255) COLLATE pg_catalog."default",
+    		CONSTRAINT typecode_tags_pkey PRIMARY KEY (typecode)
+			);" -U beluga -d belugaDb			
+
 psql -c "TRUNCATE TABLE typecode_tags;" -U beluga -d belugaDb
 psql -c "COPY typecode_tags (typecode,
 							aircraft_description,
