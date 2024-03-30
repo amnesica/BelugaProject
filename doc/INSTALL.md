@@ -163,7 +163,18 @@ If you want to use the 3D view, follow these steps:
 
 5.  When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. On first run after installation it may take up to about 3 minutes until all aircrafts are visible. If you just want to test the project, enable the [OpenSky-Network](https://opensky-network.org/) functionality in the settings menu (an Opensky-Network account is needed) or enable [Airplanes.live](https://airplanes.live/) functionality instead.
 
-6.  Operation and Maintenance
+
+6.  Update standing data
+    BelugaProject comes with standing data (aircraft data, airport data, flightroute data) which may be outdated meanwhile. So you should update them with command
+    ```
+    $ ./run.sh update-db
+    ```
+    `Important:` If you installed docker only for root user, you need to execute the command above with `sudo` privilege.
+
+    This will take some time. On an RaspberryPi 4B update database takes about 10 minutes.
+
+
+7.  Operation and Maintenance
 
     Executing
 
