@@ -15,8 +15,27 @@ SECONDS=0
 SECONDS_AT_START=$SECONDS
 
 echo ----------------------------------------------------------------------
-echo $(timestamp) loadAircraftData.sh Version 4-0-0
+echo $(timestamp) loadAircraftData.sh Version 4-0-1
 echo ----------------------------------------------------------------------
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) create table version_info
+echo ----------------------------------------------------------------------
+
+psql -c "CREATE TABLE IF NOT EXISTS Version_info
+        (
+        table_name character varying(255) NOT NULL,
+        version character varying(255),
+        rows bigint,
+	    csv_created	timestamp with time zone,					  
+	    csv_imported timestamp with time zone,
+        last_updated timestamp with time zone,					  
+        CONSTRAINT Version_info_pkey PRIMARY KEY (table_name)
+        ) 
+        TABLESPACE pg_default;" -U beluga -d belugaDb
+
+psql -c "ALTER TABLE IF EXISTS Version_info
+            OWNER to beluga;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) load aircraft data from opensky-network
@@ -296,6 +315,29 @@ psql -c "COPY TYPECODE_TAGS (TYPECODE,
 FROM '$pathToDirectoryWithCsv/typecode_tags.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table typecode_tags
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'typecode_tags',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'typecode_tags'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
+
+echo ----------------------------------------------------------------------
 echo $(timestamp) add missing aircraft from mictronics
 echo ----------------------------------------------------------------------
 psql -c "insert into aircraft_data
@@ -383,6 +425,29 @@ psql -c "UPDATE AIRCRAFT_DATA
 				FROM TYPECODE_TAGS AS TCT
 				WHERE UPPER(AIRCRAFT_DATA.TYPECODE) = UPPER(TCT.TYPECODE)
 				AND TCT.is_interesting = 'Y';" -U beluga -d belugaDb
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table aircraft_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'aircraft_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'aircraft_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) cleanup ... drop temp tables

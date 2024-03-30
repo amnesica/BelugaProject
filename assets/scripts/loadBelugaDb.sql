@@ -1,5 +1,5 @@
 \echo ----------------------------------------------------------------------
-\echo loadBelugaDb.sql Version 4-0-0 (11.12.2023 20:00)
+\echo loadBelugaDb.sql Version 4-0-1 (30.03.2024 11:00)
 \echo - this script is intended only for debug and tuning purposes
 \echo - run script from psql with parameter timing to get duration of commands
 \echo - normal installation process uses loadBelugaDb.sh instead
@@ -41,7 +41,7 @@ COPY country_data (
 	 		country_name_en,
 	 		country_name_de,
 			country_flag_utf8code)
-		FROM '/var/lib/postgresql/dbContent/country_data.csv' WITH DELIMITER ',' CSV HEADER;
+		FROM '/var/lib/postgresql/dbContent/country_data.csv' WITH DELIMITER E'\t' CSV HEADER;
 \echo Done.
 
 \echo ----------------------------------------------------------------------
@@ -52,7 +52,7 @@ COPY regcode_data (
 			regcode_prefix,
 			regcode_flag_utf8code,
 			regcode_name)
-		FROM '/var/lib/postgresql/dbContent/regcode_data.csv' WITH DELIMITER ',' CSV HEADER;
+		FROM '/var/lib/postgresql/dbContent/regcode_data.csv' WITH DELIMITER E'\t' CSV HEADER;
 \echo Done.
 
 \echo ----------------------------------------------------------------------
@@ -240,8 +240,9 @@ DROP TABLE IF EXISTS TMP_OPERATOR_DATA_MICTRONICS;
 TRUNCATE TABLE flightroute_data;
 COPY flightroute_data (
 			flight_id,
+			flight_last_update,
 			flight_route)
-		FROM '/var/lib/postgresql/dbContent/flightroute_data.csv' WITH DELIMITER ',' CSV HEADER;
+		FROM '/var/lib/postgresql/dbContent/flightroute_data.csv' WITH DELIMITER E'\t' CSV HEADER;
 \echo Done.
 
 \echo ----------------------------------------------------------------------

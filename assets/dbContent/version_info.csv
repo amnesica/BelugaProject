@@ -1,0 +1,12 @@
+table_name	version	rows	csv_created	csv_imported	last_updated
+aircraft_data	4.0.1	541740	2024-03-28 18:12:10.294981+00		
+airport_data	4.0.1	78381	2024-03-28 18:12:10.623108+00		
+country_data	4.0.1	193	2024-03-28 18:12:10.654522+00		
+flightroute_data	4.0.1	502252	2024-03-28 18:12:10.953566+00		
+map_cat_to_shape_data	4.0.1	17	2024-03-28 18:12:10.980969+00		
+map_operator_icao_to_iata	4.0.1	930	2024-03-28 18:12:11.005763+00		
+map_type_to_shape_data	4.0.1	641	2024-03-28 18:12:11.029252+00		
+operator_data	4.0.1	6200	2024-03-28 18:12:11.060638+00		
+regcode_data	4.0.1	240	2024-03-28 18:12:11.083213+00		
+shape_data	4.0.1	208	2024-03-28 18:12:11.123191+00		
+typecode_tags	4.0.1	2794	2024-03-28 18:12:11.149526+00		

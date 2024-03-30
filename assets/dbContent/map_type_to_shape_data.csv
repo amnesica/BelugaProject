@@ -1,0 +1,642 @@
+type_designator	creator	description	shape_designator	shape_scale	version
+A10	RexKramer1	Fairchild-Republic A-10 Thunderbolt	A10	0.7	2023-07-27 00:00:00
+A124	RexKramer1	A124 (Antonov An-124)	A124	0.5	2023-07-27 00:00:00
+A139	RexKramer1	Agusta AW-139	S61	0.75	2023-07-27 00:00:00
+A189	RexKramer1	Agusta AW-189	S61	0.8	2023-07-27 00:00:00
+A337	RexKramer1	Airbus A330-700 Beluga XL	A337	0.5	2023-07-27 00:00:00
+A3ST	RexKramer1	Airbus A300ST Beluga	A3ST	0.5	2023-07-27 00:00:00
+A6	RexKramer1	Grumman A-6 Intruder	EUFI	0.9	2023-07-27 00:00:00
+AT3	RexKramer1	AIDC AT-3 Tzu-Chung	EUFI	0.9	2023-07-27 00:00:00
+ATP	RexKramer1	British Aaerospace ATP / Jetstream 61	ATP	0.5	2023-07-27 00:00:00
+B463	RexKramer1	BAe-146-300	RJ85	0.5	2023-07-27 00:00:00
+B52	RexKramer1	Boeing B-52 Stratofortress	B52	0.5	2023-07-27 00:00:00
+B721	RexKramer1	Boeing 727-100	JET_swept	0.5	2023-07-27 00:00:00
+B722	RexKramer1	Boeing 727-200	B722	0.5	2023-07-27 00:00:00
+B743	RexKramer1	Boeing 747-300	B742	0.5	2023-07-27 00:00:00
+B74R	RexKramer1	Boeing 747-SR	B742	0.5	2023-07-27 00:00:00
+D140	RexKramer1	Jodel D.140 Mousquetaire	PA28	0.7	2023-07-27 00:00:00
+DA20	RexKramer1	Diamond DV-20 Katana (invalid ICAO-Type)	SR22	0.7	2023-07-27 00:00:00
+DC3	RexKramer1	Douglas DC-3	DC3	0.5	2023-07-27 00:00:00
+DC87	RexKramer1	Douglas DC-8-70	DC87	0.5	2023-07-27 00:00:00
+DC91	RexKramer1	Douglas DC-9-10	JET_swept	0.5	2023-07-27 00:00:00
+DC92	RexKramer1	Douglas DC-9-20	JET_swept	0.5	2023-07-27 00:00:00
+DC93	RexKramer1	Douglas DC-9-30	JET_swept	0.5	2023-07-27 00:00:00
+DC94	RexKramer1	Douglas DC-9-40	JET_swept	0.5	2023-07-27 00:00:00
+DC95	RexKramer1	Douglas DC-9-50	JET_swept	0.5	2023-07-27 00:00:00
+DG80	RexKramer1	Glaser-Dirks DG-800	AS21	0.7	2023-07-27 00:00:00
+E3TF	RexKramer1	Boeing E-3 (TF33) - invalid ICAO Type designator	E3TF	0.5	2023-07-27 00:00:00
+E55P	RexKramer1	EMB-505 Phenom 300	JET_nonswept	0.65	2023-07-27 00:00:00
+EC45	RexKramer1	Airbus Helicopters H-145	EC45	0.9	2023-07-27 00:00:00
+EC55	RexKramer1	Airbus Helicopters H-155	AS65	0.8	2023-07-27 00:00:00
+EC75	RexKramer1	Airbus Helicopters H-175	S61	0.8	2023-07-27 00:00:00
+F111	RexKramer1	invalid icao type designator	EUFI	0.9	2023-07-27 00:00:00
+F14	RexKramer1	F-14 Tomcat	EUFI	0.9	2023-07-27 00:00:00
+F22	unknown	F-22 Raptor	F22	0.7	2023-07-27 00:00:00
+F22A	unknown	invalid icao type designator	F22	0.7	2023-07-27 00:00:00
+F4	RexKramer1	F-4 Phantom 2	EUFI	0.9	2023-07-27 00:00:00
+K35R	RexKramer1	Boeing KC-135 Stratotanker CFM Engines	K35E	0.5	2023-07-27 00:00:00
+C17	RexKramer1	Boeing C-17 Globemaster 3	C17	0.5	2023-07-27 00:00:00
+C25B	RexKramer1	Cessna Citation CJ3	C25B	0.65	2023-07-27 00:00:00
+C25C	RexKramer1	Cessna Citation CJ4	C25B	0.65	2023-07-27 00:00:00
+C30J	RexKramer1	Lockheed C-130J Super Hercules	C130	0.5	2023-07-27 00:00:00
+C510	RexKramer1	Cessna 510 Citation Mustang	JET_nonswept	0.5	2023-07-27 00:00:00
+C550	RexKramer1	Cessna 550 Citation 2	JET_nonswept	0.5	2023-07-27 00:00:00
+C650	RexKramer1	Cessna 650 Citation 3/5/7	JET_nonswept	0.65	2023-07-27 00:00:00
+CL30	RexKramer1	Bombardier Challenger 300	JET_swept	0.35	2023-07-27 00:00:00
+CL60	RexKramer1	Bombardier Challenger 600	JET_swept	0.35	2023-07-27 00:00:00
+CRJ7	RexKramer1	Canadair Regional Jet RJ-700	CRJ7	0.5	2023-07-27 00:00:00
+CRJX	RexKramer1	Canadair Regional Jet RJ-1000	CRJX	0.5	2023-07-27 00:00:00
+GA6C	RexKramer1	Gulfstream G600	JET_swept	0.4	2023-07-27 00:00:00
+GLF3	RexKramer1	Gulfstream 3	JET_swept	0.4	2023-07-27 00:00:00
+GLF4	RexKramer1	Gulfstream 4	JET_swept	0.4	2023-07-27 00:00:00
+GLF5	RexKramer1	Gulfstream 5	JET_swept	0.4	2023-07-27 00:00:00
+GLF6	RexKramer1	Gulfstream G-650	GLF6	0.5	2023-07-27 00:00:00
+H25A	RexKramer1	Hawker Siddeley HS-125	JET_nonswept	0.65	2023-07-27 00:00:00
+H25B	RexKramer1	Hawker 700/750/800/850/900	JET_nonswept	0.65	2023-07-27 00:00:00
+H25C	RexKramer1	Hawker 1000	JET_nonswept	0.65	2023-07-27 00:00:00
+IL76	RexKramer1	Ilyushin IL-76	IL76	0.5	2023-07-27 00:00:00
+J8A	RexKramer1	Shenyang J-8A	EUFI	0.9	2023-07-27 00:00:00
+J8B	RexKramer1	Shenyang J-8B	EUFI	0.9	2023-07-27 00:00:00
+JH7	RexKramer1	Xian JH-7	EUFI	0.9	2023-07-27 00:00:00
+LJ40	RexKramer1	Lear Jet 40	JET_nonswept	0.65	2023-07-27 00:00:00
+LJ45	RexKramer1	Lear Jet 45	LJ35	0.7	2023-07-27 00:00:00
+LJ55	RexKramer1	Lear Jet 55	JET_nonswept	0.65	2023-07-27 00:00:00
+LJ60	RexKramer1	Lear Jet 60	JET_nonswept	0.65	2023-07-27 00:00:00
+LJ70	RexKramer1	Lear Jet 70	JET_nonswept	0.65	2023-07-27 00:00:00
+LJ75	RexKramer1	Lear Jet 75	JET_nonswept	0.65	2023-07-27 00:00:00
+LJ85	RexKramer1	invalid ICAO Type designator	JET_nonswept	0.65	2023-07-27 00:00:00
+MD83	RexKramer1	McDonnell Douglas MD-83	JET_swept	0.55	2023-07-27 00:00:00
+MD87	RexKramer1	McDonnell Douglas MD-87	JET_swept	0.55	2023-07-27 00:00:00
+MD88	RexKramer1	McDonnell Douglas MD-88	JET_swept	0.6	2023-07-27 00:00:00
+MD90	RexKramer1	McDonnell Douglas MD-90	B712	0.5	2023-07-27 00:00:00
+MI24	RexKramer1	MIL Mi-24	MI24	0.8	2023-07-27 00:00:00
+Q25	RexKramer1	Boeing MQ-25 Stingray	Q4	0.5	2023-07-27 00:00:00
+Q4	RexKramer1	Northrop Grumman Global Hawk	Q4	0.5	2023-07-27 00:00:00
+Q9	RexKramer1	General Atmics MQ-9 Reaper	Q4	0.5	2023-07-27 00:00:00
+SU25	RexKramer1	Sukhoi SU-25	EUFI	0.9	2023-07-27 00:00:00
+SU27	RexKramer1	Sukhoi SU-27	EUFI	0.9	2023-07-27 00:00:00
+U2	RexKramer1	Lockheed U-2	U2	0.5	2023-07-27 00:00:00
+UH1	RexKramer1	Bell UH-1	UH1	0.9	2023-07-27 00:00:00
+ULAC	RexKramer1	invalid icao type designator	C172	0.5	2023-07-27 00:00:00
+V22	RexKramer1	Bell-Boeing V-22 Osprey	V22_slow	0.7	2023-07-27 00:00:00
+VAUT	RexKramer1	Sud  SO-4050 Vautour	EUFI	0.9	2023-07-27 00:00:00
+S12	RexKramer1	Rans S-12 Super Airaile	AS21	0.7	2023-07-27 00:00:00
+V22F	RexKramer1	Bell-Boeing V-22 Osprey	V22_fast	0.7	2023-07-27 00:00:00
+A148	RexKramer1	Antonov A-148	JET_medium	0.42	2023-07-27 00:00:00
+R66	RexKramer1	Robinson R-66	R44	0.9	2023-07-27 00:00:00
+T206	RexKramer1	Cessna T206 Turbo	C172	0.75	2023-07-27 00:00:00
+A342	RexKramer1	Airbus A340-200	A342	0.5	2023-07-27 00:00:00
+A343	RexKramer1	Airbus A340-300	A343	0.5	2023-07-27 00:00:00
+A345	RexKramer1	Airbus A340-500	A345	0.5	2023-07-27 00:00:00
+A306	RexKramer1	Airbus A300-600	A306	0.5	2023-07-27 00:00:00
+A30B	RexKramer1	Airbus A300	A306	0.48	2023-07-27 00:00:00
+A310	RexKramer1	Airbus A310	A310	0.5	2023-07-27 00:00:00
+A346	RexKramer1	Airbus A340-600	A346	0.5	2023-07-27 00:00:00
+A359	RexKramer1	Airbus A350-900	A359	0.5	2023-07-27 00:00:00
+DHC2	RexKramer1	DHC-2 Beaver	DO27	0.8	2023-07-27 00:00:00
+DHC7	RexKramer1	DHC-7	AN12	0.35	2023-07-27 00:00:00
+A35K	RexKramer1	Airbus A350-1000	A35K	0.5	2023-07-27 00:00:00
+AN26	RexKramer1	Antonov AN-26	AN26	0.5	2023-07-27 00:00:00
+A19N	RexKramer1	Airbus A319neo	A19N	0.5	2023-07-27 00:00:00
+A20N	RexKramer1	Airbus A320neo	A20N	0.5	2023-07-27 00:00:00
+A21N	RexKramer1	Airbus A321neo	A21N	0.5	2023-07-27 00:00:00
+DHC6	RexKramer1	DHC-6 Twin Otter	DO28	0.6	2023-07-27 00:00:00
+DHC3	RexKramer1	DHC-3 Otter	DO27	0.7	2023-07-27 00:00:00
+VTOR	RexKramer1	PARTENAVIA AP-68TP-600 Viator	F406	0.65	2023-07-27 00:00:00
+A318	RexKramer1	Airbus A318	A318	0.5	2023-07-27 00:00:00
+B701	RexKramer1	Boeing 707-100	B703	0.47	2023-07-27 00:00:00
+A319	RexKramer1	Airbus A319	A19N	0.5	2023-07-27 00:00:00
+K35E	RexKramer1	Boeing KC-135 Stratotanker CFM Engines	K35E	0.5	2023-07-27 00:00:00
+B703	RexKramer1	Boeing 707-300	B703	0.5	2023-07-27 00:00:00
+B744	RexKramer1	Boeing 747-400	B744	0.5	2023-07-27 00:00:00
+B748	RexKramer1	Boeing 747-800	B748	0.5	2023-07-27 00:00:00
+B74S	RexKramer1	Boeing 747-SP	B74S	0.5	2023-07-27 00:00:00
+E390	RexKramer1	Embraer C-390	E390	0.5	2023-07-27 00:00:00
+P1	RexKramer1	Kawasaki P-1	P1	0.5	2023-07-27 00:00:00
+A320	RexKramer1	Airbus A320	A320	0.5	2023-07-27 00:00:00
+A321	RexKramer1	Airbus A321	A321	0.5	2023-07-27 00:00:00
+A332	RexKramer1	Airbus A330-200	A332	0.5	2023-07-27 00:00:00
+A333	RexKramer1	Airbus A330-300	A333	0.5	2023-07-27 00:00:00
+A338	RexKramer1	Airbus A330-800	A338	0.5	2023-07-27 00:00:00
+A339	RexKramer1	Airbus A330-900	A339	0.5	2023-07-27 00:00:00
+B190	RexKramer1	Beech 1900	B190	0.65	2023-07-27 00:00:00
+B29	RexKramer1	Boeing B-29 Superfortress	B29	0.5	2023-07-27 00:00:00
+B350	RexKramer1	Beech Super King Air 350	B350	0.65	2023-07-27 00:00:00
+B37M	RexKramer1	Boeing 737 Max 7	JET_medium	0.39	2023-07-27 00:00:00
+B38M	RexKramer1	Boeing 737 Max 8	B38M	0.5	2023-07-27 00:00:00
+B39M	RexKramer1	Boeing 737 Max 9	B39M	0.5	2023-07-27 00:00:00
+B3XM	RexKramer1	Boeing 737 Max 10	JET_medium	0.52	2023-07-27 00:00:00
+B731	RexKramer1	Boeing 737-100 (invalid ICAO code)	JET_medium	0.39	2023-07-27 00:00:00
+B732	RexKramer1	Boeing 737-200	JET_medium	0.42	2023-07-27 00:00:00
+B733	RexKramer1	Boeing 737-300	B733	0.5	2023-07-27 00:00:00
+B734	RexKramer1	Boeing 737-400	B734	0.5	2023-07-27 00:00:00
+B735	RexKramer1	Boeing 737-500	B735	0.5	2023-07-27 00:00:00
+B736	RexKramer1	Boeing 737-600	JET_medium	0.39	2023-07-27 00:00:00
+B737	RexKramer1	Boeing 737-700	B737	0.5	2023-07-27 00:00:00
+B738	RexKramer1	Boeing 737-800	B738	0.5	2023-07-27 00:00:00
+B739	RexKramer1	Boeing 737-900	B739	0.5	2023-07-27 00:00:00
+B752	RexKramer1	Boeing 757-200	B752	0.5	2023-07-27 00:00:00
+B753	RexKramer1	Boeing 757-300	B753	0.5	2023-07-27 00:00:00
+B762	RexKramer1	Boeing 767-200	B762	0.5	2023-07-27 00:00:00
+B763	RexKramer1	Boeing 767-300	B763	0.5	2023-07-27 00:00:00
+B764	RexKramer1	Boeing 767-400	B764	0.5	2023-07-27 00:00:00
+B772	RexKramer1	Boeing 777-200	B772	0.5	2023-07-27 00:00:00
+B773	RexKramer1	Boeing 777-300	B773	0.5	2023-07-27 00:00:00
+B779	RexKramer1	Boeing 777-900	B779	0.5	2023-07-27 00:00:00
+B77L	RexKramer1	Boeing 777-200LR / 777-F	B77L	0.5	2023-07-27 00:00:00
+B77W	RexKramer1	Boeing 777-300ER	B77W	0.5	2023-07-27 00:00:00
+B788	RexKramer1	Boeing 787-8	B788	0.5	2023-07-27 00:00:00
+B789	RexKramer1	Boeing 787-9	B789	0.5	2023-07-27 00:00:00
+B78X	RexKramer1	Boeing 787-10	B78X	0.5	2023-07-27 00:00:00
+BLCF	RexKramer1	Boeing 747-400LCF Dreamlifter	BLCF	0.5	2023-07-27 00:00:00
+FA20	RexKramer1	Dassault Falcon 20	JET_swept	0.35	2023-07-27 00:00:00
+MD11	RexKramer1	McDonnell Douglas MD-11	MD11	0.5	2023-07-27 00:00:00
+PA31	RexKramer1	Piper PA-31-300 Navajo	F406	0.65	2023-07-27 00:00:00
+PC12	RexKramer1	Pilatus PC-12	PC12	0.65	2023-07-27 00:00:00
+RJ70	RexKramer1	Avro RJ-70	RJ85	0.5	2023-07-27 00:00:00
+T210	RexKramer1	"Cessna T210 Turbo Centurion	"	C172	0.75	2023-07-27 00:00:00
+BALL	RexKramer1	Balloon  	BALL	0.35	2023-07-27 00:00:00
+SHIP	RexKramer1	Blimp  	BALL	0.5	2023-07-27 00:00:00
+B74D	RexKramer1	  	B742	0.5	2023-07-27 00:00:00
+AJET	RexKramer1	Alpha Jet	AJET	0.9	2023-07-27 00:00:00
+B461	RexKramer1	BAe-146-100	RJ85	0.5	2023-07-27 00:00:00
+B462	RexKramer1	BAe-146-200	RJ85	0.5	2023-07-27 00:00:00
+B712	RexKramer1	Boeing 717-200	B712	0.5	2023-07-27 00:00:00
+B741	RexKramer1	Boeing 747-100	B742	0.5	2023-07-27 00:00:00
+B742	RexKramer1	Boeing 747-200	B742	0.5	2023-07-27 00:00:00
+BCS1	RexKramer1	Airbus A220-100 / Bombardier C-Series 100	BCS1	0.5	2023-07-27 00:00:00
+BCS3	RexKramer1	Airbus A220-300 / Bombardier C-Series 300	BCS3	0.5	2023-07-27 00:00:00
+BE40	RexKramer1	Beech 400 Beechjet	JET_nonswept	0.65	2023-07-27 00:00:00
+C152	RexKramer1	Cessna 152	C172	0.75	2023-07-27 00:00:00
+C162	RexKramer1	Cessna 162	C172	0.75	2023-07-27 00:00:00
+C182	RexKramer1	Cessna 182 Skylane	C172	0.75	2023-07-27 00:00:00
+C208	RexKramer1	Cessna 208 Grand Caravan	C208	0.65	2023-07-27 00:00:00
+C42	RexKramer1	Ikarus C-42 Bison	F406	0.65	2023-07-27 00:00:00
+C560	RexKramer1	Cessna 560 Citation 5	JET_nonswept	0.5	2023-07-27 00:00:00
+C680	RexKramer1	Cessna 680 Citation Sovereign	JET_swept	0.4	2023-07-27 00:00:00
+C68A	RexKramer1	Cessna 680A Citation Latitude	JET_swept	0.4	2023-07-27 00:00:00
+C750	RexKramer1	Cessna 750 Citation 10	C750	0.55	2023-07-27 00:00:00
+C97	RexKramer1	Boeing C-97 Stratofreighter (Super Guppy)	SGUP	0.5	2023-07-27 00:00:00
+CL35	RexKramer1	Bombardier Challenger 350	JET_swept	0.4	2023-07-27 00:00:00
+CRJ1	RexKramer1	Canadair Regional Jet RJ-100	CRJ2	0.45	2023-07-27 00:00:00
+CRJ2	RexKramer1	Canadair Regional Jet RJ-200	CRJ2	0.5	2023-07-27 00:00:00
+D228	RexKramer1	Dornier 228	D228	0.65	2023-07-27 00:00:00
+D328	RexKramer1	Dornier 328	D328	0.65	2023-07-27 00:00:00
+DA42	RexKramer1	Diamond DA-42	DA42	0.7	2023-07-27 00:00:00
+DC10	RexKramer1	Douglas DC-10	DC10	0.5	2023-07-27 00:00:00
+DH8A	RexKramer1	DHC-8-100	DH8C	0.5	2023-07-27 00:00:00
+DH8B	RexKramer1	DHC-8-200	DH8C	0.5	2023-07-27 00:00:00
+DH8C	RexKramer1	DHC-8-300	DH8C	0.5	2023-07-27 00:00:00
+DH8D	RexKramer1	DHC-8-400	DH8D	0.5	2023-07-27 00:00:00
+E135	RexKramer1	Embraer ERJ-135	E35L	0.5	2023-07-27 00:00:00
+E145	RexKramer1	Embraer ERJ-145	E35L	0.5	2023-07-27 00:00:00
+E170	RexKramer1	Embraer ERJ-170	E170	0.5	2023-07-27 00:00:00
+E190	RexKramer1	Embraer ERJ-190	E195	0.5	2023-07-27 00:00:00
+E195	RexKramer1	Embraer ERJ-195	E195	0.5	2023-07-27 00:00:00
+E290	RexKramer1	Embraer E190-E2	E195	0.5	2023-07-27 00:00:00
+E295	RexKramer1	Embraer E195-E2	E195	0.5	2023-07-27 00:00:00
+E35L	RexKramer1	EMB-135BJ Legacy	E35L	0.5	2023-07-27 00:00:00
+E45X	RexKramer1	Embraer EMB-145XR	JET_swept	0.47	2023-07-27 00:00:00
+E75L	RexKramer1	ERJ-170-200 (long wing)	E170	0.5	2023-07-27 00:00:00
+E75S	RexKramer1	ERJ-170-200 (short wing)	E170	0.5	2023-07-27 00:00:00
+E8	RexKramer1	Northrop Grumman E-8 J-Stars (correct ICAO Type designator is B703)	E8	0.5	2023-07-27 00:00:00
+F406	RexKramer1	Cessna F406 Caravan 2	F406	0.65	2023-07-27 00:00:00
+F50	RexKramer1	Fokker 50	F50	0.5	2023-07-27 00:00:00
+F900	RexKramer1	Dassault Falcon 900	JET_swept	0.4	2023-07-27 00:00:00
+FA10	RexKramer1	Dassault Falcon 10	JET_nonswept	0.65	2023-07-27 00:00:00
+FA50	RexKramer1	Dassault Falcon 50	JET_swept	0.35	2023-07-27 00:00:00
+FA7X	RexKramer1	Dassault Falcon 7X	FA7X	0.5	2023-07-27 00:00:00
+G200	RexKramer1	Gulfstream G-200	JET_swept	0.35	2023-07-27 00:00:00
+G280	RexKramer1	Gulfstream G-280	JET_nonswept	0.65	2023-07-27 00:00:00
+G650	RexKramer1	Gulfstream G650 (ICAO = GLF6)	GLF6	0.5	2023-07-27 00:00:00
+GA5C	RexKramer1	Gulfstream G500 (G-7)	JET_swept	0.4	2023-07-27 00:00:00
+GLEX	RexKramer1	Bombardier Global Express 6000 / 6500	GL5T	0.5	2023-07-27 00:00:00
+GLF2	RexKramer1	Gulfstream 2	JET_swept	0.4	2023-07-27 00:00:00
+J328	RexKramer1	Dornier 328JET	J328	0.5	2023-07-27 00:00:00
+LJ23	RexKramer1	Lear Jet 23	JET_nonswept	0.5	2023-07-27 00:00:00
+LJ35	RexKramer1	Lear Jet 35	LJ35	0.7	2023-07-27 00:00:00
+MD80	RexKramer1	invalid ICAO Type designator	JET_swept	0.5	2023-07-27 00:00:00
+MD81	RexKramer1	McDonnell Douglas MD-81	JET_swept	0.5	2023-07-27 00:00:00
+MIR2	RexKramer1	Dassault Mirage 2000	MIR2	0.9	2023-07-27 00:00:00
+R135	RexKramer1	Boeing RC-135 Airseeker	R135	0.5	2023-07-27 00:00:00
+RJ1H	RexKramer1	Avro RJ-100	RJ85	0.5	2023-07-27 00:00:00
+RJ85	RexKramer1	Avro RJ-85	RJ85	0.5	2023-07-27 00:00:00
+SB39	RexKramer1	Saab JAS39 Gripen	SB39	0.8	2023-07-27 00:00:00
+SF34	RexKramer1	Saab 340	SF34	0.5	2023-07-27 00:00:00
+SGUP	RexKramer1	Aero Spacelines 377SGT Super Guppy	SGUP	0.5	2023-07-27 00:00:00
+T38	RexKramer1	Northrop T-38 Talon	T38	0.9	2023-07-27 00:00:00
+TOR	RexKramer1	Tornado	TOR_slow	0.7	2023-07-27 00:00:00
+YK40	RexKramer1	Yakolev Yak-40	JET_swept	0.45	2023-07-27 00:00:00
+A149	RexKramer1	Agusta AW-149	S61	0.9	2023-07-27 00:00:00
+A169	RexKramer1	Agusta AW-169	S61	0.7	2023-07-27 00:00:00
+A210	RexKramer1	AQUILA A-210	SR22	0.7	2023-07-27 00:00:00
+A225	RexKramer1	A225 (Antonov An-225 Mriya)	A225	0.5	2023-07-27 00:00:00
+A37	RexKramer1	Cessna A-37 Dragonfly	EUFI	0.9	2023-07-27 00:00:00
+A4	RexKramer1	McDonnell-Douglas A4 Skyhawk	A4	0.9	2023-07-27 00:00:00
+A400	RexKramer1	Airbus A400M	A400	0.5	2023-07-27 00:00:00
+A700	RexKramer1	A-700 AdamJet	EUFI	0.9	2023-07-27 00:00:00
+AS65	RexKramer1	Aerospatiale AS-366 Dolphin	AS65	0.8	2023-07-27 00:00:00
+B17	RexKramer1	Boeing B-17 Flying Fortress	B29	0.5	2023-07-27 00:00:00
+BL8	unknown	Bellanca / American Champion 8 Scout / Decathlon	C172	0.75	2023-07-27 00:00:00
+C130	RexKramer1	Lockheed C-130 Hercules	C130	0.5	2023-07-27 00:00:00
+C2	RexKramer1	Grumman C-2 Greyhound	C2	0.6	2023-07-27 00:00:00
+C25A	RexKramer1	Cessna Citation CJ2	C25B	0.65	2023-07-27 00:00:00
+C501	RexKramer1	Cessna 501 Citation 1SP	JET_nonswept	0.65	2023-07-27 00:00:00
+C525	RexKramer1	Cessna 525 Citation CJ1	C25B	0.65	2023-07-27 00:00:00
+C5M	RexKramer1	Lockheed C-5 Super Galaxy	C5M	0.5	2023-07-27 00:00:00
+DRON	RexKramer1	invalid ICAO Type designator	Q4	0.5	2023-07-27 00:00:00
+E3CF	RexKramer1	Boeing E-3 (CFM) - invalid ICAO Type designator	E3CF	0.5	2023-07-27 00:00:00
+EC25	RexKramer1	Airbus Helicopters H-225 Super Puma Mk2+	S61	0.8	2023-07-27 00:00:00
+EC35	RexKramer1	Airbus Helicopters H-135	EC35	0.9	2023-07-27 00:00:00
+EUFI	RexKramer1	Eurofighter 2000 / Typhoon	EUFI	0.9	2023-07-27 00:00:00
+F15	RexKramer1	F-15 Eagle	F15	0.8	2023-07-27 00:00:00
+F16	RexKramer1	F-16 Fighting Falcon	F16	0.8	2023-07-27 00:00:00
+F18H	RexKramer1	FA-18 Hornet	F18H	0.7	2023-07-27 00:00:00
+F18S	RexKramer1	FA-18 Super Hornet	F18S	0.7	2023-07-27 00:00:00
+F5	RexKramer1	F-5 Tiger 2	F5	0.9	2023-07-27 00:00:00
+FA8X	RexKramer1	Dassault Falcon 8X	FA7X	0.5	2023-07-27 00:00:00
+FOUG	RexKramer1	Fouga CM-170R Magister	EUFI	0.9	2023-07-27 00:00:00
+GAZL	RexKramer1	"Aerospatiale	SA-342 Gazelle"	GAZL	0.7	2023-07-27 00:00:00
+GL5T	RexKramer1	Bombardier Global 5000 / 5500	GL5T	0.5	2023-07-27 00:00:00
+GLID	RexKramer1	Glider (invalid icao type designator)	AS21	0.7	2023-07-27 00:00:00
+GYRO	RexKramer1	invalid icao type designator	GYRO	0.75	2023-07-27 00:00:00
+H160	RexKramer1	Airbus Helicopters H-160	S61	0.75	2023-07-27 00:00:00
+H47	RexKramer1	CH-47 Chinook	H47	0.65	2023-07-27 00:00:00
+H64	RexKramer1	AH-64 Apache	H64	0.9	2023-07-27 00:00:00
+HA4T	RexKramer1	Hawker 4000 / Horizon	JET_nonswept	0.65	2023-07-27 00:00:00
+HAWK	RexKramer1	BAE Hawk	HAWK	0.9	2023-07-27 00:00:00
+HUNT	RexKramer1	Hawker Hunter	HUNT	0.9	2023-07-27 00:00:00
+L159	RexKramer1	AERO L-159 Albatros 2	L159	0.7	2023-07-27 00:00:00
+L39	RexKramer1	AERO L-139 Albatros	L159	0.7	2023-07-27 00:00:00
+LANC	RexKramer1	AVRO Lancaster	B29	0.5	2023-07-27 00:00:00
+LEOP	RexKramer1	invalid ICAO Type designator	EUFI	0.9	2023-07-27 00:00:00
+LTNG	RexKramer1	BAC Lightning	EUFI	0.9	2023-07-27 00:00:00
+LYNX	RexKramer1	AgustaWestlnad AW-159 Lynx Wildcat	LYNX	0.7	2023-07-27 00:00:00
+M326	RexKramer1	Aermacchi MB-326	M326	0.7	2023-07-27 00:00:00
+M339	RexKramer1	Aermacchi MB-339	M326	0.7	2023-07-27 00:00:00
+ME62	RexKramer1	Messerschmidt Me-262 Replica	EUFI	0.9	2023-07-27 00:00:00
+METR	RexKramer1	Gloster Meteor	EUFI	0.9	2023-07-27 00:00:00
+MG19	RexKramer1	MiG-19 / Shenynag J-6	EUFI	0.9	2023-07-27 00:00:00
+MG25	RexKramer1	MiG-25	EUFI	0.9	2023-07-27 00:00:00
+MG29	RexKramer1	MiG-29	EUFI	0.9	2023-07-27 00:00:00
+MG31	RexKramer1	MiG-31	EUFI	0.9	2023-07-27 00:00:00
+MRF1	RexKramer1	Dassault Mirage F1	MRF1	0.9	2023-07-27 00:00:00
+P28A	RexKramer1	Piper PA-28 Cherokee	PA28	0.7	2023-07-27 00:00:00
+P3	RexKramer1	Lockheed P-3 Orion	P3	0.5	2023-07-27 00:00:00
+PA24	RexKramer1	Piper PA-24 Comanche	PA28	0.7	2023-07-27 00:00:00
+Q1	RexKramer1	General Atmics RQ-1 Predator	Q4	0.5	2023-07-27 00:00:00
+R44	RexKramer1	Robinson R-44	R44	0.9	2023-07-27 00:00:00
+RFAL	RexKramer1	Dassault Rafale	RFAL	0.7	2023-07-27 00:00:00
+RV12	RexKramer1	Van's Aircraft RV-12	SR22	0.7	2023-07-27 00:00:00
+RV14	RexKramer1	Van's Aircraft RV-14	SR22	0.7	2023-07-27 00:00:00
+RV9	RexKramer1	Van's Aircraft RV-9	SR22	0.7	2023-07-27 00:00:00
+S61	RexKramer1	Sikorsky S-61 Sea King	S61	0.9	2023-07-27 00:00:00
+S61R	RexKramer1	Sikorsky Pelican	S61	0.99	2023-07-27 00:00:00
+SF25	RexKramer1	Scheibe SF-25 Falke	SF25	0.65	2023-07-27 00:00:00
+SR22	RexKramer1	Cirrus SR-22	SR22	0.7	2023-07-27 00:00:00
+TIGR	RexKramer1	Airbus Helicopters Tiger	TIGR	0.7	2023-07-27 00:00:00
+TORF	RexKramer1	Tornado	TOR_fast	0.7	2023-07-27 00:00:00
+K35T	RexKramer1	Boeing KC-135 Stratotanker TF33 Engines	K35E	0.5	2023-07-27 00:00:00
+unidentified	RexKramer1	Default Shape for unknown	unidentified	1	2023-07-27 00:00:00
+ISS	RexKramer1	ISS Space Station	ISS	0.25	2023-07-27 00:00:00
+A388	RexKramer1	Airbus A380-800	A388	0.5	2023-07-27 00:00:00
+A3	RexKramer1	Douglas A-3 Skywarrior	EUFI	0.9	2023-07-27 00:00:00
+AA5	RexKramer1	American AA-5 Traveler	SR22	0.7	2023-07-27 00:00:00
+AS21	RexKramer1	Schleicher ASK-21Mi	AS21	0.7	2023-07-27 00:00:00
+AS32	RexKramer1	Aerospatiale AS-332B1 Super Puma	AS32	0.7	2023-07-27 00:00:00
+ASTR	RexKramer1	IAI Gulfstream G100	JET_nonswept	0.65	2023-07-27 00:00:00
+BE20	RexKramer1	Beech 200 Super King Air	B350	0.65	2023-07-27 00:00:00
+C150	RexKramer1	Cessna 150	C172	0.75	2023-07-27 00:00:00
+C172	RexKramer1	Cessna 172	C172	0.75	2023-07-27 00:00:00
+C295	RexKramer1	Airbus / Casa C-295 Persuader	C295	0.5	2023-07-27 00:00:00
+CKUO	RexKramer1	AIDC F-CK-1 Ching-Kuo	EUFI	0.9	2023-07-27 00:00:00
+CN35	RexKramer1	Airbus (Casa) CN-235	CN35	0.5	2023-07-27 00:00:00
+CRJ9	RexKramer1	Canadair Regional Jet RJ-900	CRJ9	0.5	2023-07-27 00:00:00
+D250	RexKramer1	CEentre Est Capitaine	SR22	0.7	2023-07-27 00:00:00
+DA40	RexKramer1	Diamond DA-40	SR22	0.7	2023-07-27 00:00:00
+DR40	RexKramer1	Centre Est / Robin DR400	SR22	0.7	2023-07-27 00:00:00
+E50P	RexKramer1	EMB-500 Phenom 100	JET_nonswept	0.65	2023-07-27 00:00:00
+EA50	RexKramer1	Eclipse 500/550	JET_nonswept	0.65	2023-07-27 00:00:00
+EMER	RexKramer1	invalid icao type designator	ground_emergency	1	2023-07-27 00:00:00
+F1	RexKramer1	Mitsubishi F-1	EUFI	0.9	2023-07-27 00:00:00
+F117	RexKramer1	F-117 Night Hawk	EUFI	0.9	2023-07-27 00:00:00
+G115	RexKramer1	Grob G-115	SR22	0.7	2023-07-27 00:00:00
+G150	RexKramer1	Gulfstream G-150	JET_nonswept	0.65	2023-07-27 00:00:00
+GL6T	RexKramer1	invalid icao type designator	GL5T	0.52	2023-07-27 00:00:00
+GND	RexKramer1	invalid icao type designator	ground_unknown	1	2023-07-27 00:00:00
+GRND	RexKramer1	invalid icao type designator	ground_unknown	1	2023-07-27 00:00:00
+H60	RexKramer1	Sikorsky MH-60 Black Hawk	H60	0.7	2023-07-27 00:00:00
+IL62	RexKramer1	Ilyushin IL-62	IL62	0.5	2023-07-27 00:00:00
+LJ24	RexKramer1	Lear Jet 24	JET_nonswept	0.65	2023-07-27 00:00:00
+LJ25	RexKramer1	Lear Jet 25	LJ35	0.65	2023-07-27 00:00:00
+LJ28	RexKramer1	Lear Jet 28	JET_nonswept	0.65	2023-07-27 00:00:00
+LJ31	RexKramer1	Lear Jet 31	LJ35	0.7	2023-07-27 00:00:00
+LR35	RexKramer1	invalid ICAO Type designator	JET_nonswept	0.65	2023-07-27 00:00:00
+LR45	RexKramer1	invalid ICAO Type designator	JET_nonswept	0.65	2023-07-27 00:00:00
+MG44	RexKramer1	MiG 1-44	EUFI	0.9	2023-07-27 00:00:00
+MIR4	RexKramer1	invalid ICAO Type designator	EUFI	0.9	2023-07-27 00:00:00
+MM24	RexKramer1	Magni M-24 Orion	GYRO	0.75	2023-07-27 00:00:00
+MT2	RexKramer1	Mitsubishi T-2	EUFI	0.9	2023-07-27 00:00:00
+NH90	RexKramer1	NH-90 Caïman	NH90	0.6	2023-07-27 00:00:00
+P28B	RexKramer1	Piper PA-28-235 Cherokee Charger / Dakota	PA28	0.7	2023-07-27 00:00:00
+P28T	RexKramer1	Piper PA-28RT-201 Arrow 4	PA28	0.7	2023-07-27 00:00:00
+P32R	RexKramer1	Piper PA-32R-300 Cherokee Lance	PA28	0.7	2023-07-27 00:00:00
+P46T	RexKramer1	Piper PA-46-500TP Malibu Meridian	PA46	0.7	2023-07-27 00:00:00
+PA42	RexKramer1	invalid icao type designator	PA28	0.7	2023-07-27 00:00:00
+PC9	RexKramer1	Pilatus PC-9	PC9	0.8	2023-07-27 00:00:00
+PRM1	RexKramer1	Hawker Beechcraft 390 Premier 1	JET_nonswept	0.65	2023-07-27 00:00:00
+Q5	RexKramer1	Hongdu / Nanchang A-5 / Q-5	EUFI	0.9	2023-07-27 00:00:00
+S22T	RexKramer1	Cirrus SR-22 Turbo	SR22	0.7	2023-07-27 00:00:00
+SERV	RexKramer1	invalid icao type designator	ground_service	1	2023-07-27 00:00:00
+S37	RexKramer1	Sukhoi S-37 Berkut	EUFI	0.9	2023-07-27 00:00:00
+S3	RexKramer1	Lockheed S-3 Viking	AJET	0.9	2023-07-27 00:00:00
+S92	RexKramer1	Sikorsky S-92 Helibus	H60	0.7	2023-07-27 00:00:00
+SR20	RexKramer1	Cirrus SR-20	SR22	0.7	2023-07-27 00:00:00
+SR71	RexKramer1	invalid icao type designator	EUFI	0.9	2023-07-27 00:00:00
+SU15	RexKramer1	invalid icao type designator	EUFI	0.9	2023-07-27 00:00:00
+SU24	RexKramer1	Sukhoi SU-24	EUFI	0.9	2023-07-27 00:00:00
+T2	RexKramer1	T-2 Buckeye	EUFI	0.9	2023-07-27 00:00:00
+T22M	RexKramer1	Tupolev Tu-22M	EUFI	0.9	2023-07-27 00:00:00
+T37	RexKramer1	Cessna T-37	PA28	0.9	2023-07-27 00:00:00
+T4	RexKramer1	Kawasaki T-4	EUFI	0.9	2023-07-27 00:00:00
+TB20	RexKramer1	Soccata TB-20	PA28	0.7	2023-07-27 00:00:00
+TU22	RexKramer1	Tupolev Tu-22	EUFI	0.9	2023-07-27 00:00:00
+TWR	RexKramer1	invalid icao type designator	ground_tower	0.5	2023-07-27 00:00:00
+Y130	RexKramer1	Yakolev Yak-130	EUFI	0.9	2023-07-27 00:00:00
+YK28	RexKramer1	Yakolev Yak-28	EUFI	0.9	2023-07-27 00:00:00
+ARCP	RexKramer1	Schempp-Hirth Arcus T/M	AS21	0.7	2023-07-27 00:00:00
+AS26	RexKramer1	Schleicher ASH-26E	AS21	0.7	2023-07-27 00:00:00
+AV68	RexKramer1	M&D Flugzeugbau AVo 68 Samburo	SF25	0.65	2023-07-27 00:00:00
+B429	RexKramer1	Bell 429 GlobalRanger	EC35	0.9	2023-07-27 00:00:00
+BE24	RexKramer1	Beech 24 Musketeer Super / Sierra	PA28	0.7	2023-07-27 00:00:00
+BE30	RexKramer1	Beech 300 Super King Air	B350	0.65	2023-07-27 00:00:00
+BE33	RexKramer1	Beech 33 Bonanza / Debonair	PA28	0.7	2023-07-27 00:00:00
+BE35	RexKramer1	Beech 35 Bonanza	PA28	0.7	2023-07-27 00:00:00
+BREZ	RexKramer1	Aerostyle Breezer	SR22	0.7	2023-07-27 00:00:00
+C140	RexKramer1	Cessna 140	C172	0.7	2023-07-27 00:00:00
+C175	RexKramer1	Cessna 175 Skylark	C172	0.75	2023-07-27 00:00:00
+C207	RexKramer1	Cessna 207	C172	0.8	2023-07-27 00:00:00
+C25M	RexKramer1	Cessna 525 Citation M2	C25B	0.65	2023-07-27 00:00:00
+C402	RexKramer1	Cessna 402	F406	0.7	2023-07-27 00:00:00
+C404	RexKramer1	Cessna 404 Titan	F406	0.7	2023-07-27 00:00:00
+C421	RexKramer1	Cessna 421 Executive Commuter / Golden Eagle	DA42	0.7	2023-07-27 00:00:00
+C500	RexKramer1	Cessna 500 Citation 1	C25B	0.65	2023-07-27 00:00:00
+C551	RexKramer1	Cessna 551 Citation 2SP	C25B	0.65	2023-07-27 00:00:00
+C56X	RexKramer1	Cessna 560XL Citation XLS	C25B	0.65	2023-07-27 00:00:00
+CH60	RexKramer1	AMD Zodiac (ULA)	SR22	0.7	2023-07-27 00:00:00
+CH7A	RexKramer1	Aeronca Champion	C172	0.6	2023-07-27 00:00:00
+CL85	RexKramer1	invalid icao type designator	unidentified	1	2023-07-27 00:00:00
+F2TH	RexKramer1	Dassault Falcon 2000	JET_swept	0.4	2023-07-27 00:00:00
+EUPA	RexKramer1	Europa Aircraft (ULA)	SR22	0.65	2023-07-27 00:00:00
+EV97	RexKramer1	Evektor EV-97 (ULA)	SR22	0.65	2023-07-27 00:00:00
+E230	RexKramer1	Extra EA-230	PA28	0.7	2023-07-27 00:00:00
+EXPL	RexKramer1	Boeing / McDonnell Douglas MD-902 Explorer	EC35	0.85	2023-07-27 00:00:00
+F9DX	RexKramer1	Dassault Falcon 900DX / invalid icao type designator	JET_swept	0.4	2023-07-27 00:00:00
+FK9	RexKramer1	B & F Technik FK-9 (ULA)	C172	0.6	2023-07-27 00:00:00
+G109	RexKramer1	Grob G-109	SF25	0.65	2023-07-27 00:00:00
+G3	RexKramer1	Mirage G3 (ULA)	C172	0.6	2023-07-27 00:00:00
+G400	RexKramer1	Gulfstream G400 (ICAO = GLF4)	JET_swept	0.4	2023-07-27 00:00:00
+GLST	RexKramer1	Glasair Glastar (ULA)	C172	0.65	2023-07-27 00:00:00
+GY80	RexKramer1	Gardan GY-80 Horizon	PA28	0.65	2023-07-27 00:00:00
+HROC	RexKramer1	Harmon Rocket	unidentified	1	2023-07-27 00:00:00
+J3	RexKramer1	American Legend AL-3C Legend Cub	C172	0.68	2023-07-27 00:00:00
+L8	RexKramer1	Luscombe 8	C172	0.65	2023-07-27 00:00:00
+LNC2	RexKramer1	Lancair	SR22	0.65	2023-07-27 00:00:00
+MCR1	RexKramer1	Dynaero MC-01 (ULA)	SR22	0.65	2023-07-27 00:00:00
+M20P	RexKramer1	Mooney M20	PA28	0.7	2023-07-27 00:00:00
+MCR4	RexKramer1	Dynaero MCR 4S	SR22	0.7	2023-07-27 00:00:00
+MU2	RexKramer1	Mitsubishi MU-2	F406	0.65	2023-07-27 00:00:00
+P28R	RexKramer1	Piper Cherokee Arrow	PA28	0.7	2023-07-27 00:00:00
+PA22	RexKramer1	Piper PA-22 Tri-Pacer	C172	0.68	2023-07-27 00:00:00
+PA23	RexKramer1	Piper PA-23 Apache	F406	0.65	2023-07-27 00:00:00
+PA34	RexKramer1	Piper PA-34 Seneca	F406	0.65	2023-07-27 00:00:00
+PA38	RexKramer1	Piper PA-38 Tomahawk	PA28	0.65	2023-07-27 00:00:00
+PAY1	RexKramer1	Piper Cheyenne 1	F406	0.65	2023-07-27 00:00:00
+PC24	RexKramer1	Pilatus PC-24	JET_nonswept	0.65	2023-07-27 00:00:00
+PC7	RexKramer1	Pilatus PC-7	PC9	0.8	2023-07-27 00:00:00
+PIVI	RexKramer1	Pipistrel Virus (ULA)	C172	0.65	2023-07-27 00:00:00
+PNR3	RexKramer1	Alpi Pioneer 300	SR22	0.65	2023-07-27 00:00:00
+R100	RexKramer1	Robin Aigion	PA28	0.7	2023-07-27 00:00:00
+R300	RexKramer1	Robin R3000	SR22	0.65	2023-07-27 00:00:00
+R90R	RexKramer1	Ruschmeyer R90R	PA28	0.7	2023-07-27 00:00:00
+RALL	RexKramer1	SOCATA Rallye	PA28	0.7	2023-07-27 00:00:00
+S10S	RexKramer1	Stemme S-10	AS21	0.7	2023-07-27 00:00:00
+S208	RexKramer1	Siai-Marchetti S-208	PA28	0.7	2023-07-27 00:00:00
+SUBA	RexKramer1	Fuji FA-200 Aero Subaru	SR22	0.7	2023-07-27 00:00:00
+TB21	RexKramer1	Socata TB-21	PA28	0.7	2023-07-27 00:00:00
+TBM7	RexKramer1	Socata TBM-700	PC12	0.65	2023-07-27 00:00:00
+TWEN	RexKramer1	Tecnam P2010	C172	0.7	2023-07-27 00:00:00
+TBM8	RexKramer1	Socata TBM-800	PC9	0.8	2023-07-27 00:00:00
+WA50	RexKramer1	Wassmer WA-50 Family	PA28	0.7	2023-07-27 00:00:00
+WT9	RexKramer1	Aerospool WT9 Dynamic (ULA)	SR22	0.65	2023-07-27 00:00:00
+AC95	RexKramer1	Rockwell 695 Jetprop Commander 1000	D328	0.65	2023-07-27 00:00:00
+ALSL	RexKramer1	Airlony Skylane	C172	0.7	2023-07-27 00:00:00
+AS16	RexKramer1	Schleicher ASK-16	AS21	0.7	2023-07-27 00:00:00
+F100	RexKramer1	Fokker 100	JET_swept	0.5	2023-07-27 00:00:00
+HDJT	RexKramer1	HA-420 HondaJet	JET_nonswept	0.65	2023-07-27 00:00:00
+MD82	RexKramer1	McDonnell Douglas MD-82	JET_swept	0.5	2023-07-27 00:00:00
+SF50	RexKramer1	Cirrus SF-50 Vision	JET_nonswept	0.65	2023-07-27 00:00:00
+T154	RexKramer1	Tupolev Tu-154	JET_swept	0.6	2023-07-27 00:00:00
+AN12	RexKramer1	Antonov AN-12	AN12	0.5	2023-07-27 00:00:00
+DO27	RexKramer1	Dornier Do-27	DO27	0.75	2023-07-27 00:00:00
+ST75	RexKramer1	Boeing-Stearman Model 75	ST75	0.7	2023-07-27 00:00:00
+E300	RexKramer1	Extra EA-300	E300	1	2023-07-27 00:00:00
+AS3B	RexKramer1	Aerospatiale / Eurocopter Super Puma Mk2	AS32	0.7	2023-07-27 00:00:00
+AS50	RexKramer1	Aerospatiale / Airbus Helicopters AS-350 / AS-550 / H-125	EC35	0.8	2023-07-27 00:00:00
+B209	RexKramer1	Bölkow BO-209 Monsun	SR22	0.7	2023-07-27 00:00:00
+BE23	RexKramer1	Beech 23 Musketeer / Sundowner	PA28	0.7	2023-07-27 00:00:00
+BE36	RexKramer1	Beech 36 Bonanza	PC12	0.65	2023-07-27 00:00:00
+BE58	RexKramer1	Beech 58 Baron	F406	0.65	2023-07-27 00:00:00
+BE60	RexKramer1	Beech 60 Duke	DA42	0.7	2023-07-27 00:00:00
+BE95	RexKramer1	Beech 95 Travel Air	PA28	0.7	2023-07-27 00:00:00
+C177	RexKramer1	Cessna 177 Cardinal	C172	0.75	2023-07-27 00:00:00
+C190	RexKramer1	Cessna 190	PA46	0.8	2023-07-27 00:00:00
+C210	RexKramer1	Cessna 210 Centurion	C172	0.75	2023-07-27 00:00:00
+C310	RexKramer1	Cessna 310	DA42	0.65	2023-07-27 00:00:00
+C425	RexKramer1	Cessna 425	F406	0.7	2023-07-27 00:00:00
+C441	RexKramer1	Cessna 441 Conquest	F406	0.7	2023-07-27 00:00:00
+C55B	RexKramer1	Cessna 550B Citation Bravo	C25B	0.65	2023-07-27 00:00:00
+C700	RexKramer1	Cessna 700 Citation Longitude	C750	0.55	2023-07-27 00:00:00
+C72R	RexKramer1	Cessna 172RG Cutlass RG	C172	0.75	2023-07-27 00:00:00
+C77R	RexKramer1	Cessna 177RG Cardinal RG	C172	0.75	2023-07-27 00:00:00
+COL3	RexKramer1	Columbia / Cessna 350	PA28	0.7	2023-07-27 00:00:00
+COL4	RexKramer1	Columbia / Cessna 400	PA28	0.7	2023-07-27 00:00:00
+CRUZ	RexKramer1	CZAW SportCruiser	SR22	0.65	2023-07-27 00:00:00
+D253	RexKramer1	Centre Est / Robin DR.253	PA28	0.7	2023-07-27 00:00:00
+DA62	RexKramer1	Diamond DA62	DA42	0.7	2023-07-27 00:00:00
+DAL4	RexKramer1	UL-Jih / Dallach D.4 Fascination	SR22	0.65	2023-07-27 00:00:00
+DV20	RexKramer1	Diamond DA-20	SR22	0.65	2023-07-27 00:00:00
+DIMO	RexKramer1	Diamond HK-36	SF25	0.65	2023-07-27 00:00:00
+EA55	RexKramer1	invalid icao type designator	unidentified	1	2023-07-27 00:00:00
+E545	RexKramer1	Embraer EMB-545 Legacy 450	JET_swept	0.55	2023-07-27 00:00:00
+EXNG	RexKramer1	Extra NG	PA28	0.7	2023-07-27 00:00:00
+F9EX	RexKramer1	Dassault Falcon 900EX / invalid icao type designator	JET_swept	0.4	2023-07-27 00:00:00
+F2TS	RexKramer1	Dassault Falcon 2000S / invalid icao type designator	JET_swept	0.4	2023-07-27 00:00:00
+FDCT	RexKramer1	Flight Design CT (ULA)	SR22	0.65	2023-07-27 00:00:00
+G100	RexKramer1	Gulfstream G100 (ICAO = ASTR)	JET_swept	0.35	2023-07-27 00:00:00
+G450	RexKramer1	Gulfstream G450 (ICAO = GLF4)	JET_swept	0.4	2023-07-27 00:00:00
+GL7T	RexKramer1	Bombardier Global 7000 / 7500	JET_swept	0.4	2023-07-27 00:00:00
+GOLF	RexKramer1	Tecnam P-96 Golf (ULA)	SR22	0.65	2023-07-27 00:00:00
+GLAS	RexKramer1	Glasair (ULA)	PA28	0.65	2023-07-27 00:00:00
+GX	RexKramer1	Remos GX (ULA)	C172	0.65	2023-07-27 00:00:00
+H750	RexKramer1	Hawker 750 (ICAO = H25B)	JET_nonswept	0.65	2023-07-27 00:00:00
+HUSK	RexKramer1	Aviat A-1 Husky	C172	0.67	2023-07-27 00:00:00
+JB15	RexKramer1	Oberlechner JOB-15	SR22	0.7	2023-07-27 00:00:00
+KL07	RexKramer1	Bölkow Bo 207 / Klemm Kl-107	PA28	0.7	2023-07-27 00:00:00
+KODI	RexKramer1	Daher / Quest Kodiak	C208	0.65	2023-07-27 00:00:00
+KR2	RexKramer1	Rand KR2	SR22	0.65	2023-07-27 00:00:00
+L13S	RexKramer1	Aerotechnik L-13S	AS21	0.7	2023-07-27 00:00:00
+LAE1	RexKramer1	Lange E-1 Antares 20E	AS21	0.7	2023-07-27 00:00:00
+M20T	RexKramer1	Mooney M20	PA28	0.7	2023-07-27 00:00:00
+M600	RexKramer1	Piper PA-46-600 TP M600	PA46	0.7	2023-07-27 00:00:00
+NG6	RexKramer1	invalid icao type designator	SR22	0.65	2023-07-27 00:00:00
+P210	RexKramer1	Cessna 210 Centurion	C172	0.7	2023-07-27 00:00:00
+P32T	RexKramer1	Piper Cherokee Six	PA28	0.7	2023-07-27 00:00:00
+P68	RexKramer1	Partenavia P-68	F406	0.65	2023-07-27 00:00:00
+PA16	RexKramer1	Piper PA-16 Clipper	C172	0.68	2023-07-27 00:00:00
+PA27	RexKramer1	Piper PA-27 Aztec	F406	0.65	2023-07-27 00:00:00
+PA30	RexKramer1	Piper PA-30	F406	0.65	2023-07-27 00:00:00
+PA44	RexKramer1	Piper PA-44 Seminole	F406	0.65	2023-07-27 00:00:00
+PICO	RexKramer1	Odessa Y-1 Delfin	SR22	0.65	2023-07-27 00:00:00
+RF6	RexKramer1	Slingsby T67 Firefly / Fournier RF-6	PA28	0.7	2023-07-27 00:00:00
+PULS	RexKramer1	Aero Designs Pulsar	SR22	0.65	2023-07-27 00:00:00
+R200	RexKramer1	Alpha Aviation Alpha 2000	PA28	0.7	2023-07-27 00:00:00
+RV6	RexKramer1	Van's Aircraft RV-6	SR22	0.7	2023-07-27 00:00:00
+SC01	RexKramer1	Gyroflug Speed Canard	unidentified	1	2023-07-27 00:00:00
+SHRK	RexKramer1	Shark.Aero Shark	SR22	0.65	2023-07-27 00:00:00
+SIRA	RexKramer1	Tecnam P2002 Sierra	SR22	0.7	2023-07-27 00:00:00
+SVNH	RexKramer1	Aerotex MXP-740 Savannah	C172	0.6	2023-07-27 00:00:00
+SW4	RexKramer1	Fairchild / Swearingen Metro	F50	0.45	2023-07-27 00:00:00
+TAMP	RexKramer1	Socata TB Family	PA28	0.7	2023-07-27 00:00:00
+TBM9	RexKramer1	Socata TBM-900	PC9	0.8	2023-07-27 00:00:00
+TFUN	RexKramer1	Valentin Taifun	SF25	0.65	2023-07-27 00:00:00
+TOBA	RexKramer1	Socata TB-10	PA28	0.7	2023-07-27 00:00:00
+VL3	RexKramer1	Aveko VL-3 Sprint	SR22	0.7	2023-07-27 00:00:00
+Z42	RexKramer1	Zlin Z 42	PA28	0.7	2023-07-27 00:00:00
+AC11	RexKramer1	Rockwell Commander 112/114/115	PA28	0.7	2023-07-27 00:00:00
+AC90	RexKramer1	Rockwell Turbo Commander 690	D328	0.65	2023-07-27 00:00:00
+AS25	RexKramer1	Schleicher ASH-25	AS21	0.7	2023-07-27 00:00:00
+AS29	RexKramer1	Schleicher ASG-29E	AS21	0.7	2023-07-27 00:00:00
+AS55	RexKramer1	Eurocopter / Airbus Helicopters AS-355	EC35	0.8	2023-07-27 00:00:00
+SLG4	RexKramer1	Sling Aircraft Sling 4	SR22	0.7	2023-07-27 00:00:00
+ASSO	RexKramer1	Asso 4 Whisky (ULA) (invalid icao type designator)	SR22	0.7	2023-07-27 00:00:00
+B06	RexKramer1	Bell 206 JetRanger / LongRanger	UH1	0.9	2023-07-27 00:00:00
+FW44	RexKramer1	Focke-Wulf FW-44 Stieglitz 	ST75	0.7	2023-07-27 00:00:00
+P180	RexKramer1	Piaggio P-180 Avanti	P180	0.65	2023-07-27 00:00:00
+PC6T	RexKramer1	Pilatus PC-6 Turbo Porter	PC6T	0.65	2023-07-27 00:00:00
+SC7	RexKramer1	Short SC.7 Skyvan	SC7	0.55	2023-07-27 00:00:00
+T204	RexKramer1	Tupolev Tu-204 Family	T204	0.5	2023-07-27 00:00:00
+EC20	RexKramer1	Eurocopter / Airbus Helicopters EC-120 Colibri	EC20	0.85	2023-07-27 00:00:00
+C414	RexKramer1	Cessna 414 Chancellor	JET_nonswept	0.5	2023-07-27 00:00:00
+BE9L	RexKramer1	Beech 90 King Air	B350	0.65	2023-07-27 00:00:00
+C206	RexKramer1	Cessna 206	C172	0.8	2023-07-27 00:00:00
+C303	RexKramer1	Cessna T303 Crusader	F406	0.7	2023-07-27 00:00:00
+C340	RexKramer1	Cessna 340	F406	0.7	2023-07-27 00:00:00
+C82R	RexKramer1	Cessna R182 Skylane RG	C172	0.75	2023-07-27 00:00:00
+CL61	RexKramer1	Bombardier Challenger 601 (invalid ICAO Type Designator)	JET_swept	0.35	2023-07-27 00:00:00
+CL64	RexKramer1	Bombardier Challenger 604 (invalid ICAO Type Designator)	JET_swept	0.35	2023-07-27 00:00:00
+CL65	RexKramer1	Bombardier Challenger 605 (invalid ICAO Type Designator)	JET_swept	0.35	2023-07-27 00:00:00
+CP30	RexKramer1	Piel CP-30 Emeraude	SR22	0.65	2023-07-27 00:00:00
+D11	RexKramer1	Jodel D.11	SR22	0.65	2023-07-27 00:00:00
+DR10	RexKramer1	Centre Est / Robin DR100	PA28	0.7	2023-07-27 00:00:00
+VENT	RexKramer1	Schempp-Hirth Ventus	AS21	0.7	2023-07-27 00:00:00
+DR22	RexKramer1	Centre Est / Robin DR220	PA28	0.7	2023-07-27 00:00:00
+DUOD	RexKramer1	Schempp-Hirth Duo Discus	AS21	0.7	2023-07-27 00:00:00
+E550	RexKramer1	Embraer EMB-550 Legacy 500 / 600	JET_swept	0.55	2023-07-27 00:00:00
+ECHO	RexKramer1	Tecnam P-92 (ULA)	C172	0.65	2023-07-27 00:00:00
+F260	RexKramer1	Alenia / Aermacchi F-260 / T-260	PA28	0.7	2023-07-27 00:00:00
+F2EX	RexKramer1	Dassault Falcon 2000EX (invalid icao type designator)	JET_swept	0.4	2023-07-27 00:00:00
+F2LX	RexKramer1	Dassault Falcon 2000LX / invalid icao type designator	JET_swept	0.4	2023-07-27 00:00:00
+F5EX	RexKramer1	Dassault Falcon 50 / invalid icao type designator	JET_swept	0.4	2023-07-27 00:00:00
+F9LX	RexKramer1	Dassault Falcon 900LX / invalid icao type designator	JET_swept	0.4	2023-07-27 00:00:00
+G550	RexKramer1	Gulfstream G550 (ICAO = GLF5)	JET_swept	0.4	2023-07-27 00:00:00
+GC1	RexKramer1	Globe / Temco GC-1 Swift (ULA)	SR22	0.65	2023-07-27 00:00:00
+H900	RexKramer1	Hawker 900 (ICAO = H25B)	JET_nonswept	0.65	2023-07-27 00:00:00
+JUNR	RexKramer1	Malmö Flygindustri MFI-9  / Bölkow Bo-208 Junior	C172	0.65	2023-07-27 00:00:00
+KC10	RexKramer1	McDonnel Douglas KC-10  (ICAO = DC10)	DC10	0.5	2023-07-27 00:00:00
+NG5	RexKramer1	BRM Aero Bristell NG-5 (ULA)	SR22	0.65	2023-07-27 00:00:00
+P06T	RexKramer1	Tecnam P-2006T	F406	0.65	2023-07-27 00:00:00
+P149	RexKramer1	Piaggio P-149	PA28	0.7	2023-07-27 00:00:00
+PA18	RexKramer1	Piper PA-18 Super Cub	C172	0.68	2023-07-27 00:00:00
+PAY2	RexKramer1	Piper Cheyenne 2	F406	0.65	2023-07-27 00:00:00
+PAY3	RexKramer1	Piper Cheyenne 3	F406	0.65	2023-07-27 00:00:00
+RF4	RexKramer1	Fournier RF-4	PA28	0.75	2023-07-27 00:00:00
+RV10	RexKramer1	Van's Aircraft RV-10	SR22	0.7	2023-07-27 00:00:00
+RV4	RexKramer1	Van's Aircraft RV-4	SR22	0.65	2023-07-27 00:00:00
+RV7	RexKramer1	Van's Aircraft RV-7	SR22	0.7	2023-07-27 00:00:00
+RV8	RexKramer1	Van's Aircraft RV-8	SR22	0.7	2023-07-27 00:00:00
+Z43	RexKramer1	Zlin Z 43	SR22	0.7	2023-07-27 00:00:00
+B23	RexKramer1	Bristell B23 (ICAO-Type=B23E)	SR22	0.7	2023-07-27 00:00:00
+C135	RexKramer1	Boeing NC-135 / OC-135 / WC-135	R135	0.5	2023-07-27 00:00:00
+SAVG	RexKramer1	Zlin Savage	C172	0.65	2023-07-27 00:00:00
+Falcon 8X	RexKramer1	Dassault Falcon 8X (ICAO-Type=FA8X)	FA7X	0.5	2023-07-27 00:00:00
+G2T1	RexKramer1	Great Lakes Sport Trainer	unidentified	1	2023-07-27 00:00:00
+GA8	RexKramer1	GippsAero GA8 Airvan	unidentified	1	2023-07-27 00:00:00
+MT	RexKramer1	AutoGyro MT-03	GYRO	0.75	2023-07-27 00:00:00
+P212	RexKramer1	Tecnam P-2012 Traveller	C208	0.65	2023-07-27 00:00:00
+E500	RexKramer1	Extra EA-500	C208	0.6	2023-07-27 00:00:00
+PA12	RexKramer1	PA-12 Super Cruiser	C172	0.67	2023-07-27 00:00:00
+PA32	RexKramer1	Piper PA-32 Cherokee Six	PA28	0.7	2023-07-27 00:00:00
+RS18	RexKramer1	Sportavia-Pützer RS 180 Sportsman	PA28	0.7	2023-07-27 00:00:00
+TRIN	RexKramer1	Socata TB-20 Trinidad (ICAO=TB20)	PA28	0.7	2023-07-27 00:00:00
+Y18T	RexKramer1	Yakovlev Yak-18T	PA28	0.7	2023-07-27 00:00:00
+BE55	RexKramer1	Beech 55 Baron	F406	0.65	2023-07-27 00:00:00
+NIMB	RexKramer1	Schempp-Hirth Nimbus	AS21	0.7	2023-07-27 00:00:00
+PA46	RexKramer1	Piper PA-46-310P Malibu	PA46	0.7	2023-07-27 00:00:00
+H500	RexKramer1	Boeing MD-500	EC35	0.8	2023-07-27 00:00:00
+BN2P	RexKramer1	Britten-Norman BN-2 Islander	BN2P	0.65	2023-07-27 00:00:00
+C160	RexKramer1	C-160 Transall	C160	0.5	2023-07-27 00:00:00
+DO28	RexKramer1	Dornier Do-28 Skyservant	DO28	0.65	2023-07-27 00:00:00
+SU95	RexKramer1	Suchoi Superjet 100-95	SU95	0.5	2023-07-27 00:00:00
+S108	RexKramer1	Stinson 108 (Piper Station Wagon) 	C172	0.7	2023-07-27 00:00:00
+KC2	RexKramer1	Kawasaki C-2	KC2	0.5	2023-07-27 00:00:00
+CVN-65	RexKramer1	CVN-65 USS Enterprise	CVN-65	0.7	2023-07-27 00:00:00
+A109	RexKramer1	Agusta A109	H60	0.65	2023-07-27 00:00:00
+AS31	RexKramer1	Schleicher ASH-31Mi	AS21	0.7	2023-07-27 00:00:00
+AT43	RexKramer1	ATR-42-300	AT45	0.5	2023-07-27 00:00:00
+AT45	RexKramer1	ATR-42-500	AT45	0.5	2023-07-27 00:00:00
+AT46	RexKramer1	ATR-42-600	AT45	0.5	2023-07-27 00:00:00
+AT72	RexKramer1	ATR-72-200	AT75	0.5	2023-07-27 00:00:00
+AT73	RexKramer1	ATR-72-300	AT75	0.5	2023-07-27 00:00:00
+AT75	RexKramer1	ATR-72-500	AT75	0.5	2023-07-27 00:00:00
+AT76	RexKramer1	ATR-72-600	AT75	0.5	2023-07-27 00:00:00
+BW60	RexKramer1	Blackwing BW-600	SR22	0.7	2023-07-27 00:00:00
+C170	RexKramer1	Cessna 170	C172	0.75	2023-07-27 00:00:00
+ATLA	RexKramer1	Breguet 1150 Atlantic	ATP	0.5	2023-07-27 00:00:00
+B1	RexKramer1	Rockwell B1 Lancer (slow config)	B1_slow	0.5	2023-07-27 00:00:00
+B1F	RexKramer1	Rockwell B1 Lancer (fast config)	B1_fast	0.5	2023-07-27 00:00:00
+B407	RexKramer1	Bell 407	EC35	0.9	2023-07-27 00:00:00
+B505	RexKramer1	Bell 505 Jet Ranger X	R44	0.9	2023-07-27 00:00:00
+B58T	RexKramer1	Beech Baron	F406	0.65	2023-07-27 00:00:00
+BE9T	RexKramer1	Beech King Air (F90)	B350	0.65	2023-07-27 00:00:00
+BK17	RexKramer1	Eurocopter / Kawasaki BK-117B	EC45	0.9	2023-07-27 00:00:00
+BN2T	RexKramer1	Britten-Norman BN-2T Turbine Islander	BN2P	0.65	2023-07-27 00:00:00
+BT36	RexKramer1	Beech Bonanza	PC12	0.65	2023-07-27 00:00:00
+BU31	RexKramer1	Bücker Bü-131 Jungmann	ST75	0.7	2023-07-27 00:00:00
+BU81	RexKramer1	Bücker Bü-181 Bestmann	PA28	0.7	2023-07-27 00:00:00
+C180	RexKramer1	Cessna 180 Skywagon	C172	0.75	2023-07-27 00:00:00
+C27J	RexKramer1	Alenia C-27J Spartan	C295	0.5	2023-07-27 00:00:00
+C82S	RexKramer1	Cessna T182 Turbo Skylane	C172	0.75	2023-07-27 00:00:00
+CDUS	RexKramer1	Autogyro Calidus	GYRO	0.75	2023-07-27 00:00:00
+CL2T	RexKramer1	Canadair CL-215T / CL-415	CL2T	0.55	2023-07-27 00:00:00
+CLON	RexKramer1	Autogyro Cavalon	GYRO	0.75	2023-07-27 00:00:00
+D150	RexKramer1	Jodel D-150 Mascaret	PA28	0.7	2023-07-27 00:00:00
+D28D	RexKramer1	Dornier Do-28D Skyservant	DO28	0.65	2023-07-27 00:00:00
+DA50	RexKramer1	Diamond DA-50	SR22	0.7	2023-07-27 00:00:00
+DC3T	RexKramer1	Douglas DC-3 Turbo (Basler BT-67)	DC3	0.5	2023-07-27 00:00:00
+DG40	RexKramer1	Glaser-Dirks DG-400	AS21	0.7	2023-07-27 00:00:00
+DG60	RexKramer1	Glaser-Dirks DG-600M	AS21	0.7	2023-07-27 00:00:00
+DISC	RexKramer1	Schempp-Hirth Discus	AS21	0.7	2023-07-27 00:00:00
+DR30	RexKramer1	Centre Est / Robin DR300	SR22	0.7	2023-07-27 00:00:00
+DV1	RexKramer1	DOVA DV-1 Skylark	SR22	0.7	2023-07-27 00:00:00
+E120	RexKramer1	EMB-120 Brasilia	SF34	0.5	2023-07-27 00:00:00
+E400	RexKramer1	Extra EA-400	F406	0.65	2023-07-27 00:00:00
+E737	RexKramer1	Boeing 737-700 Wedgetail	E737	0.5	2023-07-27 00:00:00
+EH10	RexKramer1	AgustaWestland EH-101 Merlin	S61	0.8	2023-07-27 00:00:00
+F35	RexKramer1	F-35A/C Lightning 2	F35	0.7	2023-07-27 00:00:00
+FA6X	RexKramer1	Dassault Falcon 6X	Jet_swept	0.4	2023-07-27 00:00:00
+H53	RexKramer1	Sikorsky CH53	S61	0.8	2023-07-27 00:00:00
+KC46	RexKramer1	Boeing KC-46 Pegasus (ICAO Type designator = B762)	KC46	0.5	2023-07-27 00:00:00
+LJ36	RexKramer1	Lear Jet 36	LJ35	0.7	2023-07-27 00:00:00
+P8	RexKramer1	Boeing P-8 Poseidon	P8	0.5	2023-07-27 00:00:00
+VF35	RexKramer1	F-35B Lightning 2	VF35	0.7	2023-07-27 00:00:00

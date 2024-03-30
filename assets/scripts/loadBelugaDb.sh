@@ -15,7 +15,7 @@ SECONDS=0
 SECONDS_AT_START=$SECONDS
 
 echo ----------------------------------------------------------------------
-echo $(timestamp) loadBelugaDb.sh Version 4-0-0
+echo $(timestamp) loadBelugaDb.sh Version 4-0-1
 echo ----------------------------------------------------------------------
 
 echo ----------------------------------------------------------------------
@@ -41,21 +41,68 @@ psql -c "COPY airport_data (
 			home_link,
 			wikipedia_link,
 			keywords)
-		FROM '$pathToDirectoryWithCsv/airports.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/airports.csv'
+		WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table airport_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'airport_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'airport_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table country_data ...
 echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE country_data;" -U beluga -d belugaDb
-psql -c "COPY country_data (
-	 		country_iso2letter,
-	 		country_iso3letter,
-	 		country_name_en,
-	 		country_name_de,
-			country_flag_utf8code)
-		FROM '$pathToDirectoryWithCsv/country_data.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+psql -c "COPY country_data (country_iso2letter,
+    						country_flag_utf8code,
+							country_iso3letter,
+							country_name_de,
+							country_name_en)
+		FROM '$pathToDirectoryWithCsv/country_data.csv'
+		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table country_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'country_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'country_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table regcode_data ...
@@ -65,8 +112,32 @@ psql -c "COPY regcode_data (
 			regcode_prefix,
 			regcode_flag_utf8code,
 			regcode_name)
-		FROM '$pathToDirectoryWithCsv/regcode_data.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/regcode_data.csv' 
+		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table regcode_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'regcode_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'regcode_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table map_operator_icao_to_iata ...
@@ -82,8 +153,32 @@ psql -c "COPY map_operator_icao_to_iata (
 			operator_name,
 			operator_icao,
 			operator_iata)
-FROM '$pathToDirectoryWithCsv/map_operator_icao_to_iata.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/map_operator_icao_to_iata.csv'
+		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table map_operator_icao_to_iata
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'map_operator_icao_to_iata',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'map_operator_icao_to_iata'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table operators.csv 
@@ -106,7 +201,8 @@ psql -c "COPY tmp_operator_data_mictronics (
 			operator_country,
 			operator_callsign
 			)
-		FROM '$pathToDirectoryWithCsv/operators.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/operators.csv'
+		WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
 
 echo ----------------------------------------------------------------------
@@ -245,17 +341,64 @@ psql -c "INSERT INTO OPERATOR_DATA(
 
 psql -c "DROP TABLE IF EXISTS TMP_OPERATOR_DATA_MICTRONICS;" -U beluga -d belugaDb
 
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table operator_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'operator_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'operator_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
+
 echo $(timestamp) Done.
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table flightroute_data ...
 echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE flightroute_data;" -U beluga -d belugaDb
-psql -c "COPY flightroute_data (
-			flight_id,
-			flight_route)
-		FROM '$pathToDirectoryWithCsv/flightroute_data.csv' WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
+psql -c "COPY flightroute_data (flight_id,
+								flight_last_update,
+								flight_route)
+		FROM '$pathToDirectoryWithCsv/flightroute_data.csv'
+		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table flightroute_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'flightroute_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'flightroute_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table shape_data ...
@@ -271,8 +414,32 @@ psql -c "COPY shape_data (
 			version,
 			png_id,
 			png_scale)
-		FROM '$pathToDirectoryWithCsv/shape_data.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/shape_data.csv'
+		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table shape_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'shape_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'shape_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table map_cat_to_shape_data ...
@@ -285,8 +452,32 @@ psql -c "COPY map_cat_to_shape_data (
 			shape_designator,
 			shape_scale,
 			version)
-		FROM '$pathToDirectoryWithCsv/map_cat_to_shape.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/map_cat_to_shape_data.csv'
+		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table map_cat_to_shape_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'map_cat_to_shape_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'map_cat_to_shape_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo $(timestamp) loading table map_type_to_shape_data ...
@@ -299,8 +490,32 @@ psql -c "COPY map_type_to_shape_data (
 			shape_designator,
 			shape_scale,
 			version)
-		FROM '$pathToDirectoryWithCsv/map_type_to_shape.csv' WITH DELIMITER E'\t' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/map_type_to_shape_data.csv'
+		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
+
+echo ----------------------------------------------------------------------
+echo $(timestamp) update version_info for table map_type_to_shape_data
+echo ----------------------------------------------------------------------
+psql -c "INSERT INTO public.version_info(
+			table_name,
+			version,
+			rows,
+			csv_created,
+			csv_imported,
+			last_updated)
+		VALUES (
+			'map_type_to_shape_data',
+			'4.0.1',
+			(SELECT n_live_tup
+		        FROM pg_stat_user_tables
+		        where relname = 'map_type_to_shape_data'),
+			null,
+			null,
+			current_timestamp)
+		ON CONFLICT ON CONSTRAINT version_info_pkey DO
+		UPDATE 
+		SET last_updated = current_timestamp;" -U beluga -d belugaDb
 
 echo ----------------------------------------------------------------------
 echo Start time was: $start_time
