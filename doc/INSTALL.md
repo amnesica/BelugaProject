@@ -15,7 +15,7 @@ $ sudo ./run.sh docker-rm
 $ cd .. && sudo rm -r BelugaProject BelugaProject.zip
 ```
 
-`Alternatively` this document guides you step-by-step through the necessary commands to install the Beluga Project `manually`.
+**Alternatively** this document guides you step-by-step through the necessary commands to install the Beluga Project **manually**.
 
 BelugaProject will run in 3 docker containers on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems.
 
