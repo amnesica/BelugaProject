@@ -15,7 +15,7 @@ $ sudo ./run.sh docker-rm
 $ cd .. && sudo rm -r BelugaProject BelugaProject.zip
 ```
 
-`Alternatively` this document guides you step-for-step through the necessary commands to install the Beluga Project `manually`.
+`Alternatively` this document guides you step-by-step through the necessary commands to install the Beluga Project `manually`.
 
 BelugaProject will run in 3 docker containers on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems.
 
@@ -44,12 +44,12 @@ If you want to use the 3D view, follow these steps:
 
 1.  Install docker and docker compose (at least version 2) from [here](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi. Check the version of docker compose with `docker compose version` (needs to be >=2)
 
-If you already have BelugaProject installed in a docker container before, first execute the following commands
-```
-$ cd BelugaProject
-$ sudo ./run.sh docker-rm
-$ cd .. && sudo rm -r BelugaProject BelugaProject.zip
-```
+    If you already have BelugaProject installed in a docker container before, first execute the following commands
+    ```
+    $ cd BelugaProject
+    $ sudo ./run.sh docker-rm
+    $ cd .. && sudo rm -r BelugaProject BelugaProject.zip
+    ```
 
 2.  Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP, rename and extract it
 
