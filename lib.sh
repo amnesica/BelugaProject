@@ -561,6 +561,9 @@ _import_db_content() {
 
   _copy_import_belugadbdata_script_to_container
   _exec_import_belugadbdata_script
+  _copy_load_db_func_script_to_container
+  _exec_load_db_func_script
+
 }
 
 _env() {
