@@ -1,194 +1,194 @@
-"country_iso2letter","country_iso3letter","country_name_en","country_name_de","country_flag_utf8_code"
-"bg","bgr","Bulgaria","Bulgarien","U+1F1E7 U+1F1EC "
-"mm","mmr","Myanmar","Myanmar","U+1F1F2 U+1F1F2 "
-"bi","bdi","Burundi","Burundi","U+1F1E7 U+1F1EE "
-"by","blr","Belarus","Belarus","U+1F1E7 U+1F1FE "
-"kh","khm","Cambodia","Kambodscha","U+1F1F0 U+1F1ED "
-"dz","dza","Algeria","Algerien","U+1F1E9 U+1F1FF "
-"cm","cmr","Cameroon","Kamerun","U+1F1E8 U+1F1F2 "
-"ca","can","Canada","Kanada","U+1F1E8 U+1F1E6 "
-"cv","cpv","Cabo Verde","Kap Verde","U+1F1E8 U+1F1FB "
-"cf","caf","Central African Republic","Zentral­afrikanische Republik","U+1F1E8 U+1F1EB "
-"lk","lka","Sri Lanka","Sri Lanka","U+1F1F1 U+1F1F0 "
-"td","tcd","Chad","Tschad","U+1F1F9 U+1F1E9 "
-"cl","chl","Chile","Chile","U+1F1E8 U+1F1F1 "
-"cn","chn","China","Volksrepublik China","U+1F1E8 U+1F1F3 "
-"co","col","Colombia","Kolumbien","U+1F1E8 U+1F1F4 "
-"km","com","Comoros","Komoren","U+1F1F0 U+1F1F2 "
-"cg","cog","Congo","Kongo, Republik","U+1F1E8 U+1F1EC "
-"cd","cod","Congo, Democratic Republic of the","Kongo, Demokratische Republik","U+1F1E8 U+1F1E9 "
-"cr","cri","Costa Rica","Costa Rica","U+1F1E8 U+1F1F7 "
-"hr","hrv","Croatia","Kroatien","U+1F1ED U+1F1F7 "
-"cu","cub","Cuba","Kuba","U+1F1E8 U+1F1FA "
-"cy","cyp","Cyprus","Zypern","U+1F1E8 U+1F1FE "
-"ad","and","Andorra","Andorra","U+1F1E6 U+1F1E9 "
-"cz","cze","Czechia","Tschechien","U+1F1E8 U+1F1FF "
-"bj","ben","Benin","Benin","U+1F1E7 U+1F1EF "
-"dk","dnk","Denmark","Dänemark","U+1F1E9 U+1F1F0 "
-"dm","dma","Dominica","Dominica","U+1F1E9 U+1F1F2 "
-"do","dom","Dominican Republic","Dominikanische Republik","U+1F1E9 U+1F1F4 "
-"ec","ecu","Ecuador","Ecuador","U+1F1EA U+1F1E8 "
-"sv","slv","El Salvador","El Salvador","U+1F1F8 U+1F1FB "
-"gq","gnq","Equatorial Guinea","Äquatorialguinea","U+1F1EC U+1F1F6 "
-"et","eth","Ethiopia","Äthiopien","U+1F1EA U+1F1F9 "
-"er","eri","Eritrea","Eritrea","U+1F1EA U+1F1F7 "
-"ee","est","Estonia","Estland","U+1F1EA U+1F1EA "
-"ao","ago","Angola","Angola","U+1F1E6 U+1F1F4 "
-"fj","fji","Fiji","Fidschi","U+1F1EB U+1F1EF "
-"fi","fin","Finland","Finnland","U+1F1EB U+1F1EE "
-"fr","fra","France","Frankreich","U+1F1EB U+1F1F7 "
-"dj","dji","Djibouti","Dschibuti","U+1F1E9 U+1F1EF "
-"ga","gab","Gabon","Gabun","U+1F1EC U+1F1E6 "
-"ge","geo","Georgia","Georgien","U+1F1EC U+1F1EA "
-"gm","gmb","Gambia","Gambia","U+1F1EC U+1F1F2 "
-"de","deu","Germany","Deutschland","U+1F1E9 U+1F1EA "
-"ag","atg","Antigua and Barbuda","Antigua und Barbuda","U+1F1E6 U+1F1EC "
-"gh","gha","Ghana","Ghana","U+1F1EC U+1F1ED "
-"ki","kir","Kiribati","Kiribati","U+1F1F0 U+1F1EE "
-"gr","grc","Greece","Griechenland","U+1F1EC U+1F1F7 "
-"gd","grd","Grenada","Grenada","U+1F1EC U+1F1E9 "
-"az","aze","Azerbaijan","Aserbaidschan","U+1F1E6 U+1F1FF "
-"ar","arg","Argentina","Argentinien","U+1F1E6 U+1F1F7 "
-"gt","gtm","Guatemala","Guatemala","U+1F1EC U+1F1F9 "
-"gn","gin","Guinea","Guinea","U+1F1EC U+1F1F3 "
-"gy","guy","Guyana","Guyana","U+1F1EC U+1F1FE "
-"ht","hti","Haiti","Haiti","U+1F1ED U+1F1F9 "
-"hn","hnd","Honduras","Honduras","U+1F1ED U+1F1F3 "
-"hu","hun","Hungary","Ungarn","U+1F1ED U+1F1FA "
-"is","isl","Iceland","Island","U+1F1EE U+1F1F8 "
-"in","ind","India","Indien","U+1F1EE U+1F1F3 "
-"au","aus","Australia","Australien","U+1F1E6 U+1F1FA "
-"id","idn","Indonesia","Indonesien","U+1F1EE U+1F1E9 "
-"ir","irn","Iran (Islamic Republic of)","Iran","U+1F1EE U+1F1F7 "
-"iq","irq","Iraq","Irak","U+1F1EE U+1F1F6 "
-"ie","irl","Ireland","Irland","U+1F1EE U+1F1EA "
-"il","isr","Israel","Israel","U+1F1EE U+1F1F1 "
-"it","ita","Italy","Italien","U+1F1EE U+1F1F9 "
-"ci","civ","Côte d'Ivoire","Elfenbeinküste","U+1F1E8 U+1F1EE "
-"jm","jam","Jamaica","Jamaika","U+1F1EF U+1F1F2 "
-"jp","jpn","Japan","Japan","U+1F1EF U+1F1F5 "
-"kz","kaz","Kazakhstan","Kasachstan","U+1F1F0 U+1F1FF "
-"af","afg","Afghanistan","Afghanistan","U+1F1E6 U+1F1EB "
-"at","aut","Austria","Österreich","U+1F1E6 U+1F1F9 "
-"jo","jor","Jordan","Jordanien","U+1F1EF U+1F1F4 "
-"ke","ken","Kenya","Kenia","U+1F1F0 U+1F1EA "
-"kp","prk","Korea (Democratic People's Republic of)","Korea, Nord","U+1F1F0 U+1F1F5 "
-"kr","kor","Korea, Republic of","Korea, Süd","U+1F1F0 U+1F1F7 "
-"kw","kwt","Kuwait","Kuwait","U+1F1F0 U+1F1FC "
-"kg","kgz","Kyrgyzstan","Kirgisistan","U+1F1F0 U+1F1EC "
-"la","lao","Lao People's Democratic Republic","Laos","U+1F1F1 U+1F1E6 "
-"lb","lbn","Lebanon","Libanon","U+1F1F1 U+1F1E7 "
-"ls","lso","Lesotho","Lesotho","U+1F1F1 U+1F1F8 "
-"lv","lva","Latvia","Lettland","U+1F1F1 U+1F1FB "
-"lr","lbr","Liberia","Liberia","U+1F1F1 U+1F1F7 "
-"ly","lby","Libya","Libyen","U+1F1F1 U+1F1FE "
-"li","lie","Liechtenstein","Liechtenstein","U+1F1F1 U+1F1EE "
-"bs","bhs","Bahamas","Bahamas","U+1F1E7 U+1F1F8 "
-"lt","ltu","Lithuania","Litauen","U+1F1F1 U+1F1F9 "
-"lu","lux","Luxembourg","Luxemburg","U+1F1F1 U+1F1FA "
-"mg","mdg","Madagascar","Madagaskar","U+1F1F2 U+1F1EC "
-"mw","mwi","Malawi","Malawi","U+1F1F2 U+1F1FC "
-"my","mys","Malaysia","Malaysia","U+1F1F2 U+1F1FE "
-"mv","mdv","Maldives","Malediven","U+1F1F2 U+1F1FB "
-"ml","mli","Mali","Mali","U+1F1F2 U+1F1F1 "
-"mt","mlt","Malta","Malta","U+1F1F2 U+1F1F9 "
-"mr","mrt","Mauritania","Mauretanien","U+1F1F2 U+1F1F7 "
-"bh","bhr","Bahrain","Bahrain","U+1F1E7 U+1F1ED "
-"mu","mus","Mauritius","Mauritius","U+1F1F2 U+1F1FA "
-"mx","mex","Mexico","Mexiko","U+1F1F2 U+1F1FD "
-"mc","mco","Monaco","Monaco","U+1F1F2 U+1F1E8 "
-"mn","mng","Mongolia","Mongolei","U+1F1F2 U+1F1F3 "
-"md","mda","Moldova, Republic of","Moldau","U+1F1F2 U+1F1E9 "
-"me","mne","Montenegro","Montenegro","U+1F1F2 U+1F1EA "
-"bd","bgd","Bangladesh","Bangladesch","U+1F1E7 U+1F1E9 "
-"ma","mar","Morocco","Marokko","U+1F1F2 U+1F1E6 "
-"mz","moz","Mozambique","Mosambik","U+1F1F2 U+1F1FF "
-"am","arm","Armenia","Armenien","U+1F1E6 U+1F1F2 "
-"om","omn","Oman","Oman","U+1F1F4 U+1F1F2 "
-"na","nam","Namibia","Namibia","U+1F1F3 U+1F1E6 "
-"bb","brb","Barbados","Barbados","U+1F1E7 U+1F1E7 "
-"nr","nru","Nauru","Nauru","U+1F1F3 U+1F1F7 "
-"np","npl","Nepal","Nepal","U+1F1F3 U+1F1F5 "
-"nl","nld","Netherlands","Niederlande","U+1F1F3 U+1F1F1 "
-"vu","vut","Vanuatu","Vanuatu","U+1F1FB U+1F1FA "
-"nz","nzl","New Zealand","Neuseeland","U+1F1F3 U+1F1FF "
-"ni","nic","Nicaragua","Nicaragua","U+1F1F3 U+1F1EE "
-"be","bel","Belgium","Belgien","U+1F1E7 U+1F1EA "
-"ne","ner","Niger","Niger","U+1F1F3 U+1F1EA "
-"ng","nga","Nigeria","Nigeria","U+1F1F3 U+1F1EC "
-"no","nor","Norway","Norwegen","U+1F1F3 U+1F1F4 "
-"fm","fsm","Micronesia (Federated States of)","Mikronesien","U+1F1EB U+1F1F2 "
-"mh","mhl","Marshall Islands","Marshallinseln","U+1F1F2 U+1F1ED "
-"pw","plw","Palau","Palau","U+1F1F5 U+1F1FC "
-"pk","pak","Pakistan","Pakistan","U+1F1F5 U+1F1F0 "
-"pa","pan","Panama","Panama","U+1F1F5 U+1F1E6 "
-"pg","png","Papua New Guinea","Papua-Neuguinea","U+1F1F5 U+1F1EC "
-"py","pry","Paraguay","Paraguay","U+1F1F5 U+1F1FE "
-"pe","per","Peru","Peru","U+1F1F5 U+1F1EA "
-"ph","phl","Philippines","Philippinen","U+1F1F5 U+1F1ED "
-"pl","pol","Poland","Polen","U+1F1F5 U+1F1F1 "
-"pt","prt","Portugal","Portugal","U+1F1F5 U+1F1F9 "
-"gw","gnb","Guinea-Bissau","Guinea-Bissau","U+1F1EC U+1F1FC "
-"tl","tls","Timor-Leste","Osttimor","U+1F1F9 U+1F1F1 "
-"qa","qat","Qatar","Katar","U+1F1F6 U+1F1E6 "
-"bt","btn","Bhutan","Bhutan","U+1F1E7 U+1F1F9 "
-"ro","rou","Romania","Rumänien","U+1F1F7 U+1F1F4 "
-"ru","rus","Russian Federation","Russland","U+1F1F7 U+1F1FA "
-"rw","rwa","Rwanda","Ruanda","U+1F1F7 U+1F1FC "
-"kn","kna","Saint Kitts and Nevis","St. Kitts und Nevis","U+1F1F0 U+1F1F3 "
-"lc","lca","Saint Lucia","St. Lucia","U+1F1F1 U+1F1E8 "
-"vc","vct","Saint Vincent and the Grenadines","St. Vincent und die Grenadinen","U+1F1FB U+1F1E8 "
-"sm","smr","San Marino","San Marino","U+1F1F8 U+1F1F2 "
-"st","stp","Sao Tome and Principe","São Tomé und Príncipe","U+1F1F8 U+1F1F9 "
-"bo","bol","Bolivia (Plurinational State of)","Bolivien","U+1F1E7 U+1F1F4 "
-"sa","sau","Saudi Arabia","Saudi-Arabien","U+1F1F8 U+1F1E6 "
-"sn","sen","Senegal","Senegal","U+1F1F8 U+1F1F3 "
-"rs","srb","Serbia","Serbien","U+1F1F7 U+1F1F8 "
-"sc","syc","Seychelles","Seychellen","U+1F1F8 U+1F1E8 "
-"sl","sle","Sierra Leone","Sierra Leone","U+1F1F8 U+1F1F1 "
-"ba","bih","Bosnia and Herzegovina","Bosnien und Herzegowina","U+1F1E7 U+1F1E6 "
-"sg","sgp","Singapore","Singapur","U+1F1F8 U+1F1EC "
-"sk","svk","Slovakia","Slowakei","U+1F1F8 U+1F1F0 "
-"vn","vnm","Viet Nam","Vietnam","U+1F1FB U+1F1F3 "
-"si","svn","Slovenia","Slowenien","U+1F1F8 U+1F1EE "
-"so","som","Somalia","Somalia","U+1F1F8 U+1F1F4 "
-"za","zaf","South Africa","Südafrika","U+1F1FF U+1F1E6 "
-"zw","zwe","Zimbabwe","Simbabwe","U+1F1FF U+1F1FC "
-"bw","bwa","Botswana","Botswana","U+1F1E7 U+1F1FC "
-"es","esp","Spain","Spanien","U+1F1EA U+1F1F8 "
-"ss","ssd","South Sudan","Südsudan","U+1F1F8 U+1F1F8 "
-"sd","sdn","Sudan","Sudan","U+1F1F8 U+1F1E9 "
-"sr","sur","Suriname","Suriname","U+1F1F8 U+1F1F7 "
-"sz","swz","Eswatini","Eswatini","U+1F1F8 U+1F1FF "
-"se","swe","Sweden","Schweden","U+1F1F8 U+1F1EA "
-"ch","che","Switzerland","Schweiz","U+1F1E8 U+1F1ED "
-"br","bra","Brazil","Brasilien","U+1F1E7 U+1F1F7 "
-"sy","syr","Syrian Arab Republic","Syrien","U+1F1F8 U+1F1FE "
-"tj","tjk","Tajikistan","Tadschikistan","U+1F1F9 U+1F1EF "
-"th","tha","Thailand","Thailand","U+1F1F9 U+1F1ED "
-"tg","tgo","Togo","Togo","U+1F1F9 U+1F1EC "
-"to","ton","Tonga","Tonga","U+1F1F9 U+1F1F4 "
-"tt","tto","Trinidad and Tobago","Trinidad und Tobago","U+1F1F9 U+1F1F9 "
-"ae","are","United Arab Emirates","Vereinigte Arabische Emirate","U+1F1E6 U+1F1EA "
-"tn","tun","Tunisia","Tunesien","U+1F1F9 U+1F1F3 "
-"tr","tur","Turkey","Türkei","U+1F1F9 U+1F1F7 "
-"tm","tkm","Turkmenistan","Turkmenistan","U+1F1F9 U+1F1F2 "
-"tv","tuv","Tuvalu","Tuvalu","U+1F1F9 U+1F1FB "
-"al","alb","Albania","Albanien","U+1F1E6 U+1F1F1 "
-"ug","uga","Uganda","Uganda","U+1F1FA U+1F1EC "
-"ua","ukr","Ukraine","Ukraine","U+1F1FA U+1F1E6 "
-"mk","mkd","North Macedonia","Nordmazedonien","U+1F1F2 U+1F1F0 "
-"eg","egy","Egypt","Ägypten","U+1F1EA U+1F1EC "
-"gb","gbr","United Kingdom of Great Britain and Northern Ireland","Vereinigtes Königreich","U+1F1EC U+1F1E7 "
-"tz","tza","Tanzania, United Republic of","Tansania","U+1F1F9 U+1F1FF "
-"bz","blz","Belize","Belize","U+1F1E7 U+1F1FF "
-"us","usa","United States of America","Vereinigte Staaten","U+1F1FA U+1F1F8 "
-"bf","bfa","Burkina Faso","Burkina Faso","U+1F1E7 U+1F1EB "
-"uy","ury","Uruguay","Uruguay","U+1F1FA U+1F1FE "
-"uz","uzb","Uzbekistan","Usbekistan","U+1F1FA U+1F1FF "
-"ve","ven","Venezuela (Bolivarian Republic of)","Venezuela","U+1F1FB U+1F1EA "
-"ws","wsm","Samoa","Samoa","U+1F1FC U+1F1F8 "
-"ye","yem","Yemen","Jemen","U+1F1FE U+1F1EA "
-"zm","zmb","Zambia","Sambia","U+1F1FF U+1F1F2 "
-"sb","slb","Solomon Islands","Salomonen","U+1F1F8 U+1F1E7 "
-"bn","brn","Brunei Darussalam","Brunei","U+1F1E7 U+1F1F3 "
+country_iso2letter	country_flag_utf8code	country_iso3letter	country_name_de	country_name_en
+bg	U+1F1E7 U+1F1EC 	bgr	Bulgarien	Bulgaria
+mm	U+1F1F2 U+1F1F2 	mmr	Myanmar	Myanmar
+bi	U+1F1E7 U+1F1EE 	bdi	Burundi	Burundi
+by	U+1F1E7 U+1F1FE 	blr	Belarus	Belarus
+kh	U+1F1F0 U+1F1ED 	khm	Kambodscha	Cambodia
+dz	U+1F1E9 U+1F1FF 	dza	Algerien	Algeria
+cm	U+1F1E8 U+1F1F2 	cmr	Kamerun	Cameroon
+ca	U+1F1E8 U+1F1E6 	can	Kanada	Canada
+cv	U+1F1E8 U+1F1FB 	cpv	Kap Verde	Cabo Verde
+cf	U+1F1E8 U+1F1EB 	caf	Zentral­afrikanische Republik	Central African Republic
+lk	U+1F1F1 U+1F1F0 	lka	Sri Lanka	Sri Lanka
+td	U+1F1F9 U+1F1E9 	tcd	Tschad	Chad
+cl	U+1F1E8 U+1F1F1 	chl	Chile	Chile
+cn	U+1F1E8 U+1F1F3 	chn	Volksrepublik China	China
+co	U+1F1E8 U+1F1F4 	col	Kolumbien	Colombia
+km	U+1F1F0 U+1F1F2 	com	Komoren	Comoros
+cg	U+1F1E8 U+1F1EC 	cog	Kongo, Republik	Congo
+cd	U+1F1E8 U+1F1E9 	cod	Kongo, Demokratische Republik	Congo, Democratic Republic of the
+cr	U+1F1E8 U+1F1F7 	cri	Costa Rica	Costa Rica
+hr	U+1F1ED U+1F1F7 	hrv	Kroatien	Croatia
+cu	U+1F1E8 U+1F1FA 	cub	Kuba	Cuba
+cy	U+1F1E8 U+1F1FE 	cyp	Zypern	Cyprus
+ad	U+1F1E6 U+1F1E9 	and	Andorra	Andorra
+cz	U+1F1E8 U+1F1FF 	cze	Tschechien	Czechia
+bj	U+1F1E7 U+1F1EF 	ben	Benin	Benin
+dk	U+1F1E9 U+1F1F0 	dnk	Dänemark	Denmark
+dm	U+1F1E9 U+1F1F2 	dma	Dominica	Dominica
+do	U+1F1E9 U+1F1F4 	dom	Dominikanische Republik	Dominican Republic
+ec	U+1F1EA U+1F1E8 	ecu	Ecuador	Ecuador
+sv	U+1F1F8 U+1F1FB 	slv	El Salvador	El Salvador
+gq	U+1F1EC U+1F1F6 	gnq	Äquatorialguinea	Equatorial Guinea
+et	U+1F1EA U+1F1F9 	eth	Äthiopien	Ethiopia
+er	U+1F1EA U+1F1F7 	eri	Eritrea	Eritrea
+ee	U+1F1EA U+1F1EA 	est	Estland	Estonia
+ao	U+1F1E6 U+1F1F4 	ago	Angola	Angola
+fj	U+1F1EB U+1F1EF 	fji	Fidschi	Fiji
+fi	U+1F1EB U+1F1EE 	fin	Finnland	Finland
+fr	U+1F1EB U+1F1F7 	fra	Frankreich	France
+dj	U+1F1E9 U+1F1EF 	dji	Dschibuti	Djibouti
+ga	U+1F1EC U+1F1E6 	gab	Gabun	Gabon
+ge	U+1F1EC U+1F1EA 	geo	Georgien	Georgia
+gm	U+1F1EC U+1F1F2 	gmb	Gambia	Gambia
+de	U+1F1E9 U+1F1EA 	deu	Deutschland	Germany
+ag	U+1F1E6 U+1F1EC 	atg	Antigua und Barbuda	Antigua and Barbuda
+gh	U+1F1EC U+1F1ED 	gha	Ghana	Ghana
+ki	U+1F1F0 U+1F1EE 	kir	Kiribati	Kiribati
+gr	U+1F1EC U+1F1F7 	grc	Griechenland	Greece
+gd	U+1F1EC U+1F1E9 	grd	Grenada	Grenada
+az	U+1F1E6 U+1F1FF 	aze	Aserbaidschan	Azerbaijan
+ar	U+1F1E6 U+1F1F7 	arg	Argentinien	Argentina
+gt	U+1F1EC U+1F1F9 	gtm	Guatemala	Guatemala
+gn	U+1F1EC U+1F1F3 	gin	Guinea	Guinea
+gy	U+1F1EC U+1F1FE 	guy	Guyana	Guyana
+ht	U+1F1ED U+1F1F9 	hti	Haiti	Haiti
+hn	U+1F1ED U+1F1F3 	hnd	Honduras	Honduras
+hu	U+1F1ED U+1F1FA 	hun	Ungarn	Hungary
+is	U+1F1EE U+1F1F8 	isl	Island	Iceland
+in	U+1F1EE U+1F1F3 	ind	Indien	India
+au	U+1F1E6 U+1F1FA 	aus	Australien	Australia
+id	U+1F1EE U+1F1E9 	idn	Indonesien	Indonesia
+ir	U+1F1EE U+1F1F7 	irn	Iran	Iran (Islamic Republic of)
+iq	U+1F1EE U+1F1F6 	irq	Irak	Iraq
+ie	U+1F1EE U+1F1EA 	irl	Irland	Ireland
+il	U+1F1EE U+1F1F1 	isr	Israel	Israel
+it	U+1F1EE U+1F1F9 	ita	Italien	Italy
+ci	U+1F1E8 U+1F1EE 	civ	Elfenbeinküste	Côte d'Ivoire
+jm	U+1F1EF U+1F1F2 	jam	Jamaika	Jamaica
+jp	U+1F1EF U+1F1F5 	jpn	Japan	Japan
+kz	U+1F1F0 U+1F1FF 	kaz	Kasachstan	Kazakhstan
+af	U+1F1E6 U+1F1EB 	afg	Afghanistan	Afghanistan
+at	U+1F1E6 U+1F1F9 	aut	Österreich	Austria
+jo	U+1F1EF U+1F1F4 	jor	Jordanien	Jordan
+ke	U+1F1F0 U+1F1EA 	ken	Kenia	Kenya
+kp	U+1F1F0 U+1F1F5 	prk	Korea, Nord	Korea (Democratic People's Republic of)
+kr	U+1F1F0 U+1F1F7 	kor	Korea, Süd	Korea, Republic of
+kw	U+1F1F0 U+1F1FC 	kwt	Kuwait	Kuwait
+kg	U+1F1F0 U+1F1EC 	kgz	Kirgisistan	Kyrgyzstan
+la	U+1F1F1 U+1F1E6 	lao	Laos	Lao People's Democratic Republic
+lb	U+1F1F1 U+1F1E7 	lbn	Libanon	Lebanon
+ls	U+1F1F1 U+1F1F8 	lso	Lesotho	Lesotho
+lv	U+1F1F1 U+1F1FB 	lva	Lettland	Latvia
+lr	U+1F1F1 U+1F1F7 	lbr	Liberia	Liberia
+ly	U+1F1F1 U+1F1FE 	lby	Libyen	Libya
+li	U+1F1F1 U+1F1EE 	lie	Liechtenstein	Liechtenstein
+bs	U+1F1E7 U+1F1F8 	bhs	Bahamas	Bahamas
+lt	U+1F1F1 U+1F1F9 	ltu	Litauen	Lithuania
+lu	U+1F1F1 U+1F1FA 	lux	Luxemburg	Luxembourg
+mg	U+1F1F2 U+1F1EC 	mdg	Madagaskar	Madagascar
+mw	U+1F1F2 U+1F1FC 	mwi	Malawi	Malawi
+my	U+1F1F2 U+1F1FE 	mys	Malaysia	Malaysia
+mv	U+1F1F2 U+1F1FB 	mdv	Malediven	Maldives
+ml	U+1F1F2 U+1F1F1 	mli	Mali	Mali
+mt	U+1F1F2 U+1F1F9 	mlt	Malta	Malta
+mr	U+1F1F2 U+1F1F7 	mrt	Mauretanien	Mauritania
+bh	U+1F1E7 U+1F1ED 	bhr	Bahrain	Bahrain
+mu	U+1F1F2 U+1F1FA 	mus	Mauritius	Mauritius
+mx	U+1F1F2 U+1F1FD 	mex	Mexiko	Mexico
+mc	U+1F1F2 U+1F1E8 	mco	Monaco	Monaco
+mn	U+1F1F2 U+1F1F3 	mng	Mongolei	Mongolia
+md	U+1F1F2 U+1F1E9 	mda	Moldau	Moldova, Republic of
+me	U+1F1F2 U+1F1EA 	mne	Montenegro	Montenegro
+bd	U+1F1E7 U+1F1E9 	bgd	Bangladesch	Bangladesh
+ma	U+1F1F2 U+1F1E6 	mar	Marokko	Morocco
+mz	U+1F1F2 U+1F1FF 	moz	Mosambik	Mozambique
+am	U+1F1E6 U+1F1F2 	arm	Armenien	Armenia
+om	U+1F1F4 U+1F1F2 	omn	Oman	Oman
+na	U+1F1F3 U+1F1E6 	nam	Namibia	Namibia
+bb	U+1F1E7 U+1F1E7 	brb	Barbados	Barbados
+nr	U+1F1F3 U+1F1F7 	nru	Nauru	Nauru
+np	U+1F1F3 U+1F1F5 	npl	Nepal	Nepal
+nl	U+1F1F3 U+1F1F1 	nld	Niederlande	Netherlands
+vu	U+1F1FB U+1F1FA 	vut	Vanuatu	Vanuatu
+nz	U+1F1F3 U+1F1FF 	nzl	Neuseeland	New Zealand
+ni	U+1F1F3 U+1F1EE 	nic	Nicaragua	Nicaragua
+be	U+1F1E7 U+1F1EA 	bel	Belgien	Belgium
+ne	U+1F1F3 U+1F1EA 	ner	Niger	Niger
+ng	U+1F1F3 U+1F1EC 	nga	Nigeria	Nigeria
+no	U+1F1F3 U+1F1F4 	nor	Norwegen	Norway
+fm	U+1F1EB U+1F1F2 	fsm	Mikronesien	Micronesia (Federated States of)
+mh	U+1F1F2 U+1F1ED 	mhl	Marshallinseln	Marshall Islands
+pw	U+1F1F5 U+1F1FC 	plw	Palau	Palau
+pk	U+1F1F5 U+1F1F0 	pak	Pakistan	Pakistan
+pa	U+1F1F5 U+1F1E6 	pan	Panama	Panama
+pg	U+1F1F5 U+1F1EC 	png	Papua-Neuguinea	Papua New Guinea
+py	U+1F1F5 U+1F1FE 	pry	Paraguay	Paraguay
+pe	U+1F1F5 U+1F1EA 	per	Peru	Peru
+ph	U+1F1F5 U+1F1ED 	phl	Philippinen	Philippines
+pl	U+1F1F5 U+1F1F1 	pol	Polen	Poland
+pt	U+1F1F5 U+1F1F9 	prt	Portugal	Portugal
+gw	U+1F1EC U+1F1FC 	gnb	Guinea-Bissau	Guinea-Bissau
+tl	U+1F1F9 U+1F1F1 	tls	Osttimor	Timor-Leste
+qa	U+1F1F6 U+1F1E6 	qat	Katar	Qatar
+bt	U+1F1E7 U+1F1F9 	btn	Bhutan	Bhutan
+ro	U+1F1F7 U+1F1F4 	rou	Rumänien	Romania
+ru	U+1F1F7 U+1F1FA 	rus	Russland	Russian Federation
+rw	U+1F1F7 U+1F1FC 	rwa	Ruanda	Rwanda
+kn	U+1F1F0 U+1F1F3 	kna	St. Kitts und Nevis	Saint Kitts and Nevis
+lc	U+1F1F1 U+1F1E8 	lca	St. Lucia	Saint Lucia
+vc	U+1F1FB U+1F1E8 	vct	St. Vincent und die Grenadinen	Saint Vincent and the Grenadines
+sm	U+1F1F8 U+1F1F2 	smr	San Marino	San Marino
+st	U+1F1F8 U+1F1F9 	stp	São Tomé und Príncipe	Sao Tome and Principe
+bo	U+1F1E7 U+1F1F4 	bol	Bolivien	Bolivia (Plurinational State of)
+sa	U+1F1F8 U+1F1E6 	sau	Saudi-Arabien	Saudi Arabia
+sn	U+1F1F8 U+1F1F3 	sen	Senegal	Senegal
+rs	U+1F1F7 U+1F1F8 	srb	Serbien	Serbia
+sc	U+1F1F8 U+1F1E8 	syc	Seychellen	Seychelles
+sl	U+1F1F8 U+1F1F1 	sle	Sierra Leone	Sierra Leone
+ba	U+1F1E7 U+1F1E6 	bih	Bosnien und Herzegowina	Bosnia and Herzegovina
+sg	U+1F1F8 U+1F1EC 	sgp	Singapur	Singapore
+sk	U+1F1F8 U+1F1F0 	svk	Slowakei	Slovakia
+vn	U+1F1FB U+1F1F3 	vnm	Vietnam	Viet Nam
+si	U+1F1F8 U+1F1EE 	svn	Slowenien	Slovenia
+so	U+1F1F8 U+1F1F4 	som	Somalia	Somalia
+za	U+1F1FF U+1F1E6 	zaf	Südafrika	South Africa
+zw	U+1F1FF U+1F1FC 	zwe	Simbabwe	Zimbabwe
+bw	U+1F1E7 U+1F1FC 	bwa	Botswana	Botswana
+es	U+1F1EA U+1F1F8 	esp	Spanien	Spain
+ss	U+1F1F8 U+1F1F8 	ssd	Südsudan	South Sudan
+sd	U+1F1F8 U+1F1E9 	sdn	Sudan	Sudan
+sr	U+1F1F8 U+1F1F7 	sur	Suriname	Suriname
+sz	U+1F1F8 U+1F1FF 	swz	Eswatini	Eswatini
+se	U+1F1F8 U+1F1EA 	swe	Schweden	Sweden
+ch	U+1F1E8 U+1F1ED 	che	Schweiz	Switzerland
+br	U+1F1E7 U+1F1F7 	bra	Brasilien	Brazil
+sy	U+1F1F8 U+1F1FE 	syr	Syrien	Syrian Arab Republic
+tj	U+1F1F9 U+1F1EF 	tjk	Tadschikistan	Tajikistan
+th	U+1F1F9 U+1F1ED 	tha	Thailand	Thailand
+tg	U+1F1F9 U+1F1EC 	tgo	Togo	Togo
+to	U+1F1F9 U+1F1F4 	ton	Tonga	Tonga
+tt	U+1F1F9 U+1F1F9 	tto	Trinidad und Tobago	Trinidad and Tobago
+ae	U+1F1E6 U+1F1EA 	are	Vereinigte Arabische Emirate	United Arab Emirates
+tn	U+1F1F9 U+1F1F3 	tun	Tunesien	Tunisia
+tr	U+1F1F9 U+1F1F7 	tur	Türkei	Turkey
+tm	U+1F1F9 U+1F1F2 	tkm	Turkmenistan	Turkmenistan
+tv	U+1F1F9 U+1F1FB 	tuv	Tuvalu	Tuvalu
+al	U+1F1E6 U+1F1F1 	alb	Albanien	Albania
+ug	U+1F1FA U+1F1EC 	uga	Uganda	Uganda
+ua	U+1F1FA U+1F1E6 	ukr	Ukraine	Ukraine
+mk	U+1F1F2 U+1F1F0 	mkd	Nordmazedonien	North Macedonia
+eg	U+1F1EA U+1F1EC 	egy	Ägypten	Egypt
+gb	U+1F1EC U+1F1E7 	gbr	Vereinigtes Königreich	United Kingdom of Great Britain and Northern Ireland
+tz	U+1F1F9 U+1F1FF 	tza	Tansania	Tanzania, United Republic of
+bz	U+1F1E7 U+1F1FF 	blz	Belize	Belize
+us	U+1F1FA U+1F1F8 	usa	Vereinigte Staaten	United States of America
+bf	U+1F1E7 U+1F1EB 	bfa	Burkina Faso	Burkina Faso
+uy	U+1F1FA U+1F1FE 	ury	Uruguay	Uruguay
+uz	U+1F1FA U+1F1FF 	uzb	Usbekistan	Uzbekistan
+ve	U+1F1FB U+1F1EA 	ven	Venezuela	Venezuela (Bolivarian Republic of)
+ws	U+1F1FC U+1F1F8 	wsm	Samoa	Samoa
+ye	U+1F1FE U+1F1EA 	yem	Jemen	Yemen
+zm	U+1F1FF U+1F1F2 	zmb	Sambia	Zambia
+sb	U+1F1F8 U+1F1E7 	slb	Salomonen	Solomon Islands
+bn	U+1F1E7 U+1F1F3 	brn	Brunei	Brunei Darussalam

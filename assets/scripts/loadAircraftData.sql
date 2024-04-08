@@ -1,5 +1,5 @@
 \echo ----------------------------------------------------------------------
-\echo loadAircraftData.sql Version 4-0-0 (11.12.2023 20:00)
+\echo loadAircraftData.sql Version 4-0-1 (29.03.2024 19:00)
 \echo - this script is intended only for debug and tuning purposes
 \echo - run script from psql with parameter timing to get duration of commands
 \echo - normal installation process uses loadAircraftData.sh instead
@@ -116,7 +116,7 @@ INSERT INTO TMP_AIRCRAFT_DATA2
 			FROM TMP_AIRCRAFT_DATA;
 
 \echo ----------------------------------------------------------------------
-echo copy to destination table aircraft_data
+\echo copy to destination table aircraft_data
 \echo   with distinct on hex_low 
 \echo   combined with order by hex_low, hex DESC
 \echo   result: for all duplicates we get the first record

@@ -58,6 +58,21 @@ path_load_aircraftdata_sh=assets/scripts/$load_aircraftdata_filename_sh
 path_load_aircraftdata_sql=assets/scripts/$load_aircraftdata_filename_sql
 load_aircraftdata_output_file=$load_aircraftdata-output.txt
 
+path_db_content_host=assets/dbContent
+path_db_content_container=/assets/dbContent/.
+
+export_belugadbdata=exportBelugaDbData
+export_belugadbdata_filename_sh=$export_belugadbdata.sh
+export_belugadbdata_filename_sql=$export_belugadbdata.sql
+path_export_belugadbdata_sh=assets/scripts/$export_belugadbdata_filename_sh
+export_belugadbdata_output_file=$export_belugadbdata-output.txt
+
+import_belugadbdata=importBelugaDbData
+import_belugadbdata_filename_sh=$import_belugadbdata.sh
+import_belugadbdata_filename_sql=$import_belugadbdata.sql
+path_import_belugadbdata_sh=assets/scripts/$import_belugadbdata_filename_sh
+import_belugadbdata_output_file=$import_belugadbdata-output.txt
+
 dbfunction_get_stat_belugaDb="getBelugaDbStatistics()"
 
 _ask_user_with_message() {
@@ -80,9 +95,11 @@ _ask_user_for_decision() {
   case "$choice" in
   y | Y) echo "-> Okay, let's do it ..." ;;
   n | N)
-    echo "-> Okay, we skip that step."  ;;
+    echo "-> Okay, we skip that step."
+    ;;
   *)
-    echo "-> Invalid answer." ;;
+    echo "-> Invalid answer."
+    ;;
   esac
 }
 
@@ -203,7 +220,10 @@ _docker_rm_all_images() {
 }
 
 _docker_rm_project() {
-  _ask_user_with_message "Do you really want to remove all containers and images for the Beluga Project (y/n)?"
+  if [[ $# -eq 0 ]]; then
+    _ask_user_with_message "Do you really want to remove all containers and images for the Beluga Project (y/n)?"
+  fi
+
   _docker_stop_all_containers
   _docker_rm_all_containers
   _docker_rm_all_images
@@ -338,6 +358,24 @@ _copy_flightroute_create_csv_script_to_container() {
   echo "-> Copy $flightroute_create_csv_script_filename to container. Done."
 }
 
+_copy_export_belugadbdata_script_to_container() {
+  echo "Copy $export_belugadbdata_filename_sh to container ..."
+  docker cp $path_export_belugadbdata_sh $container_name_db:$export_belugadbdata_filename_sh
+  echo "-> Copy $export_belugadbdata_filename_sh to container. Done."
+}
+
+_copy_exported_csv_files_from_container() {
+  echo "Copy exported csv-files from container to $path_db_content_host ..."
+  docker cp $container_name_db:$path_db_content_container $path_db_content_host
+  echo "Copy exported csv-files from container to $path_db_content_host ... done"
+}
+
+_copy_import_belugadbdata_script_to_container() {
+  echo "Copy $import_belugadbdata_filename_sh to container ..."
+  docker cp $path_import_belugadbdata_sh $container_name_db:$import_belugadbdata_filename_sh
+  echo "-> Copy $import_belugadbdata_filename_sh to container. Done."
+}
+
 _exec_load_db_func_script() {
   echo "Execute $load_belugadb_func_filename_sh on container to populate database with content ..."
   docker exec $container_name_db bash -c ". $load_belugadb_func_filename_sh" | tee $load_belugadb_func_output_file
@@ -354,6 +392,18 @@ _exec_load_aircraftdata_script() {
   echo "Execute $load_aircraftdata_filename_sh on container to populate database with aircraftdata ..."
   docker exec $container_name_db bash -c ". $load_aircraftdata_filename_sh" | tee $load_aircraftdata_output_file
   echo "-> Execute $load_aircraftdata_filename_sh on container to populate database with aircraftdata. Done."
+}
+
+_exec_export_belugadbdata_script() {
+  echo "Execute $export_belugadbdata_filename_sh on container to export standing data ..."
+  docker exec $container_name_db bash -c ". $export_belugadbdata_filename_sh" | tee $export_belugadbdata_output_file
+  echo "-> Execute $export_belugadbdata_filename_sh on container to export standing data. Done."
+}
+
+_exec_import_belugadbdata_script() {
+  echo "Execute $import_belugadbdata_filename_sh on container to populate database with standing data ..."
+  docker exec $container_name_db bash -c ". $import_belugadbdata_filename_sh" | tee $import_belugadbdata_output_file
+  echo "-> Execute $import_belugadbdata_filename_sh on container to populate database with standing data. Done."
 }
 
 _load_db_content() {
@@ -406,7 +456,7 @@ _load_db_content() {
 
 _update_db_content() {
   echo "update ... ask user for download of current version ..."
-  
+
   echo "Download $aircraft_database_filename ... "
 
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $aircraft_database_filename; then echo exists; fi") ]]; then
@@ -415,68 +465,68 @@ _update_db_content() {
     _download_mictronics_aircraft_database
   else
     if [[ $# -eq 0 ]]; then
-        _ask_user_for_decision "Do you want to download current version of $aircraft_database_filename (y/n)?"
-        if [ "$choice" != "${choice#[Yy]}" ] ; then
-          echo "$aircraft_database_filename exists. Download for update requested."
-          _download_aircraft_database
-          _download_mictronics_aircraft_database
+      _ask_user_for_decision "Do you want to download current version of $aircraft_database_filename (y/n)?"
+      if [ "$choice" != "${choice#[Yy]}" ]; then
+        echo "$aircraft_database_filename exists. Download for update requested."
+        _download_aircraft_database
+        _download_mictronics_aircraft_database
+      else
+        if [ "$choice" != "${choice#[Nn]}" ]; then
+          echo "-> $aircraft_database_filename exists. Download for update not requested."
         else
-          if [ "$choice" != "${choice#[Nn]}" ] ;then
-            echo "-> $aircraft_database_filename exists. Download for update not requested."
-          else
-            echo "-> Invalid answer: $choice. Operation cancelled. Try again."
-            exit
-          fi
+          echo "-> Invalid answer: $choice. Operation cancelled. Try again."
+          exit
         fi
+      fi
     fi
   fi
 
-echo "Download $airport_database_filename ... "
+  echo "Download $airport_database_filename ... "
 
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $airport_database_filename; then echo exists; fi") ]]; then
     echo "-> file $airport_database_filename does not exist, download required."
     _download_airport_database
   else
     if [[ $# -eq 0 ]]; then
-        _ask_user_for_decision "Do you want to download current version of $airport_database_filename (y/n)?"
-        if [ "$choice" != "${choice#[Yy]}" ] ; then
-          echo "$airport_database_filename exists. Download for update requested."
-          _download_airport_database
+      _ask_user_for_decision "Do you want to download current version of $airport_database_filename (y/n)?"
+      if [ "$choice" != "${choice#[Yy]}" ]; then
+        echo "$airport_database_filename exists. Download for update requested."
+        _download_airport_database
+      else
+        if [ "$choice" != "${choice#[Nn]}" ]; then
+          echo "-> $airport_database_filename exists. Download for update not requested."
         else
-          if [ "$choice" != "${choice#[Nn]}" ] ;then
-            echo "-> $airport_database_filename exists. Download for update not requested."
-          else
-            echo "-> Invalid answer: $choice. Operation cancelled. Try again."
-            exit
-          fi
+          echo "-> Invalid answer: $choice. Operation cancelled. Try again."
+          exit
         fi
+      fi
     fi
   fi
 
-echo "Download $flightroute_database_filename ... "
+  echo "Download $flightroute_database_filename ... "
 
   if [[ -z $(docker exec -ti $container_name_db bash -c "if test -f $flightroute_database_filename; then echo exists; fi") ]]; then
     echo "-> file $flightroute_database_filename does not exist, download required."
     _download_flightroute_database
   else
     if [[ $# -eq 0 ]]; then
-        _ask_user_for_decision "Do you want to download current version of $flightroute_database_filename (y/n)?"
-        if [ "$choice" != "${choice#[Yy]}" ] ; then
-          echo "$flightroute_database_filename exists. Download for update requested."
-          _download_flightroute_database
+      _ask_user_for_decision "Do you want to download current version of $flightroute_database_filename (y/n)?"
+      if [ "$choice" != "${choice#[Yy]}" ]; then
+        echo "$flightroute_database_filename exists. Download for update requested."
+        _download_flightroute_database
+      else
+        if [ "$choice" != "${choice#[Nn]}" ]; then
+          echo "-> $flightroute_database_filename exists. Download for update not requested."
         else
-          if [ "$choice" != "${choice#[Nn]}" ] ;then
-            echo "-> $flightroute_database_filename exists. Download for update not requested."
-          else
-            echo "-> Invalid answer: $choice. Operation cancelled. Try again."
-            exit
-          fi
+          echo "-> Invalid answer: $choice. Operation cancelled. Try again."
+          exit
         fi
+      fi
     fi
   fi
 
   echo "update ... Loading csv files into postgres database ..."
-  
+
   _copy_db_content_to_container
   _copy_load_aircraftdata_script_to_container
   _copy_load_db_script_to_container
@@ -485,6 +535,35 @@ echo "Download $flightroute_database_filename ... "
   _exec_load_db_func_script
   _exec_load_aircraftdata_script
   _exec_load_db_script
+}
+
+_export_db_content() {
+  echo "Export standing data ..."
+  _copy_export_belugadbdata_script_to_container
+  _exec_export_belugadbdata_script
+  _copy_exported_csv_files_from_container
+}
+
+_import_db_content() {
+  echo "Import standing data ..."
+
+  if _check_tables_exist -eq 0; then
+    exit
+  fi
+
+  echo "Create dbContent directory in $path_db_content ..."
+  if [[ -z $(docker exec -ti $container_name_db bash -c "if [ -d $path_db_content ]; then echo does exist; fi") ]]; then
+    _copy_db_content_to_container
+  else
+    echo "-> Directory $path_db_content already exists. Done."
+    _copy_db_content_to_container
+  fi
+
+  _copy_import_belugadbdata_script_to_container
+  _exec_import_belugadbdata_script
+  _copy_load_db_func_script_to_container
+  _exec_load_db_func_script
+
 }
 
 _env() {
@@ -500,7 +579,7 @@ _check_tables_exist() {
 
   echo "Check if tables in postgres database were created by spring ..."
   while $table_does_not_exist; do
-    if [[ -n $(docker exec $container_name_db psql $postgres_db $postgres_user -c "\dt" | grep $table_to_check ) ]]; then
+    if [[ -n $(docker exec $container_name_db psql $postgres_db $postgres_user -c "\dt" | grep $table_to_check) ]]; then
       echo "-> Check if tables in postgres database were created by spring. Done."
       table_does_not_exist=false
       return 1
@@ -519,13 +598,16 @@ _get_stat_belugaDb() {
 }
 
 _install() {
-  echo "Install the Beluga Project ..."
+  echo "Installing the Beluga Project ..."
 
-  _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
+  # only ask user if install is not started from ui installer
+  if [ $# -eq 0 ]; then
+    _ask_user_with_message "Gentle reminder: Have you configured the values in the .env file (y/n)?"
+  fi
 
   _docker_run_background
 
-  _load_db_content
-
+  _import_db_content
+  
   echo "-> The Beluga Project is running. Done."
 }

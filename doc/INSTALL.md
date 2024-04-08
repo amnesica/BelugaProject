@@ -1,8 +1,23 @@
 ## Install (Docker version)
 
-With this manual you can install the Beluga Project in 3 docker containers on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems.
+Use command
+TODO:
 
-If you already have BelugaProject installed in a docker container before, use instructions in [UPDATE.md](./UPDATE.md) instead of this manual.
+```
+$ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/dev/install.sh)"
+```
+for a comfortable menu driven installation process.
+
+If you already have BelugaProject installed in a docker container before, first execute the following commands
+```
+$ cd BelugaProject
+$ sudo ./run.sh docker-rm
+$ cd .. && sudo rm -r BelugaProject BelugaProject.zip
+```
+
+**Alternatively** this document guides you step-by-step through the necessary commands to install the Beluga Project **manually**.
+
+BelugaProject will run in 3 docker containers on your system. Only docker is required on your machine. Everything else will be taken care of in the container. Run the following instructions on your productive system, e.g. a Raspberry Pi 4B or on your local machine if you just want to test the project. Instructions are mainly for Debian based systems.
 
 For `RaspberryPi 4B` it is recommended to use a `64 bit OS` version, because BelugaProject is running significantly faster than on 32 bit OS version.
 
@@ -28,6 +43,13 @@ If you want to use the 3D view, follow these steps:
 ### Install process
 
 1.  Install docker and docker compose (at least version 2) from [here](https://docs.docker.com/desktop/install/ubuntu/) and make it run (do the tutorial if necessary). Use [this](https://docs.docker.com/engine/install/debian/#install-using-the-convenience-script) tutorial for installing docker on a Raspberry Pi. Check the version of docker compose with `docker compose version` (needs to be >=2)
+
+    If you already have BelugaProject installed in a docker container before, first execute the following commands
+    ```
+    $ cd BelugaProject
+    $ sudo ./run.sh docker-rm
+    $ cd .. && sudo rm -r BelugaProject BelugaProject.zip
+    ```
 
 2.  Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP, rename and extract it
 
@@ -63,11 +85,11 @@ If you want to use the 3D view, follow these steps:
 
     ***
 
-    1. Set your **feeder location**. Replace the values with your antenna position coordinates. Later this will be the shown on the map with an antenna icon.
+    1. Set your **feeder location**. Replace the values with your antenna position coordinates. Later this will be shown on the map with an antenna icon.
 
        ```
-       latitudeLocation=54.1234
-       longitudeLocation=8.1234
+       location_latitude=54.1234
+       location_longitude=8.1234
        ```
 
     2. Enter the **URLs** of your feeders with an json output seperated by comma (If you do not have a local feeder, just leave the value empty)
@@ -141,7 +163,19 @@ If you want to use the 3D view, follow these steps:
 
 5.  When Beluga Project is installed and is running go to `<system-prod-ip>:8090` in your browser. On first run after installation it may take up to about 3 minutes until all aircrafts are visible. If you just want to test the project, enable the [OpenSky-Network](https://opensky-network.org/) functionality in the settings menu (an Opensky-Network account is needed) or enable [Airplanes.live](https://airplanes.live/) functionality instead.
 
-6.  Operation and Maintenance
+
+6.  Update standing data
+
+    BelugaProject comes with standing data (aircraft data, airport data, flightroute data) which may be outdated meanwhile. So you should update them with command
+    ```
+    $ ./run.sh update-db
+    ```
+    `Important:` If you installed docker only for root user, you need to execute the command above with `sudo` privilege.
+
+    This will take some time. On an RaspberryPi 4B update database takes about 10 minutes.
+
+
+7.  Operation and Maintenance
 
     Executing
 
@@ -164,7 +198,9 @@ If you want to use the 3D view, follow these steps:
        docker-rm                             Remove all containers and images of Beluga Project
        download-mictronics                   Download mictronics db and convert jsons to csv files
        load-db                               Fill database in postgres container if tables were created
-       update-db                             Update database in postgres container (db maintenance)
+       update-db                             Update standing data in postgres container (db maintenance)
+       export-db                             Export standing data to csv-files
+       import-db                             import standing data from csv-files
        tables-exist                          Check if tables in postgres container were created by spring
        stat-db                               Show BelugaDB statistics
        env                                   Show current environment variables in .env file
