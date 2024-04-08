@@ -6,7 +6,7 @@
 set -eu pipefail
 
 REPO_NAME=BelugaProject
-REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip" # TODO
+REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/master.zip"
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
 WHIPTAIL_TITLE="Installation of the Beluga Project"
@@ -94,7 +94,7 @@ _unzip_repo_with_progress() {
 
 _rename_repo_with_progress() {
   echo -e "XXX\n33\nRenaming directory... \nXXX"
-  mv $REPO_NAME-dev/ $REPO_NAME # TODO
+  mv $REPO_NAME-master/ $REPO_NAME
   sleep 0.1
   echo -e "XXX\n66\nRenaming directory... Done.\nXXX"
   sleep 1
@@ -183,7 +183,7 @@ _set_env_values() {
 
   _show_whiptail_yes_no_box "Values have been configured. The Beluga Project will now be installed.\n\nThis process takes some time. Do not close the console.\
   \n\nOn an RaspberryPi 4B:\
-  \n* load database takes about 10-20 minutes\
+  \n* load database takes about 10-20 minutes (after manual update)\
   \n* first start in browser takes about 3 minutes until all aircrafts are visible\
   \n\nIf you run into any issues check out our troubleshooting page (https://github.com/amnesica/BelugaProject/blob/master/doc/TROUBLESHOOTING.md) or open up an issue on Github" 14 100
 }
