@@ -2,10 +2,12 @@
 
 ### Installation
 
-While running TODO
+While running
+
 ```
-$ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/dev/install.sh)"
+$ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/master/install.sh)"
 ```
+
 or
 
 ```
@@ -42,6 +44,7 @@ In all this cases we executed or simply repeated
 ```
 $ ./run.sh install
 ```
+
 or
 
 ```
@@ -60,11 +63,7 @@ to finish installation.
 
 #### Populating database with data
 
-This will take some time. Be patient :-)
-
-On an RaspberryPi 4B
-
-    - load database process takes about 10 minutes
+This will take some time. Be patient :-) On an RaspberryPi 4B load database process takes about 10-20 minutes.
 
 Our shellscripts report all steps both to terminal and to file. See loadAircraftData-output.txt and loadBelugaDb-output.txt in the BelugaProject root folder.
 
