@@ -74,7 +74,7 @@ If you want to use the 3D view, follow these steps:
 
     To be able to run the spring boot application you have to provide some information in the configuration file `.env` which is used when you run the application with docker.
 
-    When configuring multiple feeders the order of the entries in the following instructions is important. The first entries in `ipFeeder`, `typeFeeder`, `nameFeeder` and `colorFeeder` belong to the same feeder as well as the second and so on.
+    When configuring multiple feeders the order of the entries in the following instructions is important. The first entries in `FEEDER_IP`, `FEEDER_TYPE`, `FEEDER_NAME` and `FEEDER_COLOR` belong to the same feeder as well as the second and so on.
 
     ***
 
