@@ -5,7 +5,7 @@
 
 set -eu pipefail
 
-REPO_NAME=BelugaProject
+REPO_NAME=BelugaProject-dev # TODO change to BelugaProject again before deployment
 REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip" # TODO change to master again before deployment
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
