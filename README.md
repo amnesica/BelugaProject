@@ -16,6 +16,8 @@ Additional information about the aircraft are added through a PostgreSQL databas
 
 The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
 
+Ships (AIS messages) can be displayed from [aisstream.io](https://aisstream.io/). To use this feature you need an API key. Visit their site for more info.
+
 The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1). 3D models from [this](https://github.com/amnesica/BelugaProject-3D-Models) repository are used.
 
 ## Motivation
@@ -36,6 +38,7 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
   - Show Google photogrammetry or OSM 3D buildings
   - Cockpit mode (with or without cockpit model), Follow-Plane mode
   - High Quality mode, HDR, clouds
+- Display ships (AIS messages) from [aisstream.io](https://aisstream.io/) (API key is required)
 - See additional information about tracked aircraft like model and type, country of registration, operator callsign and more
 - Track flight progress with route information (origin, destination)
 - Display aircraft picture from planespotters.net

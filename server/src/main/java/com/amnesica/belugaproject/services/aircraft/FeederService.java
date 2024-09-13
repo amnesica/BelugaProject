@@ -263,6 +263,9 @@ public class FeederService {
       configMap.put("cesiumIonDefaultAccessToken", configuration.getCesiumIonDefaultAccessToken());
     }
 
+    // Prüfe, ob aisstream.io API-Key vorhanden ist
+    configMap.put("aisstreamApiKeyExist", configuration.aisstreamApiKeyIsValid());
+
     return configMap;
   }
 }

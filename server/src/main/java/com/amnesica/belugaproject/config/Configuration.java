@@ -100,6 +100,10 @@ public class Configuration {
   @Value("${cesium.googleMaps.api.key:}")
   private String cesiumGoogleMapsApiKey;
 
+  // API-Key für aisstream.io (AIS-Daten)
+  @Value("${aisstream.io.api.key:}")
+  private String aisstreamApiKey;
+
   // Directory für Config-Files (dev/prod)
   @Value("${config.files.directory:}")
   private String configFilesDirectory;
@@ -412,6 +416,21 @@ public class Configuration {
     if (cesiumIonDefaultAccessToken == null || cesiumIonDefaultAccessToken.isBlank()
         || cesiumIonDefaultAccessToken.equals("TODO")) {
       log.info("Cesium Ion: Access Token is not present in application.properties and Cesium Ion 3D feature will not be available!");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * Methode prüft, ob der Access Token für aisstream.io gesetzt wurde
+   *
+   * @return true, wenn Access Token gesetzt wurde
+   */
+  public boolean aisstreamApiKeyIsValid() {
+    if (aisstreamApiKey == null || aisstreamApiKey.isBlank()
+        || aisstreamApiKey.equals("TODO")) {
+      log.info("aisstream.io: API-Key is not present in application.properties and AIS data will not be available!");
       return false;
     } else {
       return true;

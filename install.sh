@@ -6,7 +6,7 @@
 set -eu pipefail
 
 REPO_NAME=BelugaProject
-REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/master.zip"
+REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip" # TODO change to master again before deployment
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
 WHIPTAIL_TITLE="Installation of the Beluga Project"
@@ -180,6 +180,8 @@ _set_env_values() {
   \n* All three should appear in 'My Assets'\
   \n* Create an access token under 'Access Tokens'\
   \n* Copy the ACESS TOKEN and paste it below" "CESIUM_ION_DEFAULTACCESSTOKEN" 18 100
+
+  _show_whiptail_input_box "15) Optional: If you want to fetch ships from aisstream.io (AIS messages) provide an API-KEY for aisstream.io (https://aisstream.io/)." "AISSTREAM_IO_API_KEY" 8 100
 
   _show_whiptail_yes_no_box "Values have been configured. The Beluga Project will now be installed.\n\nThis process takes some time. Do not close the console.\
   \n\nOn an RaspberryPi 4B:\

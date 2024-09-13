@@ -225,6 +225,12 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Trail-Data angezeigt werden soll
   showTrailData: boolean = false;
 
+  // Boolean, ob aisstream API-Key existiert, wenn nicht disable switch
+  aisstreamApiKeyExists: boolean = false;
+
+  // Boolean, ob AIS-Daten angezeigt werden sollen
+  showAisData: boolean = false;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -302,6 +308,10 @@ export class SettingsComponent implements OnInit {
 
     this.toggleAirplanesLivePlanes(
       Storage.getPropertyFromLocalStorage('showAirplanesLive', false)
+    );
+
+    this.toggleAisData(
+      Storage.getPropertyFromLocalStorage('showAisData', false)
     );
   }
 
@@ -415,6 +425,14 @@ export class SettingsComponent implements OnInit {
       .subscribe((listAvailableMaps) => {
         this.listAvailableMaps = listAvailableMaps;
         this.selectCurrentlySelectedMapStyle();
+      });
+
+    // Weise aisstreamApiKeyExists zu, damit Switch
+    // disabled werden kann, falls diese nicht vorhanden sind
+    this.settingsService.aisstreamApiKeyExistsSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((aisstreamApiKeyExists) => {
+        this.aisstreamApiKeyExists = aisstreamApiKeyExists;
       });
   }
 
@@ -978,5 +996,14 @@ export class SettingsComponent implements OnInit {
     this.settingsService.toggleAirplanesLivePlanes(
       this.showAirplanesLivePlanes
     );
+  }
+
+  toggleAisData(checked: boolean) {
+    this.showAisData = checked;
+
+    Storage.savePropertyInLocalStorage('showAisData', this.showAisData);
+
+    // Kontaktiere Map-Component und übergebe showAisData-Boolean
+    this.settingsService.toggleAisData(this.showAisData);
   }
 }

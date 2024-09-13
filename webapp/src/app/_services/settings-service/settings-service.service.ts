@@ -42,6 +42,8 @@ export class SettingsService {
   private showOnlyMilitaryPlanesSource = new Subject<boolean>();
   private showTrailDataSource = new Subject<boolean>();
   private showAirplanesLivePlanesSource = new Subject<boolean>();
+  private showAisDataSource = new Subject<boolean>();
+  private aisstreamApiKeyExistsSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -87,6 +89,9 @@ export class SettingsService {
   showTrailDataSource$ = this.showTrailDataSource.asObservable();
   showAirplanesLivePlanesSource$ =
     this.showAirplanesLivePlanesSource.asObservable();
+  showAisDataSourceSource$ = this.showAisDataSource.asObservable();
+  aisstreamApiKeyExistsSource$ =
+    this.aisstreamApiKeyExistsSource.asObservable();
 
   constructor() {}
 
@@ -194,6 +199,11 @@ export class SettingsService {
     return this.openskyCredentialsExistSource;
   }
 
+  sendReceiveAisstreamApiKeyExists(aisstreamApiKeyExists: boolean) {
+    this.aisstreamApiKeyExistsSource.next(aisstreamApiKeyExists);
+    return this.aisstreamApiKeyExistsSource;
+  }
+
   sendAircraftAltitudeData(aircraftTrailAltitudeData: Object) {
     this.aircraftTrailAltitudeData$.next(aircraftTrailAltitudeData);
   }
@@ -266,5 +276,10 @@ export class SettingsService {
   toggleAirplanesLivePlanes(showAirplanesLivePlanes: boolean) {
     this.showAirplanesLivePlanesSource.next(showAirplanesLivePlanes);
     return this.showAirplanesLivePlanesSource;
+  }
+
+  toggleAisData(showAisData: boolean) {
+    this.showAisDataSource.next(showAisData);
+    return this.showAisDataSource;
   }
 }

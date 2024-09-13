@@ -158,4 +158,10 @@ export class Globals {
   // URL zum Server zum Holen aller Trails
   static urlGetAllTrailData: string =
     'http://' + Globals.serverUrl + ':8080/getAllTrails';
+
+  // URL zum Server zum Fetchen von AIS-Daten
+  static urlGetAisData = 'http://' + Globals.serverUrl + ':8080/getAisData';
+
+  // URL zum Server zum Fetchen von AIS-Schiff-Foto-Urls
+  static urlGetAisPhoto = 'http://' + Globals.serverUrl + ':8080/getAisPhoto';
 }

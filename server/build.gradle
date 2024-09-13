@@ -16,6 +16,7 @@ ext {
   hibernateTypesVersion = "2.21.1"
   okhttpVersion = "4.12.0"
   lombokVersion = "1.18.28"
+  webSocketVersion = "1.5.7"
 }
 
 repositories {
@@ -35,6 +36,7 @@ dependencies {
   implementation "com.vladmihalcea:hibernate-types-60:${hibernateTypesVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation "org.projectlombok:lombok:${lombokVersion}"
+  implementation "org.java-websocket:Java-WebSocket:${webSocketVersion}"
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
   testImplementation "org.springframework.boot:spring-boot-starter-test"

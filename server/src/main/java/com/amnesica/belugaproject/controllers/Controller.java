@@ -3,11 +3,13 @@ package com.amnesica.belugaproject.controllers;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.data.AirportData;
 import com.amnesica.belugaproject.entities.data.RangeData;
+import com.amnesica.belugaproject.entities.ships.Ship;
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;
 import com.amnesica.belugaproject.entities.trails.SpacecraftTrail;
 import com.amnesica.belugaproject.services.aircraft.*;
 import com.amnesica.belugaproject.services.data.*;
 import com.amnesica.belugaproject.services.helper.DebugService;
+import com.amnesica.belugaproject.services.ships.AisService;
 import com.amnesica.belugaproject.services.trails.AircraftTrailService;
 import com.amnesica.belugaproject.services.trails.SpacecraftTrailService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +37,8 @@ public class Controller {
   private SpacecraftService spacecraftService;
   @Autowired
   private OpenskyService openskyService;
+  @Autowired
+  private AisService aisService;
 
   @Autowired
   private AircraftService aircraftService;
@@ -248,5 +252,29 @@ public class Controller {
   public @ResponseBody
   byte[] getAircraftData(@RequestParam(value = "type") String type) {
     return model3DService.getModelFromType(type);
+  }
+
+  /**
+   * Gibt AIS-Daten von aisstream.io zurück
+   *
+   * @return List<Ship>
+   */
+  @GetMapping(value = "/getAisData", produces = "application/json")
+  public @ResponseBody
+  Collection<Ship> getAisData(@RequestParam(value = "lomin") double lomin,
+                              @RequestParam(value = "lamin") double lamin, @RequestParam(value = "lomax") double lomax,
+                              @RequestParam(value = "lamax") double lamax, @RequestParam(value = "enable") boolean enable) {
+    return aisService.getAisData(lamin, lomin, lamax, lomax, enable);
+  }
+
+  /**
+   * Gibt einen Photo-Link von vesselfinder.com zurück
+   *
+   * @return String
+   */
+  @GetMapping(value = "/getAisPhoto", produces = "application/json")
+  public @ResponseBody
+  AisService.VesselFinderResponse getAisPhoto(@RequestParam(value = "mmsi") Integer mmsi) {
+    return aisService.getPhotoUrlFromVesselFinder(mmsi);
   }
 }

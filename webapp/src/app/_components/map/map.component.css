@@ -101,6 +101,28 @@ mat-card-header {
   min-width: auto;
 }
 
+#aisDataPopup {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  padding: 0%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
+}
+
+#aisDataPopupHeader {
+  height: 1.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+}
+
 table,
 th,
 td {

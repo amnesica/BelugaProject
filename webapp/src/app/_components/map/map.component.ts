@@ -3,7 +3,7 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import VectorLayer from 'ol/layer/Vector';
 import Vector from 'ol/source/Vector';
-import { Style, Fill, Stroke, Circle, Icon } from 'ol/style';
+import { Style, Fill, Stroke, Circle, Icon, Text } from 'ol/style';
 import OSM from 'ol/source/OSM';
 import * as olProj from 'ol/proj';
 import Feature from 'ol/Feature';
@@ -52,6 +52,7 @@ import {
 } from 'src/app/_common/animations';
 import { Storage } from 'src/app/_classes/storage';
 import { Trail } from 'src/app/_classes/trail';
+import { Ship } from 'src/app/_classes/ship';
 
 @Component({
   selector: 'app-map',
@@ -81,6 +82,15 @@ export class MapComponent implements OnInit {
 
   // Flughäfen als Features
   AirportFeatures = new Vector();
+
+  // Schiffe als Features
+  AisFeatures = new Vector();
+
+  // Schiff-Labels als Features
+  AisLabelFeatures = new Vector();
+
+  // Schiff-Outlines als Features
+  AisOutlineFeatures = new Vector();
 
   // Route als Kurve zum Zielort als Features
   RouteFeatures = new Vector();
@@ -117,6 +127,7 @@ export class MapComponent implements OnInit {
   showAirportsUpdate: boolean = true;
   showOpenskyPlanes: boolean = false;
   showAirplanesLivePlanes: boolean = false;
+  showAisData: boolean = false;
   showIss: boolean = true;
   showOnlyMilitary: boolean = false;
 
@@ -234,6 +245,9 @@ export class MapComponent implements OnInit {
   // Aktuell angeklickter AirportDataPoint (Feature)
   airportDataPoint: any;
 
+  // Aktuell angeklickter AisDataPoint (Feature)
+  aisDataPoint: any;
+
   // Positionswerte für das Popup zum Anzeigen der
   // AirportData-Informationen
   leftValueAirporteData!: number;
@@ -242,18 +256,35 @@ export class MapComponent implements OnInit {
   // Popup für AirportData-Punkte
   airportDataPopup: any;
 
+  // Popup für AisData-Punkte
+  aisDataPopup: any;
+
   // Bottom-Wert für AirportDataPopup
   // (wenn dieser angezeigt wird, soll dieser auf 10px gesetzt werden)
   airportDataPopupBottomValue: any = 0;
 
+  aisDataPopupBottomValue: any = 0;
+
   // Layer für Airports
   airportLayer!: VectorLayer<VectorSource<Geometry>>;
+
+  // Layer für AIS Features
+  aisFeatureLayer!: VectorLayer<VectorSource<Geometry>>;
+
+  // Layer für AIS Labels
+  aisLabelFeatureLayer!: VectorLayer<VectorSource<Geometry>>;
+
+  // Layer für AIS Outline (Shape) Features
+  aisOutlineFeaturesLayer!: VectorLayer<VectorSource<Geometry>>;
 
   // Liste an verfügbaren Map-Stilen
   listAvailableMaps: any;
 
   // API-Key für Geoapify
   geoapifyApiKey: any;
+
+  // API-Key für aisstream.io
+  aisstreamApiKeyExists: boolean = false;
 
   // Aktuell ausgewählter Map-Stil
   currentSelectedMapStyle: any;
@@ -284,6 +315,12 @@ export class MapComponent implements OnInit {
 
   // Boolean, ob Altitude Chart angezeigt werden soll
   showAltitudeChart: boolean = true;
+
+  // Interval-ID für fetch AIS Funktion
+  fetchAisIntervalId: number = 0;
+
+  static aisSpritesAll: string =
+    'data:image/png;base64,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';
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
@@ -448,6 +485,25 @@ export class MapComponent implements OnInit {
         } else {
           // Lösche alle bisherigen Remote-Flugzeuge
           this.removeAllRemotePlanes();
+        }
+      });
+
+    // AIS-Daten
+    this.settingsService.showAisDataSourceSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showAisData) => {
+        this.showAisData = showAisData;
+
+        if (this.showAisData) {
+          this.fetchAisIntervalId = window.setInterval(() => {
+            this.fetchAisData();
+          }, 2000);
+        } else {
+          window.clearInterval(this.fetchAisIntervalId);
+          this.fetchAisData(); // Um Verbindung zu stoppen
+          this.AisFeatures.clear();
+          this.AisLabelFeatures.clear();
+          this.AisOutlineFeatures.clear();
         }
       });
 
@@ -784,6 +840,11 @@ export class MapComponent implements OnInit {
           // Setze Cesium.GoogleMaps-API-Key (nicht mandatory)
           if (configuration.cesiumGoogleMapsApiKey) {
             this.cesiumGoogleMapsApiKey = configuration.cesiumGoogleMapsApiKey;
+          }
+
+          // Setze aisstream-API-Key (nicht mandatory)
+          if (configuration.aisstreamApiKeyExist) {
+            this.aisstreamApiKeyExists = configuration.aisstreamApiKeyExist;
           }
 
           if (localStorage.getItem('globalIconSize') == null) {
@@ -1156,6 +1217,101 @@ export class MapComponent implements OnInit {
     this.airportLayer.set('type', 'overlay');
     this.airportLayer.set('title', 'airport positions');
     this.layers.push(this.airportLayer);
+
+    // Fuege Layer fuer AIS-Label-Features hinzu
+    this.aisLabelFeatureLayer = new VectorLayer({
+      source: this.AisLabelFeatures,
+      style: this.aisLabelStyle,
+      renderOrder: undefined,
+      declutter: true,
+      zIndex: 25,
+    });
+    this.aisLabelFeatureLayer.set('name', 'ais_labels');
+    this.aisLabelFeatureLayer.set('type', 'overlay');
+    this.aisLabelFeatureLayer.set('title', 'ais labels');
+    this.layers.push(this.aisLabelFeatureLayer);
+
+    // Fuege Layer fuer AIS-Features hinzu
+    this.aisFeatureLayer = new VectorLayer({
+      source: this.AisFeatures,
+      style: this.aisMarkerStyle,
+      renderOrder: undefined,
+      zIndex: 20,
+    });
+    this.aisFeatureLayer.set('name', 'ais_positions');
+    this.aisFeatureLayer.set('type', 'overlay');
+    this.aisFeatureLayer.set('title', 'ais positions');
+    this.layers.push(this.aisFeatureLayer);
+
+    // Fuege Layer fuer AIS-Outline-Features hinzu
+    this.aisOutlineFeaturesLayer = new VectorLayer({
+      source: this.AisOutlineFeatures,
+      style: this.aisOutlineStyleFunction,
+      renderOrder: undefined,
+      minZoom: 13,
+      zIndex: 15,
+    });
+    this.aisOutlineFeaturesLayer.set('name', 'ais_outline_positions');
+    this.aisOutlineFeaturesLayer.set('type', 'overlay');
+    this.aisOutlineFeaturesLayer.set('title', 'ais outline positions');
+    this.layers.push(this.aisOutlineFeaturesLayer);
+  }
+
+  aisLabelStyle(feature): Style {
+    return new Style({
+      text: new Text({
+        font: 'bold 10px Roboto',
+        text: feature.ship.shipName || feature.ship.mmsi.toString(),
+        overflow: false,
+        offsetY: 25,
+        offsetX: 25,
+        stroke: new Stroke({
+          color: 'black',
+          width: 4,
+        }),
+        fill: new Fill({
+          color: 'white',
+        }),
+      }),
+    });
+  }
+
+  showAisLabel() {
+    return Globals.showAircraftLabel ?? false;
+  }
+
+  aisMarkerStyle(feature): Style {
+    var length = (feature.ship.to_bow || 0) + (feature.ship.to_stern || 0);
+    var mult = length >= 100 && length <= 200 ? 0.9 : length > 200 ? 1.1 : 0.75;
+
+    return new Style({
+      image: new Icon({
+        src: MapComponent.aisSpritesAll,
+        rotation: feature.ship.rot,
+        offset: [feature.ship.cx, feature.ship.cy],
+        size: [feature.ship.imgSize, feature.ship.imgSize],
+        scale: 1 * mult,
+        opacity: 1,
+      }),
+    });
+  }
+
+  aisOutlineStyleFunction(feature): Style {
+    const c = '#808080';
+    const o = 0.9;
+
+    return new Style({
+      fill: new Fill({
+        color: `rgba(${parseInt(c.slice(-6, -4), 16)}, ${parseInt(
+          c.slice(-4, -2),
+          16
+        )}, ${parseInt(c.slice(-2), 16)}, ${o})`,
+      }),
+      stroke: new Stroke({
+        color: '#A9A9A9',
+        width: 2,
+      }),
+    });
   }
 
   /**
@@ -1984,6 +2140,19 @@ export class MapComponent implements OnInit {
         }
       );
 
+      // Hole Feature zur Bestimmung eines AIS ships
+      let aisPoint;
+      aisPoint = evt.map.forEachFeatureAtPixel(
+        evt.pixel,
+        function (feature: any) {
+          return feature;
+        },
+        {
+          layerFilter: (layer) => layer == this.aisFeatureLayer,
+          hitTolerance: 5,
+        }
+      );
+
       // Setze Boolean 'showRoute' auf false zurück
       this.showRoute = false;
 
@@ -1996,6 +2165,8 @@ export class MapComponent implements OnInit {
         airportPoint.featureName == 'AirportDataPoint'
       ) {
         this.createAndShowAirportDataPopup(airportPoint, evt);
+      } else if (aisPoint && aisPoint.featureName == 'AisDataPoint') {
+        this.createAndShowAisDataPopup(aisPoint, evt);
       } else {
         this.resetAllMarkedPlanes();
         this.resetAllTrails();
@@ -2005,6 +2176,7 @@ export class MapComponent implements OnInit {
         this.unselectAllPlanesInTable();
         this.resetAllDrawnPOMDPoints();
         this.resetAirportDataPopup();
+        this.resetAisDataPopup();
         this.show3dMap(false);
       }
     });
@@ -2290,6 +2462,167 @@ export class MapComponent implements OnInit {
     this.airportDataPopupBottomValue = '10px';
   }
 
+  createAndShowAisDataPopup(aisDataPoint: any, evt: any) {
+    if (!aisDataPoint) return;
+
+    if (this.aisDataPoint && this.aisDataPoint.link)
+      this.aisDataPoint.link = undefined;
+
+    const getValueOrDefault = (value: any, defaultValue: string = 'N/A') =>
+      value ?? defaultValue;
+
+    const getShipDimension = (ship) =>
+      aisDataPoint.ship.dimension != null
+        ? aisDataPoint.ship.dimension.to_bow +
+          aisDataPoint.ship.dimension.to_stern +
+          ' m ' +
+          ' x ' +
+          (aisDataPoint.ship.dimension.to_port +
+            aisDataPoint.ship.dimension.to_starboard) +
+          ' m'
+        : null;
+
+    const getTime = (dateTimeString) => {
+      return dateTimeString.replace(/\.\d+/, '').replace(' +0000 UTC', '');
+    };
+
+    const getEtaVal = (ship) =>
+      ('0' + ship.eta.month).slice(-2) +
+      '-' +
+      ('0' + ship.eta.day).slice(-2) +
+      ' ' +
+      ('0' + ship.eta.hour).slice(-2) +
+      ':' +
+      ('0' + ship.eta.minute).slice(-2);
+
+    const urlMmsi =
+      'https://www.vesselfinder.com/vessels/details/' + aisDataPoint.ship.mmsi;
+    const title = aisDataPoint.ship.shipName ?? aisDataPoint.ship.mmsi ?? 'N/A';
+    const link = aisDataPoint.ship.mmsi ? urlMmsi : null;
+
+    // Erstelle aktuell angeklicktes AisDataPoint aus Feature
+    this.aisDataPoint = {
+      title: title,
+      link: link,
+      photoUrl: aisDataPoint.ship.photoUrl,
+      featureName: aisDataPoint.featureName, // Annahme: featureName ist immer vorhanden
+      attributes: [
+        {
+          key: 'Status',
+          value: getValueOrDefault(aisDataPoint.ship.status),
+        },
+        { key: 'MMSI', value: getValueOrDefault(aisDataPoint.ship.mmsi) },
+        {
+          key: 'IMO',
+          value: getValueOrDefault(
+            aisDataPoint.ship.imoNumber == 0
+              ? 'N/A'
+              : aisDataPoint.ship.imoNumber
+          ),
+        },
+        {
+          key: 'Class',
+          value: getValueOrDefault(aisDataPoint.ship.typeVal),
+        },
+        {
+          key: 'Destination',
+          value: getValueOrDefault(aisDataPoint.ship.destination),
+        },
+        {
+          key: 'Dimensions',
+          value:
+            getValueOrDefault(aisDataPoint.ship.dimension) == 'N/A'
+              ? 'N/A'
+              : getShipDimension(aisDataPoint.ship),
+        },
+        { key: 'Type', value: getValueOrDefault(aisDataPoint.ship.type) },
+        {
+          key: 'ETA',
+          value:
+            getValueOrDefault(aisDataPoint.ship.eta) == 'N/A'
+              ? 'N/A'
+              : getEtaVal(aisDataPoint.ship) + ' (UTC)',
+        },
+        {
+          key: 'Callsign',
+          value: getValueOrDefault(aisDataPoint.ship.callSign),
+        },
+        {
+          key: 'Course',
+          value:
+            getValueOrDefault(aisDataPoint.ship.cog) == 'N/A'
+              ? 'N/A'
+              : aisDataPoint.ship.cog + ' °',
+        },
+        {
+          key: 'Speed',
+          value:
+            getValueOrDefault(aisDataPoint.ship.sog) == 'N/A'
+              ? 'N/A'
+              : aisDataPoint.ship.sog + ' kn',
+        },
+        {
+          key: 'Heading',
+          value:
+            getValueOrDefault(aisDataPoint.ship.trueHeading) == 'N/A'
+              ? 'N/A'
+              : aisDataPoint.ship.trueHeading + ' °',
+        },
+        {
+          key: 'Draught',
+          value:
+            getValueOrDefault(aisDataPoint.ship.maximumStaticDraught) == 'N/A'
+              ? 'N/A'
+              : aisDataPoint.ship.maximumStaticDraught + ' m',
+        },
+        {
+          key: 'Last Signal',
+          value:
+            getValueOrDefault(aisDataPoint.ship.timeUTC) == 'N/A'
+              ? 'N/A'
+              : getTime(aisDataPoint.ship.timeUTC) + ' (UTC)',
+        },
+      ],
+    };
+
+    this.getAisShipPhoto(link, aisDataPoint);
+
+    // Overlay für das Popup erstellen
+    this.aisDataPopup = new Overlay({
+      element: document.getElementById('aisDataPopup')!,
+    });
+
+    // Bestimme die Popup-Position
+    const coordinate = aisDataPoint.getGeometry().getCoordinates();
+    this.aisDataPopup.setPosition([
+      coordinate[0] + Math.round(evt.coordinate[0] / 40075016) * 40075016,
+      coordinate[1],
+    ]);
+    this.OLMap.addOverlay(this.aisDataPopup);
+
+    // Setze den Bottom-Wert des Popups
+    this.aisDataPopupBottomValue = '10px';
+  }
+
+  private getAisShipPhoto(link: string | null, aisDataPoint: any) {
+    if (
+      link != null &&
+      aisDataPoint.ship.mmsi != null &&
+      aisDataPoint.ship.photoUrl == null
+    ) {
+      this.serverService
+        .getAisPhoto(aisDataPoint.ship.mmsi)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(
+          (photoUrlJson) => {
+            if (photoUrlJson == null || photoUrlJson == '') return;
+            this.aisDataPoint.photoUrl = photoUrlJson.photoUrl.toString();
+          },
+          (error) => {}
+        );
+    }
+  }
+
   resetAirportDataPopup() {
     if (this.airportDataPopup) {
       this.airportDataPopup.setPosition(undefined);
@@ -2300,6 +2633,18 @@ export class MapComponent implements OnInit {
     // Verändere Bottom-Wert für Popup,
     // damit dieser wieder ausgeblendet wird
     this.airportDataPopupBottomValue = '0px';
+  }
+
+  resetAisDataPopup() {
+    if (this.aisDataPopup) {
+      this.aisDataPopup.setPosition(undefined);
+      this.aisDataPopup.dispose();
+      this.aisDataPopup = undefined;
+    }
+
+    // Verändere Bottom-Wert für Popup,
+    // damit dieser wieder ausgeblendet wird
+    this.aisDataPopupBottomValue = '0px';
   }
 
   /**
@@ -3060,6 +3405,9 @@ export class MapComponent implements OnInit {
         this.Planes[hex].hideLabel();
       }
     }
+
+    if (this.showAisData && this.aisLabelFeatureLayer)
+      this.AisLabelFeatures.clear();
   }
 
   /**
@@ -3099,6 +3447,9 @@ export class MapComponent implements OnInit {
     this.settingsService.sendReceiveClientIp(Globals.clientIp);
     this.settingsService.sendReceiveOpenskyCredentialsExist(
       Globals.openskyCredentials
+    );
+    this.settingsService.sendReceiveAisstreamApiKeyExists(
+      this.aisstreamApiKeyExists
     );
     this.sendAvailableMapsToSettings();
   }
@@ -3996,6 +4347,88 @@ export class MapComponent implements OnInit {
       return 'Airplanes-Live';
     } else {
       return null;
+    }
+  }
+
+  fetchAisData() {
+    // Berechne extent
+    let extent = this.calcCurrentMapExtent();
+
+    // Wenn keine OLMap oder kein Extent vorhanden ist, breche ab
+    if (!this.OLMap && !extent) return;
+
+    // Server-Aufruf
+    this.serverService
+      .getAisDataInExtent(
+        extent[0],
+        extent[1],
+        extent[2],
+        extent[3],
+        this.showAisData
+      )
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (aisDataJsonArray) => {
+          if (this.showAisData) {
+            // Leere AisFeatures vor jeder Iteration
+            this.AisFeatures.clear();
+            this.AisLabelFeatures.clear();
+            this.AisOutlineFeatures.clear();
+
+            if (aisDataJsonArray != null) {
+              for (let i = 0; i < aisDataJsonArray.length; i++) {
+                const ship = aisDataJsonArray[i];
+                this.createShipOnMap(ship);
+              }
+            }
+          }
+        },
+        (error) => {
+          console.log(
+            'Error updating AIS data from the server. Is the server running?'
+          );
+          this.openSnackbar(
+            'Error updating AIS data from the server. Is the server running?',
+            2000
+          );
+        }
+      );
+  }
+
+  createShipOnMap(ship: any) {
+    Ship.checkAircraftCarrier(ship);
+    Ship.getSprite(ship);
+    Ship.getNavStatusVal(ship);
+
+    const point = new Point(olProj.fromLonLat([ship.longitude, ship.latitude]));
+    let feature: any = new Feature({
+      geometry: point,
+    });
+
+    feature.ship = ship;
+    feature.featureName = 'AisDataPoint';
+
+    // Füge Feature zu AisFeatures und AisLabelFeatures hinzu
+    this.AisFeatures.addFeature(feature);
+    this.AisLabelFeatures.addFeature(feature);
+
+    this.aisLabelFeatureLayer.setVisible(
+      Globals.showAircraftLabel && this.OLMap.getView().getZoom() > 11.5
+    );
+
+    if (
+      this.OLMap.getView().getZoom() > 11.5 &&
+      ship.trueHeading != null &&
+      ship.trueHeading != 511 &&
+      ship.dimension != null
+    ) {
+      var shapeFeature: any = new Feature({
+        geometry: Ship.createShipOutlineGeometry(ship),
+      });
+      shapeFeature.ship = ship;
+
+      // Füge Feature zu AisOutlineFeatures hinzu
+      this.AisOutlineFeatures.addFeature(shapeFeature);
     }
   }
 }

@@ -72,7 +72,7 @@
           [checked]="showAircraftLabels"
           (click)="$event.stopPropagation()"
           (change)="toggleAircraftLabels($event.checked)"
-          >Aircraft Labels</mat-slide-toggle
+          >Show Labels</mat-slide-toggle
         >
 
         <mat-slide-toggle
@@ -89,6 +89,14 @@
           (click)="$event.stopPropagation()"
           (change)="toggleAirplanesLivePlanes($event.checked)"
           >Fetch from Airplanes-Live (250nm max)</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
+          [checked]="showAisData"
+          [disabled]="!aisstreamApiKeyExists"
+          (click)="$event.stopPropagation()"
+          (change)="toggleAisData($event.checked)"
+          >Fetch AIS data from aisstream.io</mat-slide-toggle
         >
 
         <div style="display: flex; justify-content: start; align-items: center">
@@ -581,7 +589,7 @@
             "
           >
             <!-- App-BuildTime -->
-            BuildTime {{ appBuildTime *1000 | date: 'yyyy-MM-dd HH:mm:ss'}}
+            BuildTime {{ appBuildTime * 1000 | date : "yyyy-MM-dd HH:mm:ss" }}
           </p>
 
           <p

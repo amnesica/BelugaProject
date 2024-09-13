@@ -182,4 +182,43 @@ export class ServerService {
   getAllTrails(): Observable<any> {
     return this.httpClient.get(Globals.urlGetAllTrailData);
   }
+
+  /**
+   * Methode ruft AIS-Daten von aisstream.io ab
+   * @param lomin lower bound for the longitude in decimal degrees
+   * @param lamin lower bound for the latitude in decimal degrees
+   * @param lomax upper bound for the longitude in decimal degrees
+   * @param lamax upper bound for the latitude in decimal degrees
+   * @returns
+   */
+  getAisDataInExtent(
+    lomin: number,
+    lamin: number,
+    lomax: number,
+    lamax: number,
+    enable: boolean
+  ): Observable<any> {
+    // Initialiere Params-Objekt
+    let params = new HttpParams();
+
+    // Weise Parameter zu
+    params = params.append('lomin', lomin.toString());
+    params = params.append('lamin', lamin.toString());
+    params = params.append('lomax', lomax.toString());
+    params = params.append('lamax', lamax.toString());
+    params = params.append('enable', enable);
+
+    return this.httpClient.get<any>(Globals.urlGetAisData, {
+      params: params,
+    });
+  }
+
+  getAisPhoto(mmsi: string): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('mmsi', mmsi.toString());
+
+    return this.httpClient.get<any>(Globals.urlGetAisPhoto, {
+      params: params,
+    });
+  }
 }
