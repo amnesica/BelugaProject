@@ -11,7 +11,7 @@ springBoot {
 }
 
 ext {
-  postgresqlVersion = "42.6.0"
+  postgresqlVersion = "42.7.4"
   jsonVersion = "20231013"
   hypersistenceVersion = "3.8.2"
   okhttpVersion = "4.12.0"
