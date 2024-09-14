@@ -33,7 +33,7 @@ dependencies {
   implementation "org.springframework.boot:spring-boot-starter-validation"
   implementation "org.postgresql:postgresql:${postgresqlVersion}"
   implementation "org.json:json:${jsonVersion}"
-  implementation "io.hypersistence:hypersistence-utils-hibernate-60:${hypersistenceVersion}"
+  implementation "io.hypersistence:hypersistence-utils-hibernate-63:${hypersistenceVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation "org.projectlombok:lombok:${lombokVersion}"
   implementation "org.java-websocket:Java-WebSocket:${webSocketVersion}"
