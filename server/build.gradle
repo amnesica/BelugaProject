@@ -12,7 +12,7 @@ springBoot {
 
 ext {
   postgresqlVersion = "42.7.4"
-  jsonVersion = "20231013"
+  jsonVersion = "20240303"
   hypersistenceVersion = "3.8.2"
   okhttpVersion = "4.12.0"
   lombokVersion = "1.18.28"
