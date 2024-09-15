@@ -1037,6 +1037,14 @@ export class MapComponent implements OnInit {
           color: this.darkStaticFeatures ? 'black' : 'white',
           width: this.darkStaticFeatures ? 1 : 0.4,
         }),
+        text: new Text({
+          font: '10px Roboto',
+          fill: new Fill({
+            color: this.darkStaticFeatures ? 'black' : 'white',
+          }),
+          offsetY: -8,
+          text: this.circleDistancesInNm[i] + ' nm',
+        }),
       });
 
       // Fuege Ring zu StaticFeatures hinzu
