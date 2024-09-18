@@ -167,4 +167,33 @@ export class Styles {
       }),
     }),
   });
+
+  /**
+   *  Setze Style des Airport-Features entsprechend des Typs des Flughafens
+   */
+  static getStyleOfAirportFeature(type: any): any {
+    switch (type) {
+      case 'large_airport': {
+        return Styles.LargeAirportStyle;
+      }
+      case 'medium_airport': {
+        return Styles.MediumAirportStyle;
+      }
+      case 'small_airport': {
+        return Styles.SmallAirportStyle;
+      }
+      case 'heliport': {
+        return Styles.HeliportStyle;
+      }
+      case 'seaplane_base': {
+        return Styles.SeaplaneBaseStyle;
+      }
+      case 'closed': {
+        return Styles.ClosedAirportStyle;
+      }
+      default: {
+        return Styles.DefaultPointStyle;
+      }
+    }
+  }
 }
