@@ -319,10 +319,6 @@ export class SettingsComponent implements OnInit {
     // Initiiere Abonnements
     this.initSubscriptions();
 
-    // Prüfe WebGL-Support des Browsers und
-    // setze Default-Boolean entsprechend
-    this.checkWebglSupport();
-
     // Hole IP-Adresse des Servers aus Environment
     this.serverAddress = environment.baseUrl;
   }
@@ -330,35 +326,6 @@ export class SettingsComponent implements OnInit {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
-  }
-
-  /**
-   * Prüfe WebGL-Support des Browsers und setze Default-Boolean entsprechend.
-   * Sollte WebGL nicht supportet werden, wird der Toggle deaktiviert
-   */
-  checkWebglSupport() {
-    const webglSupported = Helper.detectWebGL();
-    if (webglSupported == 1) {
-      this.webgl = true;
-    } else if (webglSupported == 0) {
-      this.webgl = false;
-      console.log(
-        'WebGL is currently disabled in your browser. For better performance enable WebGL.'
-      );
-    } else {
-      this.webgl = false;
-      console.log(
-        'WebGL is not supported in your browser. For better performance use a browser with WebGL support.'
-      );
-    }
-
-    // Deaktiviere Toggle, wenn WebGL nicht unterstützt wird
-    if (!this.webgl) {
-      this.webglNotSupported = true;
-    }
-
-    // Setze Boolean, ob WebGL beim Start der Anwendung benutzt werden soll
-    Globals.useWebglOnStartup = this.webgl;
   }
 
   /**

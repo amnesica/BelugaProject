@@ -77,9 +77,6 @@ export class MapComponent implements OnInit {
   // Layer für Range Data
   rangeDataLayer!: VectorLayer<VectorSource<Geometry>>;
 
-  // Layer für Flugzeuge (kein WebGL)
-  planesLayer!: VectorLayer<VectorSource<Geometry>>;
-
   // Entfernungs-Ringe und Feeder-Position als Features
   StaticFeatures = new Vector();
 
@@ -103,6 +100,12 @@ export class MapComponent implements OnInit {
 
   // Objekt mit allen Flugzeugen
   Planes: { [hex: string]: Aircraft } = {};
+
+  // Flugzeug-Labels als Features
+  PlaneLabelFeatures = new Vector();
+
+  // Layer für Flugzeug-Labels
+  planeLabelFeatureLayer!: VectorLayer<Vector<Geometry>>;
 
   // Aktuell angeklicktes Aircraft
   aircraft: Aircraft | null = null;
@@ -387,7 +390,7 @@ export class MapComponent implements OnInit {
             'Configuration could not be loaded. Is the server online? Program will not be executed further.';
         },
         () =>
-          // Überprüfe gesetzte Werte und starte Programm
+          // Überprüfe gesetzte Werte, WebGl-Support und starte Programm
           this.startProgramOrThrowError()
       );
   }
@@ -500,7 +503,8 @@ export class MapComponent implements OnInit {
       Globals.shapesMap,
       Globals.catMap,
       Globals.typesMap,
-      Globals.clientIp)
+      Globals.clientIp,
+      this.browserSupportsWebGl())
     ) {
       this.startProgram();
     } else {
@@ -515,6 +519,7 @@ export class MapComponent implements OnInit {
     this.initMap();
     this.initBreakPointObserver();
     this.initWebglOnStartup();
+    if (!Globals.webgl) return;
     this.initAircraftFetching();
     this.fetchAircraftAfterMapMove();
     this.initClickOnMap();
@@ -986,16 +991,16 @@ export class MapComponent implements OnInit {
   private createLayers() {
     const renderBuffer = 80;
 
-    // Fuege Layer fuer Icons der Flugzeuge hinzu
-    this.planesLayer = this.createVectorLayer(
-      Globals.PlaneIconFeatures,
+    // Fuege Layer fuer Plane-Label-Features hinzu
+    this.planeLabelFeatureLayer = this.createVectorLayer(
+      this.PlaneLabelFeatures,
       200,
       false,
       renderBuffer,
-      { name: 'ac_positions', type: 'overlay', title: 'aircraft positions' },
-      undefined
+      { name: 'plane_labels', type: 'overlay', title: 'plane labels' },
+      this.planeLabelStyle
     );
-    this.layers.push(this.planesLayer);
+    this.layers.push(this.planeLabelFeatureLayer);
 
     // Erstelle Layer fuer Trails der Flugzeuge als Layer-Group
     const trailLayers = this.createLayerGroup(Globals.trailGroup, 150, {
@@ -1120,6 +1125,25 @@ export class MapComponent implements OnInit {
     this.layers.push(this.aisOutlineFeaturesLayer);
   }
 
+  private planeLabelStyle(feature): Style {
+    return new Style({
+      text: new Text({
+        font: 'bold 10px Roboto',
+        text: feature.flightId,
+        overflow: false,
+        offsetY: feature.offsetY,
+        offsetX: feature.offsetX,
+        stroke: new Stroke({
+          color: 'black',
+          width: 4,
+        }),
+        fill: new Fill({
+          color: 'white',
+        }),
+      }),
+    });
+  }
+
   private aisLabelStyle(feature): Style {
     return new Style({
       text: new Text({
@@ -1179,17 +1203,22 @@ export class MapComponent implements OnInit {
    * wenn WebGL vom Browser unterstützt wird
    */
   private initWebglOnStartup() {
-    if (Globals.useWebglOnStartup) {
-      Globals.webgl = Globals.useWebglOnStartup;
-      // Initialisiert oder deaktiviert WebGL
-      // (deaktiviert WebGL, wenn Initialisierung fehlschlägt)
-      Globals.webgl = this.initWebgl();
-    }
+    Globals.webgl = this.initWebgl();
+    if (!Globals.webgl)
+      this.showErrorLogAndSnackBar(
+        'WebGL could not be initialized. If this browser does not support WebGL use another browser.'
+      );
   }
 
   /**
-   * Initialisiert den WebGL-Layer oder deaktiviert und
-   * löscht den WebGL-Layer. Sollte die Initialisierung
+   * Prüfe WebGL-Support des Browsers
+   */
+  browserSupportsWebGl() {
+    return Helper.detectWebGL() == 1;
+  }
+
+  /**
+   * Initialisiert den WebGL-Layer. Sollte die Initialisierung
    * fehlschlagen, wird false zurückgegeben
    */
   private initWebgl() {
@@ -1201,17 +1230,6 @@ export class MapComponent implements OnInit {
       } else {
         // Versuche WebGL-Layer hinzuzufügen
         initSuccessful = this.addWebglLayer();
-      }
-    } else {
-      // Entferne webglLayer and leere webglFeatures
-      Globals.WebglFeatures.clear();
-      if (this.webglLayer) this.layers.remove(this.webglLayer);
-      this.webglLayer = undefined;
-
-      // Lösche glMarker von jedem Flugzeug
-      for (let i in Globals.PlanesOrdered) {
-        const aircraft = Globals.PlanesOrdered[i];
-        delete aircraft.glMarker;
       }
     }
 
@@ -1291,35 +1309,6 @@ export class MapComponent implements OnInit {
   }
 
   /**
-   * Aktualisiert den Icon-Cache
-   */
-  private updateIconCache() {
-    let item;
-    let tryAgain: any = [];
-    while ((item = Globals.addToIconCache.pop())) {
-      let svgKey = item[0];
-      let element = item[1];
-      if (Globals.iconCache[svgKey] != undefined) {
-        continue;
-      }
-      if (!element) {
-        element = new Image();
-        element.src = item[2];
-        item[1] = element;
-        tryAgain.push(item);
-        continue;
-      }
-      if (!element.complete) {
-        tryAgain.push(item);
-        continue;
-      }
-
-      Globals.iconCache[svgKey] = element;
-    }
-    Globals.addToIconCache = tryAgain;
-  }
-
-  /**
    * Initialisieren der Auto-Fetch Methoden mit Intervall
    */
   private initAircraftFetching() {
@@ -1334,9 +1323,6 @@ export class MapComponent implements OnInit {
         this.showOnlyMilitary
       );
     }, 2000);
-
-    // Update des Icon-Caches alle 850 ms
-    window.setInterval(this.updateIconCache, 850);
   }
 
   /**
@@ -1675,6 +1661,8 @@ export class MapComponent implements OnInit {
 
     aircraft.updateMarker(!isNewAircraft);
 
+    this.createPlaneLabel(aircraft);
+
     const isMarkedOnMap =
       this.aircraft != null && aircraft.hex == this.aircraft.hex;
     const isBeingHoveredOnMap =
@@ -1688,6 +1676,15 @@ export class MapComponent implements OnInit {
     }
 
     if (isBeingHoveredOnMap) this.createHoveredAircraft(aircraft);
+  }
+
+  private createPlaneLabel(aircraft: Aircraft) {
+    if (aircraft && aircraft.labelFeature)
+      this.PlaneLabelFeatures.removeFeature(aircraft.labelFeature);
+    if (aircraft && aircraft.flightId) {
+      const labelFeature: any = aircraft.createLabelFeature();
+      this.PlaneLabelFeatures.addFeature(labelFeature);
+    }
   }
 
   private createNewAircraft(
@@ -1903,7 +1900,7 @@ export class MapComponent implements OnInit {
       },
       {
         layerFilter: (layer) =>
-          layer == this.planesLayer || layer == this.webglLayer,
+          layer == this.webglLayer || this.planeLabelFeatureLayer,
         hitTolerance: 5,
       }
     );
@@ -2308,8 +2305,7 @@ export class MapComponent implements OnInit {
           return feature;
         },
         {
-          layerFilter: (layer) =>
-            layer == this.planesLayer || layer == this.webglLayer,
+          layerFilter: (layer) => layer == this.webglLayer,
           hitTolerance: 5,
         }
       );
@@ -2828,23 +2824,12 @@ export class MapComponent implements OnInit {
 
   private toggleShowAircraftLabels(showAircraftLabel) {
     this.showAircraftLabel = showAircraftLabel;
+    Globals.showAircraftLabel = showAircraftLabel;
 
-    if (this.showAircraftLabel) {
-      Globals.showAircraftLabel = true;
-
-      // Erstelle für jedes Flugzeug aus Planes das Label
-      for (var hex of Object.keys(this.Planes)) {
-        this.Planes[hex].showLabel();
-      }
-    } else {
-      Globals.showAircraftLabel = false;
-      for (var hex of Object.keys(this.Planes)) {
-        this.Planes[hex].hideLabel();
-      }
-    }
-
-    if (this.showAisData && this.aisLabelFeatureLayer)
-      this.AisLabelFeatures.clear();
+    this.planeLabelFeatureLayer.setVisible(Globals.showAircraftLabel);
+    this.aisLabelFeatureLayer.setVisible(
+      Globals.showAircraftLabel && this.OLMap.getView().getZoom() > 11.5
+    );
   }
 
   /**
@@ -2941,6 +2926,11 @@ export class MapComponent implements OnInit {
   private removeAircraft(aircraft: Aircraft): void {
     // Entferne Flugzeug aus Planes
     delete this.Planes[aircraft.hex];
+    this.removeFeatureFromFeatures(
+      this.PlaneLabelFeatures,
+      'hex',
+      aircraft.hex
+    );
 
     // Entferne Flugzeug als aktuell markiertes Flugzeug, wenn es dieses ist
     if (this.aircraft?.hex == aircraft.hex) this.aircraft = null;
@@ -3157,7 +3147,16 @@ export class MapComponent implements OnInit {
         return;
 
       // Lösche bisherige Geräte-Position, wenn diese existiert
-      this.removeDevicePositionFromStaticFeatures();
+      if (
+        Globals.DevicePosition !== null ||
+        localStorage.getItem('coordinatesDevicePosition') !== null
+      ) {
+        this.removeFeatureFromFeatures(
+          this.StaticFeatures,
+          'name',
+          'devicePosition'
+        );
+      }
 
       let feature = new Feature(
         new Point(olProj.fromLonLat(coordinatesDevicePosition))
@@ -3174,7 +3173,11 @@ export class MapComponent implements OnInit {
       localStorage.getItem('coordinatesDevicePosition') !== null
     ) {
       // Lösche bisherige Geräte-Position, wenn diese existiert
-      this.removeDevicePositionFromStaticFeatures();
+      this.removeFeatureFromFeatures(
+        this.StaticFeatures,
+        'name',
+        'devicePosition'
+      );
 
       localStorage.removeItem('coordinatesDevicePosition');
 
@@ -3183,25 +3186,21 @@ export class MapComponent implements OnInit {
     }
   }
 
-  private removeDevicePositionFromStaticFeatures() {
-    if (
-      Globals.DevicePosition !== null ||
-      localStorage.getItem('coordinatesDevicePosition') !== null
-    ) {
-      // Lösche bisherige Geräte-Position, wenn diese existiert
-      let staticFeatures = this.StaticFeatures.getFeatures();
-      for (let i in staticFeatures) {
-        let feature: any = staticFeatures[i];
+  private removeFeatureFromFeatures(
+    vectorFeatures: Vector<Geometry>,
+    featureKey: string,
+    featureValue: string
+  ) {
+    if (!vectorFeatures) return;
 
-        if (
-          feature != undefined &&
-          feature.get('name') != undefined &&
-          feature.get('name') === 'devicePosition'
-        ) {
-          this.StaticFeatures.removeFeature(feature);
-        }
-      }
-    }
+    const features = vectorFeatures.getFeatures();
+    const featuresToRemove = features.filter(
+      (feature: { get: (arg: string) => any }) =>
+        feature.get(featureKey) === featureValue
+    );
+    featuresToRemove.forEach((feature) =>
+      vectorFeatures.removeFeature(feature)
+    );
   }
 
   /**
@@ -3497,11 +3496,8 @@ export class MapComponent implements OnInit {
   private toggleShowAircraftPositions(showAircraftPositions: boolean) {
     this.showAircraftPositions = showAircraftPositions;
 
-    if (this.OLMap && this.layers && (this.planesLayer || this.webglLayer)) {
-      if (this.planesLayer)
-        this.planesLayer.setVisible(this.showAircraftPositions);
-      if (this.webglLayer)
-        this.webglLayer.setVisible(this.showAircraftPositions);
+    if (this.OLMap && this.layers && this.webglLayer) {
+      this.webglLayer.setVisible(this.showAircraftPositions);
     }
   }
 

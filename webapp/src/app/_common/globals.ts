@@ -25,9 +25,6 @@ export class Globals {
   // (Hinweis: In EPSG:3857 gespeichert!)
   static SitePosition;
 
-  // Flugzeug-Icons als Features
-  static PlaneIconFeatures = new Vector();
-
   // Flugzeug-Icons als Features (WebGL)
   static WebglFeatures = new Vector<Point>();
 
@@ -72,10 +69,7 @@ export class Globals {
   static showAircraftLabel: boolean = false;
 
   // Boolean, ob WebGL benutzt werden soll
-  static webgl: boolean = false;
-
-  // Boolean, ob WebGL beim Start der Anwendung genutzt werden soll
-  static useWebglOnStartup: boolean;
+  static webgl: boolean = true;
 
   // Initiale Werte für WebGL-Icon ggf. anpassen
   static glIconSize = 72;

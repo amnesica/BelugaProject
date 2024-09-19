@@ -132,15 +132,6 @@
           >Toggle POMD-Feature</mat-slide-toggle
         >
 
-        <!-- WebGL -->
-        <mat-slide-toggle
-          [checked]="webgl"
-          [disabled]="webglNotSupported"
-          (click)="$event.stopPropagation()"
-          (change)="toggleWebgl($event.checked)"
-          >WebGL</mat-slide-toggle
-        >
-
         <mat-divider style="margin-bottom: 0"></mat-divider>
 
         <div style="display: flex; justify-content: start; max-height: 2rem">
