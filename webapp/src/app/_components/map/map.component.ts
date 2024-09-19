@@ -1927,33 +1927,45 @@ export class MapComponent implements OnInit {
     this.OLMap.on('click', (evt: any) => {
       const hex = this.getHexFromClickOnLayer(evt);
 
-      let rangePoint = this.rangeDataIsVisible
-        ? this.getFeatureFromClickOnLayer(evt, this.rangeDataLayer)
-        : undefined;
+      if (hex) {
+        this.markOrUnmarkAircraft(hex, false);
+        return;
+      }
 
-      let airportPoint = this.showAirportsUpdate
-        ? this.getFeatureFromClickOnLayer(evt, this.airportLayer)
-        : undefined;
+      let featurePoint;
 
-      let aisPoint = this.showAisData
-        ? this.getFeatureFromClickOnLayer(evt, this.aisFeatureLayer)
-        : undefined;
+      if (this.rangeDataIsVisible) {
+        featurePoint = this.getFeatureFromClickOnLayer(
+          evt,
+          this.rangeDataLayer
+        );
+        if (featurePoint && featurePoint.name === 'RangeDataPoint') {
+          this.createAndShowRangeDataPopup(featurePoint, evt);
+          return;
+        }
+      }
 
-      this.showRoute = false;
+      if (this.showAirportsUpdate) {
+        featurePoint = this.getFeatureFromClickOnLayer(evt, this.airportLayer);
+        if (featurePoint && featurePoint.featureName === 'AirportDataPoint') {
+          this.createAndShowAirportDataPopup(featurePoint, evt);
+          return;
+        }
+      }
 
-      if (hex) this.markOrUnmarkAircraft(hex, false);
+      if (this.showAisData) {
+        featurePoint = this.getFeatureFromClickOnLayer(
+          evt,
+          this.aisFeatureLayer
+        );
+        if (featurePoint && featurePoint.featureName === 'AisDataPoint') {
+          this.createAndShowAisDataPopup(featurePoint, evt);
+          return;
+        }
+      }
 
-      if (rangePoint && rangePoint.name == 'RangeDataPoint')
-        this.createAndShowRangeDataPopup(rangePoint, evt);
-
-      if (airportPoint && airportPoint.featureName == 'AirportDataPoint')
-        this.createAndShowAirportDataPopup(airportPoint, evt);
-
-      if (aisPoint && aisPoint.featureName == 'AisDataPoint')
-        this.createAndShowAisDataPopup(aisPoint, evt);
-
-      if (!hex && !rangePoint && !airportPoint && !aisPoint)
-        this.resetClickOnMap();
+      // Reset only if no feature point is found
+      this.resetClickOnMap();
     });
   }
 
