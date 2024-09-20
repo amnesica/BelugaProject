@@ -1928,14 +1928,14 @@ export class MapComponent implements OnInit {
     );
   }
 
-  private getFeatureFromClickOnLayer(evt, requiredLayer) {
+  private getFeatureFromClickOnLayer(evt, requiredLayer1, requiredLayer2?) {
     return evt.map.forEachFeatureAtPixel(
       evt.pixel,
       function (feature: any) {
         return feature;
       },
       {
-        layerFilter: (layer) => layer == requiredLayer,
+        layerFilter: (layer) => layer == requiredLayer1 || requiredLayer2,
         hitTolerance: 5,
       }
     );
@@ -1978,7 +1978,8 @@ export class MapComponent implements OnInit {
       if (this.showAisData) {
         featurePoint = this.getFeatureFromClickOnLayer(
           evt,
-          this.aisFeatureLayer
+          this.aisFeatureLayer,
+          this.aisLabelFeatureLayer
         );
         if (featurePoint && featurePoint.featureName === 'AisDataPoint') {
           this.createAndShowAisDataPopup(featurePoint, evt);
