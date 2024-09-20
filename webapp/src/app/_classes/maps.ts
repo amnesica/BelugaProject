@@ -96,6 +96,14 @@ export class Maps {
         '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap contributors</a>',
       ],
     },
+    {
+      name: 'OSM OpenSeaMap',
+      url: 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+      isSelected: false,
+      attribution: [
+        'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a>',
+      ],
+    },
   ];
 
   static listAvailableGeoapifyMaps = [
