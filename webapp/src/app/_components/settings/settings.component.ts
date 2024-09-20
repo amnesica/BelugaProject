@@ -300,7 +300,7 @@ export class SettingsComponent implements OnInit {
     this.settingsService.setGlobalIconSize(+this.sliderGlobalIconSizeValue);
 
     this.sliderSmallIconSizeValue = Storage.getPropertyFromLocalStorage(
-      'gsmallIconSize',
+      'smallIconSize',
       1.0
     );
     this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
