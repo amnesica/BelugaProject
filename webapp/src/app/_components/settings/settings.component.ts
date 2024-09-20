@@ -216,6 +216,9 @@ export class SettingsComponent implements OnInit {
   // Small icon size multiplier für Plane-Icons
   sliderSmallIconSizeValue: any;
 
+  // Min Zoom Level für AIS outlines
+  sliderAisOutlinesZoomValue: any;
+
   // Boolean, ob Altitude Chart angezeigt werden soll
   showAltitudeChart: boolean = Storage.getPropertyFromLocalStorage(
     'showAltitudeChart',
@@ -313,6 +316,12 @@ export class SettingsComponent implements OnInit {
     this.toggleAisData(
       Storage.getPropertyFromLocalStorage('showAisData', false)
     );
+
+    this.sliderAisOutlinesZoomValue = Storage.getPropertyFromLocalStorage(
+      'aisOutlineMinZoom',
+      11.5
+    );
+    this.settingsService.setAisOutlineMinZoom(+this.sliderAisOutlinesZoomValue);
   }
 
   ngOnInit(): void {
@@ -903,9 +912,22 @@ export class SettingsComponent implements OnInit {
     this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
   }
 
+  onInputChangeAisOutlineMinZoom(event: any) {
+    this.sliderAisOutlinesZoomValue = event.target.valueAsNumber;
+
+    Storage.savePropertyInLocalStorage(
+      'aisOutlineMinZoom',
+      this.sliderAisOutlinesZoomValue
+    );
+
+    // Kontaktiere Map-Component
+    this.settingsService.setAisOutlineMinZoom(+this.sliderAisOutlinesZoomValue);
+  }
+
   resetIconSizeSlider() {
     this.sliderGlobalIconSizeValue = Globals.defaultGlobalScaleFactorIcons;
     this.sliderSmallIconSizeValue = Globals.defaultSmallScaleFactorIcons;
+    this.sliderAisOutlinesZoomValue = 11.5;
 
     Storage.savePropertyInLocalStorage(
       'globalIconSize',
@@ -915,10 +937,15 @@ export class SettingsComponent implements OnInit {
       'smallIconSize',
       this.sliderSmallIconSizeValue
     );
+    Storage.savePropertyInLocalStorage(
+      'aisOutlineMinZoom',
+      this.sliderAisOutlinesZoomValue
+    );
 
     // Kontaktiere Map-Component
     this.settingsService.setGlobalIconSize(this.sliderGlobalIconSizeValue);
     this.settingsService.setSmallIconSize(this.sliderSmallIconSizeValue);
+    this.settingsService.setAisOutlineMinZoom(+this.sliderAisOutlinesZoomValue);
   }
 
   toggleAltitudeChart(checked: boolean) {

@@ -44,6 +44,7 @@ export class SettingsService {
   private showAirplanesLivePlanesSource = new Subject<boolean>();
   private showAisDataSource = new Subject<boolean>();
   private aisstreamApiKeyExistsSource = new Subject<boolean>();
+  private aisOutlineMinZoomSource = new Subject<number>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -92,6 +93,7 @@ export class SettingsService {
   showAisDataSourceSource$ = this.showAisDataSource.asObservable();
   aisstreamApiKeyExistsSource$ =
     this.aisstreamApiKeyExistsSource.asObservable();
+  aisOutlineMinZoomSource$ = this.aisOutlineMinZoomSource.asObservable();
 
   constructor() {}
 
@@ -256,6 +258,11 @@ export class SettingsService {
   setSmallIconSize(value: number) {
     this.setIconSmallSizeSource.next(value);
     return this.setIconSmallSizeSource;
+  }
+
+  setAisOutlineMinZoom(value: number) {
+    this.aisOutlineMinZoomSource.next(value);
+    return this.aisOutlineMinZoomSource;
   }
 
   toggleAltitudeChart(showAltitudeChart: boolean) {
