@@ -28,16 +28,20 @@ public class AisStreamWebsocketClient extends WebSocketClient {
   }
 
   private BoundingBox boundingBox;
+  @Getter
+  private boolean isConnected = false;
 
   @Getter
-  private ConcurrentHashMap<Integer, Ship> aisShips = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<Integer, Ship> aisShips = new ConcurrentHashMap<>();
 
-  public AisStreamWebsocketClient(URI serverURI, final String apiKey, Double minLat, Double minLong, Double maxLat, Double maxLong) {
+  public AisStreamWebsocketClient(URI serverURI, final String apiKey, Double minLat, Double minLong,
+                                  Double maxLat, Double maxLong, ConcurrentHashMap<Integer, Ship> initialAisShips) {
     super(serverURI);
     this.apiKey = apiKey;
     this.box1 = new Double[]{minLat, minLong};
     this.box2 = new Double[]{maxLat, maxLong};
     this.boundingBox = new BoundingBox(minLat, minLong, maxLat, maxLong);
+    this.aisShips.putAll(initialAisShips);
   }
 
   public void updateBoundingBox(Double minLat, Double minLong, Double maxLat, Double maxLong) {
@@ -50,16 +54,21 @@ public class AisStreamWebsocketClient extends WebSocketClient {
   }
 
   private boolean sendOfSubscriptionMessageWillTriggerRateLimit() {
-    return this.lastSendSubscriptionMessage == null || Duration.between(this.lastSendSubscriptionMessage, Instant.now()).getSeconds() <= 1;
+    return this.lastSendSubscriptionMessage == null || Duration.between(this.lastSendSubscriptionMessage,
+        Instant.now()).getSeconds() <= 1;
   }
 
   private void sendSubscriptionMessage() {
-    final String subscriptionText = "{\"APIkey\":\"" + this.apiKey + "\",\"BoundingBoxes\":[[" + Arrays.toString(this.box1) + "," + Arrays.toString(this.box2) + "]], \"FilterMessageTypes\": [\"PositionReport\", \"ShipStaticData\"]}";
+    final String subscriptionText = "{\"APIkey\":\"" + this.apiKey + "\",\"BoundingBoxes\":[[" +
+        Arrays.toString(this.box1) + "," + Arrays.toString(this.box2) +
+        "]], \"FilterMessageTypes\": [\"PositionReport\", \"ShipStaticData\"]}";
     try {
       send(subscriptionText);
       this.lastSendSubscriptionMessage = Instant.now();
+      this.isConnected = true;
     } catch (Exception e) {
       log.error("Server - Failed to send subscription message. WebSocket might not be connected", e);
+      this.isConnected = false;
       stopClient();
     }
   }
@@ -101,11 +110,8 @@ public class AisStreamWebsocketClient extends WebSocketClient {
     final JSONObject positionReport = aisMessage.getJSONObject("PositionReport");
     final JSONObject metaData = jsonObject.getJSONObject("MetaData");
 
-    final Ship ship = new Ship(positionReport.getDouble("Latitude"),
-        positionReport.getDouble("Longitude"),
-        positionReport.getInt("UserID"),
-        metaData.getString("time_utc"),
-        metaData.getInt("MMSI"),
+    final Ship ship = new Ship(positionReport.getDouble("Latitude"), positionReport.getDouble("Longitude"),
+        positionReport.getInt("UserID"), metaData.getString("time_utc"), metaData.getInt("MMSI"),
         metaData.getString("ShipName").trim());
 
     if (aisShips.containsKey(positionReport.getInt("UserID"))) {
@@ -157,13 +163,13 @@ public class AisStreamWebsocketClient extends WebSocketClient {
     ship.setImoNumber(shipStaticData.getInt("ImoNumber"));
     ship.setMaximumStaticDraught(shipStaticData.getDouble("MaximumStaticDraught"));
     final JSONObject dimensionJson = shipStaticData.getJSONObject("Dimension");
-    ship.setDimension(new Ship.Dimension(dimensionJson.getInt("A"),
-        dimensionJson.getInt("B"), dimensionJson.getInt("C"), dimensionJson.getInt("D")));
+    ship.setDimension(new Ship.Dimension(dimensionJson.getInt("A"), dimensionJson.getInt("B"),
+        dimensionJson.getInt("C"), dimensionJson.getInt("D")));
     ship.setName(shipStaticData.getString("Name").trim());
     ship.setType(shipStaticData.getInt("Type"));
     final JSONObject etaJson = shipStaticData.getJSONObject("Eta");
-    ship.setEta(new Ship.ETA(etaJson.getInt("Month"),
-        etaJson.getInt("Day"), etaJson.getInt("Hour"), etaJson.getInt("Minute")));
+    ship.setEta(new Ship.ETA(etaJson.getInt("Month"), etaJson.getInt("Day"), etaJson.getInt("Hour"),
+        etaJson.getInt("Minute")));
   }
 
   @Override
@@ -173,12 +179,13 @@ public class AisStreamWebsocketClient extends WebSocketClient {
 
   @Override
   public void onClose(int code, String reason, boolean remote) {
-    log.info("Server - AIS Connection closed by {} Code: {} Reason: {}", remote ? "remote peer" : "us", code, reason);
+    this.isConnected = false;
   }
 
   @Override
   public void onError(Exception e) {
     log.error("Server - Error on AIS stream websocket : Exception = {}", String.valueOf(e));
+    this.isConnected = false;
   }
 
   public boolean boundingBoxHasMoved(Double minLatNew, Double minLongNew, Double maxLatNew, Double maxLongNew) {
@@ -189,7 +196,7 @@ public class AisStreamWebsocketClient extends WebSocketClient {
   }
 
   public void setPhotoUrl(Integer mmsi, String url) {
-    if (this.aisShips == null || url == null || mmsi == null) return;
+    if (url == null || mmsi == null) return;
     final Ship ship = aisShips.get(mmsi);
     if (ship != null) ship.setPhotoUrl(url);
   }
@@ -199,7 +206,6 @@ public class AisStreamWebsocketClient extends WebSocketClient {
   }
 
   public void stopClient() {
-    this.aisShips = new ConcurrentHashMap<>();
     this.close();
   }
 }

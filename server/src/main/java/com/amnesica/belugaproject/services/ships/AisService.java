@@ -3,6 +3,7 @@ package com.amnesica.belugaproject.services.ships;
 import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.entities.ships.Ship;
 import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,23 +26,25 @@ public class AisService {
   }
 
   private VesselFinderResponse response;
-
   private AisStreamWebsocketClient client;
-
+  private final int MAX_SIZE_SHIP_HASHMAP = 10000;
   private static final NetworkHandlerService networkHandler = new NetworkHandlerService();
+  @Getter
+  private final ConcurrentHashMap<Integer, Ship> aisShipsLongTermMap = new ConcurrentHashMap<>();
 
   public Collection<Ship> getAisData(double lamin, double lomin, double lamax, double lomax, boolean enableAis) {
     if (!configuration.aisstreamApiKeyIsValid()) return null;
 
     if (!enableAis && client != null) {
       client.stopClient();
+      aisShipsLongTermMap.putAll(client.getAisShips());
       client = null;
       return null;
     }
 
     if (!enableAis) return null;
 
-    if (client == null || client.getConnection() == null) {
+    if (client == null || !client.isConnected()) {
       createClient(lamin, lomin, lamax, lomax);
     } else {
       updateClient(lamin, lomin, lamax, lomax);
@@ -52,7 +56,7 @@ public class AisService {
   private void updateClient(double lamin, double lomin, double lamax, double lomax) {
     if (client == null) return;
 
-    if (client.getAisShips().size() > 5000) {
+    if (client.getAisShips().size() > MAX_SIZE_SHIP_HASHMAP) {
       client.clearAisShips();
     }
     if (client.boundingBoxHasMoved(lamin, lomin, lamax, lomax)) client.updateBoundingBox(lamin, lomin, lamax, lomax);
@@ -61,7 +65,8 @@ public class AisService {
   private void createClient(double lamin, double lomin, double lamax, double lomax) {
     try {
       if (!configuration.aisstreamApiKeyIsValid()) return;
-      client = new AisStreamWebsocketClient(new URI(aisStreamIoSocketUrl), configuration.getAisstreamApiKey(), lamin, lomin, lamax, lomax);
+      client = new AisStreamWebsocketClient(new URI(aisStreamIoSocketUrl), configuration.getAisstreamApiKey(),
+          lamin, lomin, lamax, lomax, aisShipsLongTermMap);
       client.connect();
     } catch (URISyntaxException e) {
       log.error("Server - Error when starting websocket client: {}", e.getMessage());
