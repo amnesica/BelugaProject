@@ -958,6 +958,28 @@ export class MapComponent implements OnInit {
     control: ScaleLine,
     attribution: Attribution
   ) {
+    let center, zoom;
+
+    let lastCenterPosition = Storage.getPropertyFromLocalStorage(
+      'lastCenterPosition',
+      undefined
+    );
+    if (lastCenterPosition)
+      lastCenterPosition = olProj.fromLonLat(lastCenterPosition);
+
+    const lastCenterZoomLevel = Storage.getPropertyFromLocalStorage(
+      'lastCenterZoomLevel',
+      undefined
+    );
+
+    if (lastCenterPosition && lastCenterZoomLevel) {
+      center = lastCenterPosition;
+      zoom = lastCenterZoomLevel;
+    } else {
+      center = olProj.fromLonLat(Globals.SitePosition);
+      zoom = Globals.zoomLevel;
+    }
+
     this.OLMap = new Map({
       interactions: interactions,
       controls: defaultControls({ attribution: false }).extend([
@@ -968,8 +990,8 @@ export class MapComponent implements OnInit {
       layers: this.layers,
       maxTilesLoading: 16,
       view: new View({
-        center: olProj.fromLonLat(Globals.SitePosition),
-        zoom: Globals.zoomLevel,
+        center: center,
+        zoom: zoom,
         multiWorld: true,
       }),
     });
@@ -1388,7 +1410,30 @@ export class MapComponent implements OnInit {
         // Aktualisiere Flughäfen auf der Karte
         this.updateAirportsFromServer();
       }
+
+      this.saveMapPositionInLocalStorage();
     });
+  }
+
+  private saveMapPositionInLocalStorage() {
+    if (!this.OLMap) return;
+
+    const lastCenterPosition = olProj.transform(
+      this.OLMap.getView().getCenter(),
+      'EPSG:3857',
+      'EPSG:4326'
+    );
+
+    const lastCenterZoomLevel = this.OLMap.getView().getZoom();
+
+    Storage.savePropertyInLocalStorage(
+      'lastCenterPosition',
+      lastCenterPosition
+    );
+    Storage.savePropertyInLocalStorage(
+      'lastCenterZoomLevel',
+      lastCenterZoomLevel
+    );
   }
 
   private getMyExtent(extent): any {
