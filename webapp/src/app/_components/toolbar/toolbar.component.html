@@ -14,6 +14,11 @@
   <!-- Abstandhalter -->
   <span class="spacer"></span>
 
+  <!-- Zurücksetzen der Map-Position -->
+  <button mat-icon-button (click)="resetMapPosition()">
+    <mat-icon>home</mat-icon>
+  </button>
+
   <!-- Tabelle mit Flugzeugen -->
   <app-aircraft-table
     [darkMode]="darkMode"

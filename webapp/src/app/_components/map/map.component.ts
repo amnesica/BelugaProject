@@ -656,6 +656,11 @@ export class MapComponent implements OnInit {
       .subscribe(
         (minZoomAisOutlines) => (this.minZoomAisOutlines = minZoomAisOutlines)
       );
+
+    // Resette Map mit gespeicherter SitePosition vom Server
+    this.settingsService.resetMapPositionSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => this.setMapCenterFromSitePosition());
   }
 
   private initWeatherSubscriptions() {
@@ -1434,6 +1439,15 @@ export class MapComponent implements OnInit {
       'lastCenterZoomLevel',
       lastCenterZoomLevel
     );
+  }
+
+  private setMapCenterFromSitePosition(): void {
+    if (!Globals.SitePosition || !Globals.zoomLevel || !this.OLMap) return;
+
+    this.OLMap.getView().setCenter(olProj.fromLonLat(Globals.SitePosition));
+    this.OLMap.getView().setZoom(Globals.zoomLevel);
+
+    this.saveMapPositionInLocalStorage();
   }
 
   private getMyExtent(extent): any {

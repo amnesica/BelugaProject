@@ -45,6 +45,7 @@ export class SettingsService {
   private showAisDataSource = new Subject<boolean>();
   private aisstreamApiKeyExistsSource = new Subject<boolean>();
   private aisOutlineMinZoomSource = new Subject<number>();
+  private resetMapPositionSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -94,6 +95,7 @@ export class SettingsService {
   aisstreamApiKeyExistsSource$ =
     this.aisstreamApiKeyExistsSource.asObservable();
   aisOutlineMinZoomSource$ = this.aisOutlineMinZoomSource.asObservable();
+  resetMapPositionSource$ = this.resetMapPositionSource.asObservable();
 
   constructor() {}
 
@@ -288,5 +290,10 @@ export class SettingsService {
   toggleAisData(showAisData: boolean) {
     this.showAisDataSource.next(showAisData);
     return this.showAisDataSource;
+  }
+
+  toggleResetMapPosition(resetMapPosition: boolean) {
+    this.resetMapPositionSource.next(resetMapPosition);
+    return this.resetMapPositionSource;
   }
 }

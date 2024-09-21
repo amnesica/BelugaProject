@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ToolbarService } from 'src/app/_services/toolbar-service/toolbar-service.service';
 import { dummyParentAnimation } from 'src/app/_common/animations';
+import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -25,7 +26,10 @@ export class ToolbarComponent implements OnInit {
 
   private ngUnsubscribe = new Subject();
 
-  constructor(private toolbarService: ToolbarService) {}
+  constructor(
+    private toolbarService: ToolbarService,
+    public settingsService: SettingsService
+  ) {}
 
   ngOnInit(): void {
     // Initiierung der Abonnements
@@ -47,5 +51,9 @@ export class ToolbarComponent implements OnInit {
       .subscribe((counterAircraft) => {
         this.counterAircraft = counterAircraft;
       });
+  }
+
+  resetMapPosition() {
+    this.settingsService.toggleResetMapPosition(true);
   }
 }
