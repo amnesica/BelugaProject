@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Input,
   OnInit,
@@ -234,11 +235,15 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob AIS-Daten angezeigt werden sollen
   showAisData: boolean = false;
 
+  // Aktuelles Zoom-Level der Map
+  currentMapZoomLevel: number = 0;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
     public serverService: ServerService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   setSettingsFromLocalStorage() {
@@ -409,6 +414,14 @@ export class SettingsComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((aisstreamApiKeyExists) => {
         this.aisstreamApiKeyExists = aisstreamApiKeyExists;
+      });
+
+    // Aktuelles Zoom-Level der Karte anzeigen
+    this.settingsService.mapZoomLevelSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((mapZoomLevel) => {
+        this.currentMapZoomLevel = mapZoomLevel;
+        this.changeDetectorRef.detectChanges();
       });
   }
 

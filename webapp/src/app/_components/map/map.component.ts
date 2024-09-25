@@ -1429,7 +1429,7 @@ export class MapComponent implements OnInit {
       'EPSG:4326'
     );
 
-    const lastCenterZoomLevel = this.OLMap.getView().getZoom();
+    const lastCenterZoomLevel: number = this.OLMap.getView().getZoom();
 
     Storage.savePropertyInLocalStorage(
       'lastCenterPosition',
@@ -1439,6 +1439,13 @@ export class MapComponent implements OnInit {
       'lastCenterZoomLevel',
       lastCenterZoomLevel
     );
+
+    this.sendCurrentZoomLevelToSettings(+lastCenterZoomLevel.toFixed(2));
+  }
+
+  private sendCurrentZoomLevelToSettings(zoomLevel: number) {
+    if (!this.OLMap) return;
+    this.settingsService.setMapZoomLevel(zoomLevel);
   }
 
   private setMapCenterFromSitePosition(): void {
