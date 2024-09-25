@@ -98,7 +98,7 @@ export class Maps {
     },
     {
       name: 'OSM OpenSeaMap',
-      url: 'http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
+      url: 'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',
       isSelected: false,
       attribution: [
         'Map data: &copy; <a href="http://www.openseamap.org">OpenSeaMap</a>',
