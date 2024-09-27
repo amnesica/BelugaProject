@@ -78,132 +78,69 @@ public class LocalFeederService {
       for (int i = 0; i < jsonArrayPlanesFeeder.length(); i++) {
 
         // Extrahiere element aus JSONArray
-        JSONObject element = jsonArrayPlanesFeeder.getJSONObject(i);
+        final JSONObject element = jsonArrayPlanesFeeder.getJSONObject(i);
 
-        // Prüfe, ob element alle Basis-Eigenschaften erfüllt (bspw. 'lat','lon' sind vorhanden)
-        // TODO: alle feeder außer vrs liefern das
-        if (element != null && element.has("hex") && element.has("lat") && element.has("lon")
-            && !element.isNull("lat") && !element.isNull("lon")
-            && element.getDouble("lat") != 0 && element.getDouble("lon") != 0) {
-
-          // Erstelle aus Daten des Feeders ein neues Flugzeug
-          Aircraft aircraftNew = aircraftService.createNewAircraft(element, feeder);
-
-          // Füge hex mit feeder zu currentIterationSet hinzu
-          currentIterationSet.add(aircraftNew.getHex());
-
-          // Aktualisiere Flugzeug aus Datenbank oder
-          // füge neues Flugzeug zur Datenbank hinzu
-          if (aircraftRepository.existsById(aircraftNew.getHex())) {
-
-            // Prüfe, ob Flugzeug in Datenbank-Tabelle enthalten ist
-            Aircraft aircraftInDb = aircraftRepository.findByHex(aircraftNew.getHex());
-
-            // Wenn Flugzeug in der letzten Iteration vorhanden war, lösche Feeder-Liste und Source-Liste,
-            // damit nach der Iteration nur die Feeder und die Sources in der Liste stehen,
-            // welche das Flugzeug geupdated haben (nur der erste Feeder pro Iteration soll die Listen löschen)
-            if (previousIterationSet.contains(aircraftNew.getHex())) {
-              previousIterationSet.remove(aircraftNew.getHex());
-              aircraftInDb.clearFeederList();
-              aircraftInDb.clearSourceList();
-            }
-
-            // Update Werte des Flugzeugs mit Werten von aircraftNew
-            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, feeder.getName(), true);
-
-            try {
-              // Schreibe Flugzeug in aircraft-Tabelle
-              aircraftRepository.save(aircraftInDb);
-            } catch (Exception e) {
-              log.error("Server - DB error when writing aircraftInDb for hex " + aircraftInDb.getHex()
-                  + ": Exception = " + e);
-            }
-          } else {
-            // Füge Informationen aus aircraftData hinzu
-            aircraftDataService.addAircraftData(aircraftNew);
-
-            // Setze Boolean, dass Flugzeug nicht von Opensky ist
-            aircraftNew.setIsFromRemote(null);
-
-            // Füge Timestamp als Zeitpunkt des letzten Updates an
-            aircraftNew.setLastUpdate(System.currentTimeMillis());
-
-            // Erstelle Range-Data Eintrag (Flugzeug empfangen!)
-            rangeDataService.createAndSaveRangeDataEntry(aircraftNew);
-
-            // Speichere Trail
-            aircraftTrailService.addTrail(aircraftNew, feeder.getName());
-
-            try {
-              // Schreibe Flugzeug in aircraft-Tabelle
-              aircraftRepository.save(aircraftNew);
-            } catch (Exception e) {
-              log.error("Server - DB error when writing aircraftNew for hex " + aircraftNew.getHex()
-                  + ": Exception = " + e);
-            }
-          }
+        // Erstelle aus Daten des Feeders ein neues Flugzeug
+        Aircraft aircraftNew = null;
+        if (feeder.getType().equals("vrs")) {
+          if (isValidVrsAircraft(element)) aircraftNew = aircraftService.createNewAircraft(element, feeder);
+        } else {
+          if (isValidAircraft(element)) aircraftNew = aircraftService.createNewAircraft(element, feeder);
         }
-        // Prüfe, ob element alle Basis-Eigenschaften erfüllt (bspw. 'lat','lon' sind vorhanden)
-        // TODO: separate Abfrage für feeder vrs vermeiden
-        if (element != null && element.has("Icao") && element.has("Lat") && element.has("Long")
-            && !element.isNull("Lat") && !element.isNull("Long")
-            && element.getDouble("Lat") != 0 && element.getDouble("Long") != 0) {
 
-          // Erstelle aus Daten des Feeders ein neues Flugzeug
-          Aircraft aircraftNew = aircraftService.createNewAircraft(element, feeder);
+        if (aircraftNew == null) continue;
 
-          // Füge hex mit feeder zu currentIterationSet hinzu
-          currentIterationSet.add(aircraftNew.getHex());
+        // Füge hex mit feeder zu currentIterationSet hinzu
+        currentIterationSet.add(aircraftNew.getHex());
 
-          // Aktualisiere Flugzeug aus Datenbank oder
-          // füge neues Flugzeug zur Datenbank hinzu
-          if (aircraftRepository.existsById(aircraftNew.getHex())) {
+        // Aktualisiere Flugzeug aus Datenbank oder
+        // füge neues Flugzeug zur Datenbank hinzu
+        if (aircraftRepository.existsById(aircraftNew.getHex())) {
 
-            // Prüfe, ob Flugzeug in Datenbank-Tabelle enthalten ist
-            Aircraft aircraftInDb = aircraftRepository.findByHex(aircraftNew.getHex());
+          // Prüfe, ob Flugzeug in Datenbank-Tabelle enthalten ist
+          Aircraft aircraftInDb = aircraftRepository.findByHex(aircraftNew.getHex());
 
-            // Wenn Flugzeug in der letzten Iteration vorhanden war, lösche Feeder-Liste und Source-Liste,
-            // damit nach der Iteration nur die Feeder und die Sources in der Liste stehen,
-            // welche das Flugzeug geupdated haben (nur der erste Feeder pro Iteration soll die Listen löschen)
-            if (previousIterationSet.contains(aircraftNew.getHex())) {
-              previousIterationSet.remove(aircraftNew.getHex());
-              aircraftInDb.clearFeederList();
-              aircraftInDb.clearSourceList();
-            }
+          // Wenn Flugzeug in der letzten Iteration vorhanden war, lösche Feeder-Liste und Source-Liste,
+          // damit nach der Iteration nur die Feeder und die Sources in der Liste stehen,
+          // welche das Flugzeug geupdated haben (nur der erste Feeder pro Iteration soll die Listen löschen)
+          if (previousIterationSet.contains(aircraftNew.getHex())) {
+            previousIterationSet.remove(aircraftNew.getHex());
+            aircraftInDb.clearFeederList();
+            aircraftInDb.clearSourceList();
+          }
 
-            // Update Werte des Flugzeugs mit Werten von aircraftNew
-            aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, feeder.getName(), true);
+          // Update Werte des Flugzeugs mit Werten von aircraftNew
+          aircraftService.updateValuesOfAircraft(aircraftInDb, aircraftNew, feeder.getName(), true);
 
-            try {
-              // Schreibe Flugzeug in aircraft-Tabelle
-              aircraftRepository.save(aircraftInDb);
-            } catch (Exception e) {
-              log.error("Server - DB error when writing aircraftInDb for hex " + aircraftInDb.getHex()
-                  + ": Exception = " + e);
-            }
-          } else {
-            // Füge Informationen aus aircraftData hinzu
-            aircraftDataService.addAircraftData(aircraftNew);
+          try {
+            // Schreibe Flugzeug in aircraft-Tabelle
+            aircraftRepository.save(aircraftInDb);
+          } catch (Exception e) {
+            log.error("Server - DB error when writing aircraftInDb for hex " + aircraftInDb.getHex()
+                + ": Exception = " + e);
+          }
+        } else {
+          // Füge Informationen aus aircraftData hinzu
+          aircraftDataService.addAircraftData(aircraftNew);
 
-            // Setze Boolean, dass Flugzeug nicht von Opensky ist
-            aircraftNew.setIsFromRemote(null);
+          // Setze Boolean, dass Flugzeug nicht von Opensky ist
+          aircraftNew.setIsFromRemote(null);
 
-            // Füge Timestamp als Zeitpunkt des letzten Updates an
-            aircraftNew.setLastUpdate(System.currentTimeMillis());
+          // Füge Timestamp als Zeitpunkt des letzten Updates an
+          aircraftNew.setLastUpdate(System.currentTimeMillis());
 
-            // Erstelle Range-Data Eintrag (Flugzeug empfangen!)
-            rangeDataService.createAndSaveRangeDataEntry(aircraftNew);
+          // Erstelle Range-Data Eintrag (Flugzeug empfangen!)
+          rangeDataService.createAndSaveRangeDataEntry(aircraftNew);
 
-            // Speichere Trail
-            aircraftTrailService.addTrail(aircraftNew, feeder.getName());
+          // Speichere Trail
+          aircraftTrailService.addTrail(aircraftNew, feeder.getName());
 
-            try {
-              // Schreibe Flugzeug in aircraft-Tabelle
-              aircraftRepository.save(aircraftNew);
-            } catch (Exception e) {
-              log.error("Server - DB error when writing aircraftNew for hex " + aircraftNew.getHex()
-                  + ": Exception = " + e);
-            }
+          try {
+            // Schreibe Flugzeug in aircraft-Tabelle
+            aircraftRepository.save(aircraftNew);
+          } catch (Exception e) {
+            log.error("Server - DB error when writing aircraftNew for hex " + aircraftNew.getHex()
+                + ": Exception = " + e);
           }
         }
       }
@@ -211,6 +148,18 @@ public class LocalFeederService {
 
     // Schreibe currentIterationSet in previousIterationSet
     previousIterationSet.addAll(currentIterationSet);
+  }
+
+  private boolean isValidVrsAircraft(JSONObject element) {
+    return element != null && element.has("Icao") && element.has("Lat") && element.has("Long")
+        && !element.isNull("Lat") && !element.isNull("Long")
+        && element.getDouble("Lat") != 0 && element.getDouble("Long") != 0;
+  }
+
+  private boolean isValidAircraft(JSONObject element) {
+    return element != null && element.has("hex") && element.has("lat") && element.has("lon")
+        && !element.isNull("lat") && !element.isNull("lon")
+        && element.getDouble("lat") != 0 && element.getDouble("lon") != 0;
   }
 
   /**
