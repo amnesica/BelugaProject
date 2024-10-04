@@ -81,7 +81,7 @@ export class Ship {
       imgSize: 20,
     },
     [Ship.ShippingClass.UNKNOWN]: {
-      cx: 40,
+      cx: 160,
       cy: 20,
       hint: 'Unknown',
       imgSize: 20,
