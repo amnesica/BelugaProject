@@ -47,6 +47,7 @@ export class SettingsService {
   private aisOutlineMinZoomSource = new Subject<number>();
   private resetMapPositionSource = new Subject<boolean>();
   private mapZoomLevelSource = new Subject<number>();
+  private showActualRangeOutlineSource = new Subject<boolean>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -98,6 +99,8 @@ export class SettingsService {
   aisOutlineMinZoomSource$ = this.aisOutlineMinZoomSource.asObservable();
   resetMapPositionSource$ = this.resetMapPositionSource.asObservable();
   mapZoomLevelSource$ = this.mapZoomLevelSource.asObservable();
+  showActualRangeOutlineSource$ =
+    this.showActualRangeOutlineSource.asObservable();
 
   constructor() {}
 
@@ -302,5 +305,10 @@ export class SettingsService {
   setMapZoomLevel(value: number) {
     this.mapZoomLevelSource.next(value);
     return this.mapZoomLevelSource;
+  }
+
+  toggleActualRangeOutline(showActualRangeOutline: boolean) {
+    this.showActualRangeOutlineSource.next(showActualRangeOutline);
+    return this.showActualRangeOutlineSource;
   }
 }

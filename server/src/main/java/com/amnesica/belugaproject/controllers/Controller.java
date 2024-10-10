@@ -172,7 +172,7 @@ public class Controller {
       List<SpacecraftTrail> trails = spacecraftTrailService.getAllTrails();
       return new Object[]{trails};
     } else if (fetchRemote == null) {
-      List<AircraftTrail> trails = aircraftTrailService.getAllTrails(hex, selectedFeeder);
+      List<AircraftTrail> trails = aircraftTrailService.getAllTrailsFromLastHour(hex, selectedFeeder);
       return new Object[]{trails};
       // TODO: Opensky schickt falsche Trails momentan zurück
       //    } else if (fetchRemote.equals("Opensky")) {
@@ -184,14 +184,14 @@ public class Controller {
   }
 
   /**
-   * Holt alle gespeicherten Trails aus der Datenbank
+   * Holt alle gespeicherten Trails der letzten Stunde aus der Datenbank
    *
    * @return List<List < AircraftTrail>>
    */
   @GetMapping(value = "/getAllTrails", produces = "application/json")
   public @ResponseBody
   List<List<AircraftTrail>> getAllTrails() {
-    return aircraftTrailService.getAllTrails();
+    return aircraftTrailService.getAllTrailsFromLastHour();
   }
 
   /**
@@ -276,5 +276,19 @@ public class Controller {
   public @ResponseBody
   AisService.VesselFinderResponse getAisPhoto(@RequestParam(value = "mmsi") Integer mmsi) {
     return aisService.getPhotoUrlFromVesselFinder(mmsi);
+  }
+
+  /**
+   * Gibt eine Liste zurück, welche die maximale Distanz von Trails beinhaltet. Die Daten sind aus den letzten 24h und
+   * nach selectedFeeder gefiltert
+   *
+   * @param selectedFeeder List<String>
+   * @return List<AircraftTrail>
+   */
+  @GetMapping(value = "/getActualRangeOutline", produces = "application/json")
+  public @ResponseBody
+  List<AircraftTrail> getActualRangeOutline(
+      @RequestParam(value = "selectedFeeder") List<String> selectedFeeder) {
+    return aircraftTrailService.getActualOutlineFromLast24Hours(selectedFeeder);
   }
 }

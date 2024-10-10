@@ -221,4 +221,13 @@ export class ServerService {
       params: params,
     });
   }
+
+  urlGetActualRangeOutline(selectedFeeder: any): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('selectedFeeder', selectedFeeder.toString());
+
+    return this.httpClient.get<any>(Globals.urlGetActualRangeOutline, {
+      params: params,
+    });
+  }
 }

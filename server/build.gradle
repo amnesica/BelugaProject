@@ -53,3 +53,7 @@ java {
 bootJar {
   destinationDirectory.set(file("$rootDir/prod"))
 }
+
+test {
+  useJUnitPlatform()
+}

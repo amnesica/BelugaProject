@@ -76,6 +76,13 @@
         >
 
         <mat-slide-toggle
+          [checked]="showActualRangeOutline"
+          (click)="$event.stopPropagation()"
+          (change)="toggleActualRangeOutline($event.checked)"
+          >Show Actual Range Outline</mat-slide-toggle
+        >
+
+        <mat-slide-toggle
           [checked]="showOpenskyPlanes"
           [disabled]="!openskyCredentialsExist || showAirplanesLivePlanes"
           (click)="$event.stopPropagation()"

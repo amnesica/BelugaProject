@@ -158,4 +158,7 @@ export class Globals {
 
   // URL zum Server zum Fetchen von AIS-Schiff-Foto-Urls
   static urlGetAisPhoto = 'http://' + Globals.serverUrl + ':8080/getAisPhoto';
+
+  static urlGetActualRangeOutline =
+    'http://' + Globals.serverUrl + ':8080/getActualRangeOutline';
 }

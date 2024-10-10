@@ -25,6 +25,8 @@ public class TrailSuperclass {
   private String source;
   private Integer track;
   private Double roll;
+  private Double distanceToSite;
+  private Integer angleToSite;
 
   public TrailSuperclass(String hex, Double longitude, Double latitude, Integer altitude, Boolean reenteredAircraft,
                          Long timestamp, String feeder, String source, Integer track, Double roll) {

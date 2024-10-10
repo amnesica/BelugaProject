@@ -238,6 +238,9 @@ export class SettingsComponent implements OnInit {
   // Aktuelles Zoom-Level der Map
   currentMapZoomLevel: number = 0;
 
+  // Boolean, ob actual range outline angezeigt werden soll
+  showActualRangeOutline: boolean = true;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -327,6 +330,10 @@ export class SettingsComponent implements OnInit {
       11.5
     );
     this.settingsService.setAisOutlineMinZoom(+this.sliderAisOutlinesZoomValue);
+
+    this.toggleActualRangeOutline(
+      Storage.getPropertyFromLocalStorage('showActualRangeOutline', true)
+    );
   }
 
   ngOnInit(): void {
@@ -1012,5 +1019,17 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component und übergebe showAisData-Boolean
     this.settingsService.toggleAisData(this.showAisData);
+  }
+
+  toggleActualRangeOutline(checked: boolean) {
+    this.showActualRangeOutline = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showActualRangeOutline',
+      this.showActualRangeOutline
+    );
+
+    // Kontaktiere Map-Component und übergebe showActualRangeOutline-Boolean
+    this.settingsService.toggleActualRangeOutline(this.showActualRangeOutline);
   }
 }
