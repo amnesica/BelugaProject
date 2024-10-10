@@ -59,6 +59,14 @@ public class AisService {
     if (client.getAisShips().size() > MAX_SIZE_SHIP_HASHMAP) {
       client.clearAisShips();
     }
+
+    // Lösche alte ships (älter als 2h)
+    long time2hAgo = System.currentTimeMillis() - 7200000L;
+    for (Ship ship : client.getAisShips().values()) {
+      if (ship.getTimestamp() < time2hAgo)
+        client.getAisShips().remove(ship.getUserId());
+    }
+
     if (client.boundingBoxHasMoved(lamin, lomin, lamax, lomax)) client.updateBoundingBox(lamin, lomin, lamax, lomax);
   }
 

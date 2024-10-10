@@ -39,16 +39,18 @@ public class Ship {
   private String name;
   private Integer type;
   private ETA eta;
+  private long timestamp;
 
   private String photoUrl;
 
-  public Ship(Double latitude, Double longitude, Integer userId, String timeUTC, Integer mmsi, String shipName) {
+  public Ship(Double latitude, Double longitude, Integer userId, String timeUTC, Integer mmsi, String shipName, long timestamp) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.userId = userId;
     this.timeUTC = timeUTC;
     this.mmsi = mmsi;
     this.shipName = shipName;
+    this.timestamp = timestamp;
   }
 
   @Override

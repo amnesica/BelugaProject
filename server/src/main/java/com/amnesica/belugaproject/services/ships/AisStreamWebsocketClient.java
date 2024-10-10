@@ -112,7 +112,7 @@ public class AisStreamWebsocketClient extends WebSocketClient {
 
     final Ship ship = new Ship(positionReport.getDouble("Latitude"), positionReport.getDouble("Longitude"),
         positionReport.getInt("UserID"), metaData.getString("time_utc"), metaData.getInt("MMSI"),
-        metaData.getString("ShipName").trim());
+        metaData.getString("ShipName").trim(), System.currentTimeMillis());
 
     if (aisShips.containsKey(positionReport.getInt("UserID"))) {
       updateShipData(positionReport, metaData);
@@ -125,6 +125,7 @@ public class AisStreamWebsocketClient extends WebSocketClient {
     final Ship ship = aisShips.get(positionReport.getInt("UserID"));
     if (ship == null) return;
 
+    ship.setTimestamp(System.currentTimeMillis());
     setShipPositionReport(positionReport, ship);
     setShipMetadata(ship, metaData);
   }
