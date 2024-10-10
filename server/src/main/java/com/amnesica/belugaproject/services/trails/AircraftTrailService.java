@@ -169,18 +169,11 @@ public class AircraftTrailService {
     // Berechne timestamp vor 1 Tag (entspricht 86400000L
     // Millisekunden), damit nur alte Trails kopiert und gelöscht werden
     long oneDayInMilliSeconds = 86400000L;
-    long startTime = System.currentTimeMillis() - oneDayInMilliSeconds;
+    long timestampOneDayAgo = System.currentTimeMillis() - oneDayInMilliSeconds;
 
-    // Hole Trails der aktuellen Iteration
-    List<AircraftTrail> listOldTrails = aircraftTrailRepository
-        .findAllByTimestampLessThanEqual(startTime);
+    aircraftTrailRepository.deleteAllByTimestampLessThanEqual(timestampOneDayAgo);
 
-    // Kopiere und lösche alle alten Trails
-    if (listOldTrails != null) {
-      // Lösche alle betroffenen Flugzeuge aus der AircraftTrails-Tabelle
-      // TODO: Einstiegspunkt zum Speichern der Trail History
-      aircraftTrailRepository.deleteAll(listOldTrails);
-    }
+    // TODO: Einstiegspunkt zum Speichern der Trail History
   }
 
   public List<AircraftTrail> getActualOutlineFromLast24Hours(List<String> selectedFeeder) {

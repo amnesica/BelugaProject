@@ -24,4 +24,6 @@ public interface AircraftTrailRepository extends CrudRepository<AircraftTrail, S
 
   @Query(value = "select distinct hex from aircraft_trail at where at.timestamp >= (extract('epoch' from (current_timestamp  - interval '1 hour')) * 1000)", nativeQuery = true)
   List<String> findAllHexUpdatedInLastHour();
+
+  void deleteAllByTimestampLessThanEqual(long timestamp);
 }
