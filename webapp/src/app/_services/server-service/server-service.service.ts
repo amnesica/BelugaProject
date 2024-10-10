@@ -230,4 +230,13 @@ export class ServerService {
       params: params,
     });
   }
+
+  getAddressFromServer(inputPlace: any): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('inputPlace', inputPlace.toString());
+
+    return this.httpClient.get<any>(Globals.urlGetLocationFromPlaceInput, {
+      params: params,
+    });
+  }
 }

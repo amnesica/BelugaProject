@@ -48,6 +48,7 @@ export class SettingsService {
   private resetMapPositionSource = new Subject<boolean>();
   private mapZoomLevelSource = new Subject<number>();
   private showActualRangeOutlineSource = new Subject<boolean>();
+  private nominatimFetchedCoordinatesSource = new Subject<any>();
 
   // Observable streams
   timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
@@ -101,6 +102,8 @@ export class SettingsService {
   mapZoomLevelSource$ = this.mapZoomLevelSource.asObservable();
   showActualRangeOutlineSource$ =
     this.showActualRangeOutlineSource.asObservable();
+  nominatimFetchedCoordinatesSource$ =
+    this.nominatimFetchedCoordinatesSource.asObservable();
 
   constructor() {}
 
@@ -310,5 +313,10 @@ export class SettingsService {
   toggleActualRangeOutline(showActualRangeOutline: boolean) {
     this.showActualRangeOutlineSource.next(showActualRangeOutline);
     return this.showActualRangeOutlineSource;
+  }
+
+  nominatimFetchedCoordinates(coordinatesJson: any) {
+    this.nominatimFetchedCoordinatesSource.next(coordinatesJson);
+    return this.nominatimFetchedCoordinatesSource;
   }
 }

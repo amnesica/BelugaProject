@@ -161,4 +161,7 @@ export class Globals {
 
   static urlGetActualRangeOutline =
     'http://' + Globals.serverUrl + ':8080/getActualRangeOutline';
+
+  static urlGetLocationFromPlaceInput =
+    'http://' + Globals.serverUrl + ':8080/getLocationFromInput';
 }

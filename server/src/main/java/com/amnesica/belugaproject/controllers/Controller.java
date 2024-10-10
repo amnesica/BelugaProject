@@ -68,6 +68,9 @@ public class Controller {
   private MapTypeToShapeDataService mapTypeToShapeDataService;
 
   @Autowired
+  private LocationFinderService locationFinderService;
+
+  @Autowired
   private DebugService debugService;
 
   /**
@@ -290,5 +293,18 @@ public class Controller {
   List<AircraftTrail> getActualRangeOutline(
       @RequestParam(value = "selectedFeeder") List<String> selectedFeeder) {
     return aircraftTrailService.getActualOutlineFromLast24Hours(selectedFeeder);
+  }
+
+  /**
+   * Gibt Koordinaten für einen Ort zurück
+   *
+   * @param inputPlace String
+   * @return List<Double>
+   */
+  @GetMapping(value = "/getLocationFromInput", produces = "application/json")
+  public @ResponseBody
+  List<Double> getCoordinatesFromPlace(
+      @RequestParam(value = "inputPlace") String inputPlace) {
+    return locationFinderService.getCoordinatesFromPlace(inputPlace);
   }
 }

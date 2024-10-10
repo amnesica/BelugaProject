@@ -742,6 +742,13 @@ export class MapComponent implements OnInit {
     this.settingsService.showISS$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showIss) => this.toggleIss(showIss));
+
+    // Adresse von nominatim osm
+    this.settingsService.nominatimFetchedCoordinatesSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((addressCoordinates) =>
+        this.processNominatimCoordinates(addressCoordinates)
+      );
   }
 
   private initRangeDataSubscriptions() {
@@ -4155,5 +4162,34 @@ export class MapComponent implements OnInit {
       }
       lastLon = lon;
     }
+  }
+
+  private processNominatimCoordinates(addressCoordinates: any): void {
+    if (
+      !addressCoordinates ||
+      addressCoordinates.length == 0 ||
+      !addressCoordinates[0] ||
+      !addressCoordinates[1]
+    ) {
+      this.showErrorLogAndSnackBar('Place was not found');
+      return;
+    }
+
+    this.centerMapAndSavePosition(
+      addressCoordinates[1],
+      addressCoordinates[0],
+      12
+    );
+  }
+
+  private centerMapAndSavePosition(
+    long: number,
+    lat: number,
+    zoomLevel: number
+  ) {
+    this.OLMap.getView().setCenter(
+      olProj.transform([long, lat], 'EPSG:4326', 'EPSG:3857')
+    );
+    this.OLMap.getView().setZoom(zoomLevel);
   }
 }

@@ -10,17 +10,32 @@
   visibility: visible;
 }
 
-.input {
-  color: rgb(61, 61, 61);
-  border: none;
-  border-radius: 0.3rem;
-  background-color: lightgrey;
-  padding: 0.6rem;
-  margin: 0%;
+.input-mat-form-field {
+  background-color: white;
+  color: black;
+  text-align: center;
+  padding: 0rem;
   width: 15rem;
-  line-height: normal;
-  font-size: 1rem;
-  height: 2.6rem;
+  border-radius: 1rem;
+  height: 2.5rem;
+  line-height: 1.5rem;
+  font-size: large;
+}
+
+::ng-deep .input-mat-form-field .mat-form-field-underline {
+  display: none;
+}
+
+::ng-deep .input-mat-form-field .mat-form-field-infix {
+  border-top: 0;
+}
+
+::ng-deep .input-mat-form-field .mat-form-field-suffix {
+  margin-right: 0.2rem;
+}
+
+.mat-form-field-wrapper {
+  padding: 0 !important;
 }
 
 .spacer {

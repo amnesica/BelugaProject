@@ -1,15 +1,54 @@
 <mat-toolbar class="toolbar">
-  <!-- Anzahl der Flugzeuge -->
-  <div id="counter-aircraft">
-    {{ counterAircraft }}
+  <div style="width: 120px; min-width: 60px">
+    <!-- Anzahl der Flugzeuge -->
+    <div id="counter-aircraft">
+      {{ counterAircraft }}
+    </div>
+
+    <!-- Logo der App -->
+    <img
+      mat-card-image
+      src="../../../favicon.ico"
+      style="width: 2rem; margin: 0%"
+    />
   </div>
 
-  <!-- Logo der App -->
-  <img
-    mat-card-image
-    src="../../../favicon.ico"
-    style="width: 2rem; margin: 0%"
-  />
+  <!-- Abstandhalter -->
+  <span class="spacer"></span>
+
+  <!-- Input für Ort-Suche -->
+  <mat-form-field
+    class="input-mat-form-field"
+    [style.width]="isDesktop ? '18rem' : '11rem'"
+    [style.background-color]="darkMode ? '#383838' : '#efeff4'"
+    [style.color]="darkMode ? 'white' : 'black'"
+  >
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="inputPlace"
+      (click)="inputPlace = ''"
+      (keydown.enter)="searchLocation(inputPlace)"
+    />
+    <button
+      *ngIf="inputPlace"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="inputPlace = ''"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+    <button
+      *ngIf="inputPlace"
+      matSuffix
+      mat-icon-button
+      aria-label="Submit"
+      (click)="searchLocation(inputPlace)"
+    >
+      <mat-icon>search</mat-icon>
+    </button>
+  </mat-form-field>
 
   <!-- Abstandhalter -->
   <span class="spacer"></span>
