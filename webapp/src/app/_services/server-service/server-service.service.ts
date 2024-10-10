@@ -222,7 +222,7 @@ export class ServerService {
     });
   }
 
-  urlGetActualRangeOutline(selectedFeeder: any): Observable<any> {
+  getActualRangeOutline(selectedFeeder: any): Observable<any> {
     let params = new HttpParams();
     params = params.append('selectedFeeder', selectedFeeder.toString());
 

@@ -4132,7 +4132,7 @@ export class MapComponent implements OnInit {
 
   private fetchActualOutline() {
     this.serverService
-      .urlGetActualRangeOutline(this.selectedFeederUpdate)
+      .getActualRangeOutline(this.selectedFeederUpdate)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (rangeDataJson) => this.processActualRangeOutline(rangeDataJson),
