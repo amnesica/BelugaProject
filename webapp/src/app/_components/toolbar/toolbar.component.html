@@ -34,15 +34,6 @@
       *ngIf="inputPlace"
       matSuffix
       mat-icon-button
-      aria-label="Clear"
-      (click)="inputPlace = ''"
-    >
-      <mat-icon>close</mat-icon>
-    </button>
-    <button
-      *ngIf="inputPlace"
-      matSuffix
-      mat-icon-button
       aria-label="Submit"
       (click)="searchLocation(inputPlace)"
     >
