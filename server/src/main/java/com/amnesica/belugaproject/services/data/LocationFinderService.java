@@ -27,7 +27,6 @@ public class LocationFinderService {
     }
 
     final String query = "https://nominatim.openstreetmap.org/search?q=" + inputPlace + "&format=jsonv2";
-    System.out.println(query);
     final String htmlContent = networkHandlerService.makeServiceCall(query);
     if (htmlContent == null || htmlContent.isEmpty()) return null;
 
