@@ -2070,13 +2070,6 @@ export class MapComponent implements OnInit {
    */
   private initClickOnMap(): void {
     this.OLMap.on('click', (evt: any) => {
-      const hex = this.getHexFromClickOnLayer(evt);
-
-      if (hex) {
-        this.markOrUnmarkAircraft(hex, false);
-        return;
-      }
-
       let featurePoint;
 
       if (this.rangeDataIsVisible) {
@@ -2108,6 +2101,13 @@ export class MapComponent implements OnInit {
           this.createAndShowAisDataPopup(featurePoint, evt);
           return;
         }
+      }
+
+      const hex = this.getHexFromClickOnLayer(evt);
+
+      if (hex) {
+        this.markOrUnmarkAircraft(hex, false);
+        return;
       }
 
       // Reset only if no feature point is found
