@@ -133,17 +133,21 @@ td {
 ::ng-deep .ol-zoom {
   top: 4rem !important;
   background: rgba(0, 0, 0, 0.4) !important;
+  color: white;
 }
 
 ::ng-deep .ol-attribution.ol-collapsed {
   background-color: rgba(0, 0, 0, 0.4) !important;
+  color: white;
 }
 
 ::ng-deep .ol-control button {
   background-color: rgba(0, 0, 0, 1) !important;
+  color: white;
 }
 
 ::ng-deep .ol-attribution.ol-uncollapsible {
+  color: white;
   font-size: smaller !important;
   padding: 0;
   background-color: rgba(0, 0, 0, 0.4) !important;
@@ -151,6 +155,10 @@ td {
 
 ::ng-deep .ol-scale-line {
   background: rgba(0, 0, 0, 0.4) !important;
+}
+
+::ng-deep .ol-scale-line-inner {
+  color: white;
 }
 
 .background-and-color-light {
