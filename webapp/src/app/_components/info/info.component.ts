@@ -128,6 +128,13 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
           show: false,
           autoSelected: 'selection',
         },
+        animations: {
+          enabled: true,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
+        fontFamily: 'font-family: Roboto, Helvetica Neue, sans-serif;',
       },
       dataLabels: {
         enabled: false,

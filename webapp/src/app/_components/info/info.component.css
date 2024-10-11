@@ -96,7 +96,7 @@ mat-card-footer {
 }
 
 :host ::ng-deep .mat-expansion-panel-header {
-  height:1.75rem;
+  height: 1.75rem;
   display: flex;
   flex-direction: row;
   align-items: center;
