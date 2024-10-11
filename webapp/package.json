@@ -24,7 +24,7 @@
     "@ng-matero/extensions-moment-adapter": "^16.0.0",
     "apexcharts": "^3.54.0",
     "arc": "^0.1.1",
-    "cesium": "^1.113.0",
+    "cesium": "^1.122.0",
     "ng-apexcharts": "^1.8.0",
     "ol": "^10.2.1",
     "ol-ext": "^4.0.23",
