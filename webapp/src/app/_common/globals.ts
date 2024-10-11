@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Aircraft } from '../_classes/aircraft';
 import VectorSource from 'ol/source/Vector';
 import { Point } from 'ol/geom';
+import { FeatureLike } from 'ol/Feature';
 
 /**
  * Globale Variablen
@@ -26,7 +27,7 @@ export class Globals {
   static SitePosition;
 
   // Flugzeug-Icons als Features (WebGL)
-  static WebglFeatures = new Vector<Point>();
+  static WebglFeatures = new Vector<FeatureLike>();
 
   // Liste mit Flugzeugen (sollte immer mit Planes synchron gehalten werden)
   static PlanesOrdered: Aircraft[] = [];

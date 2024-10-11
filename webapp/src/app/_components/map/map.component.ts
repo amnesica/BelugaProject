@@ -6,7 +6,7 @@ import Vector from 'ol/source/Vector';
 import { Style, Fill, Stroke, Circle, Icon, Text } from 'ol/style';
 import OSM from 'ol/source/OSM';
 import * as olProj from 'ol/proj';
-import Feature from 'ol/Feature';
+import Feature, { FeatureLike } from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import TileLayer from 'ol/layer/Tile';
 import { Group as LayerGroup, WebGLPoints } from 'ol/layer';
@@ -40,7 +40,6 @@ import { Styles } from 'src/app/_classes/styles';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
 import VectorSource from 'ol/source/Vector';
-import { Geometry } from 'ol/geom';
 import WebGLPointsLayer from 'ol/layer/WebGLPoints';
 import XYZ from 'ol/source/XYZ';
 import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
@@ -55,7 +54,7 @@ import { Trail } from 'src/app/_classes/trail';
 import { Ship } from 'src/app/_classes/ship';
 import BaseLayer from 'ol/layer/Base';
 import { StyleLike } from 'ol/style/Style';
-import { LiteralStyle } from 'ol/style/literal';
+import { WebGLStyle } from 'ol/style/webgl';
 
 @Component({
   selector: 'app-map',
@@ -75,7 +74,7 @@ export class MapComponent implements OnInit {
   osmLayer: any;
 
   // Layer für Range Data
-  rangeDataLayer!: VectorLayer<VectorSource<Geometry>>;
+  rangeDataLayer!: VectorLayer;
 
   // Entfernungs-Ringe und Feeder-Position als Features
   StaticFeatures = new Vector();
@@ -105,7 +104,7 @@ export class MapComponent implements OnInit {
   PlaneLabelFeatures = new Vector();
 
   // Layer für Flugzeug-Labels
-  planeLabelFeatureLayer!: VectorLayer<Vector<Geometry>>;
+  planeLabelFeatureLayer!: VectorLayer;
 
   // Aktuell angeklicktes Aircraft
   aircraft: Aircraft | null = null;
@@ -201,7 +200,7 @@ export class MapComponent implements OnInit {
   selectedFeederRangeData: string[] = [];
 
   // Layer für WebGL-Features
-  webglLayer: WebGLPoints<VectorSource<Point>> | undefined;
+  webglLayer: WebGLPoints<VectorSource<FeatureLike>> | undefined;
 
   // Boolean, ob POMD-Point angezeigt werden soll
   showPOMDPoint: boolean = false;
@@ -220,7 +219,7 @@ export class MapComponent implements OnInit {
   DrawFeature = new Vector();
 
   // Actual Outline Layer
-  actualOutlineFeatureLayer!: VectorLayer<Vector<Geometry>>;
+  actualOutlineFeatureLayer!: VectorLayer;
   ActualOutlineFeatures = new Vector();
 
   // Boolean, ob RainViewer (Rain) Data sichtbar ist
@@ -274,16 +273,16 @@ export class MapComponent implements OnInit {
   aisDataPopupBottomValue: any = 0;
 
   // Layer für Airports
-  airportLayer!: VectorLayer<VectorSource<Geometry>>;
+  airportLayer!: VectorLayer;
 
   // Layer für AIS Features
-  aisFeatureLayer!: VectorLayer<VectorSource<Geometry>>;
+  aisFeatureLayer!: VectorLayer;
 
   // Layer für AIS Labels
-  aisLabelFeatureLayer!: VectorLayer<VectorSource<Geometry>>;
+  aisLabelFeatureLayer!: VectorLayer;
 
   // Layer für AIS Outline (Shape) Features
-  aisOutlineFeaturesLayer!: VectorLayer<VectorSource<Geometry>>;
+  aisOutlineFeaturesLayer!: VectorLayer;
 
   // Liste an verfügbaren Map-Stilen
   listAvailableMaps: any;
@@ -1027,14 +1026,14 @@ export class MapComponent implements OnInit {
   }
 
   private createVectorLayer(
-    source: Vector<Geometry>,
+    source: Vector<Feature>,
     zIndex: number,
     declutter: boolean,
     renderBuffer: number | undefined,
     tags: {},
     style?: StyleLike | null | undefined,
     minZoom?: number | undefined
-  ): VectorLayer<Vector<Geometry>> {
+  ): VectorLayer<Vector<Feature>> {
     const layer = new VectorLayer({
       source: source,
       zIndex: zIndex,
@@ -1355,22 +1354,13 @@ export class MapComponent implements OnInit {
     try {
       // Definiere WebGL-Style
       let glStyle = {
-        symbol: {
-          symbolType: 'image',
-          src: '../../../assets/beluga_sprites.png',
-          size: ['get', 'size'],
-          offset: [0, 0],
-          textureCoord: [
-            'array',
-            ['get', 'cx'],
-            ['get', 'cy'],
-            ['get', 'dx'],
-            ['get', 'dy'],
-          ],
-          color: ['color', ['get', 'r'], ['get', 'g'], ['get', 'b'], 1],
-          rotateWithView: false,
-          rotation: ['get', 'rotation'],
-        },
+        'icon-src': '../../../assets/beluga_sprites.png',
+        'icon-color': ['color', ['get', 'r'], ['get', 'g'], ['get', 'b'], 1],
+        'icon-size': [Globals.glIconSize, Globals.glIconSize],
+        'icon-offset': ['array', ['get', 'sx'], ['get', 'sy']],
+        'icon-rotation': ['get', 'rotation'],
+        'icon-rotate-with-view': false,
+        'icon-scale': ['abs', ['get', 'scale']],
       };
 
       // Erstelle WebGL-Layer
@@ -1405,8 +1395,8 @@ export class MapComponent implements OnInit {
   }
 
   private createWebGlPointsLayer(
-    glStyle: LiteralStyle
-  ): WebGLPoints<Vector<Point>> {
+    glStyle: WebGLStyle
+  ): WebGLPoints<Vector<FeatureLike>> {
     return new WebGLPointsLayer({
       source: Globals.WebglFeatures,
       zIndex: 200,
@@ -3345,7 +3335,7 @@ export class MapComponent implements OnInit {
   }
 
   private removeFeatureFromFeatures(
-    vectorFeatures: Vector<Geometry>,
+    vectorFeatures: Vector,
     featureKey: string,
     featureValue: string
   ) {

@@ -545,29 +545,21 @@ export class Aircraft {
     const iconRotation = this.shapeData.noRotate ? 0 : this.track;
     this.glMarker.set('rotation', (iconRotation * Math.PI) / 180.0);
     this.glMarker.set(
-      'size',
-      this.shapeScale *
-        Math.max(this.shapeData.w, this.shapeData.h) *
+      'scale',
+      ((this.shapeScale * Math.max(this.shapeData.w, this.shapeData.h)) /
+        Globals.glIconSize) *
         (this.pngScale < 0.39
           ? this.pngScale * Globals.smallScaleFactorIcons
           : this.pngScale) *
         (Globals.globalScaleFactorIcons / 1.3)
     );
     this.glMarker.set(
-      'cx',
-      Markers.getSpriteX(this.pngId) / Globals.glImapWidth
+      'sx',
+      Markers.getSpriteX(this.pngId) * Globals.glIconSize
     );
     this.glMarker.set(
-      'cy',
-      Markers.getSpriteY(this.pngId) / Globals.glImapHeight
-    );
-    this.glMarker.set(
-      'dx',
-      (Markers.getSpriteX(this.pngId) + 1) / Globals.glImapWidth
-    );
-    this.glMarker.set(
-      'dy',
-      (Markers.getSpriteY(this.pngId) + 1) / Globals.glImapHeight
+      'sy',
+      Markers.getSpriteY(this.pngId) * Globals.glIconSize
     );
 
     if (!this.glMarker.visible) {
