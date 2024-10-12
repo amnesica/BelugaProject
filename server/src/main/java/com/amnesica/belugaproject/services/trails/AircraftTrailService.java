@@ -198,12 +198,6 @@ public class AircraftTrailService {
     // Map zur Speicherung des maximalen AircraftTrail für jeden Winkel für alle selectedFeeder insgesamt
     Map<Integer, AircraftTrail> maxTrailsPerAngle = new ConcurrentHashMap<>();
 
-    // TODO debug
-    for (String feeder : selectedFeeder) {
-      System.out.println(feeder + ": " + actualOutlineMap.get(feeder).values().size());
-    }
-    System.out.println("----------------------");
-
     for (String feeder : selectedFeeder) {
       Map<Integer, AircraftTrail> feederMap = actualOutlineMap.get(feeder);
       if (feederMap != null) {
