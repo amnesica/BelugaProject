@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -32,9 +31,8 @@ public class AircraftTrailService {
   @Autowired
   private Configuration configuration;
 
-  private List<AircraftTrail> lastActualOutline = null;
-  private List<String> lastSelectedFeederForOutline = null;
-  private Long lastOutlineTimestamp = null;
+  // key: feeder name, value: map for feeder (angleToSite, trail)
+  final Map<String, Map<Integer, AircraftTrail>> actualOutlineMap = new ConcurrentHashMap<>();
 
   /**
    * Speichert einen Trail im AircraftTrailRepository
@@ -50,6 +48,7 @@ public class AircraftTrailService {
           aircraft.getSourceCurrentFeeder(), aircraft.getTrack(), aircraft.getRoll());
 
       addDistanceAndAngleToSite(trail);
+      addTrailToOutlineMapIfNecessary(trail, feederName);
 
       try {
         // Speichere Trail in Datenbank
@@ -58,6 +57,23 @@ public class AircraftTrailService {
         log.error("Server - DB error when saving trail for aircraft with hex " + trail.getHex()
             + ": Exception = " + e);
       }
+    }
+  }
+
+  public void addTrailToOutlineMapIfNecessary(AircraftTrail trail, String feederName) {
+    if (trail.getDistanceToSite() == null || trail.getAngleToSite() == null) return;
+
+    Map<Integer, AircraftTrail> outlineMapForFeeder = actualOutlineMap.get(feederName);
+    if (outlineMapForFeeder == null) outlineMapForFeeder = new ConcurrentHashMap<>();
+
+    final AircraftTrail trailAtSameAngle = outlineMapForFeeder.get(trail.getAngleToSite());
+
+    if (trailAtSameAngle == null || // angle in map existiert noch nicht
+        trail.getDistanceToSite() >= trailAtSameAngle.getDistanceToSite() || // neuer trail hat höhere distance
+        trailAtSameAngle.getTimestamp() < System.currentTimeMillis() - 86400000L) // existierender trail ist älter als 24h
+    {
+      outlineMapForFeeder.put(trail.getAngleToSite(), trail);
+      actualOutlineMap.put(feederName, outlineMapForFeeder);
     }
   }
 
@@ -179,57 +195,33 @@ public class AircraftTrailService {
   public List<AircraftTrail> getActualOutlineFromLast24Hours(List<String> selectedFeeder) {
     if (selectedFeeder == null || selectedFeeder.isEmpty()) return null;
 
-    List<AircraftTrail> aircraftTrails = null;
-    final Map<Integer, AircraftTrail> maxDistancePerAngleMap = new ConcurrentHashMap<>();
+    // Map zur Speicherung des maximalen AircraftTrail für jeden Winkel für alle selectedFeeder insgesamt
+    Map<Integer, AircraftTrail> maxTrailsPerAngle = new ConcurrentHashMap<>();
 
-    try {
-      if (lastActualOutline == null || lastActualOutline.isEmpty() || !lastSelectedFeederForOutline.equals(selectedFeeder)
-          || lastOutlineTimestamp == null) {
-        lastOutlineTimestamp = System.currentTimeMillis();
-        aircraftTrails = aircraftTrailRepository.findAllFromLast24Hours();
-      } else {
-        // Nutze bereits berechnete Outline von letzter Iteration
-        aircraftTrails = lastActualOutline;
-        List<AircraftTrail> newTrails = aircraftTrailRepository.findAllByTimestampGreaterThanEqualOrderByAngleToSite(lastOutlineTimestamp);
-        aircraftTrails.addAll(newTrails);
-        lastOutlineTimestamp = System.currentTimeMillis();
+    // TODO debug
+    for (String feeder : selectedFeeder) {
+      System.out.println(feeder + ": " + actualOutlineMap.get(feeder).values().size());
+    }
+    System.out.println("----------------------");
 
-        // Filtere zu alte trails (> 24h)
-        long time24Hours = System.currentTimeMillis() - 86400000L; // 1 Tag
-        aircraftTrails.stream().filter(at -> at.getTimestamp() > time24Hours).collect(Collectors.toList());
-      }
+    for (String feeder : selectedFeeder) {
+      Map<Integer, AircraftTrail> feederMap = actualOutlineMap.get(feeder);
+      if (feederMap != null) {
+        for (Map.Entry<Integer, AircraftTrail> entry : feederMap.entrySet()) {
+          final Integer angleToSite = entry.getKey();
+          final AircraftTrail trail = entry.getValue();
 
-      // Filtere nach feeder
-      aircraftTrails = aircraftTrails.stream()
-          .filter(
-              at -> Stream.of(at.getFeeder())
-                  .anyMatch(selectedFeeder::contains))
-          .toList();
+          if (angleToSite == null || trail == null) continue;
 
-      // Über die Liste iterieren und die maximale Distanz für jeden Winkel zur Site finden
-      for (AircraftTrail trail : aircraftTrails) {
-        final Integer angleToSite = trail.getAngleToSite();
-        final Double distanceToSite = trail.getDistanceToSite();
-        if (angleToSite == null || distanceToSite == null) continue;
-
-        // Maximalen Abstand für den aktuellen Winkel aktualisieren
-        if (!maxDistancePerAngleMap.containsKey(angleToSite) || distanceToSite > maxDistancePerAngleMap.get(angleToSite).getDistanceToSite()) {
-          maxDistancePerAngleMap.put(angleToSite, trail);
+          // Vergleichen und speichern des maximalen Trails pro Winkel
+          maxTrailsPerAngle.merge(angleToSite, trail, (existingTrail, newTrail) ->
+              (newTrail.getDistanceToSite() > existingTrail.getDistanceToSite()) ? newTrail : existingTrail);
         }
       }
-
-      // Sortiere nach Winkeln
-      aircraftTrails = maxDistancePerAngleMap.values().stream().sorted(Comparator.comparing(TrailSuperclass::getAngleToSite))
-          .collect(Collectors.toList());
-
-      lastActualOutline = aircraftTrails;
-      lastSelectedFeederForOutline = selectedFeeder;
-    } catch (Exception e) {
-      log.error("Server - DB error when calculating actual range outline from feeder " + selectedFeeder +
-          " and last 24 hours : Exception = {}", String.valueOf(e));
     }
 
-    return aircraftTrails;
+    return maxTrailsPerAngle.values().stream().sorted(Comparator.comparing(TrailSuperclass::getAngleToSite))
+        .collect(Collectors.toList());
   }
 }
 
