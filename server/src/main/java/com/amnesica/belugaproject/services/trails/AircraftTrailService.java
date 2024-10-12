@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -159,17 +160,16 @@ public class AircraftTrailService {
   }
 
   /**
-   * Methode kopiert alle Trails, die älter als ein Tag sind in die
+   * Methode kopiert alle Trails, die älter als eine Stunde sind in die
    * HistoryTrails-Tabelle und löscht die betroffenen Trails aus der
    * AircraftTrails-Tabelle. Methode wird alle INTERVAL_REMOVE_OLD_TRAILS_LOCAL
    * Sekunden aufgerufen
    */
+  @Transactional
   @Scheduled(fixedRate = StaticValues.INTERVAL_REMOVE_OLD_TRAILS_LOCAL)
-  private void putOldTrailsInTrailsHistoryTable() {
-    // Berechne timestamp vor 1 Tag (entspricht 86400000L
-    // Millisekunden), damit nur alte Trails kopiert und gelöscht werden
-    long oneDayInMilliSeconds = 86400000L;
-    long timestampOneDayAgo = System.currentTimeMillis() - oneDayInMilliSeconds;
+  protected void putOldTrailsInTrailsHistoryTable() {
+    long oneHourInMilliSeconds = 3600000L;
+    long timestampOneDayAgo = System.currentTimeMillis() - oneHourInMilliSeconds;
 
     aircraftTrailRepository.deleteAllByTimestampLessThanEqual(timestampOneDayAgo);
 
@@ -196,7 +196,7 @@ public class AircraftTrailService {
 
         // Filtere zu alte trails (> 24h)
         long time24Hours = System.currentTimeMillis() - 86400000L; // 1 Tag
-        aircraftTrails.stream().filter(at -> at.getTimestamp() < time24Hours).collect(Collectors.toList());
+        aircraftTrails.stream().filter(at -> at.getTimestamp() > time24Hours).collect(Collectors.toList());
       }
 
       // Filtere nach feeder
