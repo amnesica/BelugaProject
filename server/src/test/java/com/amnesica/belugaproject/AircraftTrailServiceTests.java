@@ -125,4 +125,19 @@ public class AircraftTrailServiceTests {
     assertEquals(2, actualOutline.size());
     assertNotEquals(trailInside, actualOutline.get(0));
   }
+
+  @Test
+  void actualRangeDataOutlineShouldNotAddTrailIfOutsideOfPolygonButIsDistanceIsOverMaxRangeTest() {
+    // trail outside of polygon -> should be added to outline
+    AircraftTrail trailOutside = new AircraftTrail("hex3", 9.993732, 53.634054, 1000, false, 100000L, "feeder1", "adsb", 1, 0.0);
+    trailOutside.setDistanceToSite(361.0); // 360nm max distance
+    trailOutside.setAngleToSite(0); // important!
+    aircraftTrailService.addTrailToOutlineMapIfNecessary(trailOutside, trailOutside.getFeeder());
+
+    List<AircraftTrail> actualOutline = aircraftTrailService.getActualOutlineFromLast24Hours(List.of("feeder1"));
+
+    assertNotNull(actualOutline);
+    assertEquals(2, actualOutline.size());
+    assertNotEquals(trailOutside, actualOutline.get(0)); // trailInside has not replaced old trail
+  }
 }

@@ -68,6 +68,8 @@ public class AircraftTrailService {
 
     final AircraftTrail trailAtSameAngle = outlineMapForFeeder.get(trail.getAngleToSite());
 
+    if (trail.getDistanceToSite() > 360.0) return; // trail ist Outlier (max distance ist 360nm)
+
     if (trailAtSameAngle == null || // angle in map existiert noch nicht
         trail.getDistanceToSite() >= trailAtSameAngle.getDistanceToSite() || // neuer trail hat höhere distance
         trailAtSameAngle.getTimestamp() < System.currentTimeMillis() - 86400000L) // existierender trail ist älter als 24h
