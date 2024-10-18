@@ -34,6 +34,8 @@ public class AircraftTrailService {
   // key: feeder name, value: map for feeder (angleToSite, trail)
   final Map<String, Map<Integer, AircraftTrail>> actualOutlineMap = new ConcurrentHashMap<>();
 
+  private final double EFFECTIVE_MAX_RANGE_KM = 666.72;
+
   /**
    * Speichert einen Trail im AircraftTrailRepository
    *
@@ -68,7 +70,7 @@ public class AircraftTrailService {
 
     final AircraftTrail trailAtSameAngle = outlineMapForFeeder.get(trail.getAngleToSite());
 
-    if (trail.getDistanceToSite() > 360.0) return; // trail ist Outlier (max distance ist 360nm)
+    if (trail.getDistanceToSite() > EFFECTIVE_MAX_RANGE_KM) return; // trail ist Outlier (max distance ist 360nm)
 
     if (trailAtSameAngle == null || // angle in map existiert noch nicht
         trail.getDistanceToSite() >= trailAtSameAngle.getDistanceToSite() || // neuer trail hat höhere distance

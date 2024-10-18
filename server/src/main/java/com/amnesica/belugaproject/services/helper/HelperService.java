@@ -28,7 +28,7 @@ public class HelperService {
    * @param lon1 longitude of point 1
    * @param lat2 latitude of point 2
    * @param lon2 longitude of point 2
-   * @return distance
+   * @return distance in km
    */
   public static double getDistanceBetweenPositions(double lat1, double lon1, double lat2, double lon2) {
     final double EarthRadius = 6378137.0; // meters
