@@ -2,30 +2,34 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
 import { Aircraft } from 'src/app/_classes/aircraft';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource as MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Globals } from 'src/app/_common/globals';
 import { slideInOutRight } from 'src/app/_common/animations';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 @Component({
   selector: 'app-aircraft-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './aircraft-table.component.html',
-  styleUrls: ['./aircraft-table.component.css'],
+  styleUrls: ['./aircraft-table.component.scss'],
   animations: [slideInOutRight],
 })
 export class AircraftTableComponent implements OnInit {
   // Boolean, ob System im DarkMode ist
-  @Input() darkMode: boolean = false;
+  darkMode: boolean = false;
+
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
 
   // Liste mit anzuzeigenden Flugzeugen
   aircraftList: any = new MatTableDataSource<Aircraft>([]);

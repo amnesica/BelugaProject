@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import VectorLayer from 'ol/layer/Vector';
@@ -33,7 +38,7 @@ import {
   Attribution,
 } from 'ol/control';
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
@@ -55,6 +60,7 @@ import { Ship } from 'src/app/_classes/ship';
 import BaseLayer from 'ol/layer/Base';
 import { StyleLike } from 'ol/style/Style';
 import { WebGLStyle } from 'ol/style/webgl';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 @Component({
   selector: 'app-map',
@@ -340,6 +346,10 @@ export class MapComponent implements OnInit {
 
   // Interval-ID zum Fetchen der Outline
   fetchActualOutlineIntervalId: number = 0;
+
+  // TODO
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
 
   private ngUnsubscribe = new Subject<void>();
 
@@ -872,22 +882,20 @@ export class MapComponent implements OnInit {
    * der Modus gewechselt wird, wenn das System-Theme geändert wird
    */
   private initDarkMode() {
-    // Detekte dunklen Modus und setze Variable initial
-    window.matchMedia &&
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? (this.darkMode = true)
-      : (this.darkMode = false);
-
-    // Initialisiere Listener, um auf System-Veränderungen reagieren zu können
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', (event) => (this.darkMode = event.matches));
-
-    // Setze default-Value für darkMode
-    Storage.savePropertyInLocalStorage(
-      'darkMode',
-      Storage.getPropertyFromLocalStorage('darkMode', this.darkMode)
-    );
+    // // Detekte dunklen Modus und setze Variable initial
+    // window.matchMedia &&
+    // window.matchMedia('(prefers-color-scheme: dark)').matches
+    //   ? (this.darkMode = true)
+    //   : (this.darkMode = false);
+    // // Initialisiere Listener, um auf System-Veränderungen reagieren zu können
+    // window
+    //   .matchMedia('(prefers-color-scheme: dark)')
+    //   .addEventListener('change', (event) => (this.darkMode = event.matches));
+    // // Setze default-Value für darkMode
+    // Storage.savePropertyInLocalStorage(
+    //   'darkMode',
+    //   Storage.getPropertyFromLocalStorage('darkMode', this.darkMode)
+    // );
   }
 
   /**
@@ -3969,8 +3977,11 @@ export class MapComponent implements OnInit {
   }
 
   private toggleDarkMode(showDarkMode: boolean) {
-    this.darkMode = showDarkMode;
     this.setCenterOfRangeRings(Globals.useDevicePositionForDistance);
+  }
+
+  private changeTheme(theme: string) {
+    this.themeManager.changeTheme(theme);
   }
 
   private toggleShowMilitaryPlanes(showMilitaryPlanes: boolean) {

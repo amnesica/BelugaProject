@@ -1,0 +1,46 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+
+$my-app-light-primary: mat.define-palette(mat.$blue-palette);
+$my-app-light-accent: mat.define-palette(mat.$orange-palette, A200, A100, A400);
+$my-app-light-warn: mat.define-palette(mat.$red-palette);
+
+$my-app-light-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $my-app-light-primary,
+      accent: $my-app-light-accent,
+      warn: $my-app-light-warn,
+    )
+  )
+);
+
+$light-theme-overrides: (
+  'color': (
+    'background': (
+      'background': #efeff4,
+    )
+  ),
+);
+
+$my-app-light-theme: map.deep-merge($my-app-light-theme, $light-theme-overrides);
+
+// Define a dark theme
+$my-app-dark-theme: mat.define-dark-theme(
+  (
+    color: (
+      primary: mat.define-palette(mat.$blue-palette),
+      accent: mat.define-palette(mat.$orange-palette),
+    ),
+  )
+);
+
+$dark-theme-overrides: (
+  'color': (
+    'background': (
+      'background': #383838,
+    )
+  ),
+);
+
+$my-app-dark-theme: map.deep-merge($my-app-dark-theme, $dark-theme-overrides);

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   Input,
   OnInit,
 } from '@angular/core';
@@ -11,10 +12,11 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
 import { Globals } from 'src/app/_common/globals';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntil } from 'rxjs/operators';
 import { slideInOutBottom } from 'src/app/_common/animations';
 import { Storage } from 'src/app/_classes/storage';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 @Component({
   selector: 'app-cesium',
@@ -30,7 +32,10 @@ export class CesiumComponent implements OnInit {
   // Cesium Ion Default Access Token (Eingabeparameter)
   @Input() cesiumIonDefaultAccessToken: any;
 
-  @Input() darkMode: boolean = false;
+  darkMode: boolean = false;
+
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
 
   isDesktop: boolean | undefined;
   widthMap3d: string | undefined;

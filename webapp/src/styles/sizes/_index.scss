@@ -1,0 +1,15 @@
+@use "@angular/material" as mat;
+
+
+$sm-theme: mat.define-light-theme(
+  (
+    density: -2,
+  )
+);
+
+.sm {
+  @include mat.button-density($sm-theme);
+  @include mat.button-typography($sm-theme);
+  @include mat.progress-spinner-density($sm-theme);
+  @include mat.progress-spinner-typography($sm-theme);
+}

@@ -23,6 +23,7 @@
   background-color: #303030;
   width: 100%;
   text-align: left;
+  padding-left: 0.6rem;
 }
 
 /** Wichtig, damit Schrift richtig angezeigt wird! */
@@ -54,6 +55,7 @@ mat-card-header {
   flex-grow: 1;
   overflow: hidden;
   flex-direction: column;
+  padding-left: 0.6rem;
 }
 
 #rangeDataPopup {
@@ -90,6 +92,7 @@ mat-card-header {
   flex-grow: 1;
   overflow: hidden;
   flex-direction: column;
+  padding-left: 0.6rem;
 }
 
 #airportDataLinkOurAirports {
@@ -121,6 +124,7 @@ mat-card-header {
   flex-grow: 1;
   overflow: hidden;
   flex-direction: column;
+  padding-left: 0.6rem;
 }
 
 table,

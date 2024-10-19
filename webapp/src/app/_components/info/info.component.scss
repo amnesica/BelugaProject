@@ -11,7 +11,8 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   overflow: hidden;
-  background: transparent;
+  font-weight: 400 !important;
+  font-size: 90%;
 }
 
 #closeButton {
@@ -29,7 +30,6 @@
   width: 100%;
   bottom: 0%;
   padding: 0%;
-  background-color: #efeff4;
   display: flex;
   flex-direction: column;
   z-index: 10;
@@ -44,44 +44,46 @@
 .buttonFooter {
   width: 100%;
   height: 100%;
+  color: white !important;
 }
 
 #photo-link {
   height: 0.5rem;
   width: 100%;
-  color: grey;
   text-decoration: none;
   display: inline-block;
 }
 
-mat-card-header {
+.mat-mdc-card-header {
   height: 3rem;
-  background-color: #303030;
+  background-color: #303030; 
   padding-top: 0.5rem;
   flex-shrink: 0;
+
 }
 
-mat-card-content {
+.mat-mdc-card-content {
   margin: 0%;
   flex-grow: 1;
   overflow: auto;
   flex-direction: column;
+  padding: 0;
 }
 
-mat-grid-tile div {
+.mat-grid-tile div {
   width: 100%;
   text-align: left;
   padding-left: 0.75rem;
   margin-top: 0%;
 }
 
-mat-card-actions {
-  color: white;
+.mat-mdc-card-actions {
   margin: 0rem;
   padding: 0rem;
+  color: white;
 }
 
-mat-card-footer {
+.mat-mdc-card-footer {
   width: 100%;
   padding: 0%;
   margin: 0%;
@@ -106,7 +108,6 @@ mat-card-footer {
 }
 
 :host ::ng-deep .mat-expansion-panel-header-description {
-  color: white;
   display: flex;
   flex-grow: 1;
   flex-basis: 0;
@@ -122,7 +123,6 @@ mat-card-footer {
   display: block;
   padding: 3px;
   transform: rotate(45deg);
-  color: white;
 }
 
 .chart-light {
@@ -143,7 +143,7 @@ mat-card-footer {
 .background-and-color-dark {
   background-color: #383838;
   color: white;
-}
+} 
 
 .background-color-light {
   background-color: white;

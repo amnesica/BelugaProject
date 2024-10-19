@@ -2,21 +2,20 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  inject,
   Input,
   OnInit,
-  ViewChild,
 } from '@angular/core';
-import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggleChange as MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
-import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
-import { skip, takeUntil } from 'rxjs/operators';
-import { Helper } from 'src/app/_classes/helper';
+import { takeUntil } from 'rxjs/operators';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { environment } from 'src/environments/environment';
 import { Globals } from 'src/app/_common/globals';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import {
   MtxCalendarView,
   MtxDatetimepickerMode,
@@ -30,6 +29,7 @@ import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 import { slideInOutRight } from 'src/app/_common/animations';
 import { Feeder } from 'src/app/_classes/feeder';
 import { Storage } from 'src/app/_classes/storage';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 export interface DialogData {
   times: string[];
@@ -39,7 +39,7 @@ export interface DialogData {
   selector: 'app-settings',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css'],
+  styleUrls: ['./settings.component.scss'],
   providers: [
     {
       provide: DatetimeAdapter,
@@ -72,9 +72,6 @@ export interface DialogData {
   animations: [slideInOutRight],
 })
 export class SettingsComponent implements OnInit {
-  // Boolean, ob System im DarkMode ist
-  @Input() darkMode: boolean = false;
-
   // Boolean, ob RangeData versteckt werden soll
   @Input() hideRangeData: boolean = false;
 
@@ -241,6 +238,9 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob actual range outline angezeigt werden soll
   showActualRangeOutline: boolean = true;
 
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
@@ -262,7 +262,7 @@ export class SettingsComponent implements OnInit {
       Storage.getPropertyFromLocalStorage('airportLabels', true)
     );
 
-    this.toggleDarkMode(Storage.getPropertyFromLocalStorage('darkMode', false));
+    //this.toggleDarkMode(Storage.getPropertyFromLocalStorage('darkMode', false));
 
     this.toggleDarkStaticFeatures(
       Storage.getPropertyFromLocalStorage('darkStaticFeatures', true)
@@ -696,12 +696,15 @@ export class SettingsComponent implements OnInit {
    * @param checked: boolean
    */
   toggleDarkMode(checked: boolean) {
-    this.darkMode = checked;
+    let theme = checked ? 'dark' : 'light';
+    this.changeTheme(theme);
 
-    Storage.savePropertyInLocalStorage('darkMode', this.darkMode);
+    // Kontaktiere Map-Component und übergebe boolean
+    this.settingsService.toggleDarkMode(checked);
+  }
 
-    // Kontaktiere Map-Component und übergebe showDarkMode-Boolean
-    this.settingsService.toggleDarkMode(this.darkMode);
+  changeTheme(theme: string) {
+    this.themeManager.changeTheme(theme);
   }
 
   /**

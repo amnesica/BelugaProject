@@ -9,11 +9,12 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Aircraft } from '../../_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -30,6 +31,7 @@ import {
 } from 'ng-apexcharts';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { trigger, style, animate, transition } from '@angular/animations';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -48,7 +50,7 @@ export type ChartOptions = {
   selector: 'app-info',
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './info.component.html',
-  styleUrls: ['./info.component.css'],
+  styleUrls: ['./info.component.scss'],
   animations: [
     trigger('slideInOutLeft', [
       transition(':enter', [
@@ -67,12 +69,12 @@ export type ChartOptions = {
     ]),
   ],
 })
-export class InfoComponent implements OnInit, OnDestroy, OnChanges {
+export class InfoComponent implements OnInit, OnDestroy {
   // Flugzeug, wofür die Info angezeigt wird als Eingabeparameter
   @Input() aircraft: Aircraft | null = null;
 
   // Boolean, ob System im DarkMode ist
-  @Input() darkMode: boolean = false;
+  darkMode: boolean = false; // TODO
 
   // Boolean, ob große Info-Box-Variante angezeigt werden soll
   showInfoLarge: boolean | undefined;
@@ -104,6 +106,9 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
 
   // Daten für das Altitude Chart
   altitudeData: any;
+
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
 
   private ngUnsubscribe = new Subject();
 
@@ -160,16 +165,6 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
     };
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (
-      changes.darkMode != undefined &&
-      changes.darkMode.previousValue != undefined &&
-      changes.darkMode.previousValue != changes.darkMode.currentValue
-    ) {
-      this.updateThemeColorsInOptions();
-    }
-  }
-
   ngOnInit() {
     // Initiiere Abonnements
     this.initSubscriptions();
@@ -193,6 +188,11 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
           this.updateThemeColorsInOptions();
         }
       });
+
+    this.isDark$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((isDark) => {
+      this.darkMode = isDark;
+      this.updateThemeColorsInOptions();
+    });
 
     this.breakpointObserver
       .observe(['(max-width: 599px)'])

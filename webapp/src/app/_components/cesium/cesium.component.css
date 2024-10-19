@@ -1,13 +1,19 @@
 .button-3d-map {
   position: absolute;
   color: white;
-  margin: 0.5rem;
-  padding: 10px;
-  line-height: 14px;
   min-width: auto;
   z-index: 21;
   background-color: black;
   border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  margin: 0.5rem;
+  padding: 10px;
+  line-height: 14px;
+}
+
+.mat-mdc-button > .mat-icon {
+  margin: 0;
 }
 
 #closeButton3dMap {
@@ -57,6 +63,7 @@
   font-weight: 500;
   overflow: auto;
   padding-bottom: 1rem;
+  display: grid;
 }
 
 #closeButton {
@@ -77,37 +84,6 @@
 .background-and-color-dark {
   background-color: #383838;
   color: white;
-}
-
-::ng-deep .mat-slide-toggle {
-  margin: 0.2rem !important;
-  display: block !important;
-}
-
-::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
-  background-color: #f8c023;
-}
-
-.mat-mdc-slider {
-  margin: 0.2rem !important;
-  height: 1rem !important;
-
-  --mdc-slider-handle-color: #f8c023;
-  --mdc-slider-focus-handle-color: #f8c023;
-  --mdc-slider-hover-handle-color: #f8c02333;
-  --mdc-slider-active-track-color: #f8c023;
-  --mdc-slider-inactive-track-color: #232323;
-  --mat-mdc-slider-ripple-color: #f8c023;
-  --mat-mdc-slider-hover-ripple-color: #ffffff00;
-  --mat-mdc-slider-focus-ripple-color: #ffffff00;
-
-  --mdc-slider-label-container-color: #949498;
-  --mdc-slider-label-label-text-color: white;
-  --mat-mdc-slider-value-indicator-opacity: 1;
-}
-
-::ng-deep mat-slider-visual-thumb {
-  height: 1rem !important;
 }
 
 ::ng-deep .cesium-credit-textContainer {
@@ -187,9 +163,10 @@
   box-shadow: 0 0 0px #fff;
 }
 
-/* ::ng-deep .cesium-toolbar-button {
-  top: -0.7rem;
-} */
+mat-divider {
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
 
 ::ng-deep .cesium-performanceDisplay {
   background-color: black;

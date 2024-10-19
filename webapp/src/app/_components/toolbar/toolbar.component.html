@@ -17,21 +17,22 @@
   <span class="spacer"></span>
 
   <!-- Input für Ort-Suche -->
-  <mat-form-field
-    class="input-mat-form-field"
+  <div
+    class="input-mat-form-field mat-app-background"
     [style.width]="isDesktop ? '18rem' : '11rem'"
-    [style.background-color]="darkMode ? '#383838' : '#efeff4'"
-    [style.color]="darkMode ? 'white' : 'black'"
   >
     <input
       matInput
+      class="search-input mat-app-background"
       type="text"
       [(ngModel)]="inputPlace"
       (click)="inputPlace = ''"
       (keydown.enter)="searchLocation(inputPlace)"
+      [style.width]="isDesktop ? '15rem' : '6rem'"
     />
     <button
       *ngIf="inputPlace"
+      style="padding: 0"
       matSuffix
       mat-icon-button
       aria-label="Submit"
@@ -39,7 +40,7 @@
     >
       <mat-icon>search</mat-icon>
     </button>
-  </mat-form-field>
+  </div>
 
   <!-- Abstandhalter -->
   <span class="spacer"></span>
@@ -50,11 +51,8 @@
   </button>
 
   <!-- Tabelle mit Flugzeugen -->
-  <app-aircraft-table
-    [darkMode]="darkMode"
-    @dummyParentAnimation
-  ></app-aircraft-table>
+  <app-aircraft-table @dummyParentAnimation></app-aircraft-table>
 
   <!-- Einstellungs-Menu -->
-  <app-settings [darkMode]="darkMode" @dummyParentAnimation></app-settings>
+  <app-settings @dummyParentAnimation></app-settings>
 </mat-toolbar>

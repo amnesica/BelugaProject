@@ -1,7 +1,10 @@
 <!-- Map -->
-<div id="map_canvas" [style.background]="darkMode ? 'black' : 'white'">
+<div
+  id="map_canvas"
+  [style.background]="(isDark$ | async) === true ? 'black' : 'white'"
+>
   <!-- Toolbar -->
-  <app-toolbar [darkMode]="darkMode"></app-toolbar>
+  <app-toolbar></app-toolbar>
 
   <!-- Info, wenn Server nicht erreichbar ist und die Konfiguration fehlschlägt -->
   <p
@@ -18,7 +21,9 @@
     [style.top.px]="topValue"
     [style.left.px]="leftValue"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
     <div *ngIf="hoveredAircraftObject">
@@ -42,14 +47,14 @@
         <ng-container *ngFor="let item of hoveredAircraftObject.attributes">
           <tr
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark airportDataPopup-tr-dark'
                 : 'background-and-color-light color-grey'
             "
           >
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
@@ -63,7 +68,7 @@
 
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light'
               "
@@ -91,7 +96,9 @@
     id="rangeDataPopup"
     [style.bottom]="rangeDataPopupBottomValue"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
     <div *ngIf="showPopupRangeDataPoint && rangeDataPoint">
@@ -110,14 +117,14 @@
         <ng-container *ngFor="let item of rangeDataPoint.attributes">
           <tr
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark airportDataPopup-tr-dark'
                 : 'background-and-color-light color-grey'
             "
           >
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
@@ -131,7 +138,7 @@
 
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light'
               "
@@ -159,7 +166,9 @@
     id="airportDataPopup"
     [style.bottom]="airportDataPopupBottomValue"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
     <div *ngIf="airportDataPoint">
@@ -194,14 +203,14 @@
         <ng-container *ngFor="let item of airportDataPoint.attributes">
           <tr
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark airportDataPopup-tr-dark'
                 : 'background-and-color-light color-grey'
             "
           >
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
@@ -215,7 +224,7 @@
 
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light'
               "
@@ -243,7 +252,9 @@
     id="aisDataPopup"
     [style.bottom]="aisDataPopupBottomValue"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
     <div *ngIf="aisDataPoint">
@@ -329,14 +340,14 @@
         <ng-container *ngFor="let item of aisDataPoint.attributes">
           <tr
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark airportDataPopup-tr-dark'
                 : 'background-and-color-light color-grey'
             "
           >
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
@@ -350,7 +361,7 @@
 
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light'
               "
@@ -380,16 +391,15 @@
     id="aircraft-info"
     *ngIf="displayAircraftInfo"
     [aircraft]="aircraft"
-    [darkMode]="darkMode"
     @dummyParentAnimation
   ></app-info>
 
   <!-- Altitude-Chart -->
   <div id="altitude_chart" class="ol-unselectable ol-control">
-    <div *ngIf="darkMode">
+    <div *ngIf="(isDark$ | async) === true">
       <img src="../../../assets/altitude_chart_dark.svg" alt="altitude chart" />
     </div>
-    <div *ngIf="!darkMode">
+    <div *ngIf="(isDark$ | async) !== true">
       <img src="../../../assets/altitude_chart.svg" alt="altitude chart" />
     </div>
   </div>
@@ -399,7 +409,6 @@
     id="cesium-map"
     *ngIf="display3dMap && cesiumIonDefaultAccessToken"
     [aircraft]="aircraft"
-    [darkMode]="darkMode"
     [cesiumIonDefaultAccessToken]="cesiumIonDefaultAccessToken"
     [style.width]="cesiumMapWidth"
     @dummyParentAnimation

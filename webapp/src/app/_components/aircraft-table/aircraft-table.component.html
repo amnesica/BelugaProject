@@ -10,12 +10,8 @@
 <!-- Flugzeug-Tabelle -->
 <div
   *ngIf="showAircraftTableDiv"
+  class="aircraft-table-div mat-app-background"
   [style.width]="showAircraftTableWidth"
-  [ngClass]="
-    darkMode
-      ? 'background-and-color-dark aircraft-table-div'
-      : 'background-and-color-light aircraft-table-div'
-  "
   [@slideInOutRight]
 >
   <!-- Feld zum Filtern -->
@@ -33,11 +29,7 @@
     mat-table
     [dataSource]="aircraftList"
     matSort
-    [ngClass]="
-      darkMode
-        ? 'background-and-color-dark mat-elevation-z0 aircraft-table'
-        : 'background-and-color-light mat-elevation-z0 aircraft-table'
-    "
+    class="aircraft-table mat-app-background"
   >
     <!-- hex column -->
     <ng-container matColumnDef="hex">
@@ -54,7 +46,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.hex">
           {{ aircraft.hex }}
@@ -78,7 +69,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.flightId">
           {{ aircraft.flightId }}
@@ -102,7 +92,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.type">
           {{ aircraft.type }}
@@ -126,7 +115,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.registration">
           {{ aircraft.registration }}
@@ -150,7 +138,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.altitude">{{ aircraft.altitude }}</p>
         <p *ngIf="!aircraft.altitude">N/A</p>
@@ -173,7 +160,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.verticalRate != null">
           {{ aircraft.verticalRate }}
@@ -197,7 +183,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.speed">{{ aircraft.speed }}</p>
         <p *ngIf="!aircraft.speed">N/A</p>
@@ -219,7 +204,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.track != null">{{ aircraft.track }}</p>
         <p *ngIf="aircraft.track == null">N/A</p>
@@ -241,7 +225,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.lastSeen != null">{{ aircraft.lastSeen }}</p>
         <p *ngIf="aircraft.lastSeen == null">N/A</p>
@@ -263,7 +246,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.feederList">
           {{ aircraft.feederList }}
@@ -287,7 +269,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.distance">{{ aircraft.distance }}</p>
         <p *ngIf="!aircraft.distance">N/A</p>
@@ -302,7 +283,6 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
         style="width: 2rem"
       ></td>
     </ng-container>

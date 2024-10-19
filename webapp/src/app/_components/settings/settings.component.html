@@ -9,11 +9,7 @@
 
 <!-- Einstellungs-Menü Desktop -->
 <div
-  [ngClass]="
-    darkMode
-      ? 'background-and-color-dark settingsDiv'
-      : 'background-and-color-light settingsDiv'
-  "
+  class="settings mat-app-background"
   *ngIf="showSettingsDiv"
   [style.width]="settingsDivWidth"
   [@slideInOutRight]
@@ -21,7 +17,6 @@
   <mat-tab-group
     [disablePagination]="true"
     [dynamicHeight]="true"
-    [disableRipple]="true"
     animationDuration="0ms"
     (click)="$event.stopPropagation()"
   >
@@ -32,10 +27,7 @@
 
         <!-- Select, um Flugzeuge nach Feeder zu selektieren (default: Alle Feeder) -->
         <div style="display: flex; justify-content: center">
-          <mat-form-field
-            appearance="fill"
-            style="width: 100%; margin-left: 1rem"
-          >
+          <mat-form-field style="width: 100%; margin-left: 1rem">
             <mat-label>Select planes by feeder</mat-label>
             <mat-select
               [(ngModel)]="selectedFeeder"
@@ -49,100 +41,113 @@
           </mat-form-field>
 
           <div
-            style="display: flex; justify-content: center; margin-top: 0.3rem"
+            style="display: flex; justify-content: center; margin-top: 0.4rem"
           >
             <button
-              mat-icon-button
+              mat-raised-button
+              color="primary"
+              style="
+                border-radius: 50px;
+                margin: 0.3rem;
+                padding: 0;
+                width: 0.5rem;
+              "
+              class="button-rounded"
               (click)="refreshSelectedFeeder()"
               aria-label="Refresh icon"
             >
-              <mat-icon>refresh</mat-icon>
+              <mat-icon style="margin: 0; padding: 0">refresh</mat-icon>
             </button>
           </div>
         </div>
 
-        <mat-slide-toggle
-          [checked]="showAircraftPositions"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAircraftPositions($event.checked)"
-          >Aircraft Positions</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAircraftLabels"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAircraftLabels($event.checked)"
-          >Show Labels</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showActualRangeOutline"
-          (click)="$event.stopPropagation()"
-          (change)="toggleActualRangeOutline($event.checked)"
-          >Show Actual Range Outline</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showOpenskyPlanes"
-          [disabled]="!openskyCredentialsExist || showAirplanesLivePlanes"
-          (click)="$event.stopPropagation()"
-          (change)="toggleOpenskyPlanes($event.checked)"
-          >Fetch from Opensky-Network</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAirplanesLivePlanes"
-          [disabled]="showOpenskyPlanes"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAirplanesLivePlanes($event.checked)"
-          >Fetch from Airplanes-Live (250nm max)</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAisData"
-          [disabled]="!aisstreamApiKeyExists"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAisData($event.checked)"
-          >Fetch AIS data from aisstream.io</mat-slide-toggle
-        >
-
-        <div style="display: flex; justify-content: start; align-items: center">
+        <div class="button-area">
           <mat-slide-toggle
-            [checked]="showIss"
+            [checked]="showAircraftPositions"
             (click)="$event.stopPropagation()"
-            (change)="toggleIss($event.checked)"
-            >ISS</mat-slide-toggle
+            (change)="toggleAircraftPositions($event.checked)"
+            >Aircraft Positions</mat-slide-toggle
           >
-          <div mat-dialog-actions style="margin-left: 8.5rem">
-            <button
-              mat-button
-              [disabled]="!showIss"
-              style="background-color: gray; color: white"
-              (click)="toggleCenterMapOnIss()"
+
+          <mat-slide-toggle
+            [checked]="showAircraftLabels"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAircraftLabels($event.checked)"
+            >Show Labels</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showActualRangeOutline"
+            (click)="$event.stopPropagation()"
+            (change)="toggleActualRangeOutline($event.checked)"
+            >Show Actual Range Outline</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showOpenskyPlanes"
+            [disabled]="!openskyCredentialsExist || showAirplanesLivePlanes"
+            (click)="$event.stopPropagation()"
+            (change)="toggleOpenskyPlanes($event.checked)"
+            >Fetch from Opensky-Network</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showAirplanesLivePlanes"
+            [disabled]="showOpenskyPlanes"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAirplanesLivePlanes($event.checked)"
+            >Fetch from Airplanes-Live (250nm max)</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showAisData"
+            [disabled]="!aisstreamApiKeyExists"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAisData($event.checked)"
+            >Fetch AIS data from aisstream.io</mat-slide-toggle
+          >
+
+          <div
+            style="display: flex; justify-content: start; align-items: center"
+          >
+            <mat-slide-toggle
+              [checked]="showIss"
+              (click)="$event.stopPropagation()"
+              (change)="toggleIss($event.checked)"
+              >ISS</mat-slide-toggle
             >
-              Show ISS
-            </button>
+            <div mat-dialog-actions style="margin-left: 8.5rem">
+              <button
+                mat-raised-button
+                color="primary"
+                class="button-rounded"
+                [disabled]="!showIss"
+                (click)="toggleCenterMapOnIss()"
+              >
+                Show ISS
+              </button>
+            </div>
           </div>
+
+          <mat-slide-toggle
+            [checked]="showOnlyMilitaryPlanes"
+            (click)="$event.stopPropagation()"
+            (change)="toggleShowOnlyMilitaryPlanes($event.checked)"
+            >Show only military</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showPOMDPoint"
+            (click)="$event.stopPropagation()"
+            (change)="togglePOMDPoint($event.checked)"
+            >Toggle POMD-Feature</mat-slide-toggle
+          >
         </div>
-
-        <mat-slide-toggle
-          [checked]="showOnlyMilitaryPlanes"
-          (click)="$event.stopPropagation()"
-          (change)="toggleShowOnlyMilitaryPlanes($event.checked)"
-          >Show only military</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showPOMDPoint"
-          (click)="$event.stopPropagation()"
-          (change)="togglePOMDPoint($event.checked)"
-          >Toggle POMD-Feature</mat-slide-toggle
-        >
 
         <mat-divider style="margin-bottom: 0"></mat-divider>
 
         <div style="display: flex; justify-content: start; max-height: 2rem">
-          <mat-slider min="0.5" max="10" step="0.1">
+          <mat-slider min="0.5" max="10" step="0.1" color="accent">
             <input
               matSliderThumb
               [(ngModel)]="sliderGlobalIconSizeValue"
@@ -163,7 +168,7 @@
         </div>
 
         <div style="display: flex; justify-content: start; max-height: 2rem">
-          <mat-slider min="0.1" max="10" step="0.1">
+          <mat-slider min="0.1" max="10" step="0.1" color="accent">
             <input
               matSliderThumb
               [(ngModel)]="sliderSmallIconSizeValue"
@@ -184,7 +189,7 @@
         </div>
 
         <div style="display: flex; justify-content: start; max-height: 2rem">
-          <mat-slider min="8" max="16" step="0.5">
+          <mat-slider min="8" max="16" step="0.5" color="accent">
             <input
               matSliderThumb
               [(ngModel)]="sliderAisOutlinesZoomValue"
@@ -217,8 +222,9 @@
           "
         >
           <button
-            mat-button
-            style="background-color: gray; color: white"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
             (click)="resetIconSizeSlider()"
           >
             Reset sliders
@@ -230,7 +236,6 @@
         <!-- Select, um Map-Stil auszuwählen (default: OSM) -->
         <div style="display: flex; justify-content: center">
           <mat-form-field
-            appearance="fill"
             style="width: 100%; margin-left: 1rem; margin-right: 1rem"
           >
             <mat-label>Map style</mat-label>
@@ -251,50 +256,52 @@
           </mat-form-field>
         </div>
 
-        <!-- Dark mode -->
-        <div>
+        <div class="button-area">
+          <!-- Dark mode -->
+          <div>
+            <mat-slide-toggle
+              [checked]="(isDark$ | async) === true"
+              (click)="$event.stopPropagation()"
+              (change)="toggleDarkMode($event.checked)"
+              >Dark Mode</mat-slide-toggle
+            >
+          </div>
+
+          <!-- Dim map -->
+          <div>
+            <mat-slide-toggle
+              [checked]="dimMap"
+              (click)="$event.stopPropagation()"
+              (change)="toggleDimMap($event.checked)"
+              >Dim Map</mat-slide-toggle
+            >
+          </div>
+
+          <!-- Dark static features -->
+          <div>
+            <mat-slide-toggle
+              [checked]="darkStaticFeatures"
+              (click)="$event.stopPropagation()"
+              (change)="toggleDarkStaticFeatures($event.checked)"
+              >Dark Static Features</mat-slide-toggle
+            >
+          </div>
+
           <mat-slide-toggle
-            [checked]="darkMode"
+            [checked]="showAltitudeChart"
+            [disabled]="!isDesktop"
             (click)="$event.stopPropagation()"
-            (change)="toggleDarkMode($event.checked)"
-            >Dark Mode</mat-slide-toggle
+            (change)="toggleAltitudeChart($event.checked)"
+            >Show Altitude Chart</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showAirports"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAirports($event.checked)"
+            >Airport Labels</mat-slide-toggle
           >
         </div>
-
-        <!-- Dim map -->
-        <div>
-          <mat-slide-toggle
-            [checked]="dimMap"
-            (click)="$event.stopPropagation()"
-            (change)="toggleDimMap($event.checked)"
-            >Dim Map</mat-slide-toggle
-          >
-        </div>
-
-        <!-- Dark static features -->
-        <div>
-          <mat-slide-toggle
-            [checked]="darkStaticFeatures"
-            (click)="$event.stopPropagation()"
-            (change)="toggleDarkStaticFeatures($event.checked)"
-            >Dark Static Features</mat-slide-toggle
-          >
-        </div>
-
-        <mat-slide-toggle
-          [checked]="showAltitudeChart"
-          [disabled]="!isDesktop"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAltitudeChart($event.checked)"
-          >Show Altitude Chart</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAirports"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAirports($event.checked)"
-          >Airport Labels</mat-slide-toggle
-        >
 
         <mat-divider></mat-divider>
 
@@ -309,15 +316,17 @@
           "
         >
           <button
-            mat-button
-            style="background-color: gray; color: white"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
             (click)="setCurrentDevicePosition()"
           >
             Set Device Pos.
           </button>
           <button
-            mat-button
-            style="background-color: gray; color: white"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
             (click)="deleteCurrentDevicePosition()"
           >
             Delete Device Pos.
@@ -433,45 +442,68 @@
           displayed
         </p>
 
-        <h4 style="margin-top: 1rem; margin-bottom: 0">Selected times:</h4>
-        <p *ngIf="timesAsDateStrings && timesAsDateStrings[0]">
+        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem">Selected times:</h4>
+        <p
+          *ngIf="timesAsDateStrings && timesAsDateStrings[0]"
+          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
+        >
           StartTime: {{ timesAsDateStrings[0] }}
         </p>
-        <p *ngIf="timesAsDateStrings && timesAsDateStrings[1]">
+        <p
+          *ngIf="timesAsDateStrings && timesAsDateStrings[1]"
+          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
+        >
           EndTime: {{ timesAsDateStrings[1] }}
         </p>
-        <p *ngIf="!timesAsDateStrings">StartTime: /</p>
-        <p *ngIf="!timesAsDateStrings">EndTime: /</p>
+        <p
+          *ngIf="!timesAsDateStrings"
+          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
+        >
+          StartTime: /
+        </p>
+        <p
+          *ngIf="!timesAsDateStrings"
+          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
+        >
+          EndTime: /
+        </p>
 
-        <h4 style="margin-top: 1rem; margin-bottom: 0">Predefined times:</h4>
+        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem">
+          Predefined times:
+        </h4>
 
         <!-- Button-Toggles, um vordefinierte Zeiträume für die Range Data auszuwählen -->
         <div style="display: flex; justify-content: center">
           <button
-            mat-button
-            style="background-color: gray; color: white; margin-right: 0.5rem"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
+            style="margin-right: 0.5rem"
             value="current-hour"
             (click)="showRangeDataLastHour()"
           >
             Last Hour
           </button>
           <button
-            mat-button
-            style="background-color: gray; color: white; margin-right: 0.5rem"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
+            style="margin-right: 0.5rem"
             (click)="showRangeDataToday()"
           >
             Today
           </button>
           <button
-            mat-button
-            style="background-color: gray; color: white"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
             (click)="showRangeDataLastSevenDays()"
           >
             Last 7 Days
           </button>
         </div>
 
-        <h4 style="margin-top: 1rem; margin-bottom: 0">
+        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem">
           Pick your own time slot:
         </h4>
 
@@ -528,13 +560,10 @@
         <!-- Submit chosen date and time -->
         <div mat-dialog-actions>
           <button
-            mat-button
-            style="
-              background-color: gray;
-              color: white;
-              margin-left: 0.5rem;
-              margin-top: 0.2rem;
-            "
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
+            style="margin-left: 0.5rem; margin-top: 0.2rem"
             (click)="showRangeDataBetweenCustomTimestamps()"
           >
             Show data
@@ -569,6 +598,7 @@
               display: block;
               margin-left: auto;
               margin-right: auto;
+              margin-bottom: 0.5rem;
               width: 3rem;
               margin-top: 1rem;
             "
@@ -637,7 +667,7 @@
 
         <!-- Button zum Anzeigen der Debug-Logs -->
         <div mat-dialog-actions style="padding-top: 0.5rem">
-          <button mat-button style="background-color: gray">
+          <button mat-raised-button color="primary" class="button-rounded">
             <!-- Hinweis: Nur im production-Mode wird der Link richtig aufgerufen -->
             <a
               href="/getLogs"

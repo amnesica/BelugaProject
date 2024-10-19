@@ -1,3 +1,5 @@
+@use "@angular/material" as mat;
+
 .toolbar {
   position: absolute;
   right: 0;
@@ -11,9 +13,8 @@
 }
 
 .input-mat-form-field {
-  background-color: white;
-  color: black;
-  text-align: center;
+  display: flex; 
+  justify-content: space-between;
   padding: 0rem;
   width: 15rem;
   border-radius: 1rem;
@@ -22,20 +23,18 @@
   font-size: large;
 }
 
-::ng-deep .input-mat-form-field .mat-form-field-underline {
-  display: none;
+.search-input {
+  margin-left: 1rem;
+  border: none; 
+  border-width: 0; 
+  box-shadow: none;
+  border-radius: 1rem;
+  font-weight: 700;
+  background: transparent;
 }
 
-::ng-deep .input-mat-form-field .mat-form-field-infix {
-  border-top: 0;
-}
-
-::ng-deep .input-mat-form-field .mat-form-field-suffix {
-  margin-right: 0.2rem;
-}
-
-.mat-form-field-wrapper {
-  padding: 0 !important;
+input:focus, textarea:focus, select:focus{
+  outline: none;
 }
 
 .spacer {

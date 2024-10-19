@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   Input,
   OnInit,
 } from '@angular/core';
@@ -11,17 +12,21 @@ import { dummyParentAnimation } from 'src/app/_common/animations';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 @Component({
   selector: 'app-toolbar',
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.css'],
+  styleUrls: ['./toolbar.component.scss'],
   animations: [dummyParentAnimation],
 })
 export class ToolbarComponent implements OnInit {
   // Boolean, ob System im DarkMode ist
-  @Input() darkMode: boolean = false;
+  darkMode: boolean = false;
+
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
 
   // Desktop/Mobile view
   isDesktop: boolean = false;

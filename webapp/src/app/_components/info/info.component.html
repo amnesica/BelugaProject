@@ -6,6 +6,7 @@
 
 <!-- große Info-Box Variante (wird als erstes auf dem Desktop angezeigt) -->
 <mat-card
+  class="mat-app-background"
   id="largeInfo"
   *ngIf="showInfoLarge"
   [style.width]="widthInfoBox"
@@ -22,7 +23,7 @@
     <!-- flightId -->
     <mat-card-title
       *ngIf="aircraft && aircraft.flightId"
-      style="color: #f8c023"
+      style="color: #f8c023; font-weight: 800"
     >
       {{ aircraft.flightId }}
     </mat-card-title>
@@ -52,11 +53,7 @@
     </button>
   </mat-card-header>
 
-  <mat-card-content
-    [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
-    "
-  >
+  <mat-card-content>
     <section style="margin-top: 0%; position: relative; overflow: hidden">
       <!-- aircraft photo -->
       <img
@@ -174,7 +171,9 @@
       cols="12"
       rowHeight="1.2rem"
       [ngClass]="
-        darkMode ? 'background-color-dark' : 'background-color-lightgrey'
+        (isDark$ | async) === true
+          ? 'background-color-dark'
+          : 'background-color-lightgrey'
       "
     >
       <!-- origin value -->
@@ -203,7 +202,9 @@
         colspan="2"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-color-dark' : 'background-color-lightgrey'
+          (isDark$ | async) === true
+            ? 'background-color-dark'
+            : 'background-color-lightgrey'
         "
       >
         <div
@@ -217,7 +218,9 @@
         >
           <span
             [ngClass]="
-              darkMode ? 'background-color-darkgrey' : 'background-color-light'
+              (isDark$ | async) === true
+                ? 'background-color-darkgrey'
+                : 'background-color-light'
             "
             style="
               height: 2.4rem;
@@ -301,11 +304,15 @@
       <mat-grid-tile
         colspan="6"
         rowspan="1"
-        [ngClass]="darkMode ? 'border-right-dark' : 'border-right-light'"
+        [ngClass]="
+          (isDark$ | async) === true
+            ? 'border-right-dark'
+            : 'border-right-light'
+        "
       >
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-darkgrey'
           "
@@ -332,7 +339,7 @@
       <mat-grid-tile colspan="6" rowspan="1">
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-darkgrey'
           "
@@ -359,11 +366,15 @@
       <mat-grid-tile
         colspan="6"
         rowspan="1"
-        [ngClass]="darkMode ? 'border-right-dark' : 'border-right-light'"
+        [ngClass]="
+          (isDark$ | async) === true
+            ? 'border-right-dark'
+            : 'border-right-light'
+        "
       >
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-verylightgrey'
           "
@@ -387,7 +398,7 @@
       <mat-grid-tile colspan="6" rowspan="1">
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-verylightgrey'
           "
@@ -414,13 +425,19 @@
     <mat-grid-list
       cols="9"
       rowHeight="4.2rem"
-      [ngClass]="darkMode ? 'background-color-dark' : 'background-color-light'"
+      [ngClass]="
+        (isDark$ | async) === true
+          ? 'background-color-dark'
+          : 'background-color-light'
+      "
     >
       <mat-grid-tile
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -440,7 +457,7 @@
             margin-right: 1.5rem;
           "
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-and-color-dark'
               : 'background-and-color-light color-grey'
           "
@@ -530,23 +547,26 @@
     </mat-grid-list>
 
     <!-- altitude chart -->
-    <mat-expansion-panel class="my-expansion-class-1">
+    <mat-expansion-panel class="mat-app-background my-expansion-class-1">
       <mat-expansion-panel-header
         style="
           background: #303030;
           font-size: large;
           font-weight: bold;
           border-radius: 0;
+          color: white;
         "
         [ngClass]="
-          darkMode ? 'background-color-dark' : 'background-color-light'
+          (isDark$ | async) === true
+            ? 'background-color-dark'
+            : 'background-color-light'
         "
       >
         <mat-panel-description> Altitude chart </mat-panel-description>
       </mat-expansion-panel-header>
       <apx-chart
         #chart
-        [ngClass]="darkMode ? 'chart-dark' : 'chart-light'"
+        [ngClass]="(isDark$ | async) === true ? 'chart-dark' : 'chart-light'"
         [series]="chartOptions.series!"
         [chart]="chartOptions.chart!"
         [xaxis]="chartOptions.xaxis!"
@@ -562,19 +582,25 @@
     <mat-grid-list
       cols="9"
       rowHeight="1.75rem"
-      [ngClass]="darkMode ? 'background-color-dark' : 'background-color-light'"
+      [ngClass]="
+        (isDark$ | async) === true
+          ? 'background-color-dark'
+          : 'background-color-light'
+      "
     >
       <!-- short information label -->
       <mat-grid-tile
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
           style="
-            background: #327db6;
+            background: #2196f3;
             color: white;
             height: 100%;
             display: flex;
@@ -594,7 +620,9 @@
         colspan="1"
         rowspan="10"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -617,13 +645,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -650,13 +680,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -683,13 +715,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -716,13 +750,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -758,13 +794,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -800,13 +838,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -842,13 +882,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -875,13 +917,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -908,13 +952,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -942,13 +988,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -985,13 +1033,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1027,12 +1077,14 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
           style="
-            background: #327db6;
+            background: #2196f3;
             color: white;
             height: 100%;
             display: flex;
@@ -1052,7 +1104,9 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -1077,7 +1131,9 @@
         colspan="1"
         rowspan="10"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -1100,13 +1156,15 @@
         colspan="8"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div *ngIf="aircraft && aircraft.type">
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1129,7 +1187,7 @@
         <div *ngIf="aircraft && !aircraft.type">
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1156,13 +1214,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1189,13 +1249,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1222,13 +1284,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1255,13 +1319,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1288,13 +1354,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1321,13 +1389,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1354,13 +1424,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1387,13 +1459,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1420,7 +1494,9 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -1445,7 +1521,9 @@
         colspan="1"
         rowspan="10"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -1468,13 +1546,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1501,13 +1581,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1537,13 +1619,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1570,13 +1654,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1603,13 +1689,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1636,13 +1724,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1678,13 +1768,15 @@
         colspan="8"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1711,13 +1803,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1744,13 +1838,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1777,7 +1873,9 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -1802,7 +1900,9 @@
         colspan="1"
         rowspan="20"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -1825,13 +1925,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1858,13 +1960,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1891,13 +1995,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1933,13 +2039,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -1975,13 +2083,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2016,13 +2126,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2057,13 +2169,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2098,13 +2212,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2131,13 +2247,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2164,13 +2282,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2197,13 +2317,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2238,13 +2360,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2279,13 +2403,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2320,13 +2446,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2352,13 +2480,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2393,13 +2523,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2434,13 +2566,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2467,13 +2601,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2500,13 +2636,15 @@
         colspan="8"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2533,7 +2671,9 @@
         colspan="1"
         rowspan="6"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -2556,13 +2696,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2589,13 +2731,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2622,13 +2766,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2663,13 +2809,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2696,13 +2844,15 @@
         colspan="8"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2729,7 +2879,9 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -2754,7 +2906,9 @@
         colspan="1"
         rowspan="8"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -2777,13 +2931,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2810,13 +2966,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2843,13 +3001,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2876,13 +3036,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2909,13 +3071,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2942,13 +3106,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -2980,13 +3146,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3013,13 +3181,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3046,7 +3216,9 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -3071,7 +3243,9 @@
         colspan="1"
         rowspan="8"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div
@@ -3094,13 +3268,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3127,13 +3303,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3161,13 +3339,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3204,13 +3384,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3246,13 +3428,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3279,13 +3463,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3321,13 +3507,15 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3354,13 +3542,15 @@
         colspan="8"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light color-grey'
             "
@@ -3424,14 +3614,18 @@
 <mat-card id="smallInfo" *ngIf="!showInfoLarge" [style.width]="widthInfoBox">
   <mat-card-content
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
     <mat-grid-list
       cols="23"
       rowHeight="1.2rem"
       [ngClass]="
-        darkMode ? 'background-color-dark' : 'background-color-lightgrey'
+        (isDark$ | async) === true
+          ? 'background-color-dark'
+          : 'background-color-lightgrey'
       "
     >
       <!-- callsign und operator -->
@@ -3541,7 +3735,9 @@
         colspan="4"
         rowspan="2"
         [ngClass]="
-          darkMode ? 'background-color-dark' : 'background-color-lightgrey'
+          (isDark$ | async) === true
+            ? 'background-color-dark'
+            : 'background-color-lightgrey'
         "
       >
         <div
@@ -3555,7 +3751,9 @@
         >
           <span
             [ngClass]="
-              darkMode ? 'background-color-darkgrey' : 'background-color-light'
+              (isDark$ | async) === true
+                ? 'background-color-darkgrey'
+                : 'background-color-light'
             "
             style="
               height: 2.4rem;
@@ -3624,13 +3822,15 @@
         colspan="5"
         rowspan="5"
         [ngClass]="
-          darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+          (isDark$ | async) === true
+            ? 'background-and-color-dark'
+            : 'background-and-color-light'
         "
       >
         <div>
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light'
             "
@@ -3654,7 +3854,7 @@
 
           <p
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark'
                 : 'background-and-color-light'
             "
@@ -3681,11 +3881,15 @@
       <mat-grid-tile
         colspan="9"
         rowspan="1"
-        [ngClass]="darkMode ? 'border-right-dark' : 'border-right-light'"
+        [ngClass]="
+          (isDark$ | async) === true
+            ? 'border-right-dark'
+            : 'border-right-light'
+        "
       >
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-darkgrey'
           "
@@ -3711,7 +3915,7 @@
       <mat-grid-tile colspan="9" rowspan="1">
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-darkgrey'
           "
@@ -3737,11 +3941,15 @@
       <mat-grid-tile
         colspan="9"
         rowspan="1"
-        [ngClass]="darkMode ? 'border-right-dark' : 'border-right-light'"
+        [ngClass]="
+          (isDark$ | async) === true
+            ? 'border-right-dark'
+            : 'border-right-light'
+        "
       >
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-verylightgrey'
           "
@@ -3765,7 +3973,7 @@
       <mat-grid-tile colspan="9" rowspan="1">
         <div
           [ngClass]="
-            darkMode
+            (isDark$ | async) === true
               ? 'background-color-dark'
               : 'background-color-lightgrey color-verylightgrey'
           "
@@ -3792,7 +4000,7 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode
+          (isDark$ | async) === true
             ? 'background-and-color-dark border-right-dark'
             : 'background-and-color-light border-right-light'
         "
@@ -3818,7 +4026,7 @@
         colspan="9"
         rowspan="1"
         [ngClass]="
-          darkMode
+          (isDark$ | async) === true
             ? 'background-and-color-dark border-right-dark'
             : 'background-and-color-light border-right-light'
         "
