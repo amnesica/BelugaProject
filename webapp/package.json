@@ -8,18 +8,18 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-builders/custom-webpack": "^16.0.1",
-    "@angular/animations": "^16.1.4",
+    "@angular-builders/custom-webpack": "^17.0.2",
+    "@angular/animations": "^17.3.12",
     "@angular/cdk": "^16.1.4",
-    "@angular/common": "^16.1.4",
-    "@angular/compiler": "^16.1.4",
-    "@angular/core": "^16.1.4",
-    "@angular/forms": "^16.1.4",
+    "@angular/common": "^17.3.12",
+    "@angular/compiler": "^17.3.12",
+    "@angular/core": "^17.3.12",
+    "@angular/forms": "^17.3.12",
     "@angular/material": "^16.1.4",
     "@angular/material-moment-adapter": "^16.1.4",
-    "@angular/platform-browser": "^16.1.4",
-    "@angular/platform-browser-dynamic": "^16.1.4",
-    "@angular/router": "^16.1.4",
+    "@angular/platform-browser": "^17.3.12",
+    "@angular/platform-browser-dynamic": "^17.3.12",
+    "@angular/router": "^17.3.12",
     "@ng-matero/extensions": "^16.0.3",
     "@ng-matero/extensions-moment-adapter": "^16.0.0",
     "apexcharts": "^3.54.0",
@@ -30,16 +30,16 @@
     "ol-ext": "^4.0.23",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
-    "zone.js": "~0.13.1"
+    "zone.js": "~0.14.10"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.1.4",
-    "@angular/cli": "^16.1.4",
-    "@angular/compiler-cli": "^16.1.4",
+    "@angular-devkit/build-angular": "^17.3.10",
+    "@angular/cli": "^17.3.10",
+    "@angular/compiler-cli": "^17.3.12",
     "@types/node": "^12.11.1",
     "codelyzer": "^6.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.9.5"
+    "typescript": "~5.4.5"
   }
 }
