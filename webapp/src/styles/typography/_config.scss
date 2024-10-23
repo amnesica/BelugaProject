@@ -1,0 +1,34 @@
+// src/styles/typography/_config.scss
+@use '@angular/material' as mat;
+
+$regular-font-family: "'Roboto', sans-serif";
+
+$my-default-level: mat.define-typography-level(
+  $font-family: Roboto,
+  $font-weight: normal,
+  $font-size: 14px,
+  $line-height: 1,
+  $letter-spacing: normal,
+);
+
+$my-h3-level: mat.define-typography-level(
+  $font-family: Roboto,
+  $font-weight: 600,
+  $font-size: 16px,
+  $line-height: 1,
+  $letter-spacing: normal,
+);
+
+$my-app-typography: mat.define-typography-config(
+  $font-family: $regular-font-family,
+  $headline-1: $my-default-level,
+  $headline-2: $my-default-level,
+  $headline-3: $my-default-level,
+  $headline-4: $my-default-level,
+  $headline-5:$my-default-level,
+  $headline-6: $my-default-level,
+  $subtitle-1: $my-h3-level,
+  $subtitle-2: $my-default-level,
+  $body-2: $my-default-level,
+  $body-1: $my-default-level,
+  $button: $my-default-level);

@@ -11,8 +11,8 @@
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   overflow: hidden;
-  font-weight: 400 !important;
-  font-size: 90%;
+  // font-weight: 400 !important;
+  // font-size: 90%;
 }
 
 #closeButton {
@@ -55,11 +55,10 @@
 }
 
 .mat-mdc-card-header {
-  height: 3rem;
+  height: 2.5rem;
   background-color: #303030; 
   padding-top: 0.5rem;
   flex-shrink: 0;
-
 }
 
 .mat-mdc-card-content {

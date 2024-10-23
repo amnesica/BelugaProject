@@ -1,6 +1,6 @@
 @use "@angular/material" as mat;
 @use "./styles/themes/all" as themes;
-@use "./styles/sizes";
+@use "./styles/typography/config";
 @use "@ng-matero/extensions" as matx;
 
 @import "styles/roboto.scss";
@@ -8,6 +8,9 @@
 
 @include mat.core();
 
+@include mat.typography-hierarchy(config.$my-app-typography);
+
+@include mat.progress-spinner-base(themes.$my-app-light-theme);
 @include mat.core-theme(themes.$my-app-light-theme);
 @include mat.button-theme(themes.$my-app-light-theme);
 @include mat.icon-theme(themes.$my-app-light-theme);
@@ -26,15 +29,12 @@
 @include mat.snack-bar-theme(themes.$my-app-light-theme);
 @include matx.all-component-themes(themes.$my-app-light-theme);
 
-//@include components.theme(themes.$my-app-light-theme);
-
 html,
 body {
   height: 100%;
 }
 body {
   margin: 0;
-  font-weight: 500;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
@@ -98,12 +98,31 @@ mat-icon {
   }
 }
 
+// .mat-mdc-card-title {
+//   font-size: 18px;
+//   font-weight: bold; 
+//   line-height: 0;
+//   --mat-card-title-text-size: 18px
+//   --mat-card-title-text-weight: bold
+// }
+
+// .mat-mdc-card-subtitle {
+//   font-size: 14px;
+//   font-weight: normal; 
+//   line-height: 0;
+//   --mat-card-subtitle-text-size: 14px
+// }
+
 .mdc-button__label {
   font-weight: 600;
 }
 
 .mdc-tab__text-label {
   font-weight: 700;
+}
+
+.mat-mdc-raised-button {
+  letter-spacing: 0;
 }
 
 mat-slide-toggle {
