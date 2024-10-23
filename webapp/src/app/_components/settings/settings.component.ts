@@ -364,7 +364,7 @@ export class SettingsComponent implements OnInit {
         } else {
           // Setze Variable auf 'Desktop'
           this.isDesktop = true;
-          this.settingsDivWidth = '20rem';
+          this.settingsDivWidth = '25rem';
         }
       });
 
