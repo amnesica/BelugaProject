@@ -3,7 +3,7 @@
 
 $regular-font-family: "'Roboto', sans-serif";
 
-$my-default-level: mat.define-typography-level(
+$my-default-level: mat.m2-define-typography-level(
   $font-family: Roboto,
   $font-weight: normal,
   $font-size: 14px,
@@ -11,7 +11,7 @@ $my-default-level: mat.define-typography-level(
   $letter-spacing: normal,
 );
 
-$my-h3-level: mat.define-typography-level(
+$my-h3-level: mat.m2-define-typography-level(
   $font-family: Roboto,
   $font-weight: 600,
   $font-size: 16px,
@@ -19,7 +19,7 @@ $my-h3-level: mat.define-typography-level(
   $letter-spacing: normal,
 );
 
-$my-app-typography: mat.define-typography-config(
+$my-app-typography: mat.m2-define-typography-config(
   $font-family: $regular-font-family,
   $headline-1: $my-default-level,
   $headline-2: $my-default-level,
