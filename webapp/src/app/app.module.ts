@@ -12,7 +12,7 @@ import { CesiumComponent } from './_components/cesium/cesium.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LayoutModule } from '@angular/cdk/layout';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { MatCardModule as MatCardModule } from '@angular/material/card';
 import { MatButtonModule as MatButtonModule } from '@angular/material/button';
@@ -47,71 +47,65 @@ import {
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { MatExpansionModule } from '@angular/material/expansion';
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    MapComponent,
-    InfoComponent,
-    ToolbarComponent,
-    SettingsComponent,
-    AircraftTableComponent,
-    CesiumComponent,
-  ],
-  imports: [
-    CommonModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    LayoutModule,
-    MatCardModule,
-    MatButtonModule,
-    MatGridListModule,
-    MatDividerModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatToolbarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatMenuModule,
-    MatSlideToggleModule,
-    MatDatepickerModule,
-    MatInputModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatTabsModule,
-    MatButtonToggleModule,
-    MatSelectModule,
-    MatTableModule,
-    MatSortModule,
-    MatCheckboxModule,
-    MtxDatetimepickerModule,
-    NgApexchartsModule,
-    MatExpansionModule,
-    MatSliderModule,
-  ],
-  providers: [
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE],
-    },
-    {
-      provide: MAT_DATE_FORMATS,
-      useValue: {
-        parse: {
-          dateInput: 'YYYY-MM-DD',
+@NgModule({ declarations: [
+        AppComponent,
+        MapComponent,
+        InfoComponent,
+        ToolbarComponent,
+        SettingsComponent,
+        AircraftTableComponent,
+        CesiumComponent,
+    ],
+    bootstrap: [AppComponent], imports: [CommonModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        LayoutModule,
+        MatCardModule,
+        MatButtonModule,
+        MatGridListModule,
+        MatDividerModule,
+        MatIconModule,
+        MatSnackBarModule,
+        MatToolbarModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatMenuModule,
+        MatSlideToggleModule,
+        MatDatepickerModule,
+        MatInputModule,
+        FormsModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatTabsModule,
+        MatButtonToggleModule,
+        MatSelectModule,
+        MatTableModule,
+        MatSortModule,
+        MatCheckboxModule,
+        MtxDatetimepickerModule,
+        NgApexchartsModule,
+        MatExpansionModule,
+        MatSliderModule], providers: [
+        {
+            provide: DateAdapter,
+            useClass: MomentDateAdapter,
+            deps: [MAT_DATE_LOCALE],
         },
-        display: {
-          dateInput: 'YYYY-MM-DD',
-          monthYearLabel: 'YYYY MMM',
-          dateA11yLabel: 'LL',
-          monthYearA11yLabel: 'YYYY MMM',
+        {
+            provide: MAT_DATE_FORMATS,
+            useValue: {
+                parse: {
+                    dateInput: 'YYYY-MM-DD',
+                },
+                display: {
+                    dateInput: 'YYYY-MM-DD',
+                    monthYearLabel: 'YYYY MMM',
+                    dateA11yLabel: 'LL',
+                    monthYearA11yLabel: 'YYYY MMM',
+                },
+            },
         },
-      },
-    },
-  ],
-  bootstrap: [AppComponent],
-})
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule {}
