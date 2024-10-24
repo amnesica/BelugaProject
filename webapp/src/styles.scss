@@ -35,7 +35,6 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 /* Use Material Symbols instead of Material Icons */
@@ -64,7 +63,7 @@ mat-icon {
   width: 2.5rem;
   height: 2.5rem;
   border: 5px solid #000;
-  border-top: 5px solid #f8c023;
+  border-top: 5px solid #ffab40;
   border-radius: 50%;
   -webkit-animation: spin 400ms linear infinite; /* Safari */
   animation: spin 400ms linear infinite;
@@ -113,13 +112,13 @@ mat-icon {
 //   --mat-card-subtitle-text-size: 14px
 // }
 
-.mdc-button__label {
-  font-weight: 600;
-}
+// .mdc-button__label {
+//   font-weight: 600;
+// }
 
-.mdc-tab__text-label {
-  font-weight: 700;
-}
+// .mdc-tab__text-label {
+//   font-weight: 700;
+// }
 
 .mat-mdc-raised-button {
   letter-spacing: 0;

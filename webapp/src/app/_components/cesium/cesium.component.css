@@ -117,8 +117,8 @@
 ::ng-deep
   .cesium-baseLayerPicker-selectedItem
   .cesium-baseLayerPicker-itemIcon {
-  border: double 4px #f8c023;
-  border-color: #f8c023;
+  border: double 4px #ffab40;
+  border-color: #ffab40;
 }
 
 ::ng-deep .cesium-svgPath-svg {
@@ -232,11 +232,11 @@ mat-divider {
 }
 
 ::ng-deep .cesium-animation-shuttleRingG {
-  fill: #f8c023 !important;
+  fill: #ffab40 !important;
 }
 
 ::ng-deep .cesium-animation-shuttleRingSwoosh {
-  fill: #f8c023 !important;
+  fill: #ffab40 !important;
 }
 
 ::ng-deep .cesium-navigationHelpButton-wrapper {

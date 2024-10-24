@@ -31,7 +31,7 @@
         <!-- flightId -->
         <mat-card-title
           *ngIf="hoveredAircraftObject.flightId"
-          style="color: #f8c023"
+          style="color: #ffab40"
         >
           {{ hoveredAircraftObject.flightId }}
         </mat-card-title>
@@ -104,7 +104,7 @@
     <div *ngIf="showPopupRangeDataPoint && rangeDataPoint">
       <mat-card-header id="rangeDatPopupHeader">
         <!-- flightId -->
-        <mat-card-title *ngIf="rangeDataPoint.flightId" style="color: #f8c023">
+        <mat-card-title *ngIf="rangeDataPoint.flightId" style="color: #ffab40">
           {{ rangeDataPoint.flightId }}
         </mat-card-title>
         <!-- hex -->
@@ -177,7 +177,7 @@
         <mat-card-title
           *ngIf="airportDataPoint.icao"
           style="
-            color: #f8c023;
+            color: #ffab40;
             font-size: 1.2rem;
             display: flex;
             align-self: center;
@@ -192,7 +192,7 @@
             }}"
             target="_blank"
           >
-            <mat-icon aria-hidden="false" style="color: #f8c023"
+            <mat-icon aria-hidden="false" style="color: #ffab40"
               >link</mat-icon
             ></a
           >
@@ -262,7 +262,7 @@
         <mat-card-title
           *ngIf="aisDataPoint.title"
           style="
-            color: #f8c023;
+            color: #ffab40;
             font-size: 1.2rem;
             display: flex;
             align-self: center;
@@ -275,7 +275,7 @@
             href="{{ aisDataPoint.link }}"
             target="_blank"
           >
-            <mat-icon aria-hidden="false" style="color: #f8c023"
+            <mat-icon aria-hidden="false" style="color: #ffab40"
               >link</mat-icon
             ></a
           >

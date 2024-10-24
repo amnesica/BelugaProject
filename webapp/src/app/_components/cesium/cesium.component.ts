@@ -1362,7 +1362,7 @@ export class CesiumComponent implements OnInit {
   }
 
   showClickedBehaviourOnButton(buttonId: string, isClicked: boolean) {
-    const colorClicked = '#f9c534';
+    const colorClicked = '#ffab40';
     const colorNotClicked = '#000';
     document.getElementById(buttonId)!.style.background = isClicked
       ? colorClicked
