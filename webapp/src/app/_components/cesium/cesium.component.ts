@@ -22,7 +22,7 @@ import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.serv
   selector: 'app-cesium',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cesium.component.html',
-  styleUrls: ['./cesium.component.css'],
+  styleUrls: ['./cesium.component.scss'],
   animations: [slideInOutBottom],
 })
 export class CesiumComponent implements OnInit {
