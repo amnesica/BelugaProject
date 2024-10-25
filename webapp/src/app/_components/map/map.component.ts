@@ -1121,7 +1121,7 @@ export class MapComponent implements OnInit {
       { name: 'ac_route', type: 'overlay' },
       new Style({
         stroke: new Stroke({
-          color: '#EAE911',
+          color: '#ffab40',
           width: 2,
           lineDash: [0.2, 5],
         }),
@@ -1154,7 +1154,7 @@ export class MapComponent implements OnInit {
       new Style({
         fill: undefined,
         stroke: new Stroke({
-          color: '#00596b',
+          color: '#13568b',
           width: 1.7,
           lineDash: undefined,
         }),
