@@ -9,7 +9,7 @@
 
 <!-- Einstellungs-Menü Desktop -->
 <div
-  class="settings mat-app-background"
+  class="settings mat-app-background mat-typography"
   *ngIf="showSettingsDiv"
   [style.width]="settingsDivWidth"
   [@slideInOutRight]
@@ -23,7 +23,7 @@
     <!-- Tab Map-Eintellungen -->
     <mat-tab label="Map">
       <div style="padding: 0.5rem">
-        <h3>Planes</h3>
+        <h3 class="h3" class="h3">Planes</h3>
 
         <!-- Select, um Flugzeuge nach Feeder zu selektieren (default: Alle Feeder) -->
         <div style="display: flex; justify-content: center">
@@ -231,7 +231,9 @@
           </button>
         </div>
 
-        <h3 style="margin-top: 1rem">General</h3>
+        <mat-divider style="margin-bottom: 0"></mat-divider>
+
+        <h3 class="h3">General</h3>
 
         <!-- Select, um Map-Stil auszuwählen (default: OSM) -->
         <div style="display: flex; justify-content: center">
@@ -347,7 +349,7 @@
           </mat-slide-toggle>
         </div>
 
-        <h3 style="margin-top: 1rem">Weather</h3>
+        <h3 class="h3">Weather</h3>
 
         <!-- Rainviewer (Rain) -->
         <div>
@@ -386,7 +388,7 @@
     <!-- Tab Statistik-Eintellungen -->
     <mat-tab label="Statistics">
       <div style="padding: 0.5rem">
-        <h3>Range Data</h3>
+        <h3 class="h3">Range Data</h3>
         <!-- Toggle, um RangeData aus- oder einzublenden (initial disabled) -->
         <div>
           <mat-slide-toggle
@@ -442,7 +444,7 @@
           displayed
         </p>
 
-        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem">Selected times:</h4>
+        <h4 class="h4">Selected times:</h4>
         <p
           *ngIf="timesAsDateStrings && timesAsDateStrings[0]"
           style="margin-top: 0.2rem; margin-bottom: 0.2rem"
@@ -468,9 +470,7 @@
           EndTime: /
         </p>
 
-        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem">
-          Predefined times:
-        </h4>
+        <h4 class="h4">Predefined times:</h4>
 
         <!-- Button-Toggles, um vordefinierte Zeiträume für die Range Data auszuwählen -->
         <div style="display: flex; justify-content: center">
@@ -503,9 +503,7 @@
           </button>
         </div>
 
-        <h4 style="margin-top: 1rem; margin-bottom: 0.5rem">
-          Pick your own time slot:
-        </h4>
+        <h4 class="h4">Pick your own time slot:</h4>
 
         <!-- Picker, um Start- und Endzeit für die Zeitspanne der
           anzuzeigenden Range Data auszuwählen -->
@@ -572,7 +570,7 @@
 
         <mat-divider style="margin-bottom: 0"></mat-divider>
 
-        <h3>Trail Data</h3>
+        <h3 class="h3">Trail Data</h3>
         <!-- Toggle, um alle gespeicherten Trails aus- oder einzublenden -->
         <div>
           <mat-slide-toggle
@@ -588,7 +586,7 @@
     <!-- Tab About -->
     <mat-tab label="About">
       <div style="padding: 0.5rem">
-        <h3>About</h3>
+        <h3 class="h3">About</h3>
         <div>
           <!-- Logo -->
           <img
@@ -658,7 +656,7 @@
           </p>
         </div>
 
-        <h3 style="padding-top: 1rem">Debug</h3>
+        <h3 class="h3">Debug</h3>
         <!-- Ip-Addresse des Clients -->
         <p class="info-text">Client-IP: {{ clientAddress }}</p>
 

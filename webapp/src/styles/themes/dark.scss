@@ -20,5 +20,4 @@
   @include mat.table-color(themes.$my-app-dark-theme);
   @include mat.snack-bar-color(themes.$my-app-dark-theme);
   @include matx.all-component-themes(themes.$my-app-dark-theme);
-  //@include components.theme(themes.$my-app-dark-theme);
 }

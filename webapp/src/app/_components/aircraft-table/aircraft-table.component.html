@@ -37,11 +37,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Hex
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -60,11 +61,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Callsign
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -80,14 +82,16 @@
     <!-- type column -->
     <ng-container matColumnDef="type">
       <th
+        class="mat-header-colomn-row"
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Type
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -106,11 +110,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Reg.
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -129,11 +134,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Alt.<br />(ft)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -150,12 +156,13 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         V. Spd<br />
         (ft/min)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -174,11 +181,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Speed<br />(kn)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -195,11 +203,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Track<br />(°)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -216,11 +225,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Seen<br />(s)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -237,11 +247,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Feeder
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -260,11 +271,12 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Dist.<br />(km)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
@@ -277,8 +289,9 @@
 
     <!-- dummy column -->
     <ng-container matColumnDef="dummy">
-      <th mat-header-cell *matHeaderCellDef style="line-height: 1rem"></th>
+      <th mat-header-cell *matHeaderCellDef class="mat-header-colomn-row"></th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"

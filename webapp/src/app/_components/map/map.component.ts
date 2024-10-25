@@ -66,7 +66,7 @@ import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.serv
   selector: 'app-map',
   changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css'],
+  styleUrls: ['./map.component.scss'],
   animations: [dummyParentAnimation, slideInOutRight],
 })
 export class MapComponent implements OnInit {

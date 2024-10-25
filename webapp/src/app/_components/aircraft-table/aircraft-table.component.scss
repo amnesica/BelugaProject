@@ -1,16 +1,23 @@
 .aircraft-table-div {
   position: fixed;
-  border-radius: 0px;
-  margin-top: 3.5rem;
   right: 0;
   top: 0;
+  bottom: 0;
   font-size: 14px;
   overflow: auto;
-  bottom: 0;
+  border-radius: 15px;
+  margin-top: 3.8rem;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+  margin-bottom: 0.3rem;
 }
 
 .aircraft-table {
   margin-top: 3.5rem;
+  margin-top: 3.8rem;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+  margin-bottom: 0.3rem;
 }
 
 .mat-mdc-table {
@@ -49,4 +56,15 @@ td.mat-mdc-footer-cell {
 
 .selected {
   background-color: #b9b9b9 !important;
+}
+
+.mat-header-colomn-row {
+  line-height: 1rem;
+  font-weight: bold;
+  align-items: center;
+}
+
+.mat-cell-element {
+  font-size: 14px;
+  font-weight: 400;
 }

@@ -555,6 +555,9 @@
           font-weight: bold;
           border-radius: 0;
           color: white;
+          position: static;
+          height: 1.75rem;
+          transition: none;
         "
         [ngClass]="
           (isDark$ | async) === true
@@ -654,22 +657,16 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Aircraft Type
           </p>
-          <p
-            *ngIf="aircraft && aircraft.type"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && aircraft.type" class="mat-grid-tile-subtitle">
             {{ aircraft.type }}
           </p>
-          <p
-            *ngIf="aircraft && !aircraft.type"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && !aircraft.type" class="mat-grid-tile-subtitle">
             N/A
           </p>
         </div>
@@ -689,21 +686,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Registration
           </p>
           <p
             *ngIf="aircraft && aircraft.registration"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.registration }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.registration"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -724,22 +721,16 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             ICAO 24-bit address
           </p>
-          <p
-            *ngIf="aircraft && aircraft.hex"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && aircraft.hex" class="mat-grid-tile-subtitle">
             {{ aircraft.hex }}
           </p>
-          <p
-            *ngIf="aircraft && !aircraft.hex"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && !aircraft.hex" class="mat-grid-tile-subtitle">
             N/A
           </p>
         </div>
@@ -759,16 +750,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Altitude
           </p>
           <tr *ngIf="aircraft && aircraft.altitude != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.altitude }} ft
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.altitude }} ft</th>
             <th
               style="
                 font-size: smaller;
@@ -782,7 +771,7 @@
 
           <p
             *ngIf="aircraft && aircraft.altitude == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -803,14 +792,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Vertical Speed
           </p>
           <tr *ngIf="aircraft && aircraft.verticalRate != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.verticalRate }} ft/min
             </th>
             <th
@@ -826,7 +815,7 @@
 
           <p
             *ngIf="aircraft && aircraft.verticalRate == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -847,16 +836,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Ground Speed
           </p>
           <tr *ngIf="aircraft && aircraft.speed != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.speed }} kn
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.speed }} kn</th>
             <th
               style="
                 font-size: smaller;
@@ -870,7 +857,7 @@
 
           <p
             *ngIf="aircraft && aircraft.speed == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -891,21 +878,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Track
           </p>
           <p
             *ngIf="aircraft && aircraft.track != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.track }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.track == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -926,21 +913,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Last Seen
           </p>
           <p
             *ngIf="aircraft && aircraft.lastSeen != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.lastSeen }} s
           </p>
           <p
             *ngIf="aircraft && aircraft.lastSeen == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -961,21 +948,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Feeder
           </p>
           <p
             *ngIf="aircraft && aircraft.feederList"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.feederList }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.feederList"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -997,16 +984,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Distance (Antenna)
           </p>
           <tr *ngIf="aircraft && aircraft.distance != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.distance }} km
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.distance }} km</th>
             <th
               style="
                 font-size: smaller;
@@ -1020,7 +1005,7 @@
 
           <p
             *ngIf="aircraft && aircraft.distance == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1042,14 +1027,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Distance (Device)
           </p>
           <tr *ngIf="aircraft && aircraft.distanceDevicePos != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.distanceDevicePos }} km
             </th>
             <th
@@ -1065,7 +1050,7 @@
 
           <p
             *ngIf="aircraft && aircraft.distanceDevicePos == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1165,21 +1150,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Aircraft Type ({{ aircraft.type }})
           </p>
           <p
             *ngIf="aircraft && aircraft.fullType"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.fullType }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.fullType"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1188,21 +1173,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Aircraft Type (N/A)
           </p>
           <p
             *ngIf="aircraft && aircraft.fullType"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.fullType }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.fullType"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1223,21 +1208,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Category
           </p>
           <p
             *ngIf="aircraft && aircraft.category"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.category }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.category"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1258,21 +1243,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             ICAO aircraft type
           </p>
           <p
             *ngIf="aircraft && aircraft.icaoAircraftType"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.icaoAircraftType }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.icaoAircraftType"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1293,21 +1278,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Engines
           </p>
           <p
             *ngIf="aircraft && aircraft.engines"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.engines }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.engines"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1328,21 +1313,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Age
           </p>
           <p
             *ngIf="aircraft && aircraft.age != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.age }} Years
           </p>
           <p
             *ngIf="aircraft && aircraft.age == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1363,21 +1348,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Serial number
           </p>
           <p
             *ngIf="aircraft && aircraft.serialNumber"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.serialNumber }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.serialNumber"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1398,21 +1383,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Line number
           </p>
           <p
             *ngIf="aircraft && aircraft.lineNumber"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.lineNumber }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.lineNumber"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1433,22 +1418,16 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Built
           </p>
-          <p
-            *ngIf="aircraft && aircraft.built"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && aircraft.built" class="mat-grid-tile-subtitle">
             {{ aircraft.built }}
           </p>
-          <p
-            *ngIf="aircraft && !aircraft.built"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && !aircraft.built" class="mat-grid-tile-subtitle">
             N/A
           </p>
         </div>
@@ -1468,21 +1447,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             First flight
           </p>
           <p
             *ngIf="aircraft && aircraft.firstFlightDate"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.firstFlightDate }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.firstFlightDate"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1555,21 +1534,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Registration
           </p>
           <p
             *ngIf="aircraft && aircraft.registration"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.registration }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.registration"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1590,15 +1569,15 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Country Registration
           </p>
           <p
             *ngIf="aircraft && aircraft.regCodeName && aircraft.regCodeNameFlag"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             <span [innerHTML]="aircraft.regCodeNameFlag"></span>
             {{ aircraft.regCodeName }}
@@ -1607,7 +1586,7 @@
             *ngIf="
               aircraft && !aircraft.regCodeName && !aircraft.regCodeNameFlag
             "
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1628,21 +1607,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Registered since
           </p>
           <p
             *ngIf="aircraft && aircraft.registered"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.registered }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.registered"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1663,21 +1642,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Registered until
           </p>
           <p
             *ngIf="aircraft && aircraft.regUntil"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.regUntil }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.regUntil"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1698,21 +1677,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Operator
           </p>
           <p
             *ngIf="aircraft && aircraft.operatorName"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.operatorName }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.operatorName"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1733,8 +1712,8 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Country Operator
@@ -1745,7 +1724,7 @@
               aircraft.operatorCountry &&
               aircraft.operatorCountryFlag
             "
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             <span [innerHTML]="aircraft.operatorCountryFlag"></span>
             {{ aircraft.operatorCountry }}
@@ -1756,7 +1735,7 @@
               !aircraft.operatorCountry &&
               !aircraft.operatorCountryFlag
             "
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1777,21 +1756,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Operator Callsign
           </p>
           <p
             *ngIf="aircraft && aircraft.operatorCallsign"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.operatorCallsign }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.operatorCallsign"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1812,21 +1791,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Operator ICAO
           </p>
           <p
             *ngIf="aircraft && aircraft.operatorIcao"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.operatorIcao }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.operatorIcao"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1847,21 +1826,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Operator IATA
           </p>
           <p
             *ngIf="aircraft && aircraft.operatorIata"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.operatorIata }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.operatorIata"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1934,21 +1913,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Latitude
           </p>
           <p
             *ngIf="aircraft && aircraft.latitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.latitude }}°
           </p>
           <p
             *ngIf="aircraft && !aircraft.latitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -1969,21 +1948,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Longitude
           </p>
           <p
             *ngIf="aircraft && aircraft.longitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.longitude }}°
           </p>
           <p
             *ngIf="aircraft && !aircraft.longitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2004,16 +1983,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Distance (Antenna)
           </p>
           <tr *ngIf="aircraft && aircraft.distance != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.distance }} km
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.distance }} km</th>
             <th
               style="
                 font-size: smaller;
@@ -2027,7 +2004,7 @@
 
           <p
             *ngIf="aircraft && aircraft.distance == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2048,14 +2025,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Distance (Device)
           </p>
           <tr *ngIf="aircraft && aircraft.distanceDevicePos != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.distanceDevicePos }} km
             </th>
             <th
@@ -2071,7 +2048,7 @@
 
           <p
             *ngIf="aircraft && aircraft.distanceDevicePos == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2092,16 +2069,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Altitude
           </p>
           <tr *ngIf="aircraft && aircraft.altitude != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.altitude }} ft
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.altitude }} ft</th>
             <th
               style="
                 font-size: smaller;
@@ -2114,7 +2089,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.altitude == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2135,14 +2110,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Vertical Speed
           </p>
           <tr *ngIf="aircraft && aircraft.verticalRate != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.verticalRate }} ft/min
             </th>
             <th
@@ -2157,7 +2132,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.verticalRate == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2178,14 +2153,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Baro. Altitude
           </p>
           <tr *ngIf="aircraft && aircraft.elipsoidalAltitude != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.elipsoidalAltitude }} ft
             </th>
             <th
@@ -2200,7 +2175,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.elipsoidalAltitude == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2221,21 +2196,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Track
           </p>
           <p
             *ngIf="aircraft && aircraft.track != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.track }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.track == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2256,21 +2231,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Magnetic Heading
           </p>
           <p
             *ngIf="aircraft && aircraft.magHeading != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.magHeading }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.magHeading == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2291,21 +2266,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             True Heading
           </p>
           <p
             *ngIf="aircraft && aircraft.trueHeading != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.trueHeading }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.trueHeading == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2326,16 +2301,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Ground Speed
           </p>
           <tr *ngIf="aircraft && aircraft.speed != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.speed }} kn
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.speed }} kn</th>
             <th
               style="
                 font-size: smaller;
@@ -2348,7 +2321,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.speed == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2369,16 +2342,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Indicated Air Speed
           </p>
           <tr *ngIf="aircraft && aircraft.ias != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.ias }} kn
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.ias }} kn</th>
             <th
               style="
                 font-size: smaller;
@@ -2391,7 +2362,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.ias == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2412,16 +2383,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             True Air Speed
           </p>
           <tr *ngIf="aircraft && aircraft.tas != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.tas }} kn
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.tas }} kn</th>
             <th
               style="
                 font-size: smaller;
@@ -2434,7 +2403,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.tas == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2455,20 +2424,20 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Mach
           </p>
           <tr *ngIf="aircraft && aircraft.mach != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.mach }}
             </th>
           </tr>
           <p
             *ngIf="aircraft && aircraft.mach == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2489,14 +2458,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Temperature
           </p>
           <tr *ngIf="aircraft && aircraft.temperature != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.temperature }} °C
             </th>
             <th
@@ -2511,7 +2480,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.temperature == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2532,16 +2501,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Wind Speed
           </p>
           <tr *ngIf="aircraft && aircraft.windSpeed != null">
-            <th style="font-size: larger; font-weight: bold">
-              {{ aircraft.windSpeed }} kn
-            </th>
+            <th class="mat-grid-tile-subtitle">{{ aircraft.windSpeed }} kn</th>
             <th
               style="
                 font-size: smaller;
@@ -2554,7 +2521,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.windSpeed == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2575,21 +2542,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Wind From Direction
           </p>
           <p
             *ngIf="aircraft && aircraft.windFromDirection != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.windFromDirection }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.windFromDirection == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2610,21 +2577,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             On Ground
           </p>
           <p
             *ngIf="aircraft && aircraft.onGround"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.onGround }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.onGround"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2645,21 +2612,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Roll
           </p>
           <p
             *ngIf="aircraft && aircraft.roll != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.roll }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.roll == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2705,21 +2672,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Autopilot Engaged
           </p>
           <p
             *ngIf="aircraft && aircraft.autopilotEngaged"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.autopilotEngaged }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.autopilotEngaged"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2740,21 +2707,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Selected QNH
           </p>
           <p
             *ngIf="aircraft && aircraft.selectedQnh"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.selectedQnh }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.selectedQnh"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2775,14 +2742,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Selected Altitude
           </p>
           <tr *ngIf="aircraft && aircraft.selectedAltitude != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.selectedAltitude }} ft
             </th>
             <th
@@ -2797,7 +2764,7 @@
           </tr>
           <p
             *ngIf="aircraft && aircraft.selectedAltitude == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2818,21 +2785,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Selected Heading
           </p>
           <p
             *ngIf="aircraft && aircraft.selectedHeading != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.selectedHeading }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.selectedHeading == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2853,21 +2820,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Nav Modes
           </p>
           <p
             *ngIf="aircraft && aircraft.navModes != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.navModes }}
           </p>
           <p
             *ngIf="aircraft && aircraft.navModes == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -2940,22 +2907,16 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             ICAO 24-bit address
           </p>
-          <p
-            *ngIf="aircraft && aircraft.hex"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && aircraft.hex" class="mat-grid-tile-subtitle">
             {{ aircraft.hex }}
           </p>
-          <p
-            *ngIf="aircraft && !aircraft.hex"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && !aircraft.hex" class="mat-grid-tile-subtitle">
             N/A
           </p>
         </div>
@@ -2975,21 +2936,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Last Seen
           </p>
           <p
             *ngIf="aircraft && aircraft.lastSeen != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.lastSeen }} s
           </p>
           <p
             *ngIf="aircraft && aircraft.lastSeen == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3010,21 +2971,18 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Squawk
           </p>
-          <p
-            *ngIf="aircraft && aircraft.squawk"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && aircraft.squawk" class="mat-grid-tile-subtitle">
             {{ aircraft.squawk }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.squawk"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3045,21 +3003,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Emergency
           </p>
           <p
             *ngIf="aircraft && aircraft.emergency"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.emergency }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.emergency"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3080,21 +3038,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Feeder
           </p>
           <p
             *ngIf="aircraft && aircraft.feederList"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.feederList }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.feederList"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3115,15 +3073,15 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Source
           </p>
           <p
             *ngIf="aircraft && aircraft.sourceList"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.sourceList }}
           </p>
@@ -3134,7 +3092,7 @@
                 aircraft.sourceList &&
                 aircraft.sourceList.length == 0)
             "
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3155,22 +3113,16 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             RSSI
           </p>
-          <p
-            *ngIf="aircraft && aircraft.rssi"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && aircraft.rssi" class="mat-grid-tile-subtitle">
             {{ aircraft.rssi }}
           </p>
-          <p
-            *ngIf="aircraft && !aircraft.rssi"
-            style="font-size: larger; font-weight: bold"
-          >
+          <p *ngIf="aircraft && !aircraft.rssi" class="mat-grid-tile-subtitle">
             N/A
           </p>
         </div>
@@ -3190,21 +3142,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Messages
           </p>
           <p
             *ngIf="aircraft && aircraft.messages != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.messages }}
           </p>
           <p
             *ngIf="aircraft && aircraft.messages == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3277,21 +3229,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Latitude
           </p>
           <p
             *ngIf="aircraft && aircraft.pomdLatitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.pomdLatitude.toFixed(6) }}°
           </p>
           <p
             *ngIf="aircraft && !aircraft.pomdLatitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3312,21 +3264,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Longitude
           </p>
           <p
             *ngIf="aircraft && aircraft.pomdLongitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.pomdLongitude.toFixed(6) }}°
           </p>
           <p
             *ngIf="aircraft && !aircraft.pomdLongitude"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3348,14 +3300,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Distance (Antenna)
           </p>
           <tr *ngIf="aircraft && aircraft.pomdDistanceKm != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.pomdDistanceKm.toFixed(1) }} km
             </th>
             <th
@@ -3371,7 +3323,7 @@
 
           <p
             *ngIf="aircraft && aircraft.pomdDistanceKm == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3393,14 +3345,14 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Distance (Device)
           </p>
           <tr *ngIf="aircraft && aircraft.pomdDistanceKm != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.pomdDistanceKm.toFixed(1) }} km
             </th>
             <th
@@ -3416,7 +3368,7 @@
 
           <p
             *ngIf="aircraft && aircraft.pomdDistanceKm == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3437,21 +3389,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             ETA
           </p>
           <p
             *ngIf="aircraft && aircraft.pomdETA"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.pomdETA }}
           </p>
           <p
             *ngIf="aircraft && !aircraft.pomdETA"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3472,15 +3424,15 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Remaining Dist.
           </p>
 
           <tr *ngIf="aircraft && aircraft.pomdRemainingKm != null">
-            <th style="font-size: larger; font-weight: bold">
+            <th class="mat-grid-tile-subtitle">
               {{ aircraft.pomdRemainingKm.toFixed(1) }} km
             </th>
             <th
@@ -3495,7 +3447,7 @@
           </tr>
           <p
             *ngIf="aircraft && !aircraft.pomdRemainingKm"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3516,21 +3468,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Remaining Time
           </p>
           <p
             *ngIf="aircraft && aircraft.pomdRemainingSeconds"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ (aircraft.pomdRemainingSeconds / 60).toFixed(1) }} Min.
           </p>
           <p
             *ngIf="aircraft && !aircraft.pomdRemainingSeconds"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>
@@ -3551,21 +3503,21 @@
           <p
             [ngClass]="
               (isDark$ | async) === true
-                ? 'background-and-color-dark'
-                : 'background-and-color-light color-grey'
+                ? 'background-and-color-dark mat-grid-tile-title'
+                : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
             Direction
           </p>
           <p
             *ngIf="aircraft && aircraft.pomdDirection != null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             {{ aircraft.pomdDirection.toFixed(0) }}°
           </p>
           <p
             *ngIf="aircraft && aircraft.pomdDirection == null"
-            style="font-size: larger; font-weight: bold"
+            class="mat-grid-tile-subtitle"
           >
             N/A
           </p>

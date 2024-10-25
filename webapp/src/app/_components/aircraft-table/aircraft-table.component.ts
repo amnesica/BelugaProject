@@ -41,7 +41,7 @@ export class AircraftTableComponent implements OnInit {
   showAircraftTableWidth: string = 'auto';
 
   // Breite des Filter-Divs
-  filterFieldWidth: string = '60rem';
+  filterFieldWidth: string = '45rem';
 
   // Anzuzeigende Spalten der Tabelle
   displayedColumns: string[] = [

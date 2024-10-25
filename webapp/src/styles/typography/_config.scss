@@ -3,32 +3,20 @@
 
 $regular-font-family: "'Roboto', sans-serif";
 
-$my-default-level: mat.m2-define-typography-level(
-  $font-family: Roboto,
-  $font-weight: normal,
-  $font-size: 14px,
-  $line-height: 1,
-  $letter-spacing: normal,
-);
-
-$my-h3-level: mat.m2-define-typography-level(
-  $font-family: Roboto,
-  $font-weight: 600,
-  $font-size: 16px,
-  $line-height: 1,
-  $letter-spacing: normal,
-);
-
 $my-app-typography: mat.m2-define-typography-config(
   $font-family: $regular-font-family,
-  $headline-1: $my-default-level,
-  $headline-2: $my-default-level,
-  $headline-3: $my-default-level,
-  $headline-4: $my-default-level,
-  $headline-5:$my-default-level,
-  $headline-6: $my-default-level,
-  $subtitle-1: $my-h3-level,
-  $subtitle-2: $my-default-level,
-  $body-2: $my-default-level,
-  $body-1: $my-default-level,
-  $button: $my-default-level);
+  $headline-1: mat.m2-define-typography-level($font-size: 112px,$font-weight: 800),
+  $headline-2: mat.m2-define-typography-level($font-size: 56px),
+  $headline-3: mat.m2-define-typography-level($font-size: 45px, $line-height: 48px),
+  $headline-4: mat.m2-define-typography-level($font-size: 34px, $line-height: 40px),
+  $headline-5: mat.m2-define-typography-level($font-size: 24px, $line-height: 32px),
+  $headline-6: mat.m2-define-typography-level($font-size: 18px, $line-height: 16px,$font-weight: 700),
+  $subtitle-1: mat.m2-define-typography-level($font-size: 18px, $line-height: 28px, $font-weight: 600),
+  $subtitle-2: mat.m2-define-typography-level($font-size: 14px, $line-height: 24px, $font-weight: 400),
+  $body-2: mat.m2-define-typography-level($font-size: 16px, $font-weight: 400), 
+  $body-1: mat.m2-define-typography-level($font-size: 16px, $font-weight: 400),
+  $button: mat.m2-define-typography-level($font-size: 16px,$font-weight: 600),
+);
+
+// headline-6 -> mat-card-title/header
+// subtitle-2 -> mat-card-subtitle
