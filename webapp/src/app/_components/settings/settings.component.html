@@ -108,7 +108,12 @@
           >
 
           <div
-            style="display: flex; justify-content: start; align-items: center"
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-right: 0.5rem;
+            "
           >
             <mat-slide-toggle
               [checked]="showIss"
@@ -116,7 +121,7 @@
               (change)="toggleIss($event.checked)"
               >ISS</mat-slide-toggle
             >
-            <div mat-dialog-actions style="margin-left: 8.5rem">
+            <div mat-dialog-actions>
               <button
                 mat-raised-button
                 color="primary"
