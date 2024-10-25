@@ -15,6 +15,19 @@
   display: grid;
 }
 
+:host ::ng-deep .mat-mdc-tab-header {
+  top: 0;
+  z-index: 1000; 
+  position: sticky;
+  position: -webkit-sticky; /* macOS/iOS Safari */
+  background-color: #303030;
+}
+
+:host ::ng-deep .mat-mdc-tab-group {
+  --mat-tab-header-inactive-label-text-color: #fff;
+  --mat-tab-header-inactive-hover-label-text-color: #2196f3;
+}
+
 .cdk-overlay-container {
   z-index: 100 !important;
 }
