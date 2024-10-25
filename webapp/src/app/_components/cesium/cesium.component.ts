@@ -1279,10 +1279,24 @@ export class CesiumComponent implements OnInit {
 
     if (this.display3dMapFullscreen) {
       this.widthMap3d = '100vw';
-      if (cesiumMap) cesiumMap.style.width = '100vw';
+      if (cesiumMap) {
+        cesiumMap.style.width = '100vw';
+        cesiumMap.style.marginBottom = '0rem';
+        cesiumMap.style.marginLeft = '0rem';
+        cesiumMap.style.marginRight = '0rem';
+        cesiumMap.style.marginTop = '3.5rem';
+        cesiumMap.style.borderRadius = '0px';
+      }
     } else {
       this.widthMap3d = '40rem';
-      if (cesiumMap) cesiumMap.style.width = '40rem';
+      if (cesiumMap) {
+        cesiumMap.style.width = '40rem';
+        cesiumMap.style.marginBottom = '0.3rem';
+        cesiumMap.style.marginLeft = '0.3rem';
+        cesiumMap.style.marginRight = '0.3rem';
+        cesiumMap.style.marginTop = '3.8rem';
+        cesiumMap.style.borderRadius = '15px';
+      }
     }
   }
 
