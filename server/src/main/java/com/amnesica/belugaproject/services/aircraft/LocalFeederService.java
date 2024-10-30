@@ -62,7 +62,7 @@ public class LocalFeederService {
    * aufgerufen
    */
   @Scheduled(fixedRate = StaticValues.INTERVAL_UPDATE_LOCAL_FEEDER)
-  private void getPlanesFromFeeder() {
+  public void getPlanesFromFeeder() {
     // Hole und verarbeite Flugzeuge von jedem Feeder
     for (Feeder feeder : configuration.getListFeeder()) {
       // Breche ab, wenn aus einem Grund der Feeder null ist

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,8 +25,6 @@ import java.util.*;
 @org.springframework.context.annotation.Configuration
 public class Configuration {
 
-  @Autowired
-  private Environment environment;
   @Autowired
   private BuildProperties buildProperties;
 
@@ -190,7 +187,8 @@ public class Configuration {
 
     final String PATTERN_FORMAT = "yyyy-MM-dd HH:mm:ss";
     final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault());
-    final Instant buildTime = buildProperties.getTime();
+    Instant buildTime = buildProperties.getTime();
+    if (buildTime == null) buildTime = Instant.now();
     final String formattedBuildTime = formatter.format(buildTime);
 
     final String versionInfo =
@@ -213,11 +211,11 @@ public class Configuration {
   public FeederMapping getMappingsFromConfig(String typeFeederProperty) throws IOException {
     FeederMapping mapping = new FeederMapping();
 
-    if (configFilesDirectory == null || configFilesDirectory.isEmpty()) {
+    if (getConfigFilesDirectory() == null || getConfigFilesDirectory().isEmpty()) {
       throw new IOException("Error: Directory for config files not found.");
     }
 
-    final String pathToFeederMappings = configFilesDirectory + File.separator + "feederMappings" + File.separator;
+    final String pathToFeederMappings = getConfigFilesDirectory() + File.separator + "feederMappings" + File.separator;
 
     if (typeFeederProperty != null && !typeFeederProperty.isEmpty()) {
       Properties propsFeeder = readPropertiesFromResourcesFile(pathToFeederMappings + typeFeederProperty + ".config");
