@@ -56,7 +56,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(void 0);
     this.ngUnsubscribe.complete();
   }
 

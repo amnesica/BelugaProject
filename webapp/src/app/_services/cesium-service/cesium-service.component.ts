@@ -22,7 +22,7 @@ export class CesiumService {
   // Löschen alle Entitäten eines Flugzeugs, wenn dieses
   // nicht mehr markiert ist
   unmarkAircraft() {
-    this.unmarkAircraftSource.next();
+    this.unmarkAircraftSource.next(true);
     return this.unmarkAircraftSource;
   }
 }

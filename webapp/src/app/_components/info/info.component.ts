@@ -172,7 +172,7 @@ export class InfoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.chart != undefined) this.chart.destroy();
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(void 0);
     this.ngUnsubscribe.complete();
   }
 

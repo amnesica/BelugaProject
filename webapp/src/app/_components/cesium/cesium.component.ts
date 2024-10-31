@@ -153,7 +153,7 @@ export class CesiumComponent implements OnInit {
 
   ngOnDestroy() {
     this.destroy3dAssets();
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(void 0);
     this.ngUnsubscribe.complete();
   }
 

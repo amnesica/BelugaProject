@@ -45,7 +45,7 @@ export class AircraftTableService {
   }
 
   unselectAllPlanesInTable() {
-    this.unselectAllPlanesInTableSource.next();
+    this.unselectAllPlanesInTableSource.next(true);
     return this.unselectAllPlanesInTableSource;
   }
 }
