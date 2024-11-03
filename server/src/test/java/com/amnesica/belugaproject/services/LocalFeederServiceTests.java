@@ -15,6 +15,7 @@ import com.amnesica.belugaproject.utils.TestUtil;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -108,6 +109,38 @@ public class LocalFeederServiceTests {
       assertNotNull(aircraft.getLatitude());
       assertNotNull(aircraft.getLongitude());
     });
+  }
+
+  @Test
+  @SneakyThrows
+  void processAdsbxMlatAircraftTest() {
+    final String type = "adsbx";
+    final String fileNameJsonTestResource = "adsbx_aircraft_mlat.json";
+    final int expectedNumberAircraft = 4;
+
+    final List<Aircraft> savedAircraft = new ArrayList<>();
+    final Feeder feeder = createFeederWithMapping(type);
+
+    when(configuration.getListFeeder()).thenReturn(List.of(feeder));
+    when(networkHandler.makeServiceCallLocalFeeder(anyString())).thenReturn(getJsonResource(fileNameJsonTestResource));
+    when(aircraftRepository.existsById(anyString())).thenReturn(false);
+    when(aircraftRepository.save(any(Aircraft.class))).thenAnswer(invocation -> addSavedAircraftToList(invocation, savedAircraft));
+
+    localFeederService.getPlanesFromFeeder();
+
+    assertEquals(expectedNumberAircraft, savedAircraft.size());
+    for (int i = 0; i < savedAircraft.size(); i++) {
+      assertNotNull(savedAircraft.get(i).getHex());
+      assertNotNull(savedAircraft.get(i).getLatitude());
+      assertNotNull(savedAircraft.get(i).getLongitude());
+      assertNotNull(savedAircraft.get(i).getSourceList());
+
+      if (i == 2) {
+        assertTrue(savedAircraft.get(i).getSourceList().contains("test:adsb_icao"));
+      } else {
+        assertTrue(savedAircraft.get(i).getSourceList().contains("test:mlat"));
+      }
+    }
   }
 
   @NotNull

@@ -446,14 +446,26 @@ public class AircraftService {
       JSONArray navModesArray = element.getJSONArray(navModes);
       if (navModesArray != null && navModesArray.length() > 0) {
         String navModesString = navModesArray.toString();
-        navModesString = navModesString.replace("[","");
-        navModesString = navModesString.replace("]","");
+        navModesString = navModesString.replace("[", "");
+        navModesString = navModesString.replace("]", "");
         navModesString = navModesString.replaceAll("\"", "");
         aircraft.setNavModes(navModesString);
         aircraft.setAutopilotEngaged(true);
       }
     }
 
+    addSourceToAircraft(feeder, element, aircraft, source);
+
+    // Berechne und setze distance
+    double distance = HelperService.getDistanceBetweenPositions(aircraft.getLatitude(), aircraft.getLongitude(),
+        configuration.getLatFeeder(), configuration.getLonFeeder());
+    aircraft.setDistance(distance);
+
+    // Zustand des Flugzeugs
+    setAircraftState(aircraft);
+  }
+
+  private static void addSourceToAircraft(Feeder feeder, JSONObject element, AircraftSuperclass aircraft, String source) {
     if (source != null && element.has(source) && !element.isNull(source)) {
       if (feeder.getType().equals("fr24feeder")) {
         JSONArray mlatArray = element.getJSONArray(source);
@@ -470,14 +482,18 @@ public class AircraftService {
       // Füge source zur Liste der Quellen hinzu
       aircraft.addSourceToSourceList(feeder.getName());
     }
-
-    // Berechne und setze distance
-    double distance = HelperService.getDistanceBetweenPositions(aircraft.getLatitude(), aircraft.getLongitude(),
-        configuration.getLatFeeder(), configuration.getLonFeeder());
-    aircraft.setDistance(distance);
-
-    // Zustand des Flugzeugs
-    setAircraftState(aircraft);
+    if (feeder.getType().equals("adsbx")) {
+      if (source != null && element.has(source) && !element.isNull(source)) {
+        String type = element.getString("type");
+        aircraft.setSourceCurrentFeeder(type);
+        aircraft.addSourceToSourceList(feeder.getName());
+      } else {
+        if (element.has("mlat") && !element.isNull("mlat") && !element.getJSONArray("mlat").isEmpty()) {
+          aircraft.setSourceCurrentFeeder("mlat");
+          aircraft.addSourceToSourceList(feeder.getName());
+        }
+      }
+    }
   }
 
   /**
