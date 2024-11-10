@@ -7,13 +7,10 @@ import { Feeder } from '../../_classes/feeder';
 })
 export class SettingsService {
   // Observable sources
-  private timesAsTimestampsSource = new Subject<number[]>();
-  private toggleHideRangeDataSource = new Subject<boolean>();
-  private toggleMarkRangeDataByFeederSource = new Subject<boolean>();
-  private toggleMarkRangeDataByHeightSource = new Subject<boolean>();
+  private toggleMarkOutlineDataByFeederSource = new Subject<boolean>();
+  private toggleMarkOutlineDataByHeightSource = new Subject<boolean>();
   private toggleShowAircraftLabelsSource = new Subject<boolean>();
   private listFeederSource = new Subject<Feeder[]>();
-  private selectedFeederSource = new Subject<string[]>();
   private appNameAndVersionSource = new Subject<string[]>();
   private selectedFeederUpdateSource = new Subject<string[]>();
   private showAirportsSource = new Subject<boolean>();
@@ -51,16 +48,13 @@ export class SettingsService {
   private nominatimFetchedCoordinatesSource = new Subject<any>();
 
   // Observable streams
-  timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
-  toggleHideRangeData$ = this.toggleHideRangeDataSource.asObservable();
-  toggleMarkRangeDataByFeeder$ =
-    this.toggleMarkRangeDataByFeederSource.asObservable();
-  toggleMarkRangeDataByHeight$ =
-    this.toggleMarkRangeDataByHeightSource.asObservable();
+  toggleMarkOutlineDataByFeeder$ =
+    this.toggleMarkOutlineDataByFeederSource.asObservable();
+  toggleMarkOutlineDataByHeight$ =
+    this.toggleMarkOutlineDataByHeightSource.asObservable();
   toggleShowAircraftLabels$ =
     this.toggleShowAircraftLabelsSource.asObservable();
   listFeeder$ = this.listFeederSource.asObservable();
-  selectedFeeder$ = this.selectedFeederSource.asObservable();
   appNameAndVersion$ = this.appNameAndVersionSource.asObservable();
   selectedFeederUpdate$ = this.selectedFeederUpdateSource.asObservable();
   showAirportsUpdate$ = this.showAirportsSource.asObservable();
@@ -107,28 +101,14 @@ export class SettingsService {
 
   constructor() {}
 
-  showRangeDataBetweenTimestamps(
-    selectedFeederRangeData: string[],
-    timesAsTimestamps: number[]
-  ) {
-    this.timesAsTimestampsSource.next(timesAsTimestamps);
-    this.selectedFeederSource.next(selectedFeederRangeData);
-    return this.timesAsTimestampsSource;
+  toggleMarkOutlineDataByFeeder(markOutlineDataByFeeder: boolean) {
+    this.toggleMarkOutlineDataByFeederSource.next(markOutlineDataByFeeder);
+    return this.toggleMarkOutlineDataByFeederSource;
   }
 
-  toggleHideRangeData(hideRangeData: boolean) {
-    this.toggleHideRangeDataSource.next(hideRangeData);
-    return this.toggleHideRangeDataSource;
-  }
-
-  toggleMarkRangeDataByFeeder(markRangeDataByFeeder: boolean) {
-    this.toggleMarkRangeDataByFeederSource.next(markRangeDataByFeeder);
-    return this.toggleMarkRangeDataByFeederSource;
-  }
-
-  toggleMarkRangeDataByHeight(markRangeDataByHeight: boolean) {
-    this.toggleMarkRangeDataByHeightSource.next(markRangeDataByHeight);
-    return this.toggleMarkRangeDataByHeightSource;
+  toggleMarkOutlineDataByHeight(markOutlineDataByHeight: boolean) {
+    this.toggleMarkOutlineDataByHeightSource.next(markOutlineDataByHeight);
+    return this.toggleMarkOutlineDataByHeightSource;
   }
 
   toggleAircraftLabels(showAircraftLabels: boolean) {
@@ -139,11 +119,6 @@ export class SettingsService {
   sendReceiveListFeeder(listFeeder: Feeder[]) {
     this.listFeederSource.next(listFeeder);
     return this.listFeederSource;
-  }
-
-  selectRangeDataByFeeder(selectedFeederArray: string[]) {
-    this.selectedFeederSource.next(selectedFeederArray);
-    return this.selectedFeederSource;
   }
 
   sendReceiveAppNameAndVersion(appNameAndVersion: string[]) {

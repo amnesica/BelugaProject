@@ -395,184 +395,25 @@
     <!-- Tab Statistik-Eintellungen -->
     <mat-tab label="Statistics">
       <div style="padding: 0.5rem">
-        <h3 class="h3">Range Data</h3>
-        <!-- Toggle, um RangeData aus- oder einzublenden (initial disabled) -->
+        <h3 class="h3">Actual Range Outline</h3>
+        <!-- Toggle, um Outline-Data nach Feeder farblich anzuzeigen-->
         <div>
           <mat-slide-toggle
-            [disabled]="disableRangeData"
-            [checked]="hideRangeData"
+            [checked]="markOutlineDataByFeeder"
             (click)="$event.stopPropagation()"
-            (change)="toggleHideRangeData($event)"
-            >Hide range data</mat-slide-toggle
+            (change)="toggleMarkOutlineDataByFeeder($event)"
+            >Mark outline data by feeder</mat-slide-toggle
           >
         </div>
 
-        <!-- Toggle, um RangeData nach Feeder farblich anzuzeigen-->
+        <!-- Toggle, um Outline-Data nach Höhe farblich anzuzeigen-->
         <div>
           <mat-slide-toggle
-            [checked]="markRangeDataByFeeder"
+            [checked]="markOutlineDataByHeight"
             (click)="$event.stopPropagation()"
-            (change)="toggleMarkRangeDataByFeeder($event)"
-            >Mark range data by feeder</mat-slide-toggle
+            (change)="toggleMarkOutlineDataByHeight($event)"
+            >Mark outline data by height</mat-slide-toggle
           >
-        </div>
-
-        <!-- Toggle, um RangeData nach Höhe farblich anzuzeigen-->
-        <div>
-          <mat-slide-toggle
-            [checked]="markRangeDataByHeight"
-            (click)="$event.stopPropagation()"
-            (change)="toggleMarkRangeDataByHeight($event)"
-            >Mark range data by height</mat-slide-toggle
-          >
-        </div>
-
-        <!-- Select, um Range Data nach Feeder zu selektieren -->
-        <div style="display: flex; justify-content: center">
-          <mat-form-field appearance="fill">
-            <mat-label>Select range data by feeder</mat-label>
-            <mat-select
-              [(ngModel)]="selectedFeederRangeData"
-              (selectionChange)="selectRangeDataByFeeder()"
-              multiple
-            >
-              <mat-option *ngFor="let feeder of listFeeder" [value]="feeder">{{
-                feeder.name
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <mat-divider></mat-divider>
-
-        <!-- Info-Text -->
-        <p class="info-text">
-          Please specify the desired period for which the range data should be
-          displayed
-        </p>
-
-        <h4 class="h4">Selected times:</h4>
-        <p
-          *ngIf="timesAsDateStrings && timesAsDateStrings[0]"
-          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
-        >
-          StartTime: {{ timesAsDateStrings[0] }}
-        </p>
-        <p
-          *ngIf="timesAsDateStrings && timesAsDateStrings[1]"
-          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
-        >
-          EndTime: {{ timesAsDateStrings[1] }}
-        </p>
-        <p
-          *ngIf="!timesAsDateStrings"
-          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
-        >
-          StartTime: /
-        </p>
-        <p
-          *ngIf="!timesAsDateStrings"
-          style="margin-top: 0.2rem; margin-bottom: 0.2rem"
-        >
-          EndTime: /
-        </p>
-
-        <h4 class="h4">Predefined times:</h4>
-
-        <!-- Button-Toggles, um vordefinierte Zeiträume für die Range Data auszuwählen -->
-        <div style="display: flex; justify-content: center">
-          <button
-            mat-raised-button
-            color="primary"
-            class="button-rounded"
-            style="margin-right: 0.5rem"
-            value="current-hour"
-            (click)="showRangeDataLastHour()"
-          >
-            Last Hour
-          </button>
-          <button
-            mat-raised-button
-            color="primary"
-            class="button-rounded"
-            style="margin-right: 0.5rem"
-            (click)="showRangeDataToday()"
-          >
-            Today
-          </button>
-          <button
-            mat-raised-button
-            color="primary"
-            class="button-rounded"
-            (click)="showRangeDataLastSevenDays()"
-          >
-            Last 7 Days
-          </button>
-        </div>
-
-        <h4 class="h4">Pick your own time slot:</h4>
-
-        <!-- Picker, um Start- und Endzeit für die Zeitspanne der
-          anzuzeigenden Range Data auszuwählen -->
-        <div class="time-picker">
-          <!-- Starttime -->
-          <mat-form-field>
-            <mat-label>Starttime</mat-label>
-            <mtx-datetimepicker
-              #datetimeStart
-              [type]="type"
-              [mode]="mode"
-              [multiYearSelector]="multiYearSelector"
-              [startView]="startView"
-              [twelvehour]="twelvehour"
-              [timeInterval]="timeInterval"
-              [touchUi]="touchUi"
-              [timeInput]="timeInput"
-              (selectedChanged)="selectedStarttime = $event"
-            ></mtx-datetimepicker>
-            <input [mtxDatetimepicker]="datetimeStart" matInput required />
-            <mtx-datetimepicker-toggle
-              [for]="datetimeStart"
-              matSuffix
-            ></mtx-datetimepicker-toggle>
-          </mat-form-field>
-        </div>
-
-        <div class="time-picker">
-          <!-- Endtime -->
-          <mat-form-field>
-            <mat-label>Endtime</mat-label>
-            <mtx-datetimepicker
-              #datetimeEnd
-              [type]="type"
-              [mode]="mode"
-              [multiYearSelector]="multiYearSelector"
-              [startView]="startView"
-              [twelvehour]="twelvehour"
-              [timeInterval]="timeInterval"
-              [touchUi]="touchUi"
-              [timeInput]="timeInput"
-              (selectedChanged)="selectedEndtime = $event"
-            ></mtx-datetimepicker>
-            <input [mtxDatetimepicker]="datetimeEnd" matInput required />
-            <mtx-datetimepicker-toggle
-              [for]="datetimeEnd"
-              matSuffix
-            ></mtx-datetimepicker-toggle>
-          </mat-form-field>
-        </div>
-
-        <!-- Submit chosen date and time -->
-        <div mat-dialog-actions>
-          <button
-            mat-raised-button
-            color="primary"
-            class="button-rounded"
-            style="margin-left: 0.5rem; margin-top: 0.2rem"
-            (click)="showRangeDataBetweenCustomTimestamps()"
-          >
-            Show data
-          </button>
         </div>
 
         <mat-divider style="margin-bottom: 0"></mat-divider>

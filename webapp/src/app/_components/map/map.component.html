@@ -91,30 +91,35 @@
     </div>
   </mat-card>
 
-  <!-- Popup für RangeData -->
+  <!-- Popup für Outline-Data -->
   <mat-card
-    id="rangeDataPopup"
-    [style.bottom]="rangeDataPopupBottomValue"
+    id="outlineDataPopup"
+    [style.bottom]="outlineDataPopupBottomValue"
     [ngClass]="
       (isDark$ | async) === true
         ? 'background-and-color-dark'
         : 'background-and-color-light'
     "
   >
-    <div *ngIf="showPopupRangeDataPoint && rangeDataPoint">
-      <mat-card-header id="rangeDatPopupHeader">
+    <div *ngIf="showOutlinePointPopup && outlineDataPoint">
+      <mat-card-header id="outlineDataPopupHeader">
         <!-- flightId -->
-        <mat-card-title *ngIf="rangeDataPoint.flightId" style="color: #ffab40">
-          {{ rangeDataPoint.flightId }}
+        <mat-card-title
+          *ngIf="outlineDataPoint.flightId"
+          style="color: #ffab40"
+        >
+          {{ outlineDataPoint.flightId }}
         </mat-card-title>
         <!-- hex -->
-        <mat-card-subtitle *ngIf="rangeDataPoint.hex" style="color: #d5d5d5">{{
-          rangeDataPoint.hex
-        }}</mat-card-subtitle>
+        <mat-card-subtitle
+          *ngIf="outlineDataPoint.hex"
+          style="color: #d5d5d5"
+          >{{ outlineDataPoint.hex }}</mat-card-subtitle
+        >
       </mat-card-header>
 
       <table>
-        <ng-container *ngFor="let item of rangeDataPoint.attributes">
+        <ng-container *ngFor="let item of outlineDataPoint.attributes">
           <tr
             [ngClass]="
               (isDark$ | async) === true

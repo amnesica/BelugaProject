@@ -1,5 +1,4 @@
 @use "@angular/material" as mat;
-@use "@ng-matero/extensions" as matx;
 @use "./all" as themes;
 
 .dark-theme {
@@ -19,5 +18,4 @@
   @include mat.card-color(themes.$my-app-dark-theme);
   @include mat.table-color(themes.$my-app-dark-theme);
   @include mat.snack-bar-color(themes.$my-app-dark-theme);
-  @include matx.all-component-themes(themes.$my-app-dark-theme);
 }

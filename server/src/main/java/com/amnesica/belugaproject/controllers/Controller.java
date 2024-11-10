@@ -2,7 +2,6 @@ package com.amnesica.belugaproject.controllers;
 
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.data.AirportData;
-import com.amnesica.belugaproject.entities.data.RangeData;
 import com.amnesica.belugaproject.entities.ships.Ship;
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;
 import com.amnesica.belugaproject.entities.trails.SpacecraftTrail;
@@ -48,8 +47,6 @@ public class Controller {
 
   @Autowired
   private AirportDataService airportDataService;
-  @Autowired
-  private RangeDataService rangeDataService;
   @Autowired
   private HistoryAircraftService historyAircraftService;
 
@@ -195,21 +192,6 @@ public class Controller {
   public @ResponseBody
   List<List<AircraftTrail>> getAllTrails() {
     return aircraftTrailService.getAllTrailsFromLastHour();
-  }
-
-  /**
-   * Gibt eine Liste mit Range-Data, Start- und Endpunkt von Flugzeugen,
-   * welche in dem Zeitslot empfangen wurden
-   *
-   * @param startTime long
-   * @param endTime   long
-   * @return List<RangeData>
-   */
-  @GetMapping(value = "/getRangeDataBetweenTimestamps", produces = "application/json")
-  public @ResponseBody
-  List<RangeData> getRangeDataBetweenTimestamps(
-      @RequestParam(value = "startTime") long startTime, @RequestParam(value = "endTime") long endTime) {
-    return rangeDataService.getRangeDataBetweenTimestamps(startTime, endTime);
   }
 
   /**

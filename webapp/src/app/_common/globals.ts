@@ -126,14 +126,6 @@ export class Globals {
   static urlGetAircraftData =
     'http://' + Globals.serverUrl + ':8080/getAllAircraftData';
 
-  // URL zum Server zum Senden des Flugzeugs für die Range-Daten
-  static urlPostRangeData: string =
-    'http://' + Globals.serverUrl + ':8080/postRangeData';
-
-  // URL zum Server zum Holen von Range-Daten zwischen einem bestimmten Zeitraum
-  static urlGetRangeDataBetweenTimestamps: string =
-    'http://' + Globals.serverUrl + ':8080/getRangeDataBetweenTimestamps';
-
   // URL zum Server zum Holen von Konfigurations-Variablen
   static urlGetConfigurationData: string =
     'http://' + Globals.serverUrl + ':8080/getConfigurationData';

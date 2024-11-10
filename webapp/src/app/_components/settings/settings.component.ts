@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
-  Input,
   OnInit,
 } from '@angular/core';
 import { MatSlideToggleChange as MatSlideToggleChange } from '@angular/material/slide-toggle';
@@ -16,16 +15,6 @@ import { ServerService } from 'src/app/_services/server-service/server-service.s
 import { environment } from 'src/environments/environment';
 import { Globals } from 'src/app/_common/globals';
 import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
-import {
-  MtxCalendarView,
-  MtxDatetimepickerMode,
-  MtxDatetimepickerType,
-} from '@ng-matero/extensions/datetimepicker';
-import {
-  DatetimeAdapter,
-  MTX_DATETIME_FORMATS,
-} from '@ng-matero/extensions/core';
-import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
 import { slideInOutRight } from 'src/app/_common/animations';
 import { Feeder } from 'src/app/_classes/feeder';
 import { Storage } from 'src/app/_classes/storage';
@@ -40,89 +29,24 @@ export interface DialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss'],
-  providers: [
-    {
-      provide: DatetimeAdapter,
-      useClass: MomentDatetimeAdapter,
-    },
-    {
-      provide: MTX_DATETIME_FORMATS,
-      useValue: {
-        parse: {
-          dateInput: 'YYYY-MM-DD',
-          monthInput: 'MMMM',
-          yearInput: 'YYYY',
-          timeInput: 'HH:mm',
-          datetimeInput: 'YYYY-MM-DD HH:mm',
-        },
-        display: {
-          dateInput: 'YYYY-MM-DD',
-          monthInput: 'MMMM',
-          yearInput: 'YYYY',
-          timeInput: 'HH:mm',
-          datetimeInput: 'YYYY-MM-DD HH:mm',
-          monthYearLabel: 'YYYY MMMM',
-          dateA11yLabel: 'LL',
-          monthYearA11yLabel: 'MMMM YYYY',
-          popupHeaderDateLabel: 'MMM DD, ddd',
-        },
-      },
-    },
-  ],
+  providers: [],
   animations: [slideInOutRight],
 })
 export class SettingsComponent implements OnInit {
-  // Boolean, ob RangeData versteckt werden soll
-  @Input() hideRangeData: boolean = false;
-
   // Boolean, ob Settings angezeigt werden sollen
   showSettingsDiv = false;
 
   // Breite der Settings
   settingsDivWidth: string | undefined;
 
-  // Boolean, ob alle Range Data vom Server angezeigt werden soll
-  isCheckedShowAllRange = false;
-
   // Boolean, ob Anwendung im Desktop-Modus ist
   isDesktop: boolean | undefined;
 
-  // Boolean, ob RangeData nach Feedern angezeigt werden soll
-  markRangeDataByFeeder: boolean = false;
+  // Boolean, ob Outline-Data nach Feedern angezeigt werden soll
+  markOutlineDataByFeeder: boolean = false;
 
-  // Boolean, ob RangeData nach Höhe angezeigt werden soll
-  markRangeDataByHeight: boolean = false;
-
-  // Boolean, ob Toggle-Switch "hideRangeData" disabled angezeigt werden soll
-  disableRangeData: boolean = true;
-
-  // String-Array für Ergebnis aus DateTimePickern
-  times: Date[] = [];
-
-  // Referenz zu DialogCustomRangeDataComponent
-  dialogRef;
-
-  // STartzeit vom Datetimepicker
-  @Input() selectedStarttime: Date | null | undefined;
-
-  // STartzeit vom Datetimepicker
-  @Input() selectedEndtime: Date | null | undefined;
-
-  // Einstellungen für Datetime-Picker
-  type: MtxDatetimepickerType = 'datetime';
-  mode: MtxDatetimepickerMode = 'auto';
-  startView: MtxCalendarView = 'month';
-  multiYearSelector = false;
-  touchUi = false;
-  twelvehour = false;
-  timeInterval = 1;
-  timeInput = true;
-
-  datetimeStart = new UntypedFormControl();
-  datetimeEnd = new UntypedFormControl();
-
-  // Ausgewählte Start- und Endzeit als DateString zur Anzeige im FrontEnd
-  timesAsDateStrings: String[] | undefined;
+  // Boolean, ob Outline-Data nach Höhe angezeigt werden soll
+  markOutlineDataByHeight: boolean = false;
 
   // Booleans für Toggles (mit Default-Werten, wenn nötig)
   showAircraftLabels: boolean = false;
@@ -133,17 +57,11 @@ export class SettingsComponent implements OnInit {
   showAircraftPositions: boolean = true;
   showOnlyMilitaryPlanes: boolean = false;
 
-  // Boolean, ob Range Data verbunden angezeigt werden soll
-  showFilteredRangeDatabyFeeder: boolean | undefined;
-
   // Liste an Feeder (Verlinkung zu Globals, enthält 'All Feeder'-Feeder)
   listFeeder: any;
 
   // Ausgewählte Feeder in Multi-Select
   selectedFeeder: Feeder[] = [];
-
-  // Ausgewählte Feeder für Range Data in Multi-Select
-  selectedFeederRangeData: Feeder[] = [];
 
   // App-Name
   appName: any;
@@ -181,8 +99,6 @@ export class SettingsComponent implements OnInit {
 
   // Boolean, ob Opensky-Credentials existieren, wenn nicht disable switch
   openskyCredentialsExist: boolean = false;
-
-  private ngUnsubscribe = new Subject();
 
   // Boolean, ob Rainviewer (Rain) Daten angezeigt werden sollen
   rainViewerRain: boolean = false;
@@ -240,6 +156,8 @@ export class SettingsComponent implements OnInit {
 
   themeManager = inject(ThemeManager);
   isDark$ = this.themeManager.isDark$;
+
+  private ngUnsubscribe = new Subject();
 
   constructor(
     public settingsService: SettingsService,
@@ -376,7 +294,6 @@ export class SettingsComponent implements OnInit {
 
         // Füge default-Liste an Feedern hinzu
         this.selectedFeeder.push(...listFeeder);
-        this.selectedFeederRangeData.push(...listFeeder);
 
         // Map ist fertig mit Initialisierung -> setze Default-werte
         this.setSettingsFromLocalStorage();
@@ -433,55 +350,6 @@ export class SettingsComponent implements OnInit {
   }
 
   /**
-   * Methode erstellt ein Array mit Timestamps aus der bestimmten
-   * Start- und EndZeit und ruft Methode zum Senden dieser an die
-   * Map-Komponente auf. Methode wird durch Button "Show Data"
-   * aufgerufen
-   */
-  showRangeDataBetweenCustomTimestamps() {
-    if (this.selectedStarttime && this.selectedEndtime) {
-      // Wandle Dates in timestamps um
-      let timesAsTimestamps = [
-        new Date(this.selectedStarttime).getTime(),
-        new Date(this.selectedEndtime).getTime(),
-      ];
-
-      this.showRangeDataBetweenTimestamps(timesAsTimestamps);
-    }
-  }
-
-  /**
-   * Zeigt RangeData eines bestimmten Zeitraumes an
-   */
-  showRangeDataBetweenTimestamps(timesAsTimestampsArray: number[]) {
-    if (timesAsTimestampsArray[0] && timesAsTimestampsArray[1]) {
-      // Enable Toggle-Switch "hideRangeData"
-      this.disableRangeData = false;
-
-      // Zeige ausgewählte Zeit formatiert im FrontEnd an
-      this.timesAsDateStrings = [
-        new Date(timesAsTimestampsArray[0]).toLocaleDateString() +
-          ' ' +
-          new Date(timesAsTimestampsArray[0]).toLocaleTimeString(),
-        new Date(timesAsTimestampsArray[1]).toLocaleDateString() +
-          ' ' +
-          new Date(timesAsTimestampsArray[1]).toLocaleTimeString(),
-      ];
-
-      let selectedFeederNames = this.getNamesOfSelectedFeeder(
-        this.selectedFeederRangeData
-      );
-
-      // Kontaktiere Map-Komponente, damit Server-Aufruf
-      // gemacht wird mit Start- und Endzeit
-      this.settingsService.showRangeDataBetweenTimestamps(
-        selectedFeederNames,
-        timesAsTimestampsArray
-      );
-    }
-  }
-
-  /**
    * Methode zeigt oder versteckt die Labels der Flugzeuge
    * @param checked: boolean
    */
@@ -497,128 +365,42 @@ export class SettingsComponent implements OnInit {
     this.settingsService.toggleAircraftLabels(this.showAircraftLabels);
   }
 
-  /**
-   * Methode zeigt oder versteckt die RangeData
-   * @param event MatSlideToggleChange
-   */
-  toggleHideRangeData(event: MatSlideToggleChange) {
-    this.hideRangeData = event.checked;
-
-    // Kontaktiere Map-Component und übergebe hideRangeData-Boolean
-    this.settingsService.toggleHideRangeData(this.hideRangeData);
-  }
-
-  /**
-   * Methode markiert die RangeData farblich nach den Feedern
-   * @param event MatSlideToggleChange
-   */
-  toggleMarkRangeDataByFeeder(event: MatSlideToggleChange) {
-    this.markRangeDataByFeeder = event.checked;
+  toggleMarkOutlineDataByFeeder(event: MatSlideToggleChange) {
+    this.markOutlineDataByFeeder = event.checked;
 
     // Unchecke den Button "Filter by Height" und sorge für eine
     // Default-Ausgangsbasis, indem die Points wieder auf Default
     // zurückgesetzt werden. Nur ein Toggle-Switch ist zur Zeit aktiv
     // (a little hacky)
-    if (this.markRangeDataByHeight) {
-      this.toggleMarkRangeDataByHeight(
+    if (this.markOutlineDataByHeight) {
+      this.toggleMarkOutlineDataByHeight(
         new MatSlideToggleChange(event.source, !event.checked)
       );
     }
 
-    // Kontaktiere Map-Component und übergebe
-    // isCheckedFilterRangeDataByFeeder-Boolean
-    this.settingsService.toggleMarkRangeDataByFeeder(
-      this.markRangeDataByFeeder
+    // Kontaktiere Map-Component und übergebe boolean
+    this.settingsService.toggleMarkOutlineDataByFeeder(
+      this.markOutlineDataByFeeder
     );
   }
 
-  /**
-   * Methode zeigt die RangeData der laufenden Stunde an
-   */
-  showRangeDataLastHour() {
-    let startTime;
-    let endTime;
-
-    // Bestimme aktuelle Zeit
-    let currentDate = new Date();
-
-    // Erstelle Start- und EndZeit
-    startTime = currentDate.setHours(currentDate.getHours() - 1);
-    endTime = currentDate.setHours(currentDate.getHours() + 1);
-
-    this.showRangeDataBetweenTimestamps([startTime, endTime]);
-  }
-
-  /**
-   * Methode zeigt die RangeData des aktuellen Tages an
-   */
-  showRangeDataToday() {
-    let startTime;
-    let endTime;
-
-    // Bestimme aktuelle Zeit
-    let currentDate = new Date();
-
-    // Erstelle Start- und EndZeit
-    startTime = currentDate.setHours(0, 0, 0);
-    endTime = currentDate.setHours(23, 59, 59);
-
-    this.showRangeDataBetweenTimestamps([startTime, endTime]);
-  }
-
-  /**
-   * Methode zeigt die RangeData der letzten 7 Tage an
-   */
-  showRangeDataLastSevenDays() {
-    let startTime;
-    let endTime;
-
-    // Bestimme aktuelle Zeit
-    let currentDate = new Date();
-
-    // Erstelle Start- und EndZeit
-    endTime = currentDate.getTime();
-    startTime = new Date(
-      currentDate.setDate(currentDate.getDate() - 7)
-    ).getTime();
-
-    this.showRangeDataBetweenTimestamps([startTime, endTime]);
-  }
-
-  /**
-   * Methode markiert die RangeData nach der Höhe
-   * @param event MatSlideToggleChange
-   */
-  toggleMarkRangeDataByHeight(event: MatSlideToggleChange) {
-    this.markRangeDataByHeight = event.checked;
+  toggleMarkOutlineDataByHeight(event: MatSlideToggleChange) {
+    this.markOutlineDataByHeight = event.checked;
 
     // Unchecke den Button "Filter by Feeder" und sorge für eine
     // Default-Ausgangsbasis, indem die Points wieder auf Default
     // zurückgesetzt werden. Nur ein Toggle-Switch ist zur Zeit aktiv
     // (a little hacky)
-    if (this.markRangeDataByFeeder) {
-      this.toggleMarkRangeDataByFeeder(
+    if (this.markOutlineDataByFeeder) {
+      this.toggleMarkOutlineDataByFeeder(
         new MatSlideToggleChange(event.source, !event.checked)
       );
     }
 
-    // Kontaktiere Map-Component und übergebe
-    // filterRangeDataByHeight-Boolean
-    this.settingsService.toggleMarkRangeDataByHeight(
-      this.markRangeDataByHeight
+    // Kontaktiere Map-Component und übergebe boolean
+    this.settingsService.toggleMarkOutlineDataByHeight(
+      this.markOutlineDataByHeight
     );
-  }
-
-  /**
-   * Zeige Range Data der selektierten Feeder an
-   */
-  selectRangeDataByFeeder() {
-    let selectedFeederNames = this.getNamesOfSelectedFeeder(
-      this.selectedFeederRangeData
-    );
-
-    // Kontaktiere Map-Component und übergebe selectFeeder-Name
-    this.settingsService.selectRangeDataByFeeder(selectedFeederNames);
   }
 
   /**

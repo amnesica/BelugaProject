@@ -137,31 +137,6 @@ export class ServerService {
   }
 
   /**
-   * Methode ruft alle RangeData-Einträge zwischen einer Start- und
-   * einer Endzeit vom Server ab (Server-Aufruf)
-   */
-  getRangeDataBetweenTimestamps(
-    startTime: number,
-    endTime: number
-  ): Observable<any> {
-    // Initialiere Params-Objekt
-    let params = new HttpParams();
-
-    // Weise Parameter zu
-    params = params.append('startTime', startTime.toString());
-    params = params.append('endTime', endTime.toString());
-
-    let response = this.httpClient.get(
-      Globals.urlGetRangeDataBetweenTimestamps,
-      {
-        params: params,
-      }
-    );
-
-    return response;
-  }
-
-  /**
    * Methode holt benötigte Konfigurations-Variablen vom Server (Server-Aufruf)
    */
   getConfigurationData(): any {

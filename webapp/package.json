@@ -20,8 +20,6 @@
     "@angular/platform-browser": "^18.2.10",
     "@angular/platform-browser-dynamic": "^18.2.10",
     "@angular/router": "^18.2.10",
-    "@ng-matero/extensions": "^18.2.4",
-    "@ng-matero/extensions-moment-adapter": "^18.0.0",
     "apexcharts": "^3.54.1",
     "arc": "^0.1.1",
     "cesium": "^1.122.0",

@@ -8,7 +8,6 @@ import com.amnesica.belugaproject.entities.data.AirportData;
 import com.amnesica.belugaproject.repositories.aircraft.AircraftRepository;
 import com.amnesica.belugaproject.services.data.AircraftDataService;
 import com.amnesica.belugaproject.services.data.AirportDataService;
-import com.amnesica.belugaproject.services.data.RangeDataService;
 import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
 import com.amnesica.belugaproject.services.trails.AircraftTrailService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +41,6 @@ public class LocalFeederService {
   private AircraftTrailService aircraftTrailService;
   @Autowired
   private AirportDataService airportDataService;
-  @Autowired
-  private RangeDataService rangeDataService;
 
   @Autowired
   private AircraftRepository aircraftRepository;
@@ -121,9 +118,6 @@ public class LocalFeederService {
     // Füge Timestamp als Zeitpunkt des letzten Updates an
     aircraftNew.setLastUpdate(System.currentTimeMillis());
 
-    // Erstelle Range-Data Eintrag (Flugzeug empfangen!)
-    rangeDataService.createAndSaveRangeDataEntry(aircraftNew);
-
     // Speichere Trail
     aircraftTrailService.addTrail(aircraftNew, feeder.getName());
 
@@ -191,12 +185,9 @@ public class LocalFeederService {
         .findAllByLastUpdateLessThanEqual(startTime);
 
     if (listPlanesNotUpdated != null) {
-      // Erstelle Range-Date Eintrag (Flugzeug verloren!) und
-      // lösche Daten der planespotters.net API, damit diese
+      // Lösche Daten der planespotters.net API, damit diese
       // nicht länger als 24h in der Db gespeichert werden
       for (Aircraft aircraft : listPlanesNotUpdated) {
-        rangeDataService.createAndSaveRangeDataEntry(aircraft);
-
         aircraft.setUrlPhotoDirect(null);
         aircraft.setUrlPhotoWebsite(null);
         aircraft.setPhotoPhotographer(null);

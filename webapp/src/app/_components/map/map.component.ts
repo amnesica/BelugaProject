@@ -80,9 +80,6 @@ export class MapComponent implements OnInit {
   // Layer für die OSM Map
   osmLayer: any;
 
-  // Layer für Range Data
-  rangeDataLayer!: VectorLayer;
-
   // Entfernungs-Ringe und Feeder-Position als Features
   StaticFeatures = new Vector();
 
@@ -100,9 +97,6 @@ export class MapComponent implements OnInit {
 
   // Route als Kurve zum Zielort als Features
   RouteFeatures = new Vector();
-
-  // RangeData als Features
-  RangeDataFeatures = new Vector();
 
   // Objekt mit allen Flugzeugen
   Planes: { [hex: string]: Aircraft } = {};
@@ -172,48 +166,31 @@ export class MapComponent implements OnInit {
   public topValue = 60;
   public leftValue = 40;
 
-  // RangeData vom Server
-  rangeDataJSON: any;
+  // Aktuell angeklickter OutlineDataPoint (Feature)
+  outlineDataPoint: any;
 
-  // Aktuell angeklickter RangeDataPoint (Feature)
-  rangeDataPoint: any;
-
-  // Boolean, ob Popup für RangeDataPoint angezeigt
+  // Boolean, ob Popup für OutlineDataPoint angezeigt
   // werden soll nach Klick
-  showPopupRangeDataPoint: boolean = false;
+  showOutlinePointPopup: boolean = false;
 
-  // Positionswerte für das Popup zum Anzeigen der
-  // RangeData-Informationen
-  leftValueRangeData!: number;
-  topValueRangeData!: number;
+  // Popup für Outline-Data
+  outlineDataPopup: any;
 
-  // Popup für RangeData-Punkte
-  rangeDataPopup: any;
+  // Boolean, ob Outline-Data nach Feeder farblich sortiert sein soll
+  markOutlinePointsByFeeder: boolean = false;
 
-  // Number-Array mit Timestamps (startTime, endTime)
-  datesCustomRangeData!: number[];
+  // Boolean, ob Outline-Data nach Höhe farblich sortiert sein soll
+  markOutlinePointsByHeight: boolean = false;
 
-  // Boolean, ob RangeData nach Feeder farblich sortiert sein soll
-  markRangeDataByFeeder: boolean = false;
-
-  // Boolean, ob RangeData nach Höhe farblich sortiert sein soll
-  markRangeDataByHeight: boolean = false;
-
-  // Bottom-Wert für RangeDataPopup
+  // Bottom-Wert für Outline-Data-Popup
   // (wenn dieser angezeigt wird, soll dieser auf 10px gesetzt werden)
-  rangeDataPopupBottomValue: any = 0;
-
-  // Selektierte Feeder, nachdem Range Data selektiert werden soll
-  selectedFeederRangeData: string[] = [];
+  outlineDataPopupBottomValue: any = 0;
 
   // Layer für WebGL-Features
   webglLayer: WebGLPoints<VectorSource<FeatureLike>> | undefined;
 
   // Boolean, ob POMD-Point angezeigt werden soll
   showPOMDPoint: boolean = false;
-
-  // Boolean, ob Range-Data sichtbar ist
-  rangeDataIsVisible: boolean = true;
 
   // Alte Kartenposition und Zoomlevel, wenn ISS im Zentrum angezeigt werden soll
   oldISSCenterPosition: any;
@@ -471,7 +448,6 @@ export class MapComponent implements OnInit {
         );
       }
       this.selectedFeederUpdate = this.listFeeder.map((f) => f.name);
-      this.selectedFeederRangeData = this.listFeeder.map((f) => f.name);
     }
 
     // Setze Geoapify-API-Key (nicht mandatory)
@@ -554,7 +530,7 @@ export class MapComponent implements OnInit {
   }
 
   private initSubscriptions() {
-    this.initRangeDataSubscriptions();
+    this.initOutlineDataSubscriptions();
     this.initDataAndVisibilitySubscriptions();
     this.initMapToggleSubscriptions();
     this.initWeatherSubscriptions();
@@ -708,13 +684,6 @@ export class MapComponent implements OnInit {
   }
 
   private initDataAndVisibilitySubscriptions() {
-    // Filtere Range-Data nach selektiertem Feeder
-    this.settingsService.selectedFeeder$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((selectedFeederArray) =>
-        this.filterRangeDataBySelectedFeeder(selectedFeederArray)
-      );
-
     // Markiere/Entmarkiere ein Flugzeug, wenn es in der Tabelle ausgewählt wurde
     this.aircraftTableService.hexMarkUnmarkAircraft$
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -761,40 +730,26 @@ export class MapComponent implements OnInit {
       );
   }
 
-  private initRangeDataSubscriptions() {
-    // Zeige Range-Data zwischen Zeitstempeln
-    this.settingsService.timesAsTimestamps$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((timesAsTimestamps) =>
-        this.showCustomRangeData(timesAsTimestamps)
-      );
-
-    // Toggle verstecke Range-Data
-    this.settingsService.toggleHideRangeData$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((toggleHideRangeData) =>
-        this.toggleRangeData(toggleHideRangeData)
-      );
-
-    // Toggle markiere Range-Data nach Feeder
-    this.settingsService.toggleMarkRangeDataByFeeder$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((toggleMarkRangeDataByFeeder) =>
-        this.toggleFilterRangeDataByFeeder(toggleMarkRangeDataByFeeder)
-      );
-
-    // Toggle markiere Range-Data nach Höhe
-    this.settingsService.toggleMarkRangeDataByHeight$
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((toggleMarkRangeDataByHeight) =>
-        this.toggleFilterRangeDataByHeight(toggleMarkRangeDataByHeight)
-      );
-
+  private initOutlineDataSubscriptions() {
     // Toggle actual range outline
     this.settingsService.showActualRangeOutlineSource$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showActualRangeOutline) =>
         this.toggleActualRangeOutline(showActualRangeOutline)
+      );
+
+    // Toggle markiere Outline-Data nach Feeder
+    this.settingsService.toggleMarkOutlineDataByFeeder$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((toggleMarkOutlineDataByFeeder) =>
+        this.toggleMarkOutlineDataByFeeder(toggleMarkOutlineDataByFeeder)
+      );
+
+    // Toggle markiere Outline-Data nach Höhe
+    this.settingsService.toggleMarkOutlineDataByHeight$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((toggleMarkOutlineDataByHeight) =>
+        this.toggleMarkOutlineDataByHeight(toggleMarkOutlineDataByHeight)
       );
   }
 
@@ -1177,17 +1132,6 @@ export class MapComponent implements OnInit {
       undefined
     );
     this.layers.push(staticFeaturesLayer);
-
-    // Fuege Layer fuer Range Data hinzu
-    this.rangeDataLayer = this.createVectorLayer(
-      this.RangeDataFeatures,
-      50,
-      false,
-      renderBuffer,
-      { name: 'range_data', type: 'overlay' },
-      undefined
-    );
-    this.layers.push(this.rangeDataLayer);
 
     // Fuege Layer fuer Icons der Flughäfen hinzu
     this.airportLayer = this.createVectorLayer(
@@ -2071,17 +2015,6 @@ export class MapComponent implements OnInit {
     this.OLMap.on('click', (evt: any) => {
       let featurePoint;
 
-      // if (this.rangeDataIsVisible) {
-      //   featurePoint = this.getFeatureFromClickOnLayer(
-      //     evt,
-      //     this.rangeDataLayer
-      //   );
-      //   if (featurePoint && featurePoint.name === 'RangeDataPoint') {
-      //     this.createAndShowRangeDataPopup(featurePoint, evt);
-      //     return;
-      //   }
-      // }
-
       if (this.showActualRangeOutline) {
         featurePoint = this.getFeatureFromClickOnLayer(
           evt,
@@ -2130,7 +2063,7 @@ export class MapComponent implements OnInit {
     this.resetAllTrails();
     this.resetAllDrawnCircles();
     this.showLargeAircraftInfoComponent(false);
-    this.resetRangeDataPopup();
+    this.resetOutlineDataPopup();
     this.unselectAllPlanesInTable();
     this.resetAllDrawnPOMDPoints();
     this.resetAirportDataPopup();
@@ -2243,102 +2176,62 @@ export class MapComponent implements OnInit {
     return overlay;
   }
 
-  private createAndShowRangeDataPopup(rangePoint: any, evt: any): void {
-    const dateToShow = new Date(rangePoint.timestamp).toLocaleString('de-DE', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-    this.rangeDataPoint = {
-      flightId: this.getValueOrDefault(rangePoint.flightId),
-      hex: this.getValueOrDefault(rangePoint.hex),
-      attributes: this.createAttributes([
-        {
-          key: 'Latitude',
-          value: rangePoint.x ? `${rangePoint.x} °` : undefined,
-        },
-        {
-          key: 'Longitude',
-          value: rangePoint.y ? `${rangePoint.y} °` : undefined,
-        },
-        { key: 'Type', value: rangePoint.type },
-        { key: 'Category', value: rangePoint.category },
-        { key: 'Registration', value: rangePoint.registration },
-        {
-          key: 'Altitude',
-          value: rangePoint.altitude ? `${rangePoint.altitude} ft` : undefined,
-        },
-        {
-          key: 'Distance',
-          value: rangePoint.distance ? `${rangePoint.distance} km` : undefined,
-        },
-        { key: 'Feeder', value: rangePoint.feederList },
-        { key: 'Source', value: rangePoint.sourceList },
-        { key: 'Timestamp', value: dateToShow },
-      ]),
-    };
-
-    this.rangeDataPopup = this.createAndDisplayPopup(
-      'rangeDataPopup',
-      rangePoint,
-      evt
+  private createAndShowOutlineDataPopup(outlinePoint: any, evt: any): void {
+    const dateToShow = new Date(outlinePoint.timestamp).toLocaleString(
+      'de-DE',
+      {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }
     );
-    this.rangeDataPopupBottomValue = '10px';
-    this.showPopupRangeDataPoint = true;
-  }
 
-  private createAndShowOutlineDataPopup(rangePoint: any, evt: any): void {
-    const dateToShow = new Date(rangePoint.timestamp).toLocaleString('de-DE', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-
-    console.log(rangePoint);
-
-    this.rangeDataPoint = {
-      flightId: this.getValueOrDefault(rangePoint.flightId),
-      hex: this.getValueOrDefault(rangePoint.hex),
+    this.outlineDataPoint = {
+      flightId: this.getValueOrDefault(outlinePoint.flightId),
+      hex: this.getValueOrDefault(outlinePoint.hex),
       attributes: this.createAttributes([
         {
           key: 'Latitude',
-          value: rangePoint.latitude ? `${rangePoint.latitude} °` : undefined,
-        },
-        {
-          key: 'Longitude',
-          value: rangePoint.longitude ? `${rangePoint.longitude} °` : undefined,
-        },
-        { key: 'Type', value: rangePoint.type },
-        { key: 'Category', value: rangePoint.category },
-        { key: 'Registration', value: rangePoint.registration },
-        {
-          key: 'Altitude',
-          value: rangePoint.altitude ? `${rangePoint.altitude} ft` : undefined,
-        },
-        {
-          key: 'Distance',
-          value: rangePoint.distanceToSite
-            ? `${rangePoint.distanceToSite} km`
+          value: outlinePoint.latitude
+            ? `${outlinePoint.latitude} °`
             : undefined,
         },
-        { key: 'Feeder', value: rangePoint.feeder },
-        { key: 'Source', value: rangePoint.source },
+        {
+          key: 'Longitude',
+          value: outlinePoint.longitude
+            ? `${outlinePoint.longitude} °`
+            : undefined,
+        },
+        { key: 'Type', value: outlinePoint.type },
+        { key: 'Category', value: outlinePoint.category },
+        { key: 'Registration', value: outlinePoint.registration },
+        {
+          key: 'Altitude',
+          value: outlinePoint.altitude
+            ? `${outlinePoint.altitude} ft`
+            : undefined,
+        },
+        {
+          key: 'Distance',
+          value: outlinePoint.distanceToSite
+            ? `${outlinePoint.distanceToSite} km`
+            : undefined,
+        },
+        { key: 'Feeder', value: outlinePoint.feeder },
+        { key: 'Source', value: outlinePoint.source },
         { key: 'Timestamp', value: dateToShow },
       ]),
     };
 
-    this.rangeDataPopup = this.createAndDisplayPopup(
-      'rangeDataPopup',
-      rangePoint,
+    this.outlineDataPopup = this.createAndDisplayPopup(
+      'outlineDataPopup',
+      outlinePoint,
       evt
     );
-    this.rangeDataPopupBottomValue = '10px';
-    this.showPopupRangeDataPoint = true;
+    this.outlineDataPopupBottomValue = '10px';
+    this.showOutlinePointPopup = true;
   }
 
   private createAndShowAirportDataPopup(airportPoint: any, evt: any): void {
@@ -2492,10 +2385,10 @@ export class MapComponent implements OnInit {
     this.aisDataPopup = undefined;
   }
 
-  private resetRangeDataPopup(): void {
-    this.resetPopup(this.rangeDataPopup, 'rangeDataPopupBottomValue');
-    this.rangeDataPopup = undefined;
-    this.showPopupRangeDataPoint = false;
+  private resetOutlineDataPopup(): void {
+    this.resetPopup(this.outlineDataPopup, 'outlineDataPopupBottomValue');
+    this.outlineDataPopup = undefined;
+    this.showOutlinePointPopup = false;
   }
 
   private showLargeAircraftInfoComponent(show: boolean) {
@@ -2819,228 +2712,6 @@ export class MapComponent implements OnInit {
     this.drawGreatDistanceCirclesThroughAircraft();
   }
 
-  /**
-   * Sortiert und zeichnet alle Range-Data-Objekte in rangeDataJSON auf der
-   * Karte als Polygon und als einzelne Punkte zum Anklicken
-   * @param rangeDataJSON rangeDataJSON
-   */
-  drawRangeDataJSONOnMap(rangeDataJSON: any): void {
-    if (
-      !rangeDataJSON ||
-      !rangeDataJSON.length ||
-      !this.selectedFeederRangeData ||
-      !this.selectedFeederRangeData.length
-    ) {
-      this.resetAllDrawnRangeDataPoints();
-      return;
-    }
-
-    const points = this.selectedFeederRangeData.reduce(
-      (acc: any[], feeder: string) => {
-        const filteredPoints = rangeDataJSON
-          .filter((data: any) => data.feederList.includes(feeder))
-          .map((data: any) => ({
-            x: data.longitude,
-            y: data.latitude,
-            timestamp: data.timestamp,
-            ...data,
-          }));
-
-        return acc.concat(filteredPoints);
-      },
-      []
-    );
-
-    const center = points.reduce(
-      (acc, point) => {
-        acc.x += point.x / points.length;
-        acc.y += point.y / points.length;
-        return acc;
-      },
-      { x: 0, y: 0 }
-    );
-
-    // Füge Winkel hinzu und sortiere danach
-    points.forEach((point) => {
-      point.angle =
-        (Math.atan2(point.y - center.y, point.x - center.x) * 180) / Math.PI;
-    });
-    points.sort((a, b) => a.angle - b.angle);
-
-    this.resetAllDrawnRangeDataPoints();
-
-    // Polygon und Punkte auf der Karte
-    const pointsForPolygon = points.map((point) => [point.x, point.y]);
-    const polygon = new Polygon([pointsForPolygon]);
-    polygon.transform('EPSG:4326', 'EPSG:3857');
-
-    const polygonFeature = this.createPolygonFeature(
-      polygon,
-      'RangeDataPolygon',
-      this.darkStaticFeatures
-        ? Styles.RangeDataPolygonStyle
-        : Styles.RangeDataPolygonStyleWhite
-    );
-    this.RangeDataFeatures.addFeature(polygonFeature);
-
-    points.forEach((point) => {
-      const pointFeature = this.createPointFeature(point);
-      this.RangeDataFeatures.addFeature(pointFeature);
-    });
-
-    // Setze Styling je nach markierten Booleans
-    if (this.markRangeDataByFeeder) this.showRangeDataByFeeder();
-    if (this.markRangeDataByHeight) this.showRangeDataByHeight();
-  }
-
-  private createPolygonFeature(
-    geometry: any,
-    name: string,
-    style: any
-  ): Feature {
-    const feature: any = new Feature(geometry);
-    feature.name = name;
-    feature.setStyle(style);
-    return feature;
-  }
-
-  private createPointFeature(data: any): Feature {
-    const point = new Point(olProj.fromLonLat([data.x, data.y]));
-    const feature: any = new Feature(point);
-    Object.assign(feature, data); // Zuordnen von Eigenschaften
-    feature.name = 'RangeDataPoint';
-    feature.setStyle(
-      this.darkStaticFeatures
-        ? Styles.RangeDataPointStyle
-        : Styles.RangeDataPointStyleWhite
-    );
-    return feature;
-  }
-
-  private showRangeDataByFeeder(): void {
-    if (!this.rangeDataLayer) return;
-    const RangeDataFeatures: any = this.rangeDataLayer
-      .getSource()!
-      .getFeatures();
-    const styleMap = this.listFeeder.reduce((map, feeder) => {
-      map[feeder.name] = feeder.styleFeederPoint;
-      return map;
-    }, {} as Record<string, any>);
-
-    RangeDataFeatures.forEach((feature) => {
-      if (feature.name !== 'RangeDataPolygon' && feature.feederList) {
-        const feederName = feature.feederList.find((name) => styleMap[name]);
-        if (feederName) feature.setStyle(styleMap[feederName]);
-        else feature.setStyle(Styles.RangeDataPointStyle);
-      }
-    });
-  }
-
-  private showRangeDataByHeight(): void {
-    if (!this.rangeDataLayer) return;
-    const RangeDataFeatures: any = this.rangeDataLayer
-      .getSource()!
-      .getFeatures();
-
-    RangeDataFeatures.forEach((feature) => {
-      const { altitude } = feature;
-      if (feature.name !== 'RangeDataPolygon' && altitude !== undefined) {
-        const color = Markers.getColorFromAltitude(
-          altitude,
-          false,
-          true,
-          false,
-          false,
-          false
-        );
-        feature.setStyle(
-          new Style({
-            image: new Circle({
-              radius: 5,
-              fill: new Fill({ color }),
-              stroke: new Stroke({ color: 'white', width: 1 }),
-            }),
-          })
-        );
-      }
-    });
-  }
-
-  private resetAllDrawnRangeDataPoints() {
-    this.RangeDataFeatures.clear();
-  }
-
-  private updateRangeDataFromServer() {
-    if (this.datesCustomRangeData) {
-      this.serverService
-        .getRangeDataBetweenTimestamps(
-          this.datesCustomRangeData[0],
-          this.datesCustomRangeData[1]
-        )
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe(
-          (rangeDataJSON) => {
-            this.rangeDataJSON = rangeDataJSON;
-          },
-          (error) =>
-            this.showErrorLogAndSnackBar(
-              'Error fetching custom Range-Data from the server. Is the server running?'
-            ),
-          () => {
-            if (this.rangeDataJSON) {
-              this.drawRangeDataJSONOnMap(this.rangeDataJSON);
-            } else {
-              this.resetAllDrawnRangeDataPoints();
-            }
-          }
-        );
-    }
-  }
-
-  /**
-   * Methode versteckt oder zeigt den Layer mit den RangeData-Points
-   * Hinweis: Boolean wird hier invertiert, da "versteckt" true ist
-   * @param toggleHideRangeData boolean
-   */
-  private hideRangeDataOverlay(toggleHideRangeData: boolean) {
-    // Wenn die Sichtbarkeit der gewünschten bereits entspricht, tue nichts
-    if (this.rangeDataLayer.get('visible') === !toggleHideRangeData) {
-      return;
-    }
-
-    // Verändere Sichtbarkeit des Layers
-    // Hinweis: Daten des Layers werden hier nur versteckt und nicht gelöscht!
-    this.rangeDataLayer.set('visible', !toggleHideRangeData);
-  }
-
-  private toggleDarkModeInRangeData() {
-    if (this.rangeDataLayer) {
-      this.RangeDataFeatures.getFeatures().forEach((feature) => {
-        if (feature.get('name') != 'RangeDataPolygon') {
-          feature.setStyle(
-            this.darkStaticFeatures
-              ? Styles.RangeDataPointStyle
-              : Styles.RangeDataPointStyleWhite
-          );
-        } else if (feature.get('name') == 'RangeDataPolygon') {
-          feature.setStyle(
-            this.darkStaticFeatures
-              ? Styles.RangeDataPolygonStyle
-              : Styles.RangeDataPolygonStyleWhite
-          );
-        }
-      });
-
-      if (this.markRangeDataByHeight) {
-        this.showRangeDataByHeight();
-      }
-
-      if (this.markRangeDataByFeeder) {
-        this.showRangeDataByFeeder();
-      }
-    }
-  }
-
   private toggleShowAircraftLabels(showAircraftLabel) {
     this.showAircraftLabel = showAircraftLabel;
     Globals.showAircraftLabel = showAircraftLabel;
@@ -3122,13 +2793,6 @@ export class MapComponent implements OnInit {
       if (this.currentSelectedMapStyle.name == element.name)
         element.isSelected = true;
     }
-  }
-
-  private filterRangeDataBySelectedFeeder(selectedFeederArray: any[]) {
-    this.selectedFeederRangeData = selectedFeederArray;
-
-    if (this.selectedFeederRangeData)
-      this.drawRangeDataJSONOnMap(this.rangeDataJSON);
   }
 
   private markUnmarkAircraftFromAircraftTable(hexSelectedAircraft: string) {
@@ -4007,7 +3671,6 @@ export class MapComponent implements OnInit {
     this.createRangeRingsAndSitePos(
       Globals.DevicePosition ? Globals.DevicePosition : Globals.SitePosition
     );
-    this.toggleDarkModeInRangeData();
   }
 
   private setMapStyle(selectedMapStyle: string) {
@@ -4155,24 +3818,14 @@ export class MapComponent implements OnInit {
     }
   }
 
-  private showCustomRangeData(timesAsTimestamps: number[]) {
-    this.datesCustomRangeData = timesAsTimestamps;
-    this.updateRangeDataFromServer();
+  private toggleMarkOutlineDataByHeight(markOutlineDataByHeight: boolean) {
+    this.markOutlinePointsByHeight = markOutlineDataByHeight;
+    this.showOutlinePointByHeight();
   }
 
-  private toggleRangeData(toggleHideRangeData: boolean): void {
-    this.rangeDataIsVisible = !toggleHideRangeData;
-    this.hideRangeDataOverlay(toggleHideRangeData);
-  }
-
-  private toggleFilterRangeDataByHeight(toggleMarkRangeDataByHeight: boolean) {
-    this.markRangeDataByHeight = toggleMarkRangeDataByHeight;
-    this.showRangeDataByHeight();
-  }
-
-  private toggleFilterRangeDataByFeeder(toggleMarkRangeDataByFeeder: boolean) {
-    this.markRangeDataByFeeder = toggleMarkRangeDataByFeeder;
-    this.showRangeDataByFeeder();
+  private toggleMarkOutlineDataByFeeder(markOutlineDataByFeeder: boolean) {
+    this.markOutlinePointsByFeeder = markOutlineDataByFeeder;
+    this.showOutlinePointsByFeeder();
   }
 
   private showErrorLogAndSnackBar(errorMessage: string) {
@@ -4199,7 +3852,7 @@ export class MapComponent implements OnInit {
       .getActualRangeOutline(this.selectedFeederUpdate)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
-        (rangeDataJson) => this.processActualRangeOutline(rangeDataJson),
+        (outlineDataJson) => this.processActualRangeOutline(outlineDataJson),
         (error) =>
           this.showErrorLogAndSnackBar(
             'Error updating actual range outline from the server. Is the server running?'
@@ -4207,19 +3860,19 @@ export class MapComponent implements OnInit {
       );
   }
 
-  private processActualRangeOutline(rangeDataPoints: any): void {
+  private processActualRangeOutline(outlineDataJson: any): void {
     this.ActualOutlineFeatures.clear();
 
-    if (!rangeDataPoints) return;
+    if (!outlineDataJson) return;
 
     let geom;
     let lastLon;
-    for (let p = 0; p < rangeDataPoints.length; ++p) {
-      const lat = rangeDataPoints[p].latitude;
-      const lon = rangeDataPoints[p].longitude;
+    for (let p = 0; p < outlineDataJson.length; ++p) {
+      const lat = outlineDataJson[p].latitude;
+      const lon = outlineDataJson[p].longitude;
       const proj = olProj.fromLonLat([lon, lat]);
 
-      const point = this.createOutlinePointFeature(proj, rangeDataPoints[p]);
+      const point = this.createOutlinePointFeature(proj, outlineDataJson[p]);
       this.ActualOutlineFeatures.addFeature(point);
 
       if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
@@ -4230,6 +3883,9 @@ export class MapComponent implements OnInit {
       }
       lastLon = lon;
     }
+
+    if (this.markOutlinePointsByHeight) this.showOutlinePointByHeight();
+    if (this.markOutlinePointsByFeeder) this.showOutlinePointsByFeeder();
   }
 
   private createOutlinePointFeature(proj: Coordinate, data: any): Feature {
@@ -4268,5 +3924,53 @@ export class MapComponent implements OnInit {
       olProj.transform([long, lat], 'EPSG:4326', 'EPSG:3857')
     );
     this.OLMap.getView().setZoom(zoomLevel);
+  }
+
+  private showOutlinePointsByFeeder(): void {
+    if (!this.actualOutlineFeatureLayer) return;
+    const outlineDataFeatures: any = this.actualOutlineFeatureLayer
+      .getSource()!
+      .getFeatures();
+
+    const styleMap = this.listFeeder.reduce((map, feeder) => {
+      map[feeder.name] = feeder.styleFeederPoint;
+      return map;
+    }, {} as Record<string, any>);
+
+    outlineDataFeatures.forEach((feature) => {
+      if (feature.name == 'OutlineDataPoint' && feature.feeder) {
+        if (feature.feeder) feature.setStyle(styleMap[feature.feeder]);
+        else feature.setStyle(Styles.OutlinePointStyle);
+      }
+    });
+  }
+
+  private showOutlinePointByHeight(): void {
+    if (!this.actualOutlineFeatureLayer) return;
+    const outlineDataFeatures: any = this.actualOutlineFeatureLayer
+      .getSource()!
+      .getFeatures();
+
+    outlineDataFeatures.forEach((feature) => {
+      const { altitude } = feature;
+      if (feature.name == 'OutlineDataPoint' && altitude !== undefined) {
+        const color = Markers.getColorFromAltitude(
+          altitude,
+          false,
+          true,
+          false,
+          false,
+          false
+        );
+        feature.setStyle(
+          new Style({
+            image: new Circle({
+              radius: 2,
+              fill: new Fill({ color }),
+            }),
+          })
+        );
+      }
+    });
   }
 }

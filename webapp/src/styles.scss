@@ -1,7 +1,6 @@
 @use "@angular/material" as mat;
 @use "./styles/themes/all" as themes;
 @use "./styles/typography/config";
-@use "@ng-matero/extensions" as matx;
 
 @import "styles/roboto.scss";
 @import "styles/material-icons.scss";
@@ -27,7 +26,6 @@
 @include mat.card-theme(themes.$my-app-light-theme);
 @include mat.table-theme(themes.$my-app-light-theme);
 @include mat.snack-bar-theme(themes.$my-app-light-theme);
-@include matx.all-component-themes(themes.$my-app-light-theme);
 
 html,
 body {

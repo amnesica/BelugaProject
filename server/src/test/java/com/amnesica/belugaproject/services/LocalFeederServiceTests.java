@@ -59,8 +59,6 @@ public class LocalFeederServiceTests {
   @MockBean
   private AirportDataService airportDataService;
   @MockBean
-  private RangeDataService rangeDataService;
-  @MockBean
   private AircraftRepository aircraftRepository;
   @MockBean
   private RegcodeDataService regcodeDataService;

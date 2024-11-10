@@ -54,8 +54,6 @@ public class AircraftTrailService {
       trail.setCategory(aircraft.getCategory());
       trail.setType(aircraft.getType());
 
-      if (aircraft.getType() != null) System.out.println("type: " + aircraft.getType());
-
       addDistanceAndAngleToSite(trail);
       addTrailToOutlineMapIfNecessary(trail, feederName);
 
