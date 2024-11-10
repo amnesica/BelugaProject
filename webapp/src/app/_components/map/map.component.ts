@@ -61,6 +61,7 @@ import BaseLayer from 'ol/layer/Base';
 import { StyleLike } from 'ol/style/Style';
 import { WebGLStyle } from 'ol/style/webgl';
 import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
+import { Coordinate } from 'ol/coordinate';
 
 @Component({
   selector: 'app-map',
@@ -2070,13 +2071,24 @@ export class MapComponent implements OnInit {
     this.OLMap.on('click', (evt: any) => {
       let featurePoint;
 
-      if (this.rangeDataIsVisible) {
+      // if (this.rangeDataIsVisible) {
+      //   featurePoint = this.getFeatureFromClickOnLayer(
+      //     evt,
+      //     this.rangeDataLayer
+      //   );
+      //   if (featurePoint && featurePoint.name === 'RangeDataPoint') {
+      //     this.createAndShowRangeDataPopup(featurePoint, evt);
+      //     return;
+      //   }
+      // }
+
+      if (this.showActualRangeOutline) {
         featurePoint = this.getFeatureFromClickOnLayer(
           evt,
-          this.rangeDataLayer
+          this.actualOutlineFeatureLayer
         );
-        if (featurePoint && featurePoint.name === 'RangeDataPoint') {
-          this.createAndShowRangeDataPopup(featurePoint, evt);
+        if (featurePoint && featurePoint.name === 'OutlineDataPoint') {
+          this.createAndShowOutlineDataPopup(featurePoint, evt);
           return;
         }
       }
@@ -2265,6 +2277,57 @@ export class MapComponent implements OnInit {
         },
         { key: 'Feeder', value: rangePoint.feederList },
         { key: 'Source', value: rangePoint.sourceList },
+        { key: 'Timestamp', value: dateToShow },
+      ]),
+    };
+
+    this.rangeDataPopup = this.createAndDisplayPopup(
+      'rangeDataPopup',
+      rangePoint,
+      evt
+    );
+    this.rangeDataPopupBottomValue = '10px';
+    this.showPopupRangeDataPoint = true;
+  }
+
+  private createAndShowOutlineDataPopup(rangePoint: any, evt: any): void {
+    const dateToShow = new Date(rangePoint.timestamp).toLocaleString('de-DE', {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    console.log(rangePoint);
+
+    this.rangeDataPoint = {
+      flightId: this.getValueOrDefault(rangePoint.flightId),
+      hex: this.getValueOrDefault(rangePoint.hex),
+      attributes: this.createAttributes([
+        {
+          key: 'Latitude',
+          value: rangePoint.latitude ? `${rangePoint.latitude} °` : undefined,
+        },
+        {
+          key: 'Longitude',
+          value: rangePoint.longitude ? `${rangePoint.longitude} °` : undefined,
+        },
+        { key: 'Type', value: rangePoint.type },
+        { key: 'Category', value: rangePoint.category },
+        { key: 'Registration', value: rangePoint.registration },
+        {
+          key: 'Altitude',
+          value: rangePoint.altitude ? `${rangePoint.altitude} ft` : undefined,
+        },
+        {
+          key: 'Distance',
+          value: rangePoint.distanceToSite
+            ? `${rangePoint.distanceToSite} km`
+            : undefined,
+        },
+        { key: 'Feeder', value: rangePoint.feeder },
+        { key: 'Source', value: rangePoint.source },
         { key: 'Timestamp', value: dateToShow },
       ]),
     };
@@ -4155,6 +4218,10 @@ export class MapComponent implements OnInit {
       const lat = rangeDataPoints[p].latitude;
       const lon = rangeDataPoints[p].longitude;
       const proj = olProj.fromLonLat([lon, lat]);
+
+      const point = this.createOutlinePointFeature(proj, rangeDataPoints[p]);
+      this.ActualOutlineFeatures.addFeature(point);
+
       if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
         geom = new LineString([proj]);
         this.ActualOutlineFeatures.addFeature(new Feature(geom));
@@ -4163,6 +4230,15 @@ export class MapComponent implements OnInit {
       }
       lastLon = lon;
     }
+  }
+
+  private createOutlinePointFeature(proj: Coordinate, data: any): Feature {
+    const point = new Point(proj);
+    const feature: any = new Feature(point);
+    Object.assign(feature, data); // Zuordnen von Eigenschaften
+    feature.name = 'OutlineDataPoint';
+    feature.setStyle(Styles.OutlinePointStyle);
+    return feature;
   }
 
   private processNominatimCoordinates(addressCoordinates: any): void {

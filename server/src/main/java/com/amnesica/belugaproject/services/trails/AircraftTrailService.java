@@ -49,6 +49,13 @@ public class AircraftTrailService {
           aircraft.getAltitude(), aircraft.getReenteredAircraft(), System.currentTimeMillis(), feederName,
           aircraft.getSourceCurrentFeeder(), aircraft.getTrack(), aircraft.getRoll());
 
+      trail.setFlightId(aircraft.getFlightId());
+      trail.setRegistration(aircraft.getRegistration());
+      trail.setCategory(aircraft.getCategory());
+      trail.setType(aircraft.getType());
+
+      if (aircraft.getType() != null) System.out.println("type: " + aircraft.getType());
+
       addDistanceAndAngleToSite(trail);
       addTrailToOutlineMapIfNecessary(trail, feederName);
 

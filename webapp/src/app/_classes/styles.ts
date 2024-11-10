@@ -196,4 +196,18 @@ export class Styles {
       }
     }
   }
+
+  // Style für Outline Points
+  static OutlinePointStyle: Style = new Style({
+    image: new Circle({
+      fill: new Fill({
+        color: '#13568b',
+      }),
+      // stroke: new Stroke({
+      //   color: 'white',
+      //   width: 1,
+      // }),
+      radius: 2,
+    }),
+  });
 }
