@@ -38,6 +38,9 @@ export class SettingsComponent implements OnInit {
 
   // Breite der Settings
   settingsDivWidth: string | undefined;
+  margin: string | undefined;
+  marginTop: string | undefined;
+  borderRadius: string | undefined;
 
   // Boolean, ob Anwendung im Desktop-Modus ist
   isDesktop: boolean | undefined;
@@ -279,10 +282,16 @@ export class SettingsComponent implements OnInit {
           // Setze Variable auf 'Mobile'
           this.isDesktop = false;
           this.settingsDivWidth = '100%';
+          this.margin = '0';
+          this.marginTop = '3.5rem';
+          this.borderRadius = '0';
         } else {
           // Setze Variable auf 'Desktop'
           this.isDesktop = true;
           this.settingsDivWidth = '25rem';
+          this.margin = '0.3rem';
+          this.marginTop = '3.8rem';
+          this.borderRadius = '15px';
         }
       });
 

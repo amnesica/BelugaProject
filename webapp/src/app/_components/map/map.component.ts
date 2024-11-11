@@ -166,6 +166,11 @@ export class MapComponent implements OnInit {
   public topValue = 60;
   public leftValue = 40;
 
+  // CSS cesium map
+  cesiumMapMarginTop: string | undefined;
+  cesiumMapBorderRadius: string | undefined;
+  cesiumMapMargin: string | undefined;
+
   // Aktuell angeklickter OutlineDataPoint (Feature)
   outlineDataPoint: any;
 
@@ -822,9 +827,15 @@ export class MapComponent implements OnInit {
         if (state.matches) {
           this.isDesktop = false; // Mobile
           this.cesiumMapWidth = '100vw';
+          this.cesiumMapMarginTop = '3.5rem';
+          this.cesiumMapMargin = '0';
+          this.cesiumMapBorderRadius = '0';
         } else {
           this.isDesktop = true; // Desktop
           this.cesiumMapWidth = '40rem';
+          this.cesiumMapMarginTop = '3.8rem';
+          this.cesiumMapMargin = '0.3rem';
+          this.cesiumMapBorderRadius = '15px';
         }
 
         this.aircraftTableService.updateWindowMode(this.isDesktop);

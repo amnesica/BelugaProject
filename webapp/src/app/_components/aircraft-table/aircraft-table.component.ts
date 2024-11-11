@@ -37,10 +37,11 @@ export class AircraftTableComponent implements OnInit {
   // Boolean, ob Tabelle angezeigt werden soll
   showAircraftTableDiv: boolean = false;
 
-  // Breite der Tabelle
+  // CSS
   showAircraftTableWidth: string = 'auto';
-
-  // Breite des Filter-Divs
+  margin: string | undefined;
+  marginTop: string | undefined;
+  borderRadius: string | undefined;
   filterFieldWidth: string = '45rem';
 
   // Anzuzeigende Spalten der Tabelle
@@ -95,9 +96,15 @@ export class AircraftTableComponent implements OnInit {
         if (isDesktop == true) {
           this.showAircraftTableWidth = '45rem';
           this.filterFieldWidth = '45rem';
+          this.margin = '0.3rem';
+          this.marginTop = '3.8rem';
+          this.borderRadius = '15px';
         } else {
           this.showAircraftTableWidth = '100%';
           this.filterFieldWidth = '100%';
+          this.margin = '0';
+          this.marginTop = '3.5rem';
+          this.borderRadius = '0';
         }
       });
 

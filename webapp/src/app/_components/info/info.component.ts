@@ -79,11 +79,11 @@ export class InfoComponent implements OnInit, OnDestroy {
   // Boolean, ob große Info-Box-Variante angezeigt werden soll
   showInfoLarge: boolean | undefined;
 
-  // Breite der Info-Box
+  // CSS für Info-Box
   widthInfoBox: string | undefined;
-
-  // Abstand top der Info-Box
   topInfoBox: string | undefined;
+  marginInfoBox: string | undefined;
+  borderRadiusInfoBox: string | undefined;
 
   // Boolean, ob es sich um einen Desktop-Browser-Fenster handelt
   isDesktop: boolean = true;
@@ -241,9 +241,13 @@ export class InfoComponent implements OnInit, OnDestroy {
     if (this.isDesktop) {
       this.widthInfoBox = '21rem';
       this.topInfoBox = '3.5rem';
+      this.marginInfoBox = '0.3rem';
+      this.borderRadiusInfoBox = '15px';
     } else {
       this.widthInfoBox = '100%';
       this.topInfoBox = '0';
+      this.marginInfoBox = '0';
+      this.borderRadiusInfoBox = '0';
     }
 
     // Setze Variable, dass große Info-Box
