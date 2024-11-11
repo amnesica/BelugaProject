@@ -3821,11 +3821,23 @@ export class MapComponent implements OnInit {
 
   private toggleMarkOutlineDataByHeight(markOutlineDataByHeight: boolean) {
     this.markOutlinePointsByHeight = markOutlineDataByHeight;
+
+    if (!this.markOutlinePointsByHeight && !this.markOutlinePointsByFeeder) {
+      this.fetchActualOutline(); // reset to default color
+      return;
+    }
+
     this.showOutlinePointByHeight();
   }
 
   private toggleMarkOutlineDataByFeeder(markOutlineDataByFeeder: boolean) {
     this.markOutlinePointsByFeeder = markOutlineDataByFeeder;
+
+    if (!this.markOutlinePointsByHeight && !this.markOutlinePointsByFeeder) {
+      this.fetchActualOutline(); // reset to default color
+      return;
+    }
+
     this.showOutlinePointsByFeeder();
   }
 
