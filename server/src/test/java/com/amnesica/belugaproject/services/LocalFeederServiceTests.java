@@ -141,11 +141,6 @@ public class LocalFeederServiceTests {
     }
   }
 
-  @Test
-  void checkTest() {
-    assertTrue("adsb_icao".contains("adsb"));
-  }
-
   @NotNull
   private Feeder createFeederWithMapping(String type) {
     Feeder feeder = new Feeder("test", "127.0.0.1", type, "color");
