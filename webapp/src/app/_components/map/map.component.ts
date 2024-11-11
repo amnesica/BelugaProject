@@ -2515,6 +2515,7 @@ export class MapComponent implements OnInit {
           ),
         },
         { key: 'Feeder', value: this.getValueOrDefault(aircraft.feederList) },
+        { key: 'Source', value: this.getValueOrDefault(aircraft.sourceList) },
       ],
     };
 
