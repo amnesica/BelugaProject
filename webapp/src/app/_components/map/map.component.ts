@@ -1984,7 +1984,7 @@ export class MapComponent implements OnInit {
     return evt.map.forEachFeatureAtPixel(
       evt.pixel,
       (feature) => {
-        return feature.hex;
+        return feature.name != 'OutlineDataPoint' ? feature.hex : undefined;
       },
       {
         layerFilter: (layer) =>
@@ -2015,6 +2015,13 @@ export class MapComponent implements OnInit {
     this.OLMap.on('click', (evt: any) => {
       let featurePoint;
 
+      const hex = this.getHexFromClickOnLayer(evt);
+
+      if (hex) {
+        this.markOrUnmarkAircraft(hex, false);
+        return;
+      }
+
       if (this.showActualRangeOutline) {
         featurePoint = this.getFeatureFromClickOnLayer(
           evt,
@@ -2044,13 +2051,6 @@ export class MapComponent implements OnInit {
           this.createAndShowAisDataPopup(featurePoint, evt);
           return;
         }
-      }
-
-      const hex = this.getHexFromClickOnLayer(evt);
-
-      if (hex) {
-        this.markOrUnmarkAircraft(hex, false);
-        return;
       }
 
       // Reset only if no feature point is found
@@ -3877,6 +3877,8 @@ export class MapComponent implements OnInit {
 
       if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
         geom = new LineString([proj]);
+        let lineStringFeature: any = new Feature(geom);
+        lineStringFeature.name = 'lineStringFeature';
         this.ActualOutlineFeatures.addFeature(new Feature(geom));
       } else {
         geom.appendCoordinate(proj);
