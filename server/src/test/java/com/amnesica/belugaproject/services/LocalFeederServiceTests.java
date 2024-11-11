@@ -134,11 +134,16 @@ public class LocalFeederServiceTests {
       assertNotNull(savedAircraft.get(i).getSourceList());
 
       if (i == 2) {
-        assertTrue(savedAircraft.get(i).getSourceList().contains("test:adsb_icao"));
+        assertTrue(savedAircraft.get(i).getSourceList().contains("test:A"));
       } else {
-        assertTrue(savedAircraft.get(i).getSourceList().contains("test:mlat"));
+        assertTrue(savedAircraft.get(i).getSourceList().contains("test:M"));
       }
     }
+  }
+
+  @Test
+  void checkTest() {
+    assertTrue("adsb_icao".contains("adsb"));
   }
 
   @NotNull

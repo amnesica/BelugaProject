@@ -485,15 +485,29 @@ public class AircraftService {
     if (feeder.getType().equals("adsbx")) {
       if (source != null && element.has(source) && !element.isNull(source)) {
         String type = element.getString("type");
-        aircraft.setSourceCurrentFeeder(type);
+        aircraft.setSourceCurrentFeeder(getShortTypeFromType(type));
         aircraft.addSourceToSourceList(feeder.getName());
       } else {
         if (element.has("mlat") && !element.isNull("mlat") && !element.getJSONArray("mlat").isEmpty()) {
-          aircraft.setSourceCurrentFeeder("mlat");
+          aircraft.setSourceCurrentFeeder("M");
           aircraft.addSourceToSourceList(feeder.getName());
         }
       }
     }
+  }
+
+  private static String getShortTypeFromType(String type) {
+    String finalType = null;
+    if (type.contains("adsb")) {
+      finalType = "A";
+    } else if (type.contains("mlat")) {
+      finalType = "M";
+    } else if (type.contains("adsc")) {
+      finalType = "C";
+    } else if (type.contains("mode")) {
+      finalType = "S";
+    }
+    return finalType;
   }
 
   /**
