@@ -3968,7 +3968,7 @@ export class MapComponent implements OnInit {
         feature.setStyle(
           new Style({
             image: new Circle({
-              radius: 2,
+              radius: 2.5,
               fill: new Fill({ color }),
             }),
           })

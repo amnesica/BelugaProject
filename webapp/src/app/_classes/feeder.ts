@@ -18,7 +18,7 @@ export class Feeder {
     // des Feeders mit der jeweiligen Farbe
     this.styleFeederPoint = new Style({
       image: new Circle({
-        radius: 2,
+        radius: 2.5,
         fill: new Fill({ color: this.color }),
       }),
     });

@@ -161,7 +161,7 @@ export class Styles {
       fill: new Fill({
         color: '#13568b',
       }),
-      radius: 2,
+      radius: 2.5,
     }),
   });
 }
