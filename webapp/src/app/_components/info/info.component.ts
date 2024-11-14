@@ -10,6 +10,7 @@ import {
   OnChanges,
   SimpleChanges,
   inject,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Aircraft } from '../../_classes/aircraft';
@@ -32,6 +33,7 @@ import {
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
+import { InfoService } from 'src/app/_services/info-service/info-service.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -48,7 +50,7 @@ export type ChartOptions = {
 
 @Component({
   selector: 'app-info',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './info.component.html',
   styleUrls: ['./info.component.scss'],
   animations: [
@@ -70,11 +72,11 @@ export type ChartOptions = {
   ],
 })
 export class InfoComponent implements OnInit, OnDestroy {
-  // Flugzeug, wofür die Info angezeigt wird als Eingabeparameter
-  @Input() aircraft: Aircraft | null = null;
+  // Flugzeug, wofür die Info angezeigt wird
+  aircraft: Aircraft | null = null;
 
   // Boolean, ob System im DarkMode ist
-  darkMode: boolean = false; // TODO
+  darkMode: boolean = false;
 
   // Boolean, ob große Info-Box-Variante angezeigt werden soll
   showInfoLarge: boolean | undefined;
@@ -115,7 +117,9 @@ export class InfoComponent implements OnInit, OnDestroy {
   constructor(
     public breakpointObserver: BreakpointObserver,
     public snackBar: MatSnackBar,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private infoService: InfoService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.chartOptions = {
       series: [
@@ -193,6 +197,15 @@ export class InfoComponent implements OnInit, OnDestroy {
       this.darkMode = isDark;
       this.updateThemeColorsInOptions();
     });
+
+    this.infoService.updateAircraftSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((aircraft) => {
+        if (aircraft) {
+          this.aircraft = aircraft;
+          this.changeDetectorRef.detectChanges();
+        }
+      });
 
     this.breakpointObserver
       .observe(['(max-width: 599px)'])

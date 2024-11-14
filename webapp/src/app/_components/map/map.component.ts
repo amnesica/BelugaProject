@@ -62,6 +62,8 @@ import { StyleLike } from 'ol/style/Style';
 import { WebGLStyle } from 'ol/style/webgl';
 import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 import { Coordinate } from 'ol/coordinate';
+import { Map3d } from 'src/app/_classes/map3d';
+import { InfoService } from 'src/app/_services/info-service/info-service.service';
 
 @Component({
   selector: 'app-map',
@@ -359,7 +361,8 @@ export class MapComponent implements OnInit {
     private aircraftTableService: AircraftTableService,
     private snackBar: MatSnackBar,
     private rainviewerService: RainviewerService,
-    private cesiumService: CesiumService
+    private cesiumService: CesiumService,
+    private infoService: InfoService
   ) {}
 
   /**
@@ -1772,9 +1775,15 @@ export class MapComponent implements OnInit {
       if (this.aircraft) this.aircraft.updateTrail();
       this.updateShowRoute();
       this.updateAltitudeChart();
+      this.updateInfoComponent();
     }
 
     if (isBeingHoveredOnMap) this.createHoveredAircraft(aircraft);
+  }
+
+  private updateInfoComponent() {
+    if (!this.aircraft) return;
+    this.infoService.updateAircraft(this.aircraft);
   }
 
   private createPlaneLabel(aircraft: Aircraft) {
