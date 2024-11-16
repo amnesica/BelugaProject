@@ -637,14 +637,21 @@ export class Aircraft {
     let latitude = this.position[1];
 
     // Erstelle Projection aus Positions-Daten
-    const proj = olProj.fromLonLat([longitude, latitude]);
+    //const proj = olProj.fromLonLat([longitude, latitude]);
+
+    //altitude * 0.3048
+    let coordinate = olProj.transform(
+      [longitude, latitude, this.altitude * 0.3048], // OL-Cesium braucht Meter
+      'EPSG:4326',
+      'EPSG:3857'
+    );
 
     // Erstelle OpenLayers-Point für die Position, wenn es diesen noch nicht gibt
     if (!this.olPoint) {
-      this.olPoint = new Point(proj);
+      this.olPoint = new Point(coordinate);
     } else if (moved) {
       // Verändere Position des OpenLayers-Point, der Position des Flugzeugs darstellt
-      this.olPoint.setCoordinates(proj);
+      this.olPoint.setCoordinates(coordinate);
     }
   }
 
@@ -769,7 +776,7 @@ export class Aircraft {
       let track = this.aircraftTrailList[i].track;
       let roll = this.aircraftTrailList[i].roll;
 
-      this.addTrack2D(longitude, latitude);
+      this.addTrack2D(longitude, latitude, altitude);
 
       this.addTrack3D(
         longitude,
@@ -837,7 +844,7 @@ export class Aircraft {
       this.trackLinePoints
     ) {
       // Füge neuen Trailpunkt hinzu
-      this.addTrack2D(this.longitude, this.latitude);
+      this.addTrack2D(this.longitude, this.latitude, this.altitude);
 
       if (this.track3d) {
         // Verhindere das Position doppelt in trailPoints ist
@@ -1019,10 +1026,10 @@ export class Aircraft {
     }
   }
 
-  addTrack2D(longitude, latitude) {
+  addTrack2D(longitude, latitude, altitude) {
     this.trackLinePoints.push({
       coordinate: olProj.transform(
-        [longitude, latitude],
+        [longitude, latitude, altitude * 0.3048], // OL-Cesium braucht Meter,
         'EPSG:4326',
         'EPSG:3857'
       ),

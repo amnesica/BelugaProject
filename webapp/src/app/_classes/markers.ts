@@ -124,7 +124,8 @@ export class Markers {
     asHex: boolean,
     isMarked: boolean,
     isCesium: boolean,
-    isReentered: boolean
+    isReentered: boolean,
+    isCesiumLabel?: boolean
   ): any {
     let rgb: number[];
 
@@ -152,6 +153,12 @@ export class Markers {
 
     if (isReentered || altitude == null) {
       rgb = [25, 25, 25];
+    }
+
+    if (isCesium && isCesiumLabel) {
+      let colorAsHex = Markers.rgbToHex(rgb[0], rgb[1], rgb[2]);
+      let rgba = Cesium.Color.fromCssColorString(colorAsHex).withAlpha(0.4);
+      return rgba;
     }
 
     if (isCesium) {

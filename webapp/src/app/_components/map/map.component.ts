@@ -337,6 +337,9 @@ export class MapComponent implements OnInit {
   isDark$ = this.themeManager.isDark$;
 
   private ngUnsubscribe = new Subject<void>();
+  map3dEnabled: boolean = false;
+  map3d: Map3d | undefined;
+  trailLayers: LayerGroup | undefined;
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
   // Klick auf das "X" in der Komponente die Komponente wieder ausgeblendet
@@ -609,6 +612,11 @@ export class MapComponent implements OnInit {
         this.toggleDevicePositionAsBasis(devicePositionAsBasis)
       );
 
+    // Toogle 2D/3D map
+    this.settingsService.enable3dMapSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((enable3dMap) => this.toggle2d3dMap(enable3dMap));
+
     // Toggle zeige/verstecke Flugzeug-Positionen
     this.settingsService.toggleShowAircraftPositions$
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -665,6 +673,33 @@ export class MapComponent implements OnInit {
     this.settingsService.resetMapPositionSource$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => this.setMapCenterFromSitePosition());
+  }
+
+  private toggle2d3dMap(enable3dMap: boolean) {
+    this.map3dEnabled = enable3dMap;
+
+    this.webglLayer?.setVisible(!this.map3dEnabled);
+    this.actualOutlineFeatureLayer?.setVisible(!this.map3dEnabled);
+    this.planeLabelFeatureLayer?.setVisible(!this.map3dEnabled);
+    this.trailLayers?.setVisible(!this.map3dEnabled);
+    this.allTrailsLayer?.setVisible(!this.map3dEnabled);
+
+    if (this.map3dEnabled) {
+      this.ActualOutlineFeatures.clear();
+      this.createMap3d();
+    } else {
+      this.destroyMap3d();
+      this.OLMap.getView().setRotation(0);
+    }
+  }
+
+  private destroyMap3d() {
+    this.map3d?.destroy();
+    this.map3d = undefined;
+  }
+
+  private createMap3d() {
+    this.map3d = new Map3d(this.OLMap, this.cesiumIonDefaultAccessToken, this);
   }
 
   private initWeatherSubscriptions() {
@@ -922,7 +957,9 @@ export class MapComponent implements OnInit {
             color: this.darkStaticFeatures ? 'black' : 'white',
           }),
           offsetY: -8,
-          text: this.circleDistancesInNm[i] + ' nm',
+          text: this.map3dEnabled
+            ? undefined
+            : this.circleDistancesInNm[i] + ' nm',
         }),
       });
 
@@ -1064,12 +1101,12 @@ export class MapComponent implements OnInit {
     this.layers.push(this.planeLabelFeatureLayer);
 
     // Erstelle Layer fuer Trails der Flugzeuge als Layer-Group
-    const trailLayers = this.createLayerGroup(Globals.trailGroup, 150, {
+    this.trailLayers = this.createLayerGroup(Globals.trailGroup, 150, {
       name: 'ac_trail',
       type: 'overlay',
       title: 'aircraft trails',
     });
-    this.layers.push(trailLayers);
+    this.layers.push(this.trailLayers);
 
     // Fuege Layer fuer POMDs hinzu
     const pomdLayer = this.createVectorLayer(
@@ -1705,6 +1742,8 @@ export class MapComponent implements OnInit {
     if (Globals.aircraftTableIsVisible)
       this.aircraftTableService.updateAircraftList(Globals.PlanesOrdered);
 
+    if (this.map3dEnabled) this.map3d?.loadPlanesInCesium();
+
     this.updateCesiumComponentWithAircraft();
 
     // Aktualisiere angezeigte Flugzeug-Zähler
@@ -1772,7 +1811,10 @@ export class MapComponent implements OnInit {
       aircraft.hex == this.hoveredAircraftObject.hex;
 
     if (isMarkedOnMap) {
-      if (this.aircraft) this.aircraft.updateTrail();
+      if (this.aircraft) {
+        this.aircraft.updateTrail(); // 2D
+        this.map3d?.updateTrail(aircraft); // 3D
+      }
       this.updateShowRoute();
       this.updateAltitudeChart();
       this.updateInfoComponent();
@@ -1974,15 +2016,17 @@ export class MapComponent implements OnInit {
     if (trailDataJSONObject[0]) {
       this.aircraft.aircraftTrailList = trailDataJSONObject[0];
       this.aircraft.makeTrail();
-      this.aircraft.setTrailVisibility2d(true);
+      if (!this.map3dEnabled) this.aircraft.setTrailVisibility2d(true);
       this.updateAltitudeChart();
       this.updateCesiumComponentWithAircraft();
+      this.map3d?.createTrail(this.aircraft);
+      this.map3d?.followPlane(this.aircraft);
     }
   }
 
   private createEmptyTrailForRemoteAircraft(aircraft: Aircraft) {
     aircraft.makeTrail();
-    aircraft.setTrailVisibility2d(true);
+    if (!this.map3dEnabled) aircraft.setTrailVisibility2d(true);
     this.updateCesiumComponentWithAircraft();
   }
 
@@ -2034,6 +2078,8 @@ export class MapComponent implements OnInit {
   private initClickOnMap(): void {
     this.OLMap.on('click', (evt: any) => {
       let featurePoint;
+
+      if (this.map3dEnabled) return;
 
       const hex = this.getHexFromClickOnLayer(evt);
 
@@ -2095,7 +2141,7 @@ export class MapComponent implements OnInit {
     this.aircraftTableService.unselectAllPlanesInTable();
   }
 
-  private markOrUnmarkAircraft(hex: string, isRequestFromTable: boolean) {
+  public markOrUnmarkAircraft(hex: string, isRequestFromTable: boolean) {
     let aircraft: Aircraft = this.Planes[hex];
     if (!aircraft) return;
 
@@ -2835,6 +2881,8 @@ export class MapComponent implements OnInit {
       'hex',
       aircraft.hex
     );
+
+    if (this.map3dEnabled) this.map3d?.removeAircraft(aircraft.hex);
 
     // Entferne Flugzeug als aktuell markiertes Flugzeug, wenn es dieses ist
     if (this.aircraft?.hex == aircraft.hex) this.aircraft = null;
@@ -3896,31 +3944,36 @@ export class MapComponent implements OnInit {
   private processActualRangeOutline(outlineDataJson: any): void {
     this.ActualOutlineFeatures.clear();
 
-    if (!outlineDataJson) return;
+    if (!outlineDataJson || this.map3dEnabled) return;
+    if (outlineDataJson.length < 2) return;
 
-    let geom;
-    let lastLon;
-    for (let p = 0; p < outlineDataJson.length; ++p) {
-      const lat = outlineDataJson[p].latitude;
-      const lon = outlineDataJson[p].longitude;
-      const proj = olProj.fromLonLat([lon, lat]);
+    try {
+      let geom;
+      let lastLon;
+      for (let p = 0; p < outlineDataJson.length; ++p) {
+        const lat = outlineDataJson[p].latitude;
+        const lon = outlineDataJson[p].longitude;
+        const proj = olProj.fromLonLat([lon, lat]);
 
-      const point = this.createOutlinePointFeature(proj, outlineDataJson[p]);
-      this.ActualOutlineFeatures.addFeature(point);
+        const point = this.createOutlinePointFeature(proj, outlineDataJson[p]);
+        this.ActualOutlineFeatures.addFeature(point);
 
-      if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
-        geom = new LineString([proj]);
-        let lineStringFeature: any = new Feature(geom);
-        lineStringFeature.name = 'lineStringFeature';
-        this.ActualOutlineFeatures.addFeature(new Feature(geom));
-      } else {
-        geom.appendCoordinate(proj);
+        if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
+          geom = new LineString([proj]);
+          let lineStringFeature: any = new Feature(geom);
+          lineStringFeature.name = 'lineStringFeature';
+          this.ActualOutlineFeatures.addFeature(new Feature(geom));
+        } else {
+          geom.appendCoordinate(proj);
+        }
+        lastLon = lon;
       }
-      lastLon = lon;
-    }
 
-    if (this.markOutlinePointsByHeight) this.showOutlinePointByHeight();
-    if (this.markOutlinePointsByFeeder) this.showOutlinePointsByFeeder();
+      if (this.markOutlinePointsByHeight) this.showOutlinePointByHeight();
+      if (this.markOutlinePointsByFeeder) this.showOutlinePointsByFeeder();
+    } catch (error) {
+      console.log('Error: ' + error);
+    }
   }
 
   private createOutlinePointFeature(proj: Coordinate, data: any): Feature {
