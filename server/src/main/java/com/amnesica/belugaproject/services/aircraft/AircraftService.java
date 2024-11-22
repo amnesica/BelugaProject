@@ -200,7 +200,7 @@ public class AircraftService {
 
     if (isLocalFeederService) {
       // Aktualisiere Trail des Flugzeugs mit neuer Position und Höhe
-      aircraftTrailService.addTrail(aircraftNew, feederName);
+      aircraftTrailService.addTrail(aircraftToUpdate, feederName);
     }
 
     // Track berechnen, wenn nicht vom Feeder geliefert und sich die Position
