@@ -168,17 +168,21 @@ public class LocalFeederService {
   }
 
   /**
-   * Methode kopiert alle Flugzeuge, die länger als eine Stunde nicht geupdatet
-   * wurden in die History-Tabelle und löscht die betroffenen Flugzeuge aus der
-   * aircraft-Tabelle. Methode wird alle INTERVAL_LOCAL_PLANES_TO_HISTORY
+   * Methode kopiert alle Flugzeuge,
+   * die länger als RETENTION_TIME_AIRCRAFT_LOCAL
+   * Millisekunden (Default = 3600000 = 1 Stunde) nicht geupdatet wurden,
+   * in die History-Tabelle und löscht die betroffenen Flugzeuge
+   * aus der aircraft-Tabelle.
+   * Methode wird alle INTERVAL_LOCAL_PLANES_TO_HISTORY
    * Millisekunden aufgerufen
    */
   @Scheduled(fixedRate = StaticValues.INTERVAL_LOCAL_PLANES_TO_HISTORY)
   private void putOldPlanesInHistoryTable() {
-    // Berechne timestamp vor 1 Stunde (3600 Sekunden, entspricht 3600000
-    // Millisekunden), damit nur die Flugzeuge kopiert werden, die nicht mehr
+    // Berechne timestamp vor RETENTION_TIME_AIRCRAFT_LOCAL Millisekunden,
+    // damit nur die Flugzeuge kopiert werden, die nicht mehr
     // aktualisiert werden
-    long startTime = System.currentTimeMillis() - 3600000;
+
+    long startTime = System.currentTimeMillis() - StaticValues.RETENTION_TIME_AIRCRAFT_LOCAL;
 
     // Hole Flugzeuge der aktuellen Iteration
     List<Aircraft> listPlanesNotUpdated = aircraftRepository

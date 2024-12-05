@@ -185,16 +185,17 @@ public class AircraftTrailService {
   }
 
   /**
-   * Methode kopiert alle Trails, die älter als eine Stunde sind in die
-   * HistoryTrails-Tabelle und löscht die betroffenen Trails aus der
-   * AircraftTrails-Tabelle. Methode wird alle INTERVAL_REMOVE_OLD_TRAILS_LOCAL
-   * Sekunden aufgerufen
+   * Methode kopiert alle Trails, die älter als RETENTION_TIME_TRAILS_LOCAL
+   * (Default = 1 Stunde) sind in die HistoryTrails-Tabelle und löscht
+   * die betroffenen Trails aus der AircraftTrails-Tabelle.
+   * Methode wird alle INTERVAL_REMOVE_OLD_TRAILS_LOCAL
+   * Millisekunden aufgerufen (Default = 600000 = 10 Minuten)
    */
   @Transactional
   @Scheduled(fixedRate = StaticValues.INTERVAL_REMOVE_OLD_TRAILS_LOCAL)
   protected void putOldTrailsInTrailsHistoryTable() {
-    long oneHourInMilliSeconds = 3600000L;
-    long timestampOneDayAgo = System.currentTimeMillis() - oneHourInMilliSeconds;
+    long retention_time_trails_local = StaticValues.RETENTION_TIME_TRAILS_LOCAL;
+    long timestampOneDayAgo = System.currentTimeMillis() - retention_time_trails_local;
 
     aircraftTrailRepository.deleteAllByTimestampLessThanEqual(timestampOneDayAgo);
 
