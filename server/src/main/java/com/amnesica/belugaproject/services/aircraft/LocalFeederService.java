@@ -60,6 +60,9 @@ public class LocalFeederService {
    */
   @Scheduled(fixedRate = StaticValues.INTERVAL_UPDATE_LOCAL_FEEDER)
   public void getPlanesFromFeeder() {
+    // Lösche currentIterationSet
+    currentIterationSet.clear();
+
     // Hole und verarbeite Flugzeuge von jedem Feeder
     for (Feeder feeder : configuration.getListFeeder()) {
       // Breche ab, wenn aus einem Grund der Feeder null ist
@@ -90,6 +93,9 @@ public class LocalFeederService {
         processAircraft(aircraftNew, feeder);
       }
     }
+    
+    // Lösche previousIterationSet
+    previousIterationSet.clear();
 
     // Schreibe currentIterationSet in previousIterationSet
     previousIterationSet.addAll(currentIterationSet);
