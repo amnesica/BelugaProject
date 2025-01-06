@@ -41,12 +41,6 @@
   <!-- Abstandhalter -->
   <span class="spacer"></span>
 
-  <!-- Switch 2D/3D-Karte -->
-  <button mat-icon-button (click)="toggleMap()">
-    <mat-icon *ngIf="!toggle3dMapIsActive">3d_rotation </mat-icon>
-    <mat-icon *ngIf="toggle3dMapIsActive">2d</mat-icon>
-  </button>
-
   <!-- Zurücksetzen der Map-Position -->
   <button mat-icon-button (click)="resetMapPosition()">
     <mat-icon>home</mat-icon>

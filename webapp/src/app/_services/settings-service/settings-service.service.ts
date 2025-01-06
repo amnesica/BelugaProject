@@ -46,7 +46,6 @@ export class SettingsService {
   private mapZoomLevelSource = new Subject<number>();
   private showActualRangeOutlineSource = new Subject<boolean>();
   private nominatimFetchedCoordinatesSource = new Subject<any>();
-  private enable3dMapSource = new Subject<boolean>();
 
   // Observable streams
   toggleMarkOutlineDataByFeeder$ =
@@ -99,7 +98,6 @@ export class SettingsService {
     this.showActualRangeOutlineSource.asObservable();
   nominatimFetchedCoordinatesSource$ =
     this.nominatimFetchedCoordinatesSource.asObservable();
-  enable3dMapSource$ = this.enable3dMapSource.asObservable();
 
   constructor() {}
 
@@ -295,10 +293,5 @@ export class SettingsService {
   nominatimFetchedCoordinates(coordinatesJson: any) {
     this.nominatimFetchedCoordinatesSource.next(coordinatesJson);
     return this.nominatimFetchedCoordinatesSource;
-  }
-
-  toggle3dMap(enable3dMap: boolean) {
-    this.enable3dMapSource.next(enable3dMap);
-    return this.enable3dMapSource;
   }
 }

@@ -37,9 +37,6 @@ export class ToolbarComponent implements OnInit {
   // Ort-Suche
   inputPlace = 'Search place';
 
-  // Switch Map
-  toggle3dMapIsActive = false;
-
   private ngUnsubscribe = new Subject();
 
   constructor(
@@ -143,10 +140,5 @@ export class ToolbarComponent implements OnInit {
 
   private processCoordinatesFromServer(coordinatesJson: any): void {
     this.settingsService.nominatimFetchedCoordinates(coordinatesJson);
-  }
-
-  toggleMap() {
-    this.toggle3dMapIsActive = !this.toggle3dMapIsActive;
-    this.settingsService.toggle3dMap(this.toggle3dMapIsActive);
   }
 }
