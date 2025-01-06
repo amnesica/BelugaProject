@@ -86,7 +86,6 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 - [OpenLayers](https://openlayers.org/)
 - [Cesium](https://cesium.com/)
 - [ng-apexcharts](https://github.com/apexcharts/ng-apexcharts)
-- [ng-matero/extensions-moment-adapter](https://github.com/ng-matero/extensions)
 
 ## Our Setup
 
