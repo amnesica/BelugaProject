@@ -38,7 +38,7 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
   - Show Google photogrammetry or OSM 3D buildings
   - Cockpit mode (with or without cockpit model), Follow-Plane mode
   - High Quality mode, HDR, clouds
-- Display ships (AIS messages) from [aisstream.io](https://aisstream.io/) (API key is required)
+- Display ships (AIS messages) from [aisstream.io](https://aisstream.io/) (API key is required) (Important: Given that this uses a stream API, it might take some time until all ships are loaded)
 - See additional information about tracked aircraft like model and type, country of registration, operator callsign and more
 - Track flight progress with route information (origin, destination)
 - Display aircraft picture from planespotters.net
