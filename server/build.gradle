@@ -15,7 +15,7 @@ ext {
   jsonVersion = "20241224"
   hypersistenceVersion = "3.9.0"
   okhttpVersion = "4.12.0"
-  lombokVersion = "1.18.34"
+  lombokVersion = "1.18.36"
   webSocketVersion = "1.5.7"
 }
 
