@@ -28,7 +28,7 @@
     "ol-ext": "^4.0.24",
     "olcs": "^2.22.1",
     "rxjs": "^7.8.1",
-    "tslib": "^2.8.0",
+    "tslib": "^2.8.1",
     "zone.js": "^0.14.0"
   },
   "devDependencies": {
