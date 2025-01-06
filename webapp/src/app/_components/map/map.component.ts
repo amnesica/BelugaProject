@@ -62,7 +62,6 @@ import { StyleLike } from 'ol/style/Style';
 import { WebGLStyle } from 'ol/style/webgl';
 import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 import { Coordinate } from 'ol/coordinate';
-import { Map3d } from 'src/app/_classes/map3d';
 import { InfoService } from 'src/app/_services/info-service/info-service.service';
 
 @Component({
