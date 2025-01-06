@@ -5,8 +5,9 @@
 
 set -eu pipefail
 
+BRANCH=dev # TODO master || dev
 REPO_NAME=BelugaProject
-REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/dev.zip" # TODO change to master again before deployment
+REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/$BRANCH.zip"
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
 WHIPTAIL_TITLE="Installation of the Beluga Project"
@@ -94,7 +95,7 @@ _unzip_repo_with_progress() {
 
 _rename_repo_with_progress() {
   echo -e "XXX\n33\nRenaming directory... \nXXX"
-  mv $REPO_NAME-dev/ $REPO_NAME # TODO change to -master/ again before deployment
+  mv $REPO_NAME-$BRANCH/ $REPO_NAME
   sleep 0.1
   echo -e "XXX\n66\nRenaming directory... Done.\nXXX"
   sleep 1
