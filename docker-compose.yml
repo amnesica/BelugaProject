@@ -51,7 +51,7 @@ services:
     restart: always
 
   postgres:
-    image: 'postgres:16.1-alpine'
+    image: 'postgres:16.6-alpine'
     container_name: postgres
     environment:
       - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
