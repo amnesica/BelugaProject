@@ -15,7 +15,7 @@ SECONDS=0
 SECONDS_AT_START=$SECONDS
 
 echo ----------------------------------------------------------------------
-echo $(timestamp) importBelugaDbData.sh Version 4-0-1
+echo $(timestamp) importBelugaDbData.sh Version 4-1-0
 echo ----------------------------------------------------------------------
 
 echo ----------------------------------------------------------------------

@@ -15,7 +15,7 @@ SECONDS=0
 SECONDS_AT_START=$SECONDS
 
 echo ----------------------------------------------------------------------
-echo $(timestamp) loadAircraftData.sh Version 4-0-1
+echo $(timestamp) loadAircraftData.sh Version 4-1-0
 echo ----------------------------------------------------------------------
 
 echo ----------------------------------------------------------------------
@@ -326,7 +326,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'typecode_tags',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'typecode_tags'),
@@ -438,7 +438,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'aircraft_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'aircraft_data'),
