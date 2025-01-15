@@ -1,5 +1,5 @@
 \echo ----------------------------------------------------------------------
-\echo loadBelugaDb.sql Version 4-0-1 (30.03.2024 11:00)
+\echo loadBelugaDb.sql Version 4-1-0 (11.01.2025 18:25)
 \echo - this script is intended only for debug and tuning purposes
 \echo - run script from psql with parameter timing to get duration of commands
 \echo - normal installation process uses loadBelugaDb.sh instead
@@ -242,7 +242,7 @@ COPY flightroute_data (
 			flight_id,
 			flight_last_update,
 			flight_route)
-		FROM '/var/lib/postgresql/dbContent/flightroute_data.csv' WITH DELIMITER E'\t' CSV HEADER;
+		FROM '/var/lib/postgresql/dbContent/flightrouteData.csv' WITH DELIMITER E'\t' CSV HEADER;
 \echo Done.
 
 \echo ----------------------------------------------------------------------

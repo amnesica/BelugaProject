@@ -1,5 +1,5 @@
 # -------------------------------------------------------------
-# This script creates flightroute_data.csv
+# This script creates flightrouteData.csv
 # from VRS standing-data Github repository
 # -------------------------------------------------------------
 from pathlib import Path
@@ -29,7 +29,7 @@ else:
     # If it fails, inform the user.
     print("Info: prevoius version of %s file not found. Okay."  % myfile)
 
-myfile = "flightroute_data.csv"
+myfile = "flightrouteData.csv"
 # If file exists, delete it.
 if os.path.isfile(myfile):
     os.remove(myfile)
@@ -46,9 +46,9 @@ df = pd.concat(pd.read_csv(p) for p in csv_folder.glob('**/*.csv'))
 df.to_csv(os.path.join('.', 'combined_file.csv'), index=False)
 
 # -------------------------------------------------------------
-# remove unused columns and export to flightroute_data.csv
+# remove unused columns and export to flightrouteData.csv
 # -------------------------------------------------------------
 f=pd.read_csv("combined_file.csv")
 keep_col = ['Callsign','AirportCodes']
 new_f = f[keep_col]
-new_f.to_csv("flightroute_data.csv", index=False)
+new_f.to_csv("flightrouteData.csv", index=False)

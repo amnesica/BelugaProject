@@ -15,7 +15,7 @@ SECONDS=0
 SECONDS_AT_START=$SECONDS
 
 echo ----------------------------------------------------------------------
-echo $(timestamp) loadBelugaDb.sh Version 4-0-1
+echo $(timestamp) loadBelugaDb.sh Version 4-1-0
 echo ----------------------------------------------------------------------
 
 echo ----------------------------------------------------------------------
@@ -57,7 +57,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'airport_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'airport_data'),
@@ -93,7 +93,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'country_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'country_data'),
@@ -128,7 +128,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'regcode_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'regcode_data'),
@@ -169,7 +169,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'map_operator_icao_to_iata',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'map_operator_icao_to_iata'),
@@ -353,7 +353,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'operator_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'operator_data'),
@@ -370,11 +370,10 @@ echo ----------------------------------------------------------------------
 echo $(timestamp) loading table flightroute_data ...
 echo ----------------------------------------------------------------------
 psql -c "TRUNCATE TABLE flightroute_data;" -U beluga -d belugaDb
-psql -c "COPY flightroute_data (flight_id,
-								flight_last_update,
+psql -c "COPY flightroute_data (flight_id, 
 								flight_route)
-		FROM '$pathToDirectoryWithCsv/flightroute_data.csv'
-		WITH DELIMITER E'\\t' CSV HEADER;" -U beluga -d belugaDb
+		FROM '$pathToDirectoryWithCsv/flightrouteData.csv'
+		WITH DELIMITER ',' CSV HEADER;" -U beluga -d belugaDb
 echo $(timestamp) Done.
 
 echo ----------------------------------------------------------------------
@@ -389,7 +388,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'flightroute_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'flightroute_data'),
@@ -430,7 +429,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'shape_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'shape_data'),
@@ -468,7 +467,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'map_cat_to_shape_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'map_cat_to_shape_data'),
@@ -506,7 +505,7 @@ psql -c "INSERT INTO public.version_info(
 			last_updated)
 		VALUES (
 			'map_type_to_shape_data',
-			'4.0.1',
+			'4.1.0',
 			(SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'map_type_to_shape_data'),
