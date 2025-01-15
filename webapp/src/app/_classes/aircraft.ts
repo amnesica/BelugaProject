@@ -43,7 +43,7 @@ export class Aircraft {
   selectedQnh!: number;
   selectedAltitude!: number;
   selectedHeading!: number;
-  lastSeen!: number;
+  lastSeenPos!: number;
   feederList!: string;
   sourceList!: string;
   fullType!: string;
@@ -206,7 +206,7 @@ export class Aircraft {
     speed: number,
     flightId: string,
     distance: number,
-    lastSeen: number,
+    lastSeenPos: number,
     verticalRate: number,
     feederList: string,
     position: any,
@@ -246,7 +246,7 @@ export class Aircraft {
     this.speed = speed;
     this.flightId = this.trimFlightId(flightId);
     this.distance = distance;
-    this.lastSeen = lastSeen;
+    this.lastSeenPos = lastSeenPos;
     this.verticalRate = verticalRate;
     this.feederList = feederList;
     this.position = position;
@@ -294,7 +294,7 @@ export class Aircraft {
       aircraftJSONElement.speed,
       aircraftJSONElement.flightId,
       aircraftJSONElement.distance,
-      aircraftJSONElement.lastSeen,
+      aircraftJSONElement.lastSeenPos,
       aircraftJSONElement.verticalRate,
       aircraftJSONElement.feederList,
       [aircraftJSONElement.longitude, aircraftJSONElement.latitude],
@@ -422,7 +422,7 @@ export class Aircraft {
     this.selectedQnh = listElement.selectedQnh;
     this.selectedAltitude = listElement.selectedAltitude;
     this.selectedHeading = listElement.selectedHeading;
-    this.lastSeen = listElement.lastSeen;
+    this.lastSeenPos = listElement.lastSeenPos;
     this.feederList = listElement.feederList;
     this.sourceList = listElement.sourceList;
     this.fullType = listElement.fullType;

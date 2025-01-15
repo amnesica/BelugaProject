@@ -2526,10 +2526,10 @@ export class MapComponent implements OnInit {
           ),
         },
         {
-          key: 'Last Seen',
+          key: 'Last Seen (Pos.)',
           value: this.getValueOrDefault(
-            typeof aircraft.lastSeen !== 'undefined'
-              ? aircraft.lastSeen + ' s'
+            typeof aircraft.lastSeenPos !== 'undefined'
+              ? aircraft.lastSeenPos + ' s'
               : undefined
           ),
         },

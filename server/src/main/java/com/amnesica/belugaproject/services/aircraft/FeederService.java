@@ -131,7 +131,7 @@ public class FeederService {
 
           // Priorisiere Remote-Flugzeug, wenn dies neuer ist als markiertes lokales Flugzeug
           final Aircraft localAircraft = (Aircraft) mapAircraftRaw.get(remoteAircraft.getHex());
-          if (localAircraft.getHex().equals(markedHex) && localAircraft.getLastSeen() > remoteAircraft.getLastSeen()) {
+          if (localAircraft.getHex().equals(markedHex) && localAircraft.getLastSeenPos() > remoteAircraft.getLastSeenPos()) {
             aircraftSet.remove(localAircraft);
             aircraftService.updateValuesOfAircraft(localAircraft, remoteAircraft, remoteAircraft.getIsFromRemote(), false);
             aircraftSet.add(localAircraft);

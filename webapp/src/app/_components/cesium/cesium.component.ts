@@ -640,12 +640,12 @@ export class CesiumComponent implements OnInit {
     }
 
     // Stoppe Extrapolation, wenn 5 Sekunden kein Update des Flugzeugs kommt
-    if (aircraft.lastSeen >= 5 && this.EntityPositions[aircraft.hex]) {
+    if (aircraft.lastSeenPos >= 5 && this.EntityPositions[aircraft.hex]) {
       this.EntityPositions[aircraft.hex]!.forwardExtrapolationType =
         Cesium.ExtrapolationType.HOLD;
       this.EntityCockpitPositions[aircraft.hex]!.forwardExtrapolationType =
         Cesium.ExtrapolationType.HOLD;
-    } else if (aircraft.lastSeen < 5 && this.EntityPositions[aircraft.hex]) {
+    } else if (aircraft.lastSeenPos < 5 && this.EntityPositions[aircraft.hex]) {
       this.EntityPositions[aircraft.hex]!.forwardExtrapolationType =
         Cesium.ExtrapolationType.EXTRAPOLATE;
       this.EntityCockpitPositions[aircraft.hex]!.forwardExtrapolationType =

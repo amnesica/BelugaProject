@@ -229,14 +229,14 @@
     </ng-container>
 
     <!-- last seen column -->
-    <ng-container matColumnDef="lastSeen">
+    <ng-container matColumnDef="lastSeenPos">
       <th
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
         class="mat-header-colomn-row"
       >
-        Seen<br />(s)
+        Pos.<br />Seen(s)
       </th>
       <td
         class="mat-cell-element"
@@ -245,8 +245,8 @@
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
       >
-        <p *ngIf="aircraft.lastSeen != null">{{ aircraft.lastSeen }}</p>
-        <p *ngIf="aircraft.lastSeen == null">N/A</p>
+        <p *ngIf="aircraft.lastSeenPos != null">{{ aircraft.lastSeenPos }}</p>
+        <p *ngIf="aircraft.lastSeenPos == null">N/A</p>
       </td>
     </ng-container>
 

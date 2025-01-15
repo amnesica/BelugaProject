@@ -54,7 +54,7 @@ export class AircraftTableComponent implements OnInit {
     'verticalRate',
     'speed',
     'track',
-    'lastSeen',
+    'lastSeenPos',
     'feeder',
     'distance',
     'dummy',

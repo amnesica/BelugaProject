@@ -138,7 +138,7 @@ public class AircraftService {
     aircraftToUpdate.setSelectedQnh(aircraftNew.getSelectedQnh());
     aircraftToUpdate.setSelectedAltitude(aircraftNew.getSelectedAltitude());
     aircraftToUpdate.setSelectedHeading(aircraftNew.getSelectedHeading());
-    aircraftToUpdate.setLastSeen(aircraftNew.getLastSeen());
+    aircraftToUpdate.setLastSeenPos(aircraftNew.getLastSeenPos());
     aircraftToUpdate.setSourceCurrentFeeder(aircraftNew.getSourceCurrentFeeder());
     aircraftToUpdate.setRoll(aircraftNew.getRoll());
     aircraftToUpdate.setIas(aircraftNew.getIas());
@@ -407,7 +407,7 @@ public class AircraftService {
     }
 
     if (lastSeen != null && element.has(lastSeen)) {
-      aircraft.setLastSeen(element.getInt(lastSeen));
+      aircraft.setLastSeenPos(element.getInt(lastSeen));
     }
 
     if (rssi != null && element.has(rssi) && !element.isNull(rssi)) {

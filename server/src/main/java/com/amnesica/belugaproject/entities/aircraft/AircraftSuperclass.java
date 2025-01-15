@@ -56,7 +56,7 @@ public class AircraftSuperclass {
   private List<String> feederList;
 
   // Zuletzt gesehen
-  private Integer lastSeen;
+  private Integer lastSeenPos;
 
   // Quelle (ADS-B oder MLAT)
   @Type(ListArrayType.class)

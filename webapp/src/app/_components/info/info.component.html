@@ -919,16 +919,16 @@
                 : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
-            Last Seen
+            Last Seen (Pos.)
           </p>
           <p
-            *ngIf="aircraft && aircraft.lastSeen != null"
+            *ngIf="aircraft && aircraft.lastSeenPos != null"
             class="mat-grid-tile-subtitle"
           >
-            {{ aircraft.lastSeen }} s
+            {{ aircraft.lastSeenPos }} s
           </p>
           <p
-            *ngIf="aircraft && aircraft.lastSeen == null"
+            *ngIf="aircraft && aircraft.lastSeenPos == null"
             class="mat-grid-tile-subtitle"
           >
             N/A
@@ -2942,16 +2942,16 @@
                 : 'background-and-color-light color-grey mat-grid-tile-title'
             "
           >
-            Last Seen
+            Last Seen (Pos.)
           </p>
           <p
-            *ngIf="aircraft && aircraft.lastSeen != null"
+            *ngIf="aircraft && aircraft.lastSeenPos != null"
             class="mat-grid-tile-subtitle"
           >
-            {{ aircraft.lastSeen }} s
+            {{ aircraft.lastSeenPos }} s
           </p>
           <p
-            *ngIf="aircraft && aircraft.lastSeen == null"
+            *ngIf="aircraft && aircraft.lastSeenPos == null"
             class="mat-grid-tile-subtitle"
           >
             N/A
