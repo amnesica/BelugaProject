@@ -27,9 +27,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,23 +48,23 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class LocalFeederServiceTests {
 
-  @MockBean
+  @MockitoBean
   private NetworkHandlerService networkHandler;
-  @MockBean
+  @MockitoBean
   private AircraftDataService aircraftDataService;
-  @MockBean
+  @MockitoBean
   private HistoryAircraftService historyAircraftService;
-  @MockBean
+  @MockitoBean
   private AircraftTrailService aircraftTrailService;
-  @MockBean
+  @MockitoBean
   private AirportDataService airportDataService;
-  @MockBean
+  @MockitoBean
   private AircraftRepository aircraftRepository;
-  @MockBean
+  @MockitoBean
   private RegcodeDataService regcodeDataService;
-  @MockBean
+  @MockitoBean
   private OperatorDataService operatorDataService;
-  @MockBean
+  @MockitoBean
   private FlightrouteDataService flightrouteDataService;
 
   @Spy
