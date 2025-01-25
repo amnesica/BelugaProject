@@ -1931,12 +1931,6 @@ export class MapComponent implements OnInit {
   private getTrailToAircraft(aircraft: Aircraft, selectedFeeder: any) {
     if (!aircraft) return;
 
-    // Hint: Opensky schickt falsche Trails momentan zurück
-    if (this.isRemoteAircraft(aircraft)) {
-      this.createEmptyTrailForRemoteAircraft(aircraft);
-      return;
-    }
-
     this.serverService
       .getTrail(
         aircraft.hex,
