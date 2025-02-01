@@ -46,6 +46,7 @@ export class SettingsService {
   private mapZoomLevelSource = new Subject<number>();
   private showActualRangeOutlineSource = new Subject<boolean>();
   private nominatimFetchedCoordinatesSource = new Subject<any>();
+  private showDayNightLineSource = new Subject<boolean>();
 
   // Observable streams
   toggleMarkOutlineDataByFeeder$ =
@@ -98,6 +99,7 @@ export class SettingsService {
     this.showActualRangeOutlineSource.asObservable();
   nominatimFetchedCoordinatesSource$ =
     this.nominatimFetchedCoordinatesSource.asObservable();
+  showDayNightLineSource$ = this.showDayNightLineSource.asObservable();
 
   constructor() {}
 
@@ -293,5 +295,10 @@ export class SettingsService {
   nominatimFetchedCoordinates(coordinatesJson: any) {
     this.nominatimFetchedCoordinatesSource.next(coordinatesJson);
     return this.nominatimFetchedCoordinatesSource;
+  }
+
+  toggleDayNightLine(showDayNightLine: boolean) {
+    this.showDayNightLineSource.next(showDayNightLine);
+    return this.showDayNightLineSource;
   }
 }

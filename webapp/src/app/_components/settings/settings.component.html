@@ -313,6 +313,13 @@
             (change)="toggleAirports($event.checked)"
             >Airport Labels</mat-slide-toggle
           >
+
+          <mat-slide-toggle
+            [checked]="showDayNightLine"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDayNightLine($event.checked)"
+            >Show Day/Night Line</mat-slide-toggle
+          >
         </div>
 
         <mat-divider></mat-divider>

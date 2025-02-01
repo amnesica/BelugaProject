@@ -59,6 +59,7 @@ export class SettingsComponent implements OnInit {
   showIss: boolean = true;
   showAircraftPositions: boolean = true;
   showOnlyMilitaryPlanes: boolean = false;
+  showDayNightLine: boolean = true;
 
   // Liste an Feeder (Verlinkung zu Globals, enthält 'All Feeder'-Feeder)
   listFeeder: any;
@@ -254,6 +255,10 @@ export class SettingsComponent implements OnInit {
 
     this.toggleActualRangeOutline(
       Storage.getPropertyFromLocalStorage('showActualRangeOutline', true)
+    );
+
+    this.toggleDayNightLine(
+      Storage.getPropertyFromLocalStorage('dayNightLine', true)
     );
   }
 
@@ -825,5 +830,13 @@ export class SettingsComponent implements OnInit {
 
     // Kontaktiere Map-Component und übergebe showActualRangeOutline-Boolean
     this.settingsService.toggleActualRangeOutline(this.showActualRangeOutline);
+  }
+
+  toggleDayNightLine(checked: boolean) {
+    this.showDayNightLine = checked;
+
+    Storage.savePropertyInLocalStorage('dayNightLine', this.showDayNightLine);
+
+    this.settingsService.toggleDayNightLine(this.showDayNightLine);
   }
 }

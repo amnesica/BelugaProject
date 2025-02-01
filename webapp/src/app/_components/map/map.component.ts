@@ -63,6 +63,7 @@ import { WebGLStyle } from 'ol/style/webgl';
 import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 import { Coordinate } from 'ol/coordinate';
 import { InfoService } from 'src/app/_services/info-service/info-service.service';
+import DayNight from 'ol-ext/source/DayNight';
 
 @Component({
   selector: 'app-map',
@@ -334,6 +335,11 @@ export class MapComponent implements OnInit {
   // TODO
   themeManager = inject(ThemeManager);
   isDark$ = this.themeManager.isDark$;
+
+  // Day/Night Line
+  dayNightVectorSource: any = new DayNight();
+  dayNightVectorLayer!: VectorLayer;
+  refreshIntervalIdDayNightLine: any;
 
   private ngUnsubscribe = new Subject<void>();
 
@@ -664,6 +670,11 @@ export class MapComponent implements OnInit {
     this.settingsService.resetMapPositionSource$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => this.setMapCenterFromSitePosition());
+
+    // Zeige Day/Night Line
+    this.settingsService.showDayNightLineSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showDayNightLine) => this.showDayNightLine(showDayNightLine));
   }
 
   private initWeatherSubscriptions() {
@@ -4000,5 +4011,61 @@ export class MapComponent implements OnInit {
         );
       }
     });
+  }
+
+  private showDayNightLine(showDayNightLine: boolean): void {
+    if (!this.OLMap) return;
+
+    if (showDayNightLine) {
+      this.createDayNightLine();
+    } else {
+      this.removeDayNightLine();
+    }
+  }
+
+  private removeDayNightLine() {
+    if (!this.dayNightVectorLayer) return;
+
+    this.layers.remove(this.dayNightVectorLayer);
+    this.stopUpdateDayNightLine();
+  }
+
+  private createDayNightLine() {
+    this.dayNightVectorSource = new DayNight({});
+    this.dayNightVectorLayer = this.createVectorLayer(
+      this.dayNightVectorSource,
+      5,
+      false,
+      80,
+      {
+        name: 'day_night_line',
+        type: 'overlay',
+        title: 'day night line',
+      },
+      new Style({
+        image: new Circle({
+          radius: 5,
+          fill: new Fill({ color: 'red' }),
+        }),
+        fill: new Fill({
+          color: [0, 0, 0, 0.1],
+        }),
+      }),
+      undefined
+    );
+    this.layers.push(this.dayNightVectorLayer);
+    this.initUpdateDayNightLine();
+  }
+
+  private initUpdateDayNightLine() {
+    this.refreshIntervalIdDayNightLine = window.setInterval(() => {
+      if (this.dayNightVectorSource)
+        this.dayNightVectorSource.setTime(new Date());
+    }, 60000);
+  }
+
+  private stopUpdateDayNightLine() {
+    clearInterval(this.refreshIntervalIdDayNightLine);
+    this.refreshIntervalIdDayNightLine = undefined;
   }
 }
