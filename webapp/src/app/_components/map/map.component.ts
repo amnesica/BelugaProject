@@ -341,6 +341,9 @@ export class MapComponent implements OnInit {
   dayNightVectorLayer!: VectorLayer;
   refreshIntervalIdDayNightLine: any;
 
+  // Route to destination
+  showRouteToDestination: boolean = false;
+
   private ngUnsubscribe = new Subject<void>();
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
@@ -675,6 +678,13 @@ export class MapComponent implements OnInit {
     this.settingsService.showDayNightLineSource$
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((showDayNightLine) => this.showDayNightLine(showDayNightLine));
+
+    // Zeige Route zum Ziel-Flughafen
+    this.settingsService.showRouteToDestinationSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((showRouteToDestination) =>
+        this.toggleRouteToDestination(showRouteToDestination)
+      );
   }
 
   private initWeatherSubscriptions() {
@@ -1783,6 +1793,7 @@ export class MapComponent implements OnInit {
 
     if (isMarkedOnMap) {
       if (this.aircraft) this.aircraft.updateTrail();
+      if (this.showRouteToDestination) this.updateRouteToDestination();
       this.updateShowRoute();
       this.updateAltitudeChart();
       this.updateInfoComponent();
@@ -2735,6 +2746,23 @@ export class MapComponent implements OnInit {
     // Zeichne Route von Herkunftsort zu Flugzeug
     // und vom Flugzeug zum Zielort
     this.drawGreatDistanceCirclesThroughAircraft();
+  }
+
+  private updateRouteToDestination() {
+    if (
+      !this.aircraft ||
+      !this.aircraft.positionOrg ||
+      !this.aircraft.positionDest
+    )
+      return;
+
+    this.resetAllDrawnCircles();
+
+    // Linie von Flugzeug -> Zielort
+    this.createAndAddCircleToFeature(
+      this.aircraft.position,
+      this.aircraft.positionDest
+    );
   }
 
   private toggleShowAircraftLabels(showAircraftLabel) {
@@ -4069,5 +4097,15 @@ export class MapComponent implements OnInit {
   private stopUpdateDayNightLine() {
     clearInterval(this.refreshIntervalIdDayNightLine);
     this.refreshIntervalIdDayNightLine = undefined;
+  }
+
+  private toggleRouteToDestination(showRouteToDestination: boolean) {
+    this.showRouteToDestination = showRouteToDestination;
+
+    showRouteToDestination
+      ? this.updateRouteToDestination()
+      : this.resetAllDrawnCircles();
+
+    if (this.showRoute) this.updateShowRoute();
   }
 }

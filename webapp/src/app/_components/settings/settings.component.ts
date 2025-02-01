@@ -60,6 +60,7 @@ export class SettingsComponent implements OnInit {
   showAircraftPositions: boolean = true;
   showOnlyMilitaryPlanes: boolean = false;
   showDayNightLine: boolean = true;
+  showRouteToDestination: boolean = false;
 
   // Liste an Feeder (Verlinkung zu Globals, enthält 'All Feeder'-Feeder)
   listFeeder: any;
@@ -259,6 +260,10 @@ export class SettingsComponent implements OnInit {
 
     this.toggleDayNightLine(
       Storage.getPropertyFromLocalStorage('dayNightLine', true)
+    );
+
+    this.toggleRouteToDestination(
+      Storage.getPropertyFromLocalStorage('routeToDestination', false)
     );
   }
 
@@ -838,5 +843,16 @@ export class SettingsComponent implements OnInit {
     Storage.savePropertyInLocalStorage('dayNightLine', this.showDayNightLine);
 
     this.settingsService.toggleDayNightLine(this.showDayNightLine);
+  }
+
+  toggleRouteToDestination(checked: boolean) {
+    this.showRouteToDestination = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'routeToDestination',
+      this.showRouteToDestination
+    );
+
+    this.settingsService.toggleRouteToDestination(this.showRouteToDestination);
   }
 }

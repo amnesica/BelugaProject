@@ -152,6 +152,13 @@
             (change)="togglePOMDPoint($event.checked)"
             >Toggle POMD-Feature</mat-slide-toggle
           >
+
+          <mat-slide-toggle
+            [checked]="showRouteToDestination"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRouteToDestination($event.checked)"
+            >Show Route To Destination</mat-slide-toggle
+          >
         </div>
 
         <mat-divider style="margin-bottom: 0"></mat-divider>

@@ -47,6 +47,7 @@ export class SettingsService {
   private showActualRangeOutlineSource = new Subject<boolean>();
   private nominatimFetchedCoordinatesSource = new Subject<any>();
   private showDayNightLineSource = new Subject<boolean>();
+  private showRouteToDestinationSource = new Subject<boolean>();
 
   // Observable streams
   toggleMarkOutlineDataByFeeder$ =
@@ -100,6 +101,8 @@ export class SettingsService {
   nominatimFetchedCoordinatesSource$ =
     this.nominatimFetchedCoordinatesSource.asObservable();
   showDayNightLineSource$ = this.showDayNightLineSource.asObservable();
+  showRouteToDestinationSource$ =
+    this.showRouteToDestinationSource.asObservable();
 
   constructor() {}
 
@@ -300,5 +303,10 @@ export class SettingsService {
   toggleDayNightLine(showDayNightLine: boolean) {
     this.showDayNightLineSource.next(showDayNightLine);
     return this.showDayNightLineSource;
+  }
+
+  toggleRouteToDestination(showRouteToDestination: boolean) {
+    this.showRouteToDestinationSource.next(showRouteToDestination);
+    return this.showRouteToDestinationSource;
   }
 }
