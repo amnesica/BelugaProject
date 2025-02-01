@@ -2875,7 +2875,9 @@ export class MapComponent implements OnInit {
       (aircraft) =>
         !aircraft.isMarked &&
         aircraft.isFromRemote !== undefined &&
-        aircraft.isFromRemote !== null
+        aircraft.isFromRemote !== null &&
+        (aircraft.isFromRemote == 'Airplanes-Live' ||
+          aircraft.isFromRemote == 'Opensky')
     );
   }
 
