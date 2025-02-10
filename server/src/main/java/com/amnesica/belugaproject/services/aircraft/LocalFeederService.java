@@ -287,7 +287,7 @@ public class LocalFeederService {
   public List<Aircraft> getPlanes(Double lomin, Double lamin, Double lomax, Double lamax,
                                   String selectedFeeder, long startTime, String markedHex, boolean showOnlyMilitary) {
     List<Aircraft> listAircraftRaw;
-    listAircraftRaw = getPlanesWithinExtent(lomin, lamin, lomax, lamax, selectedFeeder, startTime, markedHex, showOnlyMilitary);
+    listAircraftRaw = getPlanesWithoutExtent(lomin, lamin, lomax, lamax, selectedFeeder, startTime, markedHex, showOnlyMilitary);
 
     try {
       if (markedHex != null && !markedHex.isEmpty()) {
@@ -310,7 +310,7 @@ public class LocalFeederService {
     return listAircraftRaw;
   }
 
-  private List<Aircraft> getPlanesWithinExtent(double lomin, double lamin, double lomax, double lamax, String selectedFeeder, long startTime, String markedHex, boolean showOnlyMilitary) {
+  private List<Aircraft> getPlanesWithoutExtent(double lomin, double lamin, double lomax, double lamax, String selectedFeeder, long startTime, String markedHex, boolean showOnlyMilitary) {
     List<Aircraft> listAircraftRaw = null;
 
     try {
