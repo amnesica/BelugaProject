@@ -42,7 +42,7 @@ export class AircraftTableComponent implements OnInit {
   margin: string | undefined;
   marginTop: string | undefined;
   borderRadius: string | undefined;
-  filterFieldWidth: string = '45rem';
+  filterFieldWidth: string = '51rem';
 
   // Anzuzeigende Spalten der Tabelle
   displayedColumns: string[] = [
@@ -95,8 +95,8 @@ export class AircraftTableComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isDesktop) => {
         if (isDesktop == true) {
-          this.showAircraftTableWidth = '50rem';
-          this.filterFieldWidth = '50rem';
+          this.showAircraftTableWidth = '51rem';
+          this.filterFieldWidth = '51rem';
           this.margin = '0.3rem';
           this.marginTop = '3.8rem';
           this.borderRadius = '15px';

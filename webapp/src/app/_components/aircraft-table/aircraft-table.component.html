@@ -314,8 +314,9 @@
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
+        style="text-align: right"
       >
-        <p *ngIf="aircraft.distance">{{ aircraft.distance }}</p>
+        <p *ngIf="aircraft.distance">{{ aircraft.distance.toFixed(1) }}</p>
         <p *ngIf="!aircraft.distance">N/A</p>
       </td>
     </ng-container>
