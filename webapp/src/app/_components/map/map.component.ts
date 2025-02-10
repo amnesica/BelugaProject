@@ -2255,6 +2255,12 @@ export class MapComponent implements OnInit {
         { key: 'Category', value: outlinePoint.category },
         { key: 'Registration', value: outlinePoint.registration },
         {
+          key: 'Track',
+          value: outlinePoint.track
+            ? `${outlinePoint.track} °`
+            : undefined,
+        },
+        {
           key: 'Altitude',
           value: outlinePoint.altitude
             ? `${outlinePoint.altitude} ft`
