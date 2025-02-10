@@ -43,7 +43,7 @@ public class AircraftTrailService {
    * @param feederName String
    */
   public void addTrail(AircraftSuperclass aircraft, String feederName) {
-    if (aircraft != null) {
+    if (aircraft != null && aircraft.getLatitude() != null && aircraft.getLongitude() != null) {
       // Erstelle neues Trail-Element
       AircraftTrail trail = new AircraftTrail(aircraft.getHex(), aircraft.getLongitude(), aircraft.getLatitude(),
           aircraft.getAltitude(), aircraft.getReenteredAircraft(), System.currentTimeMillis(), feederName,

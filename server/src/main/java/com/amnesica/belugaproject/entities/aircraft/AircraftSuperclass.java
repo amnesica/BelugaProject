@@ -134,7 +134,12 @@ public class AircraftSuperclass {
 
   private Double roll;
 
-  // Konstruktor
+  private Boolean sendWithPos = false;
+
+  public AircraftSuperclass(String hex) {
+    this.hex = hex;
+  }
+
   public AircraftSuperclass(String hex, double latitude, double longitude) {
     this.hex = hex;
     this.latitude = latitude;

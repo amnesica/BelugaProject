@@ -1741,8 +1741,16 @@ export class MapComponent implements OnInit {
   private updatePlanesCounter(amountFetchedPlanes: number) {
     Globals.amountDisplayedAircraft = amountFetchedPlanes;
 
+    let aircraftSendWithPos = 0;
+    aircraftSendWithPos = Globals.PlanesOrdered.filter(
+      (plane) => plane.sendWithPos == true
+    ).length;
+
     this.titleService.setTitle(
-      'Beluga Project  - ' + Globals.amountDisplayedAircraft
+      'Beluga Project  - ' +
+        aircraftSendWithPos +
+        '/' +
+        Globals.amountDisplayedAircraft
     );
 
     this.toolbarService.updateAircraftCounter(Globals.amountDisplayedAircraft);
@@ -2125,7 +2133,11 @@ export class MapComponent implements OnInit {
     } else {
       // Zentriere Map-Ansicht auf das ausgewählte Flugzeug,
       // wenn Flugzeug durch die Tabelle markiert wurde
-      if (aircraft.isMarked) {
+      if (
+        aircraft.isMarked &&
+        aircraft.latitude != undefined &&
+        aircraft.longitude != undefined
+      ) {
         this.centerMap(
           aircraft.longitude,
           aircraft.latitude,

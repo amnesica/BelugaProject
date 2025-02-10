@@ -11,6 +11,10 @@ public class Aircraft extends AircraftSuperclass {
     // Benötiger, leerer Konstruktor
   }
 
+  public Aircraft(String hex) {
+    super(hex);
+  }
+
   public Aircraft(String hex, Double latitude, Double longitude) {
     super(hex, latitude, longitude);
   }

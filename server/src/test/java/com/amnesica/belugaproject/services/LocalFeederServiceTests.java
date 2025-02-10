@@ -80,10 +80,12 @@ public class LocalFeederServiceTests {
   private static Stream<Arguments> getArguments() {
     // type feeder, filename aircraft json, expected #aircraft
     return Stream.of(
-        Arguments.of("adsbx", "adsbx_aircraft.json", 25),
-        Arguments.of("vrs", "vrs_aircraft.json", 6),
-        Arguments.of("dump1090-fa", "dump1090-fa_aircraft.json", 21),
-        Arguments.of("airsquitter", "airsquitter_aircraft.json", 21)
+        Arguments.of("adsbx", "adsbx_aircraft.json", 31), // 25 with pos, 31 total
+        Arguments.of("vrs", "vrs_aircraft.json", 6), // 6 with pos, 6 total
+        Arguments.of("dump1090-fa", "dump1090-fa_aircraft.json", 32), // 21 with pos, 32 total
+        Arguments.of("airsquitter", "airsquitter_aircraft.json", 29), // 21 with pos, 29 total
+        Arguments.of("adsbx", "adsbx_aircraft_without_pos.json", 4), // 0 with pos, 4 total
+        Arguments.of("adsbx", "adsbx_aircraft_pos_no_pos.json", 29) // 18 with pos, 5 with last_position, 29 total
     );
   }
 
@@ -97,15 +99,15 @@ public class LocalFeederServiceTests {
     when(configuration.getListFeeder()).thenReturn(List.of(feeder));
     when(networkHandler.makeServiceCallLocalFeeder(anyString())).thenReturn(getJsonResource(fileNameJsonTestResource));
     when(aircraftRepository.existsById(anyString())).thenReturn(false);
-    when(aircraftRepository.save(any(Aircraft.class))).thenAnswer(invocation -> addSavedAircraftToList(invocation, savedAircraft));
+    when(aircraftRepository.save(any(Aircraft.class))).thenAnswer(
+        invocation -> addSavedAircraftToList(invocation, savedAircraft));
 
     localFeederService.getPlanesFromFeeder();
 
     assertEquals(expectedNumberAircraft, savedAircraft.size());
     savedAircraft.forEach(aircraft -> {
       assertNotNull(aircraft.getHex());
-      assertNotNull(aircraft.getLatitude());
-      assertNotNull(aircraft.getLongitude());
+      assertNotNull(aircraft.getLastUpdate());
     });
   }
 

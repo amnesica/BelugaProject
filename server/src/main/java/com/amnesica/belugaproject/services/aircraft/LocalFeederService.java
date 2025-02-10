@@ -60,44 +60,25 @@ public class LocalFeederService {
    */
   @Scheduled(fixedRate = StaticValues.INTERVAL_UPDATE_LOCAL_FEEDER)
   public void getPlanesFromFeeder() {
-    // Lösche currentIterationSet
     currentIterationSet.clear();
 
-    // Hole und verarbeite Flugzeuge von jedem Feeder
     for (Feeder feeder : configuration.getListFeeder()) {
-      // Breche ab, wenn aus einem Grund der Feeder null ist
       if (feeder == null) return;
 
-      // Hole Planes vom lokalen Feeder als JSONArray
       JSONArray jsonArrayPlanesFeeder = getAircraftJSONFromLocalFeeder(feeder);
-
-      // Wenn JSONArray null ist, breche Vorgang ab und fahre mit nächstem Feeder fort
       if (jsonArrayPlanesFeeder == null) continue;
 
-      // Füge Flugzeuge in Datenbank hinzu oder update Flugzeuge in Datenbank
       for (int i = 0; i < jsonArrayPlanesFeeder.length(); i++) {
-
-        // Extrahiere element aus JSONArray
         final JSONObject element = jsonArrayPlanesFeeder.getJSONObject(i);
-
-        // Erstelle aus Daten des Feeders ein neues Flugzeug
         Aircraft aircraftNew = null;
-        if (feeder.getType().equals("vrs")) {
-          if (isValidVrsAircraft(element)) aircraftNew = aircraftService.createNewAircraft(element, feeder);
-        } else {
-          if (isValidAircraft(element)) aircraftNew = aircraftService.createNewAircraft(element, feeder);
-        }
-
+        if (isValidAircraft(element, feeder)) aircraftNew = aircraftService.createNewAircraft(element, feeder);
         if (aircraftNew == null) continue;
 
         processAircraft(aircraftNew, feeder);
       }
     }
-    
-    // Lösche previousIterationSet
-    previousIterationSet.clear();
 
-    // Schreibe currentIterationSet in previousIterationSet
+    previousIterationSet.clear();
     previousIterationSet.addAll(currentIterationSet);
   }
 
@@ -161,16 +142,9 @@ public class LocalFeederService {
     }
   }
 
-  private boolean isValidVrsAircraft(JSONObject element) {
-    return element != null && element.has("Icao") && element.has("Lat") && element.has("Long")
-        && !element.isNull("Lat") && !element.isNull("Long")
-        && element.getDouble("Lat") != 0 && element.getDouble("Long") != 0;
-  }
-
-  private boolean isValidAircraft(JSONObject element) {
-    return element != null && element.has("hex") && element.has("lat") && element.has("lon")
-        && !element.isNull("lat") && !element.isNull("lon")
-        && element.getDouble("lat") != 0 && element.getDouble("lon") != 0;
+  private boolean isValidAircraft(JSONObject element, Feeder feeder) {
+    // Icao is hex in vrs feeder
+    return element != null && (element.has("hex") || (feeder.getType().equals("vrs") && element.has("Icao")));
   }
 
   /**
@@ -342,8 +316,8 @@ public class LocalFeederService {
     try {
       if (selectedFeeder != null && !selectedFeeder.isEmpty()) {
         // Gebe Flugzeuge eines bestimmten Feeders zurück
-        listAircraftRaw = aircraftRepository.findAllByLastUpdateAndFeederAndWithinExtent(
-            startTime, selectedFeeder, lomin, lamin, lomax, lamax);
+        listAircraftRaw = aircraftRepository.findAllByLastUpdateAndFeederWithoutExtent(
+            startTime, selectedFeeder);
       }
     } catch (Exception e) {
       log.error("Server - DB error when fetching planes : Exception = " + e);

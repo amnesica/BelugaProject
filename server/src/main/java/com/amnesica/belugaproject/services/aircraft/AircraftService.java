@@ -12,6 +12,7 @@ import com.amnesica.belugaproject.services.data.RegcodeDataService;
 import com.amnesica.belugaproject.services.helper.HelperService;
 import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
 import com.amnesica.belugaproject.services.trails.AircraftTrailService;
+import com.amnesica.belugaproject.utility.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,26 +49,45 @@ public class AircraftService {
   /**
    * Erstellt ein neues Flugzeug (Aircraft)
    *
-   * @param element JSONObject
-   * @param feeder  Feeder
+   * @param jsonObject JSONObject
+   * @param feeder     Feeder
    * @return Aircraft
    */
-  public Aircraft createNewAircraft(JSONObject element, Feeder feeder) {
-    // Erstelle Flugzeug
-    // TODO: alle Feeder außer vrs arbeiten mit hex, lat, lon
+  public Aircraft createNewAircraft(JSONObject jsonObject, Feeder feeder) {
     Aircraft aircraftNew;
-    if (feeder.getType().equals("vrs")) {
-      aircraftNew = new Aircraft(element.getString("Icao").toLowerCase().trim(), element.getDouble("Lat"),
-          element.getDouble("Long"));
-    } else {
-      aircraftNew = new Aircraft(element.getString("hex").toLowerCase().trim(), element.getDouble("lat"),
-          element.getDouble("lon"));
-    }
 
-    // Setze spezifische Werte der Feeder
-    setValuesToAircraft(feeder, element, aircraftNew);
+    final String hexMapping = feeder.getMapping().getHex();
+    final String latMapping = feeder.getMapping().getLatitude();
+    final String lonMapping = feeder.getMapping().getLongitude();
+
+    if (hexMapping == null || latMapping == null || lonMapping == null) return null;
+
+    aircraftNew = new Aircraft(jsonObject.getString(hexMapping).toLowerCase().trim());
+    if (Utility.jsonFieldExists(jsonObject, latMapping))
+      aircraftNew.setLatitude(jsonObject.getDouble(latMapping));
+    if (Utility.jsonFieldExists(jsonObject, lonMapping))
+      aircraftNew.setLongitude(jsonObject.getDouble(lonMapping));
+
+    // Message with position
+    aircraftNew.setSendWithPos(Utility.jsonFieldExists(jsonObject, latMapping) && Utility.jsonFieldExists(jsonObject, lonMapping));
+
+    // Only for adsbx
+    setPosFromAdsbxLastPosWhenNeeded(jsonObject, feeder, latMapping, lonMapping, aircraftNew);
+
+    setValuesToAircraft(feeder, jsonObject, aircraftNew);
 
     return aircraftNew;
+  }
+
+  private static void setPosFromAdsbxLastPosWhenNeeded(JSONObject jsonObject, Feeder feeder, String latMapping, String lonMapping, Aircraft aircraftNew) {
+    if (feeder.getType().equals("adsbx") &&
+        !Utility.jsonFieldExists(jsonObject, latMapping) &&
+        !Utility.jsonFieldExists(jsonObject, lonMapping) &&
+        Utility.jsonFieldExists(jsonObject, "lastPosition")) {
+      final JSONObject lastPosition = jsonObject.getJSONObject("lastPosition");
+      aircraftNew.setLatitude(lastPosition.getDouble(latMapping));
+      aircraftNew.setLongitude(lastPosition.getDouble(lonMapping));
+    }
   }
 
   /**
@@ -110,8 +130,8 @@ public class AircraftService {
   public void updateValuesOfAircraft(AircraftSuperclass aircraftToUpdate, AircraftSuperclass aircraftNew,
                                      String feederName, boolean isLocalFeederService) {
     // Merken vorherige Position für nachfolgende Trackberechnung
-    double prevLatitude = aircraftToUpdate.getLatitude();
-    double prevLongitude = aircraftToUpdate.getLongitude();
+    Double prevLatitude = aircraftToUpdate.getLatitude();
+    Double prevLongitude = aircraftToUpdate.getLongitude();
     Integer prevTrack = aircraftToUpdate.getTrack();
 
     if (isLocalFeederService) {
@@ -125,6 +145,7 @@ public class AircraftService {
     // Aktualisiere Werte von aircraftNew
     aircraftToUpdate.setLatitude(aircraftNew.getLatitude());
     aircraftToUpdate.setLongitude(aircraftNew.getLongitude());
+    aircraftToUpdate.setSendWithPos(aircraftNew.getSendWithPos());
     aircraftToUpdate.setAltitude(aircraftNew.getAltitude());
     aircraftToUpdate.setOnGround(aircraftNew.getOnGround());
     aircraftToUpdate.setSpeed(aircraftNew.getSpeed());
@@ -194,7 +215,7 @@ public class AircraftService {
       aircraftToUpdate.setOrigin(aircraftNew.getOrigin());
     }
 
-    if (aircraftNew.getDistance() != 0) {
+    if (aircraftNew.getDistance() != null && aircraftNew.getDistance() != 0) {
       aircraftToUpdate.setDistance(aircraftNew.getDistance());
     }
 
@@ -203,10 +224,10 @@ public class AircraftService {
       aircraftTrailService.addTrail(aircraftToUpdate, feederName);
     }
 
-    // Track berechnen, wenn nicht vom Feeder geliefert und sich die Position
-    // geändert hat
-    if (aircraftNew.getTrack() == null && prevLatitude != aircraftNew.getLatitude()
-        && prevLongitude != aircraftNew.getLongitude()) {
+    // Track berechnen, wenn nicht vom Feeder geliefert und sich die Position geändert hat
+    if (prevLatitude != null && prevLongitude != null &&
+        aircraftNew.getLatitude() != null && aircraftNew.getLongitude() != null && aircraftNew.getTrack() == null &&
+        !prevLatitude.equals(aircraftNew.getLatitude()) && !prevLongitude.equals(aircraftNew.getLongitude())) {
       aircraftNew.setTrack((int) HelperService.getAngleBetweenPositions(prevLatitude, prevLongitude,
           aircraftNew.getLatitude(), aircraftNew.getLongitude()));
     } else if (aircraftNew.getTrack() == null) {
@@ -240,211 +261,208 @@ public class AircraftService {
    * Setze Werte aus JSON-Element an das Flugzeug basierend auf den Mappings des
    * jeweiligen Feeders
    *
-   * @param feeder   Feeder
-   * @param element  JSONObject
-   * @param aircraft Aircraft
+   * @param feeder     Feeder
+   * @param jsonObject JSONObject
+   * @param aircraft   Aircraft
    */
-  private void setValuesToAircraft(Feeder feeder, JSONObject element, AircraftSuperclass aircraft) {
+  private void setValuesToAircraft(Feeder feeder, JSONObject jsonObject, AircraftSuperclass aircraft) {
     // Füge Feeder in Liste der Feeder hinzu
     aircraft.addFeederToFeederList(feeder.getName());
 
     // Setze Mapping-Werte
-    String altitude = feeder.getMapping().getAltitude();
-    String track = feeder.getMapping().getTrack();
-    String type = feeder.getMapping().getType();
-    String registration = feeder.getMapping().getRegistration();
-    String category = feeder.getMapping().getCategory();
-    String flightId = feeder.getMapping().getFlightId();
-    String speed = feeder.getMapping().getSpeed();
-    String verticalRate = feeder.getMapping().getVerticalRate();
-    String temperature = feeder.getMapping().getTemperature();
-    String windSpeed = feeder.getMapping().getWindSpeed();
-    String windFromDirection = feeder.getMapping().getWindFromDirection();
-    String destination = feeder.getMapping().getDestination();
-    String origin = feeder.getMapping().getOrigin();
-    String squawk = feeder.getMapping().getSquawk();
-    String autopilotEngaged = feeder.getMapping().getAutopilotEngaged();
-    String elipsoidalAltitude = feeder.getMapping().getElipsoidalAltitude();
-    String selectedQnh = feeder.getMapping().getSelectedQnh();
-    String selectedAltitude = feeder.getMapping().getSelectedAltitude();
-    String selectedHeading = feeder.getMapping().getSelectedHeading();
-    String lastSeen = feeder.getMapping().getLastSeen();
-    String rssi = feeder.getMapping().getRssi();
-    String source = feeder.getMapping().getSource();
-    String roll = feeder.getMapping().getRoll();
-    String ias = feeder.getMapping().getIas();
-    String tas = feeder.getMapping().getTas();
-    String mach = feeder.getMapping().getMach();
-    String magHeading = feeder.getMapping().getMagHeading();
-    String trueHeading = feeder.getMapping().getTrueHeading();
-    String messages = feeder.getMapping().getMessages();
-    String emergency = feeder.getMapping().getEmergency();
-    String navModes = feeder.getMapping().getNavModes();
+    final String altitude = feeder.getMapping().getAltitude();
+    final String track = feeder.getMapping().getTrack();
+    final String type = feeder.getMapping().getType();
+    final String registration = feeder.getMapping().getRegistration();
+    final String category = feeder.getMapping().getCategory();
+    final String flightId = feeder.getMapping().getFlightId();
+    final String speed = feeder.getMapping().getSpeed();
+    final String verticalRate = feeder.getMapping().getVerticalRate();
+    final String temperature = feeder.getMapping().getTemperature();
+    final String windSpeed = feeder.getMapping().getWindSpeed();
+    final String windFromDirection = feeder.getMapping().getWindFromDirection();
+    final String destination = feeder.getMapping().getDestination();
+    final String origin = feeder.getMapping().getOrigin();
+    final String squawk = feeder.getMapping().getSquawk();
+    final String autopilotEngaged = feeder.getMapping().getAutopilotEngaged();
+    final String elipsoidalAltitude = feeder.getMapping().getElipsoidalAltitude();
+    final String selectedQnh = feeder.getMapping().getSelectedQnh();
+    final String selectedAltitude = feeder.getMapping().getSelectedAltitude();
+    final String selectedHeading = feeder.getMapping().getSelectedHeading();
+    final String lastSeenPos = feeder.getMapping().getLastSeen();
+    final String rssi = feeder.getMapping().getRssi();
+    final String source = feeder.getMapping().getSource();
+    final String roll = feeder.getMapping().getRoll();
+    final String ias = feeder.getMapping().getIas();
+    final String tas = feeder.getMapping().getTas();
+    final String mach = feeder.getMapping().getMach();
+    final String magHeading = feeder.getMapping().getMagHeading();
+    final String trueHeading = feeder.getMapping().getTrueHeading();
+    final String messages = feeder.getMapping().getMessages();
+    final String emergency = feeder.getMapping().getEmergency();
+    final String navModes = feeder.getMapping().getNavModes();
 
     // Setze Werte nach Mapping
-    if (altitude != null && element.has(altitude) && !element.isNull(altitude)
-        && element.get(altitude) instanceof Integer) {
-      aircraft.setAltitude(element.getInt(altitude));
+    if (Utility.jsonFieldExists(jsonObject, altitude) && jsonObject.get(altitude) instanceof Integer) {
+      aircraft.setAltitude(jsonObject.getInt(altitude));
       aircraft.setOnGround(false);
-    } else if (altitude != null && element.has(altitude) && !element.isNull(altitude)
-        && element.get(altitude) instanceof Double) {
-      aircraft.setAltitude((int) element.getDouble(altitude));
+    } else if (Utility.jsonFieldExists(jsonObject, altitude) && jsonObject.get(altitude) instanceof Double) {
+      aircraft.setAltitude((int) jsonObject.getDouble(altitude));
       aircraft.setOnGround(false);
       // Pruefe, ob Flugzeug auf dem Boden ist und setze Altitude auf 0
-    } else if (altitude != null && element.has(altitude) && !element.isNull(altitude)
-        && element.get(altitude) instanceof String) {
+    } else if (Utility.jsonFieldExists(jsonObject, altitude) && jsonObject.get(altitude) instanceof String) {
       aircraft.setOnGround(true);
       aircraft.setAltitude(0);
       // Prüfe, ob asdbx-Feeder baro_alt hat, aber nicht geom_alt,
       // setze elipsoidalAltitude als altitude (verhindert schwarze Marker!)
-    } else if (feeder.getType().equals("adsbx") && altitude != null && !element.has(altitude) &&
-        elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude) &&
-        element.get(elipsoidalAltitude) instanceof Integer) {
+    } else if (feeder.getType().equals("adsbx") && !Utility.jsonFieldExists(jsonObject, altitude) &&
+        Utility.jsonFieldExists(jsonObject, elipsoidalAltitude) &&
+        jsonObject.get(elipsoidalAltitude) instanceof Integer) {
       aircraft.setOnGround(false);
-      aircraft.setAltitude(element.getInt(elipsoidalAltitude));
+      aircraft.setAltitude(jsonObject.getInt(elipsoidalAltitude));
     }
 
-    if (track != null && element.has(track) && !element.isNull(track)) {
-      aircraft.setTrack(element.getInt(track));
+    if (Utility.jsonFieldExists(jsonObject, track)) {
+      aircraft.setTrack(jsonObject.getInt(track));
     }
 
-    if (roll != null && element.has(roll) && !element.isNull(roll)) {
-      aircraft.setRoll(element.getDouble(roll));
+    if (Utility.jsonFieldExists(jsonObject, roll)) {
+      aircraft.setRoll(jsonObject.getDouble(roll));
     }
 
-    if (type != null && element.has(type) && !element.isNull(type)) {
-      aircraft.setType(element.get(type).toString().trim());
+    if (Utility.jsonFieldExists(jsonObject, type)) {
+      aircraft.setType(jsonObject.get(type).toString().trim());
     }
 
-    if (registration != null && element.has(registration) && !element.isNull(registration)) {
-      aircraft.setRegistration(element.get(registration).toString().trim());
+    if (Utility.jsonFieldExists(jsonObject, registration)) {
+      aircraft.setRegistration(jsonObject.get(registration).toString().trim());
     }
 
-    if (category != null && element.has(category) && !element.isNull(category)) {
-      aircraft.setCategory(element.getString(category));
+    if (Utility.jsonFieldExists(jsonObject, category)) {
+      aircraft.setCategory(jsonObject.getString(category));
     }
 
-    if (flightId != null && element.has(flightId) && !element.isNull(flightId)) {
-      aircraft.setFlightId(element.getString(flightId).trim());
+    if (Utility.jsonFieldExists(jsonObject, flightId)) {
+      aircraft.setFlightId(jsonObject.getString(flightId).trim());
     }
 
-    if (speed != null && element.has(speed) && !element.isNull(speed)) {
-      aircraft.setSpeed(element.getInt(speed));
+    if (Utility.jsonFieldExists(jsonObject, speed)) {
+      aircraft.setSpeed(jsonObject.getInt(speed));
     }
 
-    if (verticalRate != null && element.has(verticalRate) && !element.isNull(verticalRate)) {
-      aircraft.setVerticalRate(element.getInt(verticalRate));
+    if (Utility.jsonFieldExists(jsonObject, verticalRate)) {
+      aircraft.setVerticalRate(jsonObject.getInt(verticalRate));
     }
 
-    if (temperature != null && element.has(temperature) && !element.isNull(temperature)) {
-      aircraft.setTemperature(element.getInt(temperature));
+    if (Utility.jsonFieldExists(jsonObject, temperature)) {
+      aircraft.setTemperature(jsonObject.getInt(temperature));
     }
 
-    if (windSpeed != null && element.has(windSpeed) && !element.isNull(windSpeed)) {
-      aircraft.setWindSpeed(element.getInt(windSpeed));
+    if (Utility.jsonFieldExists(jsonObject, windSpeed)) {
+      aircraft.setWindSpeed(jsonObject.getInt(windSpeed));
     }
 
-    if (windFromDirection != null && element.has(windFromDirection) && !element.isNull(windFromDirection)) {
-      aircraft.setWindFromDirection(element.getInt(feeder.getMapping().getWindFromDirection()));
+    if (Utility.jsonFieldExists(jsonObject, windFromDirection)) {
+      aircraft.setWindFromDirection(jsonObject.getInt(windFromDirection));
     }
 
     // Virtual Radar Server liefert Origin/Destination im Format IATA-Code plus Airportbezeichnung
     // Nur der IATA-Code wird extrahiert und über die Datenbank nach ICAO gemappt
-    if (feeder.getType().equals("vrs") && destination != null && element.has(destination) && !element.isNull(destination)) {
-      String iataCode = element.getString(destination).substring(0, 3);
+    if (feeder.getType().equals("vrs") && Utility.jsonFieldExists(jsonObject, destination)) {
+      String iataCode = jsonObject.getString(destination).substring(0, 3);
       String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
       if (icaoCode != null) {
-        element.put(destination, icaoCode);
-        aircraft.setDestination(element.getString(destination));
+        jsonObject.put(destination, icaoCode);
+        aircraft.setDestination(jsonObject.getString(destination));
       }
     } else {
-      if (destination != null && element.has(destination) && !element.isNull(destination)) {
-        aircraft.setDestination(element.getString(destination));
+      if (Utility.jsonFieldExists(jsonObject, destination)) {
+        aircraft.setDestination(jsonObject.getString(destination));
       }
     }
-    if (feeder.getType().equals("vrs") && origin != null && element.has(origin) && !element.isNull(origin)) {
-      String iataCode = element.getString(origin).substring(0, 3);
+    if (feeder.getType().equals("vrs") && Utility.jsonFieldExists(jsonObject, origin)) {
+      String iataCode = jsonObject.getString(origin).substring(0, 3);
       String icaoCode = airportDataService.getAirportIcaoCode(iataCode);
       if (icaoCode != null) {
-        element.put(origin, icaoCode);
-        aircraft.setOrigin(element.getString(origin));
+        jsonObject.put(origin, icaoCode);
+        aircraft.setOrigin(jsonObject.getString(origin));
       }
     } else {
-      if (origin != null && element.has(origin) && !element.isNull(origin)) {
-        aircraft.setOrigin(element.getString(origin));
+      if (Utility.jsonFieldExists(jsonObject, origin)) {
+        aircraft.setOrigin(jsonObject.getString(origin));
       }
     }
 
-    if (squawk != null && element.has(squawk) && !element.isNull(squawk)) {
-      aircraft.setSquawk(element.getString(squawk));
+    if (Utility.jsonFieldExists(jsonObject, squawk)) {
+      aircraft.setSquawk(jsonObject.getString(squawk));
     }
 
-    if (autopilotEngaged != null && element.has(autopilotEngaged) && !element.isNull(autopilotEngaged)) {
-      aircraft.setAutopilotEngaged(element.getBoolean(autopilotEngaged));
+    if (Utility.jsonFieldExists(jsonObject, autopilotEngaged)) {
+      aircraft.setAutopilotEngaged(jsonObject.getBoolean(autopilotEngaged));
     }
 
-    if (elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude)
-        && element.get(elipsoidalAltitude) instanceof Integer) {
-      aircraft.setElipsoidalAltitude(element.getInt(elipsoidalAltitude));
-    } else if (elipsoidalAltitude != null && element.has(elipsoidalAltitude) && !element.isNull(elipsoidalAltitude)
-        && element.get(elipsoidalAltitude) instanceof String) {
+    if (Utility.jsonFieldExists(jsonObject, elipsoidalAltitude)
+        && jsonObject.get(elipsoidalAltitude) instanceof Integer) {
+      aircraft.setElipsoidalAltitude(jsonObject.getInt(elipsoidalAltitude));
+    } else if (Utility.jsonFieldExists(jsonObject, elipsoidalAltitude)
+        && jsonObject.get(elipsoidalAltitude) instanceof String) {
       // Wenn adsbx-Feeder "ground" sendet
       aircraft.setAltitude(0);
       aircraft.setElipsoidalAltitude(0);
       aircraft.setOnGround(true);
     }
 
-    if (selectedQnh != null && element.has(selectedQnh) && !element.isNull(selectedQnh)) {
-      aircraft.setSelectedQnh(element.getDouble(selectedQnh));
+    if (Utility.jsonFieldExists(jsonObject, selectedQnh)) {
+      aircraft.setSelectedQnh(jsonObject.getDouble(selectedQnh));
     }
 
-    if (selectedAltitude != null && element.has(selectedAltitude) && !element.isNull(selectedAltitude)) {
-      aircraft.setSelectedAltitude(element.getInt(selectedAltitude));
+    if (Utility.jsonFieldExists(jsonObject, selectedAltitude)) {
+      aircraft.setSelectedAltitude(jsonObject.getInt(selectedAltitude));
     }
 
-    if (selectedHeading != null && element.has(selectedHeading) && !element.isNull(selectedHeading)) {
-      aircraft.setSelectedHeading(element.getInt(selectedHeading));
+    if (Utility.jsonFieldExists(jsonObject, selectedHeading)) {
+      aircraft.setSelectedHeading(jsonObject.getInt(selectedHeading));
     }
 
-    if (lastSeen != null && element.has(lastSeen)) {
-      aircraft.setLastSeenPos(element.getInt(lastSeen));
+    if (Utility.jsonFieldExists(jsonObject, lastSeenPos)) {
+      aircraft.setLastSeenPos(jsonObject.getInt(lastSeenPos));
     }
 
-    if (rssi != null && element.has(rssi) && !element.isNull(rssi)) {
-      aircraft.setRssi(element.getDouble(rssi));
+    if (Utility.jsonFieldExists(jsonObject, rssi)) {
+      aircraft.setRssi(jsonObject.getDouble(rssi));
     }
 
-    if (ias != null && element.has(ias)) {
-      aircraft.setIas(element.getInt(ias));
+    if (Utility.jsonFieldExists(jsonObject, ias)) {
+      aircraft.setIas(jsonObject.getInt(ias));
     }
 
-    if (tas != null && element.has(tas)) {
-      aircraft.setTas(element.getInt(tas));
+    if (Utility.jsonFieldExists(jsonObject, tas)) {
+      aircraft.setTas(jsonObject.getInt(tas));
     }
 
-    if (mach != null && element.has(mach)) {
-      aircraft.setMach(element.getDouble(mach));
+    if (Utility.jsonFieldExists(jsonObject, mach)) {
+      aircraft.setMach(jsonObject.getDouble(mach));
     }
 
-    if (magHeading != null && element.has(magHeading)) {
-      aircraft.setMagHeading(element.getDouble(magHeading));
+    if (Utility.jsonFieldExists(jsonObject, magHeading)) {
+      aircraft.setMagHeading(jsonObject.getDouble(magHeading));
     }
 
-    if (trueHeading != null && element.has(trueHeading)) {
-      aircraft.setTrueHeading(element.getDouble(trueHeading));
+    if (Utility.jsonFieldExists(jsonObject, trueHeading)) {
+      aircraft.setTrueHeading(jsonObject.getDouble(trueHeading));
     }
 
-    if (messages != null && element.has(messages)) {
-      aircraft.setMessages(element.getInt(messages));
+    if (Utility.jsonFieldExists(jsonObject, messages)) {
+      aircraft.setMessages(jsonObject.getInt(messages));
     }
 
-    if (emergency != null && element.has(emergency) && !element.isNull(emergency)) {
-      aircraft.setEmergency(element.getString(emergency));
+    if (Utility.jsonFieldExists(jsonObject, emergency)) {
+      aircraft.setEmergency(jsonObject.getString(emergency));
     }
 
-    if (navModes != null && element.has(navModes) && !element.isNull(navModes)) {
-      JSONArray navModesArray = element.getJSONArray(navModes);
-      if (navModesArray != null && navModesArray.length() > 0) {
+    if (Utility.jsonFieldExists(jsonObject, navModes)) {
+      JSONArray navModesArray = jsonObject.getJSONArray(navModes);
+      if (navModesArray != null && !navModesArray.isEmpty()) {
         String navModesString = navModesArray.toString();
         navModesString = navModesString.replace("[", "");
         navModesString = navModesString.replace("]", "");
@@ -454,14 +472,15 @@ public class AircraftService {
       }
     }
 
-    addSourceToAircraft(feeder, element, aircraft, source);
+    addSourceToAircraft(feeder, jsonObject, aircraft, source);
 
-    // Berechne und setze distance
-    double distance = HelperService.getDistanceBetweenPositions(aircraft.getLatitude(), aircraft.getLongitude(),
-        configuration.getLatFeeder(), configuration.getLonFeeder());
-    aircraft.setDistance(distance);
+    boolean positionExists = aircraft.getLatitude() != null && aircraft.getLongitude() != null;
+    if (positionExists) {
+      double distance = HelperService.getDistanceBetweenPositions(aircraft.getLatitude(), aircraft.getLongitude(),
+          configuration.getLatFeeder(), configuration.getLonFeeder());
+      aircraft.setDistance(distance);
+    }
 
-    // Zustand des Flugzeugs
     setAircraftState(aircraft);
   }
 

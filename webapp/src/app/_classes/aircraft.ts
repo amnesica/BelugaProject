@@ -77,6 +77,8 @@ export class Aircraft {
   messages: any;
   emergency: any;
   navModes: any;
+  sourceCurrentFeeder: any;
+  sendWithPos: any;
 
   // Daten für Info-Abschnitt PositionOfMinimumDistance
   pomdLatitude!: any;
@@ -234,7 +236,9 @@ export class Aircraft {
     trueHeading: any,
     messages: any,
     emergency: any,
-    navModes: any
+    navModes: any,
+    sourceCurrentFeeder: any,
+    sendWithPos: any
   ) {
     this.hex = hex;
     this.latitude = latitude;
@@ -275,6 +279,8 @@ export class Aircraft {
     this.messages = messages;
     this.emergency = emergency;
     this.navModes = navModes;
+    this.sourceCurrentFeeder = sourceCurrentFeeder;
+    this.sendWithPos = sendWithPos;
   }
 
   /**
@@ -283,6 +289,10 @@ export class Aircraft {
    * @param aircraftJSONElement JSONElement vom Server
    */
   static createNewAircraft(aircraftJSONElement: Aircraft): Aircraft {
+    let hasPosition =
+      aircraftJSONElement.longitude != undefined &&
+      aircraftJSONElement.latitude != undefined;
+
     return new Aircraft(
       aircraftJSONElement.hex,
       aircraftJSONElement.latitude,
@@ -297,7 +307,9 @@ export class Aircraft {
       aircraftJSONElement.lastSeenPos,
       aircraftJSONElement.verticalRate,
       aircraftJSONElement.feederList,
-      [aircraftJSONElement.longitude, aircraftJSONElement.latitude],
+      hasPosition
+        ? [aircraftJSONElement.longitude, aircraftJSONElement.latitude]
+        : undefined,
       aircraftJSONElement.onGround,
       aircraftJSONElement.rssi,
       aircraftJSONElement.category,
@@ -322,7 +334,9 @@ export class Aircraft {
       aircraftJSONElement.trueHeading,
       aircraftJSONElement.messages,
       aircraftJSONElement.emergency,
-      aircraftJSONElement.navModes
+      aircraftJSONElement.navModes,
+      aircraftJSONElement.sourceCurrentFeeder,
+      aircraftJSONElement.sendWithPos
     );
   }
 
@@ -467,6 +481,8 @@ export class Aircraft {
     this.messages = listElement.messages;
     this.emergency = listElement.emergency;
     this.navModes = listElement.navModes;
+    this.sourceCurrentFeeder = listElement.sourceCurrentFeeder;
+    this.sendWithPos = listElement.sendWithPos;
 
     // Generell: Berechne POMD-Point nur, wenn dieser auch angefragt wird
     // Ausnahme: Flugzeug ist das aktuell markierte, dann aktualisiere Werte,
