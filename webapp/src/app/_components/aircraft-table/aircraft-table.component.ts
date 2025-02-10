@@ -54,6 +54,7 @@ export class AircraftTableComponent implements OnInit {
     'verticalRate',
     'speed',
     'track',
+    'sourceCurrentFeeder',
     'lastSeenPos',
     'feeder',
     'distance',
@@ -94,8 +95,8 @@ export class AircraftTableComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isDesktop) => {
         if (isDesktop == true) {
-          this.showAircraftTableWidth = '45rem';
-          this.filterFieldWidth = '45rem';
+          this.showAircraftTableWidth = '50rem';
+          this.filterFieldWidth = '50rem';
           this.margin = '0.3rem';
           this.marginTop = '3.8rem';
           this.borderRadius = '15px';

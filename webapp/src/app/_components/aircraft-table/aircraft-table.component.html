@@ -228,6 +228,30 @@
       </td>
     </ng-container>
 
+    <!-- source current feeder  -->
+    <ng-container matColumnDef="sourceCurrentFeeder">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="mat-header-colomn-row"
+      >
+        Source
+      </th>
+      <td
+        class="mat-cell-element"
+        mat-cell
+        *matCellDef="let aircraft"
+        (click)="$event ? selectRow(aircraft) : null"
+        [class.selected]="aircraft.isMarked"
+      >
+        <p *ngIf="aircraft.sourceCurrentFeeder != null">
+          {{ aircraft.sourceCurrentFeeder }}
+        </p>
+        <p *ngIf="aircraft.sourceCurrentFeeder == null">N/A</p>
+      </td>
+    </ng-container>
+
     <!-- last seen column -->
     <ng-container matColumnDef="lastSeenPos">
       <th
