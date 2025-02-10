@@ -332,7 +332,7 @@ export class MapComponent implements OnInit {
   // Interval-ID zum Fetchen der Outline
   fetchActualOutlineIntervalId: number = 0;
 
-  // TODO
+  // Theme-Manager
   themeManager = inject(ThemeManager);
   isDark$ = this.themeManager.isDark$;
 
