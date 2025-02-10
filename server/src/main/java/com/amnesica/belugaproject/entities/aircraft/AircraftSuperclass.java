@@ -140,7 +140,7 @@ public class AircraftSuperclass {
     this.hex = hex;
   }
 
-  public AircraftSuperclass(String hex, double latitude, double longitude) {
+  public AircraftSuperclass(String hex, Double latitude, Double longitude) {
     this.hex = hex;
     this.latitude = latitude;
     this.longitude = longitude;
