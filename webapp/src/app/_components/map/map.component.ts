@@ -2256,9 +2256,7 @@ export class MapComponent implements OnInit {
         { key: 'Registration', value: outlinePoint.registration },
         {
           key: 'Track',
-          value: outlinePoint.track
-            ? `${outlinePoint.track} °`
-            : undefined,
+          value: outlinePoint.track ? `${outlinePoint.track} °` : undefined,
         },
         {
           key: 'Altitude',
@@ -4079,7 +4077,10 @@ export class MapComponent implements OnInit {
   }
 
   private createDayNightLine() {
-    this.dayNightVectorSource = new DayNight({});
+    this.dayNightVectorSource = new DayNight({
+      time: new Date(),
+      step: 0.1,
+    });
     this.dayNightVectorLayer = this.createVectorLayer(
       this.dayNightVectorSource,
       5,
