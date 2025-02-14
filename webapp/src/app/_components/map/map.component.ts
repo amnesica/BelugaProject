@@ -1182,7 +1182,7 @@ export class MapComponent implements OnInit {
     this.aisLabelFeatureLayer = this.createVectorLayer(
       this.AisLabelFeatures,
       25,
-      true,
+      false,
       renderBuffer,
       { name: 'ais_labels', type: 'overlay', title: 'ais labels' },
       this.aisLabelStyle
