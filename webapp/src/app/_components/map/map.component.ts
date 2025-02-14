@@ -2297,6 +2297,7 @@ export class MapComponent implements OnInit {
 
     this.airportDataPoint = {
       icao: this.getValueOrDefault(airportPoint.icao),
+      iata: this.getValueOrDefault(airportPoint.iata),
       featureName: airportPoint.featureName,
       attributes: this.createAttributes([
         { key: 'Elevation', value: elevation },

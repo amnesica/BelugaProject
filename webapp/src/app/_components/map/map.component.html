@@ -190,6 +190,20 @@
         >
           {{ airportDataPoint.icao }}
           <a
+            *ngIf="airportDataPoint.iata !== 'N/A'"
+            id="airportDataSchedule"
+            href="{{
+              'https://www.avionio.com/en/airport/' +
+                airportDataPoint.iata +
+                '/arrivals'
+            }}"
+            target="_blank"
+          >
+            <mat-icon aria-hidden="false" style="color: #ffab40"
+              >schedule</mat-icon
+            ></a
+          >
+          <a
             *ngIf="airportDataPoint.icao"
             id="airportDataLinkOurAirports"
             href="{{
