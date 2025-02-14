@@ -50,7 +50,7 @@ export class CesiumComponent implements OnInit {
   displayOsmBuildings3d: boolean = false;
   osmBuildingsTileset: Cesium.Cesium3DTileset | undefined;
   displayGooglePhotorealistic3d: boolean = false;
-  googlePhotorealisticTileset: any;
+  google3dTileset: any;
   displayCockpitView3d: boolean = false;
   display3dMapFullscreen: boolean = false;
   displayTerrain: boolean = false;
@@ -544,23 +544,35 @@ export class CesiumComponent implements OnInit {
 
   getAltitudeWhenOnGround(longitude, latitude): number {
     const defaultHeightInMeters = 5;
-
     if (!this.scene) return defaultHeightInMeters;
-    let altitude = this.scene.globe.getHeight(
-      Cesium.Cartographic.fromDegrees(longitude, latitude)
-    );
 
-    if (altitude == undefined) {
-      // default, wenn kein altitude-Wert gefunden wird (in Metern)
-      altitude = defaultHeightInMeters;
-    }
+    const cartoPosition = Cesium.Cartographic.fromDegrees(longitude, latitude);
+
+    let altitude = this.scene.globe.getHeight(cartoPosition);
 
     // Google Photogrammetrie ist höher als normales OSM-Terrain
     if (this.displayGooglePhotorealistic3d) {
-      altitude += 5;
+      altitude = this.getHeightFrom3dTilesetDirect(cartoPosition);
+    } else {
+      altitude = this.scene.globe.getHeight(cartoPosition);
     }
 
-    return altitude;
+    return altitude !== undefined ? altitude : defaultHeightInMeters;
+  }
+
+  private getHeightFrom3dTilesetDirect(
+    cartographic: Cesium.Cartographic
+  ): number | undefined {
+    if (
+      !Cesium.defined(cartographic) ||
+      !this.viewer ||
+      !this.google3dTileset ||
+      !this.viewer.scene
+    ) {
+      return undefined;
+    }
+
+    return this.google3dTileset.getHeight(cartographic, this.viewer.scene);
   }
 
   async loadAircraftModel(
@@ -825,7 +837,7 @@ export class CesiumComponent implements OnInit {
     this.removeGooglePhotorealistic3D();
     this.removeDayNightLayerOnMap();
     this.osmBuildingsTileset = undefined;
-    this.googlePhotorealisticTileset = undefined;
+    this.google3dTileset = undefined;
     this.earthAtNightLayer = undefined;
 
     this.aircraft = null;
@@ -907,10 +919,12 @@ export class CesiumComponent implements OnInit {
 
     // Füge Photorealistic 3D Tiles hinzu
     try {
-      if (!this.googlePhotorealisticTileset) {
-        this.googlePhotorealisticTileset =
-          await Cesium.Cesium3DTileset.fromIonAssetId(2275207, {});
-        this.scene.primitives.add(this.googlePhotorealisticTileset);
+      if (!this.google3dTileset) {
+        this.google3dTileset = await Cesium.Cesium3DTileset.fromIonAssetId(
+          2275207,
+          {}
+        );
+        this.scene.primitives.add(this.google3dTileset);
       }
 
       // Globe muss nicht angezeigt werden, da die Photorealistic 3D Tiles das Terrain beinhalten
@@ -927,10 +941,10 @@ export class CesiumComponent implements OnInit {
   removeGooglePhotorealistic3D() {
     if (!this.viewer || !this.scene) return;
 
-    if (this.googlePhotorealisticTileset)
-      this.scene.primitives.remove(this.googlePhotorealisticTileset);
+    if (this.google3dTileset)
+      this.scene.primitives.remove(this.google3dTileset);
     this.scene.globe.show = true;
-    this.googlePhotorealisticTileset = undefined;
+    this.google3dTileset = undefined;
   }
 
   showCockpitView3d() {
