@@ -119,6 +119,8 @@ export class CesiumComponent implements OnInit {
   sliderMsaa3dValue: any;
   enableDefaultResolution3dMap: boolean = true;
 
+  lastGroundHeight: any;
+
   // Subscriptions
   private ngUnsubscribe = new Subject();
 
@@ -542,22 +544,24 @@ export class CesiumComponent implements OnInit {
     });
   }
 
-  getAltitudeWhenOnGround(longitude, latitude): number {
+  private getAltitudeWhenOnGround(longitude, latitude): number {
     const defaultHeightInMeters = 5;
-    if (!this.scene) return defaultHeightInMeters;
+    if (!this.scene || !longitude || !latitude) return defaultHeightInMeters;
 
     const cartoPosition = Cesium.Cartographic.fromDegrees(longitude, latitude);
+    let altitude: any = defaultHeightInMeters;
 
-    let altitude = this.scene.globe.getHeight(cartoPosition);
+    this.displayGooglePhotorealistic3d
+      ? (altitude = this.getHeightFrom3dTilesetDirect(cartoPosition))
+      : (altitude = this.scene.globe.getHeight(cartoPosition));
 
-    // Google Photogrammetrie ist höher als normales OSM-Terrain
-    if (this.displayGooglePhotorealistic3d) {
-      altitude = this.getHeightFrom3dTilesetDirect(cartoPosition);
-    } else {
-      altitude = this.scene.globe.getHeight(cartoPosition);
-    }
+    if (altitude !== undefined) this.lastGroundHeight = altitude;
 
-    return altitude !== undefined ? altitude : defaultHeightInMeters;
+    return altitude !== undefined
+      ? altitude
+      : this.lastGroundHeight !== undefined
+      ? this.lastGroundHeight
+      : defaultHeightInMeters;
   }
 
   private getHeightFrom3dTilesetDirect(
