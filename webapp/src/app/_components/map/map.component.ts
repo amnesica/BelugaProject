@@ -3950,9 +3950,7 @@ export class MapComponent implements OnInit {
     this.ActualOutlineFeatures.clear();
 
     if (outlineDataJson[0])
-      outlineDataJson[outlineDataJson.length] = structuredClone(
-        outlineDataJson[0]
-      );
+      outlineDataJson.push(structuredClone(outlineDataJson[0]));
 
     let geom;
     let lastLon;
