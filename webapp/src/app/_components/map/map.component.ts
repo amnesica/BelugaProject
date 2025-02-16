@@ -3945,18 +3945,23 @@ export class MapComponent implements OnInit {
   }
 
   private processActualRangeOutline(outlineDataJson: any): void {
+    if (!outlineDataJson) return;
+
     this.ActualOutlineFeatures.clear();
 
-    if (!outlineDataJson) return;
+    if (outlineDataJson[0])
+      outlineDataJson[outlineDataJson.length] = structuredClone(
+        outlineDataJson[0]
+      );
 
     let geom;
     let lastLon;
-    for (let p = 0; p < outlineDataJson.length; ++p) {
-      const lat = outlineDataJson[p].latitude;
-      const lon = outlineDataJson[p].longitude;
+    for (let i = 0; i < outlineDataJson.length; i++) {
+      const lat = outlineDataJson[i].latitude;
+      const lon = outlineDataJson[i].longitude;
       const proj = olProj.fromLonLat([lon, lat]);
 
-      const point = this.createOutlinePointFeature(proj, outlineDataJson[p]);
+      const point = this.createOutlinePointFeature(proj, outlineDataJson[i]);
       this.ActualOutlineFeatures.addFeature(point);
 
       if (!geom || (lastLon && Math.abs(lon - lastLon) > 270)) {
