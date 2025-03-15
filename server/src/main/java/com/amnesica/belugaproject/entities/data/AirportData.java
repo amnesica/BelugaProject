@@ -24,6 +24,7 @@ public class AirportData {
   private String municipality;
   private String scheduled_service;
   private String gps_code;
+  private String icao_code;
   private String iata_code;
   private String local_code;
   private String home_link;

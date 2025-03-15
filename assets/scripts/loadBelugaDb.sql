@@ -23,6 +23,7 @@ COPY airport_data (
 			municipality,
 			scheduled_service,
 			gps_code,
+			icao_code,
 			iata_code,
 			local_code,
 			home_link,
