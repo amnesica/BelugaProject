@@ -22,7 +22,7 @@
     "@angular/router": "^18.2.13",
     "apexcharts": "^3.54.1",
     "arc": "^0.1.1",
-    "cesium": "^1.125.0",
+    "cesium": "^1.129.0",
     "ng-apexcharts": "^1.12.0",
     "ol": "^10.3.1",
     "ol-ext": "^4.0.24",
