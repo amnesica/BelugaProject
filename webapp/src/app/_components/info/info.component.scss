@@ -92,6 +92,14 @@
   font-weight: bold;
 }
 
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  max-width: 9rem;
+}
+
 :host ::ng-deep .mat-expansion-panel {
   border-radius: 0;
 }

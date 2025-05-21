@@ -331,7 +331,7 @@
             font-size: 0.9rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.originFullTown">
+          <p *ngIf="aircraft && aircraft.originFullTown" class="truncate">
             {{ aircraft.originFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.originFullTown">N/A</p>
@@ -359,7 +359,7 @@
             font-size: 0.9rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.destinationFullTown">
+          <p *ngIf="aircraft && aircraft.destinationFullTown" class="truncate">
             {{ aircraft.destinationFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.destinationFullTown">N/A</p>
@@ -3872,7 +3872,7 @@
             font-size: 0.8rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.originFullTown">
+          <p *ngIf="aircraft && aircraft.originFullTown" class="truncate">
             {{ aircraft.originFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.originFullTown">N/A</p>
@@ -3899,7 +3899,7 @@
             font-size: 0.8rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.destinationFullTown">
+          <p *ngIf="aircraft && aircraft.destinationFullTown" class="truncate">
             {{ aircraft.destinationFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.destinationFullTown">N/A</p>
