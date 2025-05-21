@@ -121,13 +121,14 @@ export class CesiumComponent implements OnInit {
 
   lastGroundHeight: any;
 
+  private snackBar = inject(MatSnackBar);
+
   // Subscriptions
   private ngUnsubscribe = new Subject();
 
   constructor(
     public breakpointObserver: BreakpointObserver,
     private cesumService: CesiumService,
-    private snackBar: MatSnackBar,
     private el: ElementRef
   ) {
     this.elementRef = el;
