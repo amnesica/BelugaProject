@@ -1,7 +1,7 @@
 plugins {
   id "java"
   id "idea"
-  id "org.springframework.boot" version "3.4.1"
+  id "org.springframework.boot" version "3.4.5"
 }
 
 apply plugin: "io.spring.dependency-management"
@@ -11,11 +11,11 @@ springBoot {
 }
 
 ext {
-  postgresqlVersion = "42.7.4"
-  jsonVersion = "20241224"
-  hypersistenceVersion = "3.9.0"
+  postgresqlVersion = "42.7.5"
+  jsonVersion = "20250517"
+  hypersistenceVersion = "3.9.10"
   okhttpVersion = "4.12.0"
-  lombokVersion = "1.18.36"
+  lombokVersion = "1.18.38"
   webSocketVersion = "1.6.0"
 }
 

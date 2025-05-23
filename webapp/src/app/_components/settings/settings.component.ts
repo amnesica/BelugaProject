@@ -162,13 +162,13 @@ export class SettingsComponent implements OnInit {
   themeManager = inject(ThemeManager);
   isDark$ = this.themeManager.isDark$;
 
+  private snackBar = inject(MatSnackBar);
   private ngUnsubscribe = new Subject();
 
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
     public serverService: ServerService,
-    private snackBar: MatSnackBar,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 

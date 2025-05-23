@@ -186,7 +186,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2.1rem;
             padding-left: 1.8rem;
             font-weight: 500;
             padding-top: 0.1rem;
@@ -289,7 +289,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2.1rem;
             padding-right: 2.4rem;
             font-weight: 500;
             padding-top: 0.1rem;
@@ -328,9 +328,10 @@
             text-transform: uppercase;
             padding-top: 0.1rem;
             word-wrap: break-word;
+            font-size: 0.9rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.originFullTown">
+          <p *ngIf="aircraft && aircraft.originFullTown" class="truncate">
             {{ aircraft.originFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.originFullTown">N/A</p>
@@ -355,9 +356,10 @@
             text-transform: uppercase;
             padding-top: 0.1rem;
             word-wrap: break-word;
+            font-size: 0.9rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.destinationFullTown">
+          <p *ngIf="aircraft && aircraft.destinationFullTown" class="truncate">
             {{ aircraft.destinationFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.destinationFullTown">N/A</p>
@@ -3549,7 +3551,6 @@
         <mat-grid-tile colspan="1" rowspan="2" *ngIf="!isDesktop">
           <button mat-button class="buttonFooter" (click)="showSmallInfo()">
             <mat-icon aria-hidden="false">expand_more</mat-icon>
-            LESS INFO
           </button>
         </mat-grid-tile>
 
@@ -3585,17 +3586,29 @@
       <!-- callsign und operator -->
       <mat-grid-tile colspan="16" rowspan="3" style="background-color: #303030">
         <div>
-          <p *ngIf="aircraft && aircraft.flightId" style="color: #ffab40">
+          <p
+            *ngIf="aircraft && aircraft.flightId"
+            style="color: #ffab40; font-weight: bold; font-size: small"
+          >
             {{ aircraft.flightId }}
           </p>
-          <p *ngIf="aircraft && !aircraft.flightId" style="color: #ffab40">
+          <p
+            *ngIf="aircraft && !aircraft.flightId"
+            style="color: #ffab40; font-weight: bold; font-size: small"
+          >
             N/A
           </p>
 
-          <p *ngIf="aircraft && aircraft.operatorName" style="color: #d5d5d5">
+          <p
+            *ngIf="aircraft && aircraft.operatorName"
+            style="color: #d5d5d5; font-size: small"
+          >
             {{ aircraft.operatorName }}
           </p>
-          <p *ngIf="aircraft && !aircraft.operatorName" style="color: #d5d5d5">
+          <p
+            *ngIf="aircraft && !aircraft.operatorName"
+            style="color: #d5d5d5; font-size: small"
+          >
             N/A
           </p>
         </div>
@@ -3671,7 +3684,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             padding-left: 2.5rem;
             font-weight: 500;
             padding-top: 0.1rem;
@@ -3758,7 +3771,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2rem;
             padding-right: 3.2rem;
             font-weight: 500;
             padding-top: 0.1rem;
@@ -3814,7 +3827,7 @@
             "
             style="font-size: small"
           >
-            Ground Speed
+            Gr. Speed
           </p>
           <p
             *ngIf="aircraft && aircraft.speed != null"
@@ -3856,9 +3869,10 @@
             font-weight: bold;
             text-transform: uppercase;
             padding-top: 0.1rem;
+            font-size: 0.8rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.originFullTown">
+          <p *ngIf="aircraft && aircraft.originFullTown" class="truncate">
             {{ aircraft.originFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.originFullTown">N/A</p>
@@ -3882,9 +3896,10 @@
             font-weight: bold;
             text-transform: uppercase;
             padding-top: 0.1rem;
+            font-size: 0.8rem;
           "
         >
-          <p *ngIf="aircraft && aircraft.destinationFullTown">
+          <p *ngIf="aircraft && aircraft.destinationFullTown" class="truncate">
             {{ aircraft.destinationFullTown }}
           </p>
           <p *ngIf="aircraft && !aircraft.destinationFullTown">N/A</p>
@@ -3914,7 +3929,7 @@
             align-items: center;
             padding-left: 0;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 800;
           "
         >
@@ -3938,7 +3953,7 @@
             align-items: center;
             padding-left: 0;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 800;
           "
         >
@@ -4020,7 +4035,6 @@
         <mat-grid-tile colspan="1" rowspan="2">
           <button mat-button (click)="showLargeInfo()" class="buttonFooter">
             <mat-icon aria-hidden="false">expand_less</mat-icon>
-            MORE INFO
           </button>
         </mat-grid-tile>
 

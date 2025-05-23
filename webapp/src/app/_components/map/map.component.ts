@@ -11,10 +11,10 @@ import Vector from 'ol/source/Vector';
 import { Style, Fill, Stroke, Circle, Icon, Text } from 'ol/style';
 import OSM from 'ol/source/OSM';
 import * as olProj from 'ol/proj';
-import Feature, { FeatureLike } from 'ol/Feature';
+import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
 import TileLayer from 'ol/layer/Tile';
-import { Group as LayerGroup, WebGLPoints } from 'ol/layer';
+import { Group as LayerGroup, WebGLVector } from 'ol/layer';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { Aircraft } from 'src/app/_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
@@ -27,7 +27,6 @@ import * as olInteraction from 'ol/interaction';
 import * as olExtent from 'ol/extent';
 import LineString from 'ol/geom/LineString';
 import * as olExtSphere from 'ol-ext/geom/sphere';
-import Polygon from 'ol/geom/Polygon';
 import Overlay from 'ol/Overlay';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { Feeder } from 'src/app/_classes/feeder';
@@ -44,8 +43,6 @@ import { takeUntil } from 'rxjs/operators';
 import { Styles } from 'src/app/_classes/styles';
 import { Collection } from 'ol';
 import { Draw } from 'ol/interaction';
-import VectorSource from 'ol/source/Vector';
-import WebGLPointsLayer from 'ol/layer/WebGLPoints';
 import XYZ from 'ol/source/XYZ';
 import { RainviewerService } from 'src/app/_services/rainviewer-service/rainviewer-service.service';
 import { Maps } from 'src/app/_classes/maps';
@@ -59,7 +56,6 @@ import { Trail } from 'src/app/_classes/trail';
 import { Ship } from 'src/app/_classes/ship';
 import BaseLayer from 'ol/layer/Base';
 import { StyleLike } from 'ol/style/Style';
-import { WebGLStyle } from 'ol/style/webgl';
 import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 import { Coordinate } from 'ol/coordinate';
 import { InfoService } from 'src/app/_services/info-service/info-service.service';
@@ -194,7 +190,7 @@ export class MapComponent implements OnInit {
   outlineDataPopupBottomValue: any = 0;
 
   // Layer für WebGL-Features
-  webglLayer: WebGLPoints<VectorSource<FeatureLike>> | undefined;
+  webglLayer: WebGLVector | undefined;
 
   // Boolean, ob POMD-Point angezeigt werden soll
   showPOMDPoint: boolean = false;
@@ -344,6 +340,7 @@ export class MapComponent implements OnInit {
   // Route to destination
   showRouteToDestination: boolean = false;
 
+  private snackBar = inject(MatSnackBar);
   private ngUnsubscribe = new Subject<void>();
 
   // Boolean, um große Info-Box beim Klick anzuzeigen (in Globals, da ein
@@ -367,7 +364,6 @@ export class MapComponent implements OnInit {
     private settingsService: SettingsService,
     private toolbarService: ToolbarService,
     private aircraftTableService: AircraftTableService,
-    private snackBar: MatSnackBar,
     private rainviewerService: RainviewerService,
     private cesiumService: CesiumService,
     private infoService: InfoService
@@ -1381,10 +1377,8 @@ export class MapComponent implements OnInit {
     return success;
   }
 
-  private createWebGlPointsLayer(
-    glStyle: WebGLStyle
-  ): WebGLPoints<Vector<FeatureLike>> {
-    return new WebGLPointsLayer({
+  private createWebGlPointsLayer(glStyle: any): WebGLVector {
+    return new WebGLVector({
       source: Globals.WebglFeatures,
       zIndex: 200,
       style: glStyle,
