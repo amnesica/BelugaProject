@@ -16,7 +16,6 @@ ext {
   hypersistenceVersion = "3.9.10"
   okhttpVersion = "4.12.0"
   lombokVersion = "1.18.38"
-  webSocketVersion = "1.6.0"
 }
 
 repositories {
@@ -36,7 +35,6 @@ dependencies {
   implementation "io.hypersistence:hypersistence-utils-hibernate-63:${hypersistenceVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation "org.projectlombok:lombok:${lombokVersion}"
-  implementation "org.java-websocket:Java-WebSocket:${webSocketVersion}"
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
   testImplementation "org.springframework.boot:spring-boot-starter-test"
