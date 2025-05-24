@@ -9,7 +9,7 @@
 Spring Boot Angular web application that displays one or multiple, local ADS-B feeders along with additional information on a map interface in the browser.
 
 <p align="center">
-<img alt="Web View" src="assets/images/demo.gif" style="min-width: 110%"\>
+<img alt="Web View" src="assets/images/demo.gif"\>
 </p>
 
 Currently you can use this application out of the box with [Flightradar24](https://www.flightradar24.com/), [tar1090](https://github.com/wiedehopf/tar1090), [AirSquitter](https://airsquitter.com/) or [VirtualRadarServer](https://www.virtualradarserver.co.uk/) (Rebroadcast Server only) feeders. Other ADS-B feeders can be added aswell.
