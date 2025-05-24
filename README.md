@@ -8,6 +8,10 @@
 
 Spring Boot Angular web application that displays one or multiple, local ADS-B feeders along with additional information on a map interface in the browser.
 
+<p align="center">
+<img alt="Web View" src="assets/images/demo.gif"/>
+</p>
+
 Currently you can use this application out of the box with [Flightradar24](https://www.flightradar24.com/), [tar1090](https://github.com/wiedehopf/tar1090), [AirSquitter](https://airsquitter.com/) or [VirtualRadarServer](https://www.virtualradarserver.co.uk/) (Rebroadcast Server only) feeders. Other ADS-B feeders can be added aswell.
 
 It is possible to run the application only with data from the [OpenSky-Network](https://opensky-network.org/), if you have an account there. Besides you can use data from [Airplanes.live](https://airplanes.live/). So you need no local feeders to try out the app.
@@ -16,7 +20,7 @@ Additional information about the aircraft are added through a PostgreSQL databas
 
 The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
 
-Ships (AIS messages) can be displayed from [aisstream.io](https://aisstream.io/). To use this feature you need an API key. Visit their site for more info.
+Ships (AIS messages) can be displayed from [aisstream.io](https://aisstream.io/). To use this feature you need an API key. Visit their site for more info. [VesselFinder](https://vesselfinder.com/) is used for ship images.
 
 The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1). 3D models from [this](https://github.com/amnesica/BelugaProject-3D-Models) repository are used.
 
@@ -58,20 +62,6 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
 **Note**: At the moment The Beluga Project is meant to be used in a local network. It is not recommended to publish it on the web due to security and performance reasons.
 
 ---
-
-## Screenshots
-
-### Web view
-
-<p align="center">
-<img alt="Web View" src="assets/images/screenshots_web.gif"/>
-</p>
-
-### Mobile view
-
-<p align="center">
-<img alt="App View" src="assets/images/screenshot_mobile.png" width="35%" />
-</p>
 
 ## General structure of the project
 
