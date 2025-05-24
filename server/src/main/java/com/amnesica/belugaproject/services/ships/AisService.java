@@ -75,7 +75,7 @@ public class AisService {
       if (!configuration.aisstreamApiKeyIsValid()) return;
       client = new AisStreamWebsocketClient(new URI(aisStreamIoSocketUrl), configuration.getAisstreamApiKey(),
           lamin, lomin, lamax, lomax, aisShipsLongTermMap);
-      client.connect();
+      client.run();
     } catch (URISyntaxException e) {
       log.error("Server - Error when starting websocket client: {}", e.getMessage());
     }

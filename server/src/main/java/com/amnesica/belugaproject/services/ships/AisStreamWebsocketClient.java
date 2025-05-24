@@ -3,22 +3,21 @@ package com.amnesica.belugaproject.services.ships;
 import com.amnesica.belugaproject.entities.ships.Ship;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
+import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class AisStreamWebsocketClient extends WebSocketClient {
+public class AisStreamWebsocketClient extends WebSocketListener {
   private final String apiKey;
   private Double[] box1;
   private Double[] box2;
@@ -28,20 +27,74 @@ public class AisStreamWebsocketClient extends WebSocketClient {
   }
 
   private BoundingBox boundingBox;
+
   @Getter
   private boolean isConnected = false;
 
   @Getter
   private final ConcurrentHashMap<Integer, Ship> aisShips = new ConcurrentHashMap<>();
 
+  private final OkHttpClient client;
+  private WebSocket webSocket;
+  private final URI serverURI;
+
   public AisStreamWebsocketClient(URI serverURI, final String apiKey, Double minLat, Double minLong,
                                   Double maxLat, Double maxLong, ConcurrentHashMap<Integer, Ship> initialAisShips) {
-    super(serverURI);
+    this.serverURI = serverURI;
     this.apiKey = apiKey;
     this.box1 = new Double[]{minLat, minLong};
     this.box2 = new Double[]{maxLat, maxLong};
     this.boundingBox = new BoundingBox(minLat, minLong, maxLat, maxLong);
     this.aisShips.putAll(initialAisShips);
+    this.client = new OkHttpClient.Builder()
+        .readTimeout(0, TimeUnit.MILLISECONDS)  // No timeout for WebSockets
+        .build();
+  }
+
+  void run() {
+    Request request = new Request.Builder()
+        .url(serverURI.toString())
+        .build();
+
+    this.webSocket = client.newWebSocket(request, this);
+  }
+
+  @Override
+  public void onOpen(WebSocket webSocket, Response response) {
+    sendSubscriptionMessage();
+  }
+
+  @Override
+  public void onMessage(WebSocket webSocket, String text) {
+    // Not used as messages come as byte strings
+  }
+
+  @Override
+  public void onMessage(WebSocket webSocket, okio.ByteString bytes) {
+    try {
+      String jsonString = bytes.string(StandardCharsets.UTF_8);
+      if (jsonString.isEmpty()) return;
+      JSONObject jsonObject = new JSONObject(jsonString);
+
+      if (messageTypeIsPositionReportWithMetadata(jsonObject)) {
+        processPositionReportMessage(jsonObject);
+      } else if (messageTypeIsShipStaticData(jsonObject)) {
+        processShipStaticDataMessage(jsonObject);
+      }
+    } catch (JSONException e) {
+      log.error("Server - Error on AIS stream onMessage : Exception = {}", String.valueOf(e));
+    }
+  }
+
+  @Override
+  public void onClosed(WebSocket webSocket, int code, String reason) {
+    isConnected = false;
+  }
+
+  @Override
+  public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+    log.error("Server - Error on AIS stream websocket : Exception = {}", String.valueOf(t));
+    isConnected = false;
   }
 
   public void updateBoundingBox(Double minLat, Double minLong, Double maxLat, Double maxLong) {
@@ -63,35 +116,15 @@ public class AisStreamWebsocketClient extends WebSocketClient {
         Arrays.toString(this.box1) + "," + Arrays.toString(this.box2) +
         "]], \"FilterMessageTypes\": [\"PositionReport\", \"ShipStaticData\"]}";
     try {
-      send(subscriptionText);
-      this.lastSendSubscriptionMessage = Instant.now();
-      this.isConnected = true;
+      if (webSocket != null) {
+        webSocket.send(subscriptionText);
+        this.lastSendSubscriptionMessage = Instant.now();
+        this.isConnected = true;
+      }
     } catch (Exception e) {
       log.error("Server - Failed to send subscription message. WebSocket might not be connected", e);
       this.isConnected = false;
       stopClient();
-    }
-  }
-
-  @Override
-  public void onOpen(ServerHandshake handshake) {
-    sendSubscriptionMessage();
-  }
-
-  @Override
-  public void onMessage(ByteBuffer message) {
-    try {
-      String jsonString = StandardCharsets.UTF_8.decode(message).toString();
-      if (jsonString.isEmpty()) return;
-      JSONObject jsonObject = new JSONObject(jsonString);
-
-      if (messageTypeIsPositionReportWithMetadata(jsonObject)) {
-        processPositionReportMessage(jsonObject);
-      } else if (messageTypeIsShipStaticData(jsonObject)) {
-        processShipStaticDataMessage(jsonObject);
-      }
-    } catch (JSONException e) {
-      log.error("Server - Error on AIS stream onMessage : Exception = {}", String.valueOf(e));
     }
   }
 
@@ -173,22 +206,6 @@ public class AisStreamWebsocketClient extends WebSocketClient {
         etaJson.getInt("Minute")));
   }
 
-  @Override
-  public void onMessage(String message) {
-    // unused as aisstream.io returns messages as byte buffers
-  }
-
-  @Override
-  public void onClose(int code, String reason, boolean remote) {
-    this.isConnected = false;
-  }
-
-  @Override
-  public void onError(Exception e) {
-    log.error("Server - Error on AIS stream websocket : Exception = {}", String.valueOf(e));
-    this.isConnected = false;
-  }
-
   public boolean boundingBoxHasMoved(Double minLatNew, Double minLongNew, Double maxLatNew, Double maxLongNew) {
     if (!Objects.equals(boundingBox.minLat, minLatNew)) return true;
     if (!Objects.equals(boundingBox.minLong, minLongNew)) return true;
@@ -207,6 +224,9 @@ public class AisStreamWebsocketClient extends WebSocketClient {
   }
 
   public void stopClient() {
-    this.close();
+    if (webSocket != null) {
+      webSocket.close(1000, "Client closing connection");
+      webSocket = null;
+    }
   }
 }
