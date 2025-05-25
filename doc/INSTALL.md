@@ -37,6 +37,12 @@ If you want to use the 3D view, follow these steps:
 - Create an access token under "Access Tokens"
 - Copy the access token and paste it in your .env file as `CESIUM_ION_DEFAULTACCESSTOKEN`
 
+If you want to display AIS-data, follow these steps:
+
+- Visit [aisstream.io](https://aisstream.io/)
+- Follow the "Get Started" instructions and create an API-Key
+- Copy the access token and paste it in your .env file as `AISSTREAM_IO_API_KEY`
+
 <p align="center">
 <img alt="App View" src="../assets/images/BelugaProjectOverviewV4.png" width="60%" />
 </p>
@@ -137,11 +143,12 @@ If you want to use the 3D view, follow these steps:
 
     10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex.
 
-    11. Add your API-Keys for additional maps and the 3D view (**Optional**). For the 3D view follow the instructions at "Preparations" above (without these API-Keys you cannot use the 3D view and cannot use all available maps in settings)
+    11. Add your API-Keys for additional maps, the 3D view and AIS-data (**Optional**). For the 3D view and AIS-data follow the instructions at "Preparations" above (without these API-Keys you cannot use the 3D view or AIS-data and cannot use all available maps in settings)
 
         ```
         GEOAPIFY_API_KEY=
         CESIUM_ION_DEFAULTACCESSTOKEN=
+        AISSTREAM_IO_API_KEY=
         ```
 
    </details>
