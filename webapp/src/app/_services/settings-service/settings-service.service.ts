@@ -7,13 +7,10 @@ import { Feeder } from '../../_classes/feeder';
 })
 export class SettingsService {
   // Observable sources
-  private timesAsTimestampsSource = new Subject<number[]>();
-  private toggleHideRangeDataSource = new Subject<boolean>();
-  private toggleMarkRangeDataByFeederSource = new Subject<boolean>();
-  private toggleMarkRangeDataByHeightSource = new Subject<boolean>();
+  private toggleMarkOutlineDataByFeederSource = new Subject<boolean>();
+  private toggleMarkOutlineDataByHeightSource = new Subject<boolean>();
   private toggleShowAircraftLabelsSource = new Subject<boolean>();
   private listFeederSource = new Subject<Feeder[]>();
-  private selectedFeederSource = new Subject<string[]>();
   private appNameAndVersionSource = new Subject<string[]>();
   private selectedFeederUpdateSource = new Subject<string[]>();
   private showAirportsSource = new Subject<boolean>();
@@ -42,18 +39,24 @@ export class SettingsService {
   private showOnlyMilitaryPlanesSource = new Subject<boolean>();
   private showTrailDataSource = new Subject<boolean>();
   private showAirplanesLivePlanesSource = new Subject<boolean>();
+  private showAisDataSource = new Subject<boolean>();
+  private aisstreamApiKeyExistsSource = new Subject<boolean>();
+  private aisOutlineMinZoomSource = new Subject<number>();
+  private resetMapPositionSource = new Subject<boolean>();
+  private mapZoomLevelSource = new Subject<number>();
+  private showActualRangeOutlineSource = new Subject<boolean>();
+  private nominatimFetchedCoordinatesSource = new Subject<any>();
+  private showDayNightLineSource = new Subject<boolean>();
+  private showRouteToDestinationSource = new Subject<boolean>();
 
   // Observable streams
-  timesAsTimestamps$ = this.timesAsTimestampsSource.asObservable();
-  toggleHideRangeData$ = this.toggleHideRangeDataSource.asObservable();
-  toggleMarkRangeDataByFeeder$ =
-    this.toggleMarkRangeDataByFeederSource.asObservable();
-  toggleMarkRangeDataByHeight$ =
-    this.toggleMarkRangeDataByHeightSource.asObservable();
+  toggleMarkOutlineDataByFeeder$ =
+    this.toggleMarkOutlineDataByFeederSource.asObservable();
+  toggleMarkOutlineDataByHeight$ =
+    this.toggleMarkOutlineDataByHeightSource.asObservable();
   toggleShowAircraftLabels$ =
     this.toggleShowAircraftLabelsSource.asObservable();
   listFeeder$ = this.listFeederSource.asObservable();
-  selectedFeeder$ = this.selectedFeederSource.asObservable();
   appNameAndVersion$ = this.appNameAndVersionSource.asObservable();
   selectedFeederUpdate$ = this.selectedFeederUpdateSource.asObservable();
   showAirportsUpdate$ = this.showAirportsSource.asObservable();
@@ -87,31 +90,30 @@ export class SettingsService {
   showTrailDataSource$ = this.showTrailDataSource.asObservable();
   showAirplanesLivePlanesSource$ =
     this.showAirplanesLivePlanesSource.asObservable();
+  showAisDataSourceSource$ = this.showAisDataSource.asObservable();
+  aisstreamApiKeyExistsSource$ =
+    this.aisstreamApiKeyExistsSource.asObservable();
+  aisOutlineMinZoomSource$ = this.aisOutlineMinZoomSource.asObservable();
+  resetMapPositionSource$ = this.resetMapPositionSource.asObservable();
+  mapZoomLevelSource$ = this.mapZoomLevelSource.asObservable();
+  showActualRangeOutlineSource$ =
+    this.showActualRangeOutlineSource.asObservable();
+  nominatimFetchedCoordinatesSource$ =
+    this.nominatimFetchedCoordinatesSource.asObservable();
+  showDayNightLineSource$ = this.showDayNightLineSource.asObservable();
+  showRouteToDestinationSource$ =
+    this.showRouteToDestinationSource.asObservable();
 
   constructor() {}
 
-  showRangeDataBetweenTimestamps(
-    selectedFeederRangeData: string[],
-    timesAsTimestamps: number[]
-  ) {
-    this.timesAsTimestampsSource.next(timesAsTimestamps);
-    this.selectedFeederSource.next(selectedFeederRangeData);
-    return this.timesAsTimestampsSource;
+  toggleMarkOutlineDataByFeeder(markOutlineDataByFeeder: boolean) {
+    this.toggleMarkOutlineDataByFeederSource.next(markOutlineDataByFeeder);
+    return this.toggleMarkOutlineDataByFeederSource;
   }
 
-  toggleHideRangeData(hideRangeData: boolean) {
-    this.toggleHideRangeDataSource.next(hideRangeData);
-    return this.toggleHideRangeDataSource;
-  }
-
-  toggleMarkRangeDataByFeeder(markRangeDataByFeeder: boolean) {
-    this.toggleMarkRangeDataByFeederSource.next(markRangeDataByFeeder);
-    return this.toggleMarkRangeDataByFeederSource;
-  }
-
-  toggleMarkRangeDataByHeight(markRangeDataByHeight: boolean) {
-    this.toggleMarkRangeDataByHeightSource.next(markRangeDataByHeight);
-    return this.toggleMarkRangeDataByHeightSource;
+  toggleMarkOutlineDataByHeight(markOutlineDataByHeight: boolean) {
+    this.toggleMarkOutlineDataByHeightSource.next(markOutlineDataByHeight);
+    return this.toggleMarkOutlineDataByHeightSource;
   }
 
   toggleAircraftLabels(showAircraftLabels: boolean) {
@@ -122,11 +124,6 @@ export class SettingsService {
   sendReceiveListFeeder(listFeeder: Feeder[]) {
     this.listFeederSource.next(listFeeder);
     return this.listFeederSource;
-  }
-
-  selectRangeDataByFeeder(selectedFeederArray: string[]) {
-    this.selectedFeederSource.next(selectedFeederArray);
-    return this.selectedFeederSource;
   }
 
   sendReceiveAppNameAndVersion(appNameAndVersion: string[]) {
@@ -194,6 +191,11 @@ export class SettingsService {
     return this.openskyCredentialsExistSource;
   }
 
+  sendReceiveAisstreamApiKeyExists(aisstreamApiKeyExists: boolean) {
+    this.aisstreamApiKeyExistsSource.next(aisstreamApiKeyExists);
+    return this.aisstreamApiKeyExistsSource;
+  }
+
   sendAircraftAltitudeData(aircraftTrailAltitudeData: Object) {
     this.aircraftTrailAltitudeData$.next(aircraftTrailAltitudeData);
   }
@@ -248,6 +250,11 @@ export class SettingsService {
     return this.setIconSmallSizeSource;
   }
 
+  setAisOutlineMinZoom(value: number) {
+    this.aisOutlineMinZoomSource.next(value);
+    return this.aisOutlineMinZoomSource;
+  }
+
   toggleAltitudeChart(showAltitudeChart: boolean) {
     this.showAltitudeChartSource.next(showAltitudeChart);
     return this.showAltitudeChartSource;
@@ -266,5 +273,40 @@ export class SettingsService {
   toggleAirplanesLivePlanes(showAirplanesLivePlanes: boolean) {
     this.showAirplanesLivePlanesSource.next(showAirplanesLivePlanes);
     return this.showAirplanesLivePlanesSource;
+  }
+
+  toggleAisData(showAisData: boolean) {
+    this.showAisDataSource.next(showAisData);
+    return this.showAisDataSource;
+  }
+
+  toggleResetMapPosition(resetMapPosition: boolean) {
+    this.resetMapPositionSource.next(resetMapPosition);
+    return this.resetMapPositionSource;
+  }
+
+  setMapZoomLevel(value: number) {
+    this.mapZoomLevelSource.next(value);
+    return this.mapZoomLevelSource;
+  }
+
+  toggleActualRangeOutline(showActualRangeOutline: boolean) {
+    this.showActualRangeOutlineSource.next(showActualRangeOutline);
+    return this.showActualRangeOutlineSource;
+  }
+
+  nominatimFetchedCoordinates(coordinatesJson: any) {
+    this.nominatimFetchedCoordinatesSource.next(coordinatesJson);
+    return this.nominatimFetchedCoordinatesSource;
+  }
+
+  toggleDayNightLine(showDayNightLine: boolean) {
+    this.showDayNightLineSource.next(showDayNightLine);
+    return this.showDayNightLineSource;
+  }
+
+  toggleRouteToDestination(showRouteToDestination: boolean) {
+    this.showRouteToDestinationSource.next(showRouteToDestination);
+    return this.showRouteToDestinationSource;
   }
 }

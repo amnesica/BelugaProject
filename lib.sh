@@ -5,8 +5,8 @@ set -euo pipefail
 
 # Global variables
 container_name_db=postgres
-container_name_webapp=webapp
-container_name_server=server
+container_name_webapp=belugaproject-webapp
+container_name_server=belugaproject-server
 image_name_db=postgres
 image_name_webapp=belugaproject/belugaproject-webapp
 image_name_server=belugaproject/belugaproject-server
@@ -16,8 +16,8 @@ path_db_content=$path_postgresql/dbContent
 aircraft_database_zipfilename=aircraftDatabase.zip
 aircraft_database_filename=aircraftDatabase.csv
 airport_database_filename=airports.csv
-flightroute_database_filename=flightroute_data.csv
-aircraft_database_url=https://opensky-network.org/datasets/metadata/$aircraft_database_zipfilename
+flightroute_database_filename=flightrouteData.csv
+aircraft_database_url=https://s3.opensky-network.org/data-samples/metadata/$aircraft_database_zipfilename
 airport_database_url=https://davidmegginson.github.io/ourairports-data/$airport_database_filename
 flightroute_database_zipfilename="vrs_standing_data.zip"
 flightroute_database_url=https://github.com/vradarserver/standing-data/archive/refs/heads/main.zip
@@ -119,7 +119,31 @@ _docker_build() {
     docker compose build --progress=plain --no-cache
   else
     echo "Build the image for $1 (force rebuild of existing image) ..."
-    docker compose build --progress=plain --no-cache $1
+
+    if [[ $1 = 'server' ]] || [[ $1 = $container_name_server ]]; then
+      echo "Build container $container_name_server ..."
+      docker compose build --progress=plain --no-cache $container_name_server
+      echo "-> Build container $container_name_server. Done."
+    else
+      echo "-> No container $1 to build. Done."
+    fi
+
+    if [[ $1 = 'webapp' ]] || [[ $1 = $container_name_webapp ]]; then
+      echo "Build container $container_name_webapp ..."
+      docker compose build --progress=plain --no-cache $container_name_webapp
+      echo "-> Build container $container_name_webapp. Done."
+    else
+      echo "-> No container $1 to build. Done."
+    fi
+    
+    if [[ $1 = 'postgres' ]] || [[ $1 = $container_name_db ]]; then
+      echo "Build container $container_name_db ..."
+      docker compose build --progress=plain --no-cache $container_name_db
+      echo "-> Build container $container_name_db. Done."
+    else
+        echo "-> No container $1 to build. Done."
+    fi
+    
   fi
 }
 
@@ -200,14 +224,39 @@ _docker_rm_image() {
     _ask_user_with_message "Do you really want to remove all images for the Beluga Project (y/n)?"
     _docker_rm_all_images
   else
-    echo "Remove image $1 ..."
-    local image_id=$(docker images -q $1)
-    if [[ $image_id ]]; then
-      docker image rm -f $image_id
-      echo "-> Removed image for $1. Done."
-    else
-      echo "-> No image $1 to remove. Done."
+    if [[ $1 = 'server' ]] || [[ $1 = $image_name_server ]]; then
+      echo "Remove image $image_name_server ..."
+      local image_id=$(docker images -q $image_name_server)
+      if [[ $image_id ]]; then
+        docker image rm -f $image_id
+        echo "-> Removed image for $image_name_server. Done."
+      else
+        echo "-> No image $1 to remove. Done."
+      fi
     fi
+
+    if [[ $1 = 'webapp' ]] || [[ $1 = $image_name_webapp ]]; then
+      echo "Remove image $image_name_webapp ..."
+      local image_id=$(docker images -q $image_name_webapp)
+      if [[ $image_id ]]; then
+        docker image rm -f $image_id
+        echo "-> Removed image for $image_name_webapp. Done."
+      else
+        echo "-> No image $1 to remove. Done."
+      fi
+    fi
+
+    if [[ $1 = 'postgres' ]] || [[ $1 = $image_name_db ]]; then
+      echo "Remove image $image_name_db ..."
+      local image_id=$(docker images -q $image_name_db)
+      if [[ $image_id ]]; then
+        docker image rm -f $image_id
+        echo "-> Removed image for $image_name_db. Done."
+      else
+        echo "-> No image $1 to remove. Done."
+      fi
+    fi
+
   fi
 }
 

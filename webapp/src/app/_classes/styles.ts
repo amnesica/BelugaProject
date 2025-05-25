@@ -114,48 +114,6 @@ export class Styles {
     }),
   });
 
-  // Style für Range-Data Polygon
-  static RangeDataPolygonStyle: Style = new Style({
-    fill: new Fill({
-      color: 'rgba(0, 0, 0, 0.3)',
-    }),
-  });
-
-  // Dark-Style für Range-Data Polygon
-  static RangeDataPolygonStyleWhite: Style = new Style({
-    fill: new Fill({
-      color: 'rgba(100, 100, 100, 0.5)',
-    }),
-  });
-
-  // Style für Range-Data Points
-  static RangeDataPointStyle: Style = new Style({
-    image: new Circle({
-      fill: new Fill({
-        color: 'rgba(30, 30, 30, 1)',
-      }),
-      stroke: new Stroke({
-        color: 'white',
-        width: 1,
-      }),
-      radius: 5,
-    }),
-  });
-
-  // Dark-Style für Range-Data Points
-  static RangeDataPointStyleWhite: Style = new Style({
-    image: new Circle({
-      fill: new Fill({
-        color: 'rgba(100, 100, 100, 1)',
-      }),
-      stroke: new Stroke({
-        color: 'white',
-        width: 1,
-      }),
-      radius: 5,
-    }),
-  });
-
   // Style für Geräte-Position
   static DevicePositionStyle = new Style({
     image: new Circle({
@@ -165,6 +123,45 @@ export class Styles {
         color: 'white',
         width: 2,
       }),
+    }),
+  });
+
+  /**
+   *  Setze Style des Airport-Features entsprechend des Typs des Flughafens
+   */
+  static getStyleOfAirportFeature(type: any): any {
+    switch (type) {
+      case 'large_airport': {
+        return Styles.LargeAirportStyle;
+      }
+      case 'medium_airport': {
+        return Styles.MediumAirportStyle;
+      }
+      case 'small_airport': {
+        return Styles.SmallAirportStyle;
+      }
+      case 'heliport': {
+        return Styles.HeliportStyle;
+      }
+      case 'seaplane_base': {
+        return Styles.SeaplaneBaseStyle;
+      }
+      case 'closed': {
+        return Styles.ClosedAirportStyle;
+      }
+      default: {
+        return Styles.DefaultPointStyle;
+      }
+    }
+  }
+
+  // Style für Outline Points
+  static OutlinePointStyle: Style = new Style({
+    image: new Circle({
+      fill: new Fill({
+        color: '#13568b',
+      }),
+      radius: 2.5,
     }),
   });
 }

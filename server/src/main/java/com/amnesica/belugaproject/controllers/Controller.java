@@ -2,12 +2,13 @@ package com.amnesica.belugaproject.controllers;
 
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.data.AirportData;
-import com.amnesica.belugaproject.entities.data.RangeData;
+import com.amnesica.belugaproject.entities.ships.Ship;
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;
 import com.amnesica.belugaproject.entities.trails.SpacecraftTrail;
 import com.amnesica.belugaproject.services.aircraft.*;
 import com.amnesica.belugaproject.services.data.*;
 import com.amnesica.belugaproject.services.helper.DebugService;
+import com.amnesica.belugaproject.services.ships.AisService;
 import com.amnesica.belugaproject.services.trails.AircraftTrailService;
 import com.amnesica.belugaproject.services.trails.SpacecraftTrailService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +36,8 @@ public class Controller {
   private SpacecraftService spacecraftService;
   @Autowired
   private OpenskyService openskyService;
+  @Autowired
+  private AisService aisService;
 
   @Autowired
   private AircraftService aircraftService;
@@ -44,8 +47,6 @@ public class Controller {
 
   @Autowired
   private AirportDataService airportDataService;
-  @Autowired
-  private RangeDataService rangeDataService;
   @Autowired
   private HistoryAircraftService historyAircraftService;
 
@@ -62,6 +63,9 @@ public class Controller {
 
   @Autowired
   private MapTypeToShapeDataService mapTypeToShapeDataService;
+
+  @Autowired
+  private LocationFinderService locationFinderService;
 
   @Autowired
   private DebugService debugService;
@@ -168,41 +172,25 @@ public class Controller {
       List<SpacecraftTrail> trails = spacecraftTrailService.getAllTrails();
       return new Object[]{trails};
     } else if (fetchRemote == null) {
-      List<AircraftTrail> trails = aircraftTrailService.getAllTrails(hex, selectedFeeder);
+      List<AircraftTrail> trails = aircraftTrailService.getAllTrailsFromLastHour(hex, selectedFeeder);
       return new Object[]{trails};
-      // TODO: Opensky schickt falsche Trails momentan zurück
-      //    } else if (fetchRemote.equals("Opensky")) {
-      //      List<AircraftTrail> trails = openskyService.getTrail(hex);
-      //      return new Object[]{trails};
+    } else if (fetchRemote.equals("Opensky")) {
+      List<AircraftTrail> trails = openskyService.getTrail(hex);
+      return new Object[]{trails};
     } else {
       return null;
     }
   }
 
   /**
-   * Holt alle gespeicherten Trails aus der Datenbank
+   * Holt alle gespeicherten Trails der letzten Stunde aus der Datenbank
    *
    * @return List<List < AircraftTrail>>
    */
   @GetMapping(value = "/getAllTrails", produces = "application/json")
   public @ResponseBody
   List<List<AircraftTrail>> getAllTrails() {
-    return aircraftTrailService.getAllTrails();
-  }
-
-  /**
-   * Gibt eine Liste mit Range-Data, Start- und Endpunkt von Flugzeugen,
-   * welche in dem Zeitslot empfangen wurden
-   *
-   * @param startTime long
-   * @param endTime   long
-   * @return List<RangeData>
-   */
-  @GetMapping(value = "/getRangeDataBetweenTimestamps", produces = "application/json")
-  public @ResponseBody
-  List<RangeData> getRangeDataBetweenTimestamps(
-      @RequestParam(value = "startTime") long startTime, @RequestParam(value = "endTime") long endTime) {
-    return rangeDataService.getRangeDataBetweenTimestamps(startTime, endTime);
+    return aircraftTrailService.getAllTrailsFromLastHour();
   }
 
   /**
@@ -248,5 +236,56 @@ public class Controller {
   public @ResponseBody
   byte[] getAircraftData(@RequestParam(value = "type") String type) {
     return model3DService.getModelFromType(type);
+  }
+
+  /**
+   * Gibt AIS-Daten von aisstream.io zurück
+   *
+   * @return List<Ship>
+   */
+  @GetMapping(value = "/getAisData", produces = "application/json")
+  public @ResponseBody
+  Collection<Ship> getAisData(@RequestParam(value = "lomin") double lomin,
+                              @RequestParam(value = "lamin") double lamin, @RequestParam(value = "lomax") double lomax,
+                              @RequestParam(value = "lamax") double lamax, @RequestParam(value = "enable") boolean enable) {
+    return aisService.getAisData(lamin, lomin, lamax, lomax, enable);
+  }
+
+  /**
+   * Gibt einen Photo-Link von vesselfinder.com zurück
+   *
+   * @return String
+   */
+  @GetMapping(value = "/getAisPhoto", produces = "application/json")
+  public @ResponseBody
+  AisService.VesselFinderResponse getAisPhoto(@RequestParam(value = "mmsi") Integer mmsi) {
+    return aisService.getPhotoUrlFromVesselFinder(mmsi);
+  }
+
+  /**
+   * Gibt eine Liste zurück, welche die maximale Distanz von Trails beinhaltet. Die Daten sind aus den letzten 24h und
+   * nach selectedFeeder gefiltert
+   *
+   * @param selectedFeeder List<String>
+   * @return List<AircraftTrail>
+   */
+  @GetMapping(value = "/getActualRangeOutline", produces = "application/json")
+  public @ResponseBody
+  List<AircraftTrail> getActualRangeOutline(
+      @RequestParam(value = "selectedFeeder") List<String> selectedFeeder) {
+    return aircraftTrailService.getActualOutlineFromLast24Hours(selectedFeeder);
+  }
+
+  /**
+   * Gibt Koordinaten für einen Ort zurück
+   *
+   * @param inputPlace String
+   * @return List<Double>
+   */
+  @GetMapping(value = "/getLocationFromInput", produces = "application/json")
+  public @ResponseBody
+  List<Double> getCoordinatesFromPlace(
+      @RequestParam(value = "inputPlace") String inputPlace) {
+    return locationFinderService.getCoordinatesFromPlace(inputPlace);
   }
 }

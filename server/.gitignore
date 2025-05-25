@@ -49,3 +49,4 @@ gradle-app.setting
 
 ### dev properties ###
 application-dev.properties
+application-test.properties

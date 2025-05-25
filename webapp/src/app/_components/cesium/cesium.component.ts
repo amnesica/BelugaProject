@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   Input,
   OnInit,
 } from '@angular/core';
@@ -11,16 +12,17 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
 import { Globals } from 'src/app/_common/globals';
 import { CesiumService } from 'src/app/_services/cesium-service/cesium-service.component';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import { takeUntil } from 'rxjs/operators';
 import { slideInOutBottom } from 'src/app/_common/animations';
 import { Storage } from 'src/app/_classes/storage';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 @Component({
   selector: 'app-cesium',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cesium.component.html',
-  styleUrls: ['./cesium.component.css'],
+  styleUrls: ['./cesium.component.scss'],
   animations: [slideInOutBottom],
 })
 export class CesiumComponent implements OnInit {
@@ -30,7 +32,10 @@ export class CesiumComponent implements OnInit {
   // Cesium Ion Default Access Token (Eingabeparameter)
   @Input() cesiumIonDefaultAccessToken: any;
 
-  @Input() darkMode: boolean = false;
+  darkMode: boolean = false;
+
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
 
   isDesktop: boolean | undefined;
   widthMap3d: string | undefined;
@@ -45,7 +50,7 @@ export class CesiumComponent implements OnInit {
   displayOsmBuildings3d: boolean = false;
   osmBuildingsTileset: Cesium.Cesium3DTileset | undefined;
   displayGooglePhotorealistic3d: boolean = false;
-  googlePhotorealisticTileset: any;
+  google3dTileset: any;
   displayCockpitView3d: boolean = false;
   display3dMapFullscreen: boolean = false;
   displayTerrain: boolean = false;
@@ -114,13 +119,16 @@ export class CesiumComponent implements OnInit {
   sliderMsaa3dValue: any;
   enableDefaultResolution3dMap: boolean = true;
 
+  lastGroundHeight: any;
+
+  private snackBar = inject(MatSnackBar);
+
   // Subscriptions
   private ngUnsubscribe = new Subject();
 
   constructor(
     public breakpointObserver: BreakpointObserver,
     private cesumService: CesiumService,
-    private snackBar: MatSnackBar,
     private el: ElementRef
   ) {
     this.elementRef = el;
@@ -148,7 +156,7 @@ export class CesiumComponent implements OnInit {
 
   ngOnDestroy() {
     this.destroy3dAssets();
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(void 0);
     this.ngUnsubscribe.complete();
   }
 
@@ -537,25 +545,39 @@ export class CesiumComponent implements OnInit {
     });
   }
 
-  getAltitudeWhenOnGround(longitude, latitude): number {
+  private getAltitudeWhenOnGround(longitude, latitude): number {
     const defaultHeightInMeters = 5;
+    if (!this.scene || !longitude || !latitude) return defaultHeightInMeters;
 
-    if (!this.scene) return defaultHeightInMeters;
-    let altitude = this.scene.globe.getHeight(
-      Cesium.Cartographic.fromDegrees(longitude, latitude)
-    );
+    const cartoPosition = Cesium.Cartographic.fromDegrees(longitude, latitude);
+    let altitude: any = defaultHeightInMeters;
 
-    if (altitude == undefined) {
-      // default, wenn kein altitude-Wert gefunden wird (in Metern)
-      altitude = defaultHeightInMeters;
+    this.displayGooglePhotorealistic3d
+      ? (altitude = this.getHeightFrom3dTilesetDirect(cartoPosition))
+      : (altitude = this.scene.globe.getHeight(cartoPosition));
+
+    if (altitude !== undefined) this.lastGroundHeight = altitude;
+
+    return altitude !== undefined
+      ? altitude
+      : this.lastGroundHeight !== undefined
+      ? this.lastGroundHeight
+      : defaultHeightInMeters;
+  }
+
+  private getHeightFrom3dTilesetDirect(
+    cartographic: Cesium.Cartographic
+  ): number | undefined {
+    if (
+      !Cesium.defined(cartographic) ||
+      !this.viewer ||
+      !this.google3dTileset ||
+      !this.viewer.scene
+    ) {
+      return undefined;
     }
 
-    // Google Photogrammetrie ist höher als normales OSM-Terrain
-    if (this.displayGooglePhotorealistic3d) {
-      altitude += 5;
-    }
-
-    return altitude;
+    return this.google3dTileset.getHeight(cartographic, this.viewer.scene);
   }
 
   async loadAircraftModel(
@@ -635,12 +657,12 @@ export class CesiumComponent implements OnInit {
     }
 
     // Stoppe Extrapolation, wenn 5 Sekunden kein Update des Flugzeugs kommt
-    if (aircraft.lastSeen >= 5 && this.EntityPositions[aircraft.hex]) {
+    if (aircraft.lastSeenPos >= 5 && this.EntityPositions[aircraft.hex]) {
       this.EntityPositions[aircraft.hex]!.forwardExtrapolationType =
         Cesium.ExtrapolationType.HOLD;
       this.EntityCockpitPositions[aircraft.hex]!.forwardExtrapolationType =
         Cesium.ExtrapolationType.HOLD;
-    } else if (aircraft.lastSeen < 5 && this.EntityPositions[aircraft.hex]) {
+    } else if (aircraft.lastSeenPos < 5 && this.EntityPositions[aircraft.hex]) {
       this.EntityPositions[aircraft.hex]!.forwardExtrapolationType =
         Cesium.ExtrapolationType.EXTRAPOLATE;
       this.EntityCockpitPositions[aircraft.hex]!.forwardExtrapolationType =
@@ -820,7 +842,7 @@ export class CesiumComponent implements OnInit {
     this.removeGooglePhotorealistic3D();
     this.removeDayNightLayerOnMap();
     this.osmBuildingsTileset = undefined;
-    this.googlePhotorealisticTileset = undefined;
+    this.google3dTileset = undefined;
     this.earthAtNightLayer = undefined;
 
     this.aircraft = null;
@@ -902,10 +924,12 @@ export class CesiumComponent implements OnInit {
 
     // Füge Photorealistic 3D Tiles hinzu
     try {
-      if (!this.googlePhotorealisticTileset) {
-        this.googlePhotorealisticTileset =
-          await Cesium.Cesium3DTileset.fromIonAssetId(2275207, {});
-        this.scene.primitives.add(this.googlePhotorealisticTileset);
+      if (!this.google3dTileset) {
+        this.google3dTileset = await Cesium.Cesium3DTileset.fromIonAssetId(
+          2275207,
+          {}
+        );
+        this.scene.primitives.add(this.google3dTileset);
       }
 
       // Globe muss nicht angezeigt werden, da die Photorealistic 3D Tiles das Terrain beinhalten
@@ -922,10 +946,10 @@ export class CesiumComponent implements OnInit {
   removeGooglePhotorealistic3D() {
     if (!this.viewer || !this.scene) return;
 
-    if (this.googlePhotorealisticTileset)
-      this.scene.primitives.remove(this.googlePhotorealisticTileset);
+    if (this.google3dTileset)
+      this.scene.primitives.remove(this.google3dTileset);
     this.scene.globe.show = true;
-    this.googlePhotorealisticTileset = undefined;
+    this.google3dTileset = undefined;
   }
 
   showCockpitView3d() {
@@ -1274,10 +1298,24 @@ export class CesiumComponent implements OnInit {
 
     if (this.display3dMapFullscreen) {
       this.widthMap3d = '100vw';
-      if (cesiumMap) cesiumMap.style.width = '100vw';
+      if (cesiumMap) {
+        cesiumMap.style.width = '100vw';
+        cesiumMap.style.marginBottom = '0rem';
+        cesiumMap.style.marginLeft = '0rem';
+        cesiumMap.style.marginRight = '0rem';
+        cesiumMap.style.marginTop = '3.5rem';
+        cesiumMap.style.borderRadius = '0px';
+      }
     } else {
       this.widthMap3d = '40rem';
-      if (cesiumMap) cesiumMap.style.width = '40rem';
+      if (cesiumMap) {
+        cesiumMap.style.width = '40rem';
+        cesiumMap.style.marginBottom = '0.3rem';
+        cesiumMap.style.marginLeft = '0.3rem';
+        cesiumMap.style.marginRight = '0.3rem';
+        cesiumMap.style.marginTop = '3.8rem';
+        cesiumMap.style.borderRadius = '15px';
+      }
     }
   }
 
@@ -1357,7 +1395,7 @@ export class CesiumComponent implements OnInit {
   }
 
   showClickedBehaviourOnButton(buttonId: string, isClicked: boolean) {
-    const colorClicked = '#f9c534';
+    const colorClicked = '#ffab40';
     const colorNotClicked = '#000';
     document.getElementById(buttonId)!.style.background = isClicked
       ? colorClicked

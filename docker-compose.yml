@@ -1,11 +1,9 @@
-version: '2'
-
 services:
   belugaproject-server:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: belugaproject/belugaproject-server:4.0.0
+    image: belugaproject/belugaproject-server:4.1.0
     container_name: belugaproject-server
     depends_on:
       - postgres
@@ -35,6 +33,7 @@ services:
       - PROD_BASE_URL_WEBAPP=${PROD_BASE_URL_WEBAPP}
       - GEOAPIFY_API_KEY=${GEOAPIFY_API_KEY}
       - CESIUM_ION_DEFAULTACCESSTOKEN=${CESIUM_ION_DEFAULTACCESSTOKEN}
+      - AISSTREAM_IO_API_KEY=${AISSTREAM_IO_API_KEY}
     ports:
       - "8080:8080"
     restart: always
@@ -43,7 +42,7 @@ services:
     build:
       context: .
       dockerfile: webapp/Dockerfile
-    image: belugaproject/belugaproject-webapp:4.0.0
+    image: belugaproject/belugaproject-webapp:4.1.0
     container_name: belugaproject-webapp
     environment:
       - PROD_BASE_URL_WEBAPP=${PROD_BASE_URL_WEBAPP}
@@ -52,7 +51,7 @@ services:
     restart: always
 
   postgres:
-    image: 'postgres:16.1-alpine'
+    image: 'postgres:16.6-alpine'
     container_name: postgres
     environment:
       - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}

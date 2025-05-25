@@ -1,0 +1,119 @@
+@use "@angular/material" as mat;
+@use "./styles/themes/all" as themes;
+@use "./styles/typography/config";
+
+@import "styles/roboto.scss";
+@import "styles/material-icons.scss";
+
+@include mat.core();
+
+@include mat.typography-hierarchy(config.$my-app-typography);
+
+@include mat.progress-spinner-base(themes.$my-app-light-theme);
+@include mat.core-theme(themes.$my-app-light-theme);
+@include mat.button-theme(themes.$my-app-light-theme);
+@include mat.icon-theme(themes.$my-app-light-theme);
+@include mat.menu-theme(themes.$my-app-light-theme);
+@include mat.slide-toggle-theme(themes.$my-app-light-theme);
+@include mat.tabs-theme(themes.$my-app-light-theme);
+@include mat.slider-theme(themes.$my-app-light-theme);
+@include mat.form-field-theme(themes.$my-app-light-theme);
+@include mat.select-theme(themes.$my-app-light-theme);
+@include mat.option-theme(themes.$my-app-light-theme);
+@include mat.divider-theme(themes.$my-app-light-theme);
+@include mat.input-theme(themes.$my-app-light-theme);
+@include mat.dialog-theme(themes.$my-app-light-theme);
+@include mat.card-theme(themes.$my-app-light-theme);
+@include mat.table-theme(themes.$my-app-light-theme);
+@include mat.snack-bar-theme(themes.$my-app-light-theme);
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
+
+/* Use Material Symbols instead of Material Icons */
+mat-icon {
+  font-family: "Material Symbols Outlined";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.loader {
+  overflow: show;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 5px solid #000;
+  border-top: 5px solid #ffab40;
+  border-radius: 50%;
+  -webkit-animation: spin 400ms linear infinite; /* Safari */
+  animation: spin 400ms linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.button-rounded {
+  &.mat-mdc-button,
+  &.mat-mdc-raised-button,
+  &.mdc-button--unelevated,
+  &.mdc-button--outlined {
+    border-radius: 15px;
+  }
+}
+
+.mat-mdc-raised-button {
+  letter-spacing: 0;
+}
+
+mat-slide-toggle {
+  margin: 0.3rem;
+}
+
+.mat-mdc-card-title .mat-mdc-card-header .mat-mdc-card-header-text {
+  font-weight: 800;
+  font-size: large;
+  line-height: 16px;
+}
+
+.mdc-text-field--filled { // when appearance="fill"
+  border-top-left-radius: 15px !important;
+  border-top-right-radius: 15px !important;
+}
+
+.mdc-text-field--outlined { // when appearance="outline"
+  --mdc-outlined-text-field-container-shape: 18px !important;
+}

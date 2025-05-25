@@ -1,0 +1,48 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+@use "../typography/config" as config;
+
+$my-app-light-primary: mat.m2-define-palette(mat.$m2-blue-palette);
+$my-app-light-accent: mat.m2-define-palette(mat.$m2-orange-palette, A200, A100, A400);
+$my-app-light-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+$my-app-light-theme: mat.m2-define-light-theme(
+  (
+    color: (
+      primary: $my-app-light-primary,
+      accent: $my-app-light-accent,
+      warn: $my-app-light-warn,
+    ),
+    typography: config.$my-app-typography
+  )
+);
+
+$light-theme-overrides: (
+  'color': (
+    'background': (
+      'background': #efeff4,
+    )
+  ),
+);
+
+$my-app-light-theme: map.deep-merge($my-app-light-theme, $light-theme-overrides);
+
+// Define a dark theme
+$my-app-dark-theme: mat.m2-define-dark-theme(
+  (
+    color: (
+      primary: mat.m2-define-palette(mat.$m2-blue-palette),
+      accent: mat.m2-define-palette(mat.$m2-orange-palette),
+    )
+  )
+);
+
+$dark-theme-overrides: (
+  'color': (
+    'background': (
+      'background': #383838,
+    )
+  ),
+);
+
+$my-app-dark-theme: map.deep-merge($my-app-dark-theme, $dark-theme-overrides);

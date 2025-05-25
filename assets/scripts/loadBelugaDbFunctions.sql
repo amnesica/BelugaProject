@@ -4,6 +4,25 @@
 \echo -----------------------------------------------------
 
 \echo -----------------------------------------------------
+\echo helper function to count rows for a
+\echo dynamicly submitted tablename
+\echo -----------------------------------------------------
+CREATE OR REPLACE FUNCTION 
+count_rows(schema text, tablename text) returns integer
+as
+$body$
+declare
+  result integer;
+  query varchar;
+begin
+  query := 'SELECT count(1) FROM ' || schema || '.' || tablename;
+  execute query into result;
+  return result;
+end;
+$body$
+language plpgsql;
+
+\echo -----------------------------------------------------
 \echo get BelugaDb Statistics
 \echo -----------------------------------------------------
 CREATE OR REPLACE FUNCTION public.getbelugaDbstatistics()
@@ -18,10 +37,12 @@ declare
 	 csv_imported_txt text default '';
 	 last_updated_txt text default '';
 	 local_tz text default '';
+	 schema_name text default 'public';
 	 rec_table_list record;
 	 cur_table_list cursor 
 		 for
-	 		SELECT relname, n_live_tup
+	 		SELECT relname, 
+			count_rows(schema_name, relname) as table_rows
 			FROM pg_stat_user_tables;
 
    -- two records because two sources
@@ -93,7 +114,7 @@ begin
 	-- print row
 	stat := stat || 
 			RPAD(rec_table_list.relname, 25) || '  ' ||
-			LPAD(CAST(rec_table_list.n_live_tup as text),8) || '  ' ||
+			LPAD(CAST(rec_table_list.table_rows as text),8) || '  ' ||
 			LPAD(CAST(rec_table_stat1.size as text),20) || '  ' ||
 			rec_table_stat1.change || '  ' ||
 			csv_created_txt  || '  ' ||

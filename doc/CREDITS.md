@@ -2,9 +2,11 @@
 
 The BelugaProject uses parts and a lot of the concepts of the [tar1090](https://github.com/wiedehopf/tar1090) repository by [wiedehopf](https://github.com/wiedehopf) and of [dump1090](https://github.com/flightaware/dump1090) by [flightaware](https://github.com/flightaware). Maybe there are far more contributors. Please tell us if we have forgotten someone. 
 
-The BelugaProject allows you to add live data from [Opensky network](https://opensky-network.org/) and/or [airplanes.live](https://globe.airplanes.live/).
+The BelugaProject allows you to add live data from [Opensky network](https://opensky-network.org/), [airplanes.live](https://globe.airplanes.live/), ["Where the ISS at?" API](https://wheretheiss.at/w/developer) and/or ship data from [aisstream.io](https://aisstream.io/). 
 
-By clicking on an airport icon you will see airport data from [OurAirports](https://ourairports.com/data/). Via hyperlink you can open the airport data website from [OurAirports](https://ourairports.com/data/) for the selected airport.
+Airplane images come from [planespotters.net](https://www.planespotters.net) together with a link to their site. Ship images come from [VesselFinder](https://vesselfinder.com/) with a link to their site.
+
+By clicking on an airport icon you will see airport data from [OurAirports](https://ourairports.com/data/). Via hyperlink you can open the airport data website from [OurAirports](https://ourairports.com/data/) for the selected airport. Airport arrival and departure boards are provided by [Avionio.com](https://www.avionio.com).
 
 In our database we use data from
 - [Opensky network](https://opensky-network.org/): aircraft data

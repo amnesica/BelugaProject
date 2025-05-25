@@ -1,7 +1,7 @@
 package com.amnesica.belugaproject.entities.aircraft;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
@@ -56,7 +56,7 @@ public class AircraftSuperclass {
   private List<String> feederList;
 
   // Zuletzt gesehen
-  private Integer lastSeen;
+  private Integer lastSeenPos;
 
   // Quelle (ADS-B oder MLAT)
   @Type(ListArrayType.class)
@@ -134,8 +134,13 @@ public class AircraftSuperclass {
 
   private Double roll;
 
-  // Konstruktor
-  public AircraftSuperclass(String hex, double latitude, double longitude) {
+  private Boolean sendWithPos = false;
+
+  public AircraftSuperclass(String hex) {
+    this.hex = hex;
+  }
+
+  public AircraftSuperclass(String hex, Double latitude, Double longitude) {
     this.hex = hex;
     this.latitude = latitude;
     this.longitude = longitude;

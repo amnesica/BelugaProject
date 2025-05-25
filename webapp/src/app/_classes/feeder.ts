@@ -14,16 +14,12 @@ export class Feeder {
     this.type = type;
     this.color = color;
 
-    // Setze Style für einen RangeData-Punkt
+    // Setze Style für einen Outline-Data-Punkt
     // des Feeders mit der jeweiligen Farbe
     this.styleFeederPoint = new Style({
       image: new Circle({
-        radius: 5,
+        radius: 2.5,
         fill: new Fill({ color: this.color }),
-        stroke: new Stroke({
-          color: 'white',
-          width: 1,
-        }),
       }),
     });
   }

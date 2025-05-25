@@ -1,7 +1,10 @@
 <!-- Map -->
-<div id="map_canvas" [style.background]="darkMode ? 'black' : 'white'">
+<div
+  id="map_canvas"
+  [style.background]="(isDark$ | async) === true ? 'black' : 'white'"
+>
   <!-- Toolbar -->
-  <app-toolbar [darkMode]="darkMode"></app-toolbar>
+  <app-toolbar></app-toolbar>
 
   <!-- Info, wenn Server nicht erreichbar ist und die Konfiguration fehlschlägt -->
   <p
@@ -18,7 +21,9 @@
     [style.top.px]="topValue"
     [style.left.px]="leftValue"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
     <div *ngIf="hoveredAircraftObject">
@@ -26,7 +31,7 @@
         <!-- flightId -->
         <mat-card-title
           *ngIf="hoveredAircraftObject.flightId"
-          style="color: #f8c023"
+          style="color: #ffab40"
         >
           {{ hoveredAircraftObject.flightId }}
         </mat-card-title>
@@ -42,14 +47,14 @@
         <ng-container *ngFor="let item of hoveredAircraftObject.attributes">
           <tr
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark airportDataPopup-tr-dark'
                 : 'background-and-color-light color-grey'
             "
           >
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
@@ -63,7 +68,7 @@
 
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light'
               "
@@ -86,38 +91,45 @@
     </div>
   </mat-card>
 
-  <!-- Popup für RangeData -->
+  <!-- Popup für Outline-Data -->
   <mat-card
-    id="rangeDataPopup"
-    [style.bottom]="rangeDataPopupBottomValue"
+    id="outlineDataPopup"
+    [style.bottom]="outlineDataPopupBottomValue"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
-    <div *ngIf="showPopupRangeDataPoint && rangeDataPoint">
-      <mat-card-header id="rangeDatPopupHeader">
+    <div *ngIf="showOutlinePointPopup && outlineDataPoint">
+      <mat-card-header id="outlineDataPopupHeader">
         <!-- flightId -->
-        <mat-card-title *ngIf="rangeDataPoint.flightId" style="color: #f8c023">
-          {{ rangeDataPoint.flightId }}
+        <mat-card-title
+          *ngIf="outlineDataPoint.flightId"
+          style="color: #ffab40"
+        >
+          {{ outlineDataPoint.flightId }}
         </mat-card-title>
         <!-- hex -->
-        <mat-card-subtitle *ngIf="rangeDataPoint.hex" style="color: #d5d5d5">{{
-          rangeDataPoint.hex
-        }}</mat-card-subtitle>
+        <mat-card-subtitle
+          *ngIf="outlineDataPoint.hex"
+          style="color: #d5d5d5"
+          >{{ outlineDataPoint.hex }}</mat-card-subtitle
+        >
       </mat-card-header>
 
       <table>
-        <ng-container *ngFor="let item of rangeDataPoint.attributes">
+        <ng-container *ngFor="let item of outlineDataPoint.attributes">
           <tr
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark airportDataPopup-tr-dark'
                 : 'background-and-color-light color-grey'
             "
           >
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
@@ -131,7 +143,7 @@
 
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light'
               "
@@ -159,7 +171,9 @@
     id="airportDataPopup"
     [style.bottom]="airportDataPopupBottomValue"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
   >
     <div *ngIf="airportDataPoint">
@@ -168,13 +182,27 @@
         <mat-card-title
           *ngIf="airportDataPoint.icao"
           style="
-            color: #f8c023;
+            color: #ffab40;
             font-size: 1.2rem;
             display: flex;
             align-self: center;
           "
         >
           {{ airportDataPoint.icao }}
+          <a
+            *ngIf="airportDataPoint.iata !== 'N/A'"
+            id="airportDataSchedule"
+            href="{{
+              'https://www.avionio.com/en/airport/' +
+                airportDataPoint.iata +
+                '/arrivals'
+            }}"
+            target="_blank"
+          >
+            <mat-icon aria-hidden="false" style="color: #ffab40"
+              >schedule</mat-icon
+            ></a
+          >
           <a
             *ngIf="airportDataPoint.icao"
             id="airportDataLinkOurAirports"
@@ -183,7 +211,7 @@
             }}"
             target="_blank"
           >
-            <mat-icon aria-hidden="false" style="color: #f8c023"
+            <mat-icon aria-hidden="false" style="color: #ffab40"
               >link</mat-icon
             ></a
           >
@@ -194,14 +222,14 @@
         <ng-container *ngFor="let item of airportDataPoint.attributes">
           <tr
             [ngClass]="
-              darkMode
+              (isDark$ | async) === true
                 ? 'background-and-color-dark airportDataPopup-tr-dark'
                 : 'background-and-color-light color-grey'
             "
           >
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light color-grey'
               "
@@ -215,7 +243,144 @@
 
             <td
               [ngClass]="
-                darkMode
+                (isDark$ | async) === true
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
+                  : 'background-and-color-light'
+              "
+            >
+              <div>
+                <p
+                  style="
+                    font-size: small;
+                    font-weight: bold;
+                    padding-inline: 0.5rem;
+                  "
+                >
+                  {{ item.value }}
+                </p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </table>
+    </div>
+  </mat-card>
+
+  <!-- Popup für AisData -->
+  <mat-card
+    id="aisDataPopup"
+    [style.bottom]="aisDataPopupBottomValue"
+    [ngClass]="
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
+    "
+  >
+    <div *ngIf="aisDataPoint">
+      <mat-card-header id="aisDataPopupHeader">
+        <mat-card-title
+          *ngIf="aisDataPoint.title"
+          style="
+            color: #ffab40;
+            font-size: 1.2rem;
+            display: flex;
+            align-self: center;
+          "
+        >
+          {{ aisDataPoint.title }}
+          <a
+            *ngIf="aisDataPoint.link"
+            id="airportDataLinkOurAirports"
+            href="{{ aisDataPoint.link }}"
+            target="_blank"
+          >
+            <mat-icon aria-hidden="false" style="color: #ffab40"
+              >link</mat-icon
+            ></a
+          >
+        </mat-card-title>
+      </mat-card-header>
+
+      <div style="margin-top: 0%; position: relative; overflow: hidden">
+        <img
+          *ngIf="aisDataPoint && aisDataPoint.photoUrl != null"
+          mat-card-image
+          [src]="aisDataPoint.photoUrl"
+          style="
+            margin: 0%;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            height: auto;
+            width: auto;
+            max-height: 13rem;
+            cursor: default;
+          "
+        />
+
+        <!-- Anzeige der Bildquelle -->
+        <div
+          *ngIf="aisDataPoint && aisDataPoint.photoUrl != null"
+          style="
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            padding: 0.8rem;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 1rem;
+            background: rgba(0, 0, 0, 0.15);
+            color: #fff;
+            width: 100%;
+          "
+        >
+          <span
+            *ngIf="aisDataPoint && aisDataPoint.photoUrl != null"
+            style="font-size: 0.8rem"
+          >
+            © VesselFinder</span
+          >
+
+          <a
+            *ngIf="aisDataPoint && aisDataPoint.photoUrl != null"
+            href="{{ aisDataPoint.link }}"
+            target="_blank"
+            style="display: flex; align-self: center"
+          >
+            <mat-icon aria-hidden="false" style="color: #fff">link</mat-icon></a
+          >
+        </div>
+      </div>
+
+      <table>
+        <ng-container *ngFor="let item of aisDataPoint.attributes">
+          <tr
+            [ngClass]="
+              (isDark$ | async) === true
+                ? 'background-and-color-dark airportDataPopup-tr-dark'
+                : 'background-and-color-light color-grey'
+            "
+          >
+            <td
+              [ngClass]="
+                (isDark$ | async) === true
+                  ? 'background-and-color-dark airportDataPopup-td-dark'
+                  : 'background-and-color-light color-grey'
+              "
+            >
+              <div>
+                <p style="font-size: small; padding-inline: 0.5rem">
+                  {{ item.key }}
+                </p>
+              </div>
+            </td>
+
+            <td
+              [ngClass]="
+                (isDark$ | async) === true
                   ? 'background-and-color-dark airportDataPopup-td-dark'
                   : 'background-and-color-light'
               "
@@ -244,17 +409,15 @@
     (show3dMapEvent)="receiveToggleShow3dMap()"
     id="aircraft-info"
     *ngIf="displayAircraftInfo"
-    [aircraft]="aircraft"
-    [darkMode]="darkMode"
     @dummyParentAnimation
   ></app-info>
 
   <!-- Altitude-Chart -->
   <div id="altitude_chart" class="ol-unselectable ol-control">
-    <div *ngIf="darkMode">
+    <div *ngIf="(isDark$ | async) === true">
       <img src="../../../assets/altitude_chart_dark.svg" alt="altitude chart" />
     </div>
-    <div *ngIf="!darkMode">
+    <div *ngIf="(isDark$ | async) !== true">
       <img src="../../../assets/altitude_chart.svg" alt="altitude chart" />
     </div>
   </div>
@@ -264,9 +427,13 @@
     id="cesium-map"
     *ngIf="display3dMap && cesiumIonDefaultAccessToken"
     [aircraft]="aircraft"
-    [darkMode]="darkMode"
     [cesiumIonDefaultAccessToken]="cesiumIonDefaultAccessToken"
     [style.width]="cesiumMapWidth"
+    [style.margin-top]="cesiumMapMarginTop"
+    [style.margin-left]="cesiumMapMargin"
+    [style.margin-right]="cesiumMapMargin"
+    [style.margin-bottom]="cesiumMapMargin"
+    [style.border-radius]="cesiumMapBorderRadius"
     @dummyParentAnimation
     [@slideInOutRight]
   ></app-cesium>

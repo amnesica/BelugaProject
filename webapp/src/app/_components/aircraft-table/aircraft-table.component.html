@@ -10,12 +10,13 @@
 <!-- Flugzeug-Tabelle -->
 <div
   *ngIf="showAircraftTableDiv"
+  class="aircraft-table-div mat-app-background"
   [style.width]="showAircraftTableWidth"
-  [ngClass]="
-    darkMode
-      ? 'background-and-color-dark aircraft-table-div'
-      : 'background-and-color-light aircraft-table-div'
-  "
+  [style.margin-top]="marginTop"
+  [style.margin-left]="margin"
+  [style.margin-right]="margin"
+  [style.margin-bottom]="margin"
+  [style.border-radius]="borderRadius"
   [@slideInOutRight]
 >
   <!-- Feld zum Filtern -->
@@ -33,11 +34,7 @@
     mat-table
     [dataSource]="aircraftList"
     matSort
-    [ngClass]="
-      darkMode
-        ? 'background-and-color-dark mat-elevation-z0 aircraft-table'
-        : 'background-and-color-light mat-elevation-z0 aircraft-table'
-    "
+    class="aircraft-table mat-app-background"
   >
     <!-- hex column -->
     <ng-container matColumnDef="hex">
@@ -45,16 +42,16 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Hex
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.hex">
           {{ aircraft.hex }}
@@ -69,16 +66,16 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Callsign
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.flightId">
           {{ aircraft.flightId }}
@@ -90,19 +87,20 @@
     <!-- type column -->
     <ng-container matColumnDef="type">
       <th
+        class="mat-header-colomn-row"
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Type
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.type">
           {{ aircraft.type }}
@@ -117,16 +115,16 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Reg.
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.registration">
           {{ aircraft.registration }}
@@ -141,16 +139,16 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Alt.<br />(ft)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.altitude">{{ aircraft.altitude }}</p>
         <p *ngIf="!aircraft.altitude">N/A</p>
@@ -163,17 +161,17 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         V. Spd<br />
         (ft/min)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.verticalRate != null">
           {{ aircraft.verticalRate }}
@@ -188,16 +186,16 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Speed<br />(kn)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.speed">{{ aircraft.speed }}</p>
         <p *ngIf="!aircraft.speed">N/A</p>
@@ -210,41 +208,65 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Track<br />(°)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.track != null">{{ aircraft.track }}</p>
         <p *ngIf="aircraft.track == null">N/A</p>
       </td>
     </ng-container>
 
-    <!-- last seen column -->
-    <ng-container matColumnDef="lastSeen">
+    <!-- source current feeder  -->
+    <ng-container matColumnDef="sourceCurrentFeeder">
       <th
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
-        Seen<br />(s)
+        Source
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
-        <p *ngIf="aircraft.lastSeen != null">{{ aircraft.lastSeen }}</p>
-        <p *ngIf="aircraft.lastSeen == null">N/A</p>
+        <p *ngIf="aircraft.sourceCurrentFeeder != null">
+          {{ aircraft.sourceCurrentFeeder }}
+        </p>
+        <p *ngIf="aircraft.sourceCurrentFeeder == null">N/A</p>
+      </td>
+    </ng-container>
+
+    <!-- last seen column -->
+    <ng-container matColumnDef="lastSeenPos">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="mat-header-colomn-row"
+      >
+        Pos.<br />Seen(s)
+      </th>
+      <td
+        class="mat-cell-element"
+        mat-cell
+        *matCellDef="let aircraft"
+        (click)="$event ? selectRow(aircraft) : null"
+        [class.selected]="aircraft.isMarked"
+      >
+        <p *ngIf="aircraft.lastSeenPos != null">{{ aircraft.lastSeenPos }}</p>
+        <p *ngIf="aircraft.lastSeenPos == null">N/A</p>
       </td>
     </ng-container>
 
@@ -254,16 +276,16 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Feeder
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
       >
         <p *ngIf="aircraft.feederList">
           {{ aircraft.feederList }}
@@ -278,31 +300,32 @@
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        style="line-height: 1rem"
+        class="mat-header-colomn-row"
       >
         Dist.<br />(km)
       </th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
+        style="text-align: right"
       >
-        <p *ngIf="aircraft.distance">{{ aircraft.distance }}</p>
+        <p *ngIf="aircraft.distance">{{ aircraft.distance.toFixed(1) }}</p>
         <p *ngIf="!aircraft.distance">N/A</p>
       </td>
     </ng-container>
 
     <!-- dummy column -->
     <ng-container matColumnDef="dummy">
-      <th mat-header-cell *matHeaderCellDef style="line-height: 1rem"></th>
+      <th mat-header-cell *matHeaderCellDef class="mat-header-colomn-row"></th>
       <td
+        class="mat-cell-element"
         mat-cell
         *matCellDef="let aircraft"
         (click)="$event ? selectRow(aircraft) : null"
         [class.selected]="aircraft.isMarked"
-        [ngClass]="darkMode ? 'mat-cell-dark' : 'mat-cell-light'"
         style="width: 2rem"
       ></td>
     </ng-container>

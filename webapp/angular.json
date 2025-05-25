@@ -20,8 +20,9 @@
             "outputPath": "dist/webapp",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": "zone.js",
             "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets",
@@ -33,9 +34,13 @@
             ],
             "styles": [
               "node_modules/ol/ol.css",
-              "src/styles.css",
-              "src/theme.scss",
-              "node_modules/cesium/Build/Cesium/Widgets/widgets.css"
+              "node_modules/cesium/Build/Cesium/Widgets/widgets.css",
+              "src/styles.scss",
+              {
+                "bundleName": "dark-theme",
+                "inject": false,
+                "input": "src/styles/themes/dark.scss"
+              }
             ],
             "scripts": [
               "node_modules/apexcharts/dist/apexcharts.min.js",
@@ -88,18 +93,18 @@
           "options": {},
           "configurations": {
             "production": {
-              "browserTarget": "webapp:build:production"
+              "buildTarget": "webapp:build:production"
             },
             "development": {
-              "browserTarget": "webapp:build:development"
+              "buildTarget": "webapp:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
-            "browserTarget": "webapp:build"
+            "buildTarget": "webapp:build"
           }
         }
       }

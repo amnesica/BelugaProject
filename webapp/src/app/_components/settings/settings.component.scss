@@ -1,0 +1,74 @@
+.settings {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+  border-radius: 15px;
+  margin-top: 3.8rem;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.button-area {
+  display: grid;
+}
+
+:host ::ng-deep .mat-mdc-tab-header {
+  top: 0;
+  z-index: 1000; 
+  position: sticky;
+  position: -webkit-sticky; /* macOS/iOS Safari */
+  background-color: #303030;
+}
+
+:host ::ng-deep .mat-mdc-tab-group {
+  --mat-tab-header-inactive-label-text-color: #fff;
+  --mat-tab-header-inactive-hover-label-text-color: #2196f3;
+}
+
+.cdk-overlay-container {
+  z-index: 100 !important;
+}
+
+.mat-tab-label {
+  height: 3.5rem;
+  min-width: 33.3%;
+}
+
+.time-picker {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.info-text {
+  margin-top: 1rem;
+  white-space: normal;
+  line-height: 1rem;
+}
+
+.mat-dialog-container {
+  padding: 0 !important;
+}
+
+mat-divider {
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.h3 {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.h4 {
+  font-weight: 500;
+  font-size: 16px;
+  margin-top: 1rem; 
+  margin-bottom: 0.5rem;
+}
+

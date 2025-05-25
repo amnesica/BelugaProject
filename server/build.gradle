@@ -1,7 +1,7 @@
 plugins {
   id "java"
   id "idea"
-  id "org.springframework.boot" version "3.2.0"
+  id "org.springframework.boot" version "3.4.5"
 }
 
 apply plugin: "io.spring.dependency-management"
@@ -11,11 +11,11 @@ springBoot {
 }
 
 ext {
-  postgresqlVersion = "42.6.0"
-  jsonVersion = "20231013"
-  hibernateTypesVersion = "2.21.1"
+  postgresqlVersion = "42.7.5"
+  jsonVersion = "20250517"
+  hypersistenceVersion = "3.9.10"
   okhttpVersion = "4.12.0"
-  lombokVersion = "1.18.28"
+  lombokVersion = "1.18.38"
 }
 
 repositories {
@@ -32,7 +32,7 @@ dependencies {
   implementation "org.springframework.boot:spring-boot-starter-validation"
   implementation "org.postgresql:postgresql:${postgresqlVersion}"
   implementation "org.json:json:${jsonVersion}"
-  implementation "com.vladmihalcea:hibernate-types-60:${hibernateTypesVersion}"
+  implementation "io.hypersistence:hypersistence-utils-hibernate-63:${hypersistenceVersion}"
   implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
   implementation "org.projectlombok:lombok:${lombokVersion}"
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
@@ -41,7 +41,7 @@ dependencies {
 }
 
 group = "com.amnesica"
-version = "4-0-0"
+version = "4-1-0"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_17
@@ -50,4 +50,8 @@ java {
 
 bootJar {
   destinationDirectory.set(file("$rootDir/prod"))
+}
+
+test {
+  useJUnitPlatform()
 }

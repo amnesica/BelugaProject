@@ -46,7 +46,7 @@ public class HistoryAircraft extends AircraftSuperclass {
     copy.setSelectedAltitude(that.getSelectedAltitude());
     copy.setSelectedHeading(that.getSelectedHeading());
     copy.setFeederList(that.getFeederList());
-    copy.setLastSeen(that.getLastSeen());
+    copy.setLastSeenPos(that.getLastSeenPos());
     copy.setSourceList(that.getSourceList());
     copy.setAge(that.getAge());
     copy.setFullType(that.getFullType());

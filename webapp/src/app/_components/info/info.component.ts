@@ -9,11 +9,13 @@ import {
   OnDestroy,
   OnChanges,
   SimpleChanges,
+  inject,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Aircraft } from '../../_classes/aircraft';
 import { Globals } from 'src/app/_common/globals';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
@@ -30,6 +32,8 @@ import {
 } from 'ng-apexcharts';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
 import { trigger, style, animate, transition } from '@angular/animations';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
+import { InfoService } from 'src/app/_services/info-service/info-service.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -46,9 +50,9 @@ export type ChartOptions = {
 
 @Component({
   selector: 'app-info',
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './info.component.html',
-  styleUrls: ['./info.component.css'],
+  styleUrls: ['./info.component.scss'],
   animations: [
     trigger('slideInOutLeft', [
       transition(':enter', [
@@ -67,21 +71,21 @@ export type ChartOptions = {
     ]),
   ],
 })
-export class InfoComponent implements OnInit, OnDestroy, OnChanges {
-  // Flugzeug, wofür die Info angezeigt wird als Eingabeparameter
-  @Input() aircraft: Aircraft | null = null;
+export class InfoComponent implements OnInit, OnDestroy {
+  // Flugzeug, wofür die Info angezeigt wird
+  aircraft: Aircraft | null = null;
 
   // Boolean, ob System im DarkMode ist
-  @Input() darkMode: boolean = false;
+  darkMode: boolean = false;
 
   // Boolean, ob große Info-Box-Variante angezeigt werden soll
   showInfoLarge: boolean | undefined;
 
-  // Breite der Info-Box
+  // CSS für Info-Box
   widthInfoBox: string | undefined;
-
-  // Abstand top der Info-Box
   topInfoBox: string | undefined;
+  marginInfoBox: string | undefined;
+  borderRadiusInfoBox: string | undefined;
 
   // Boolean, ob es sich um einen Desktop-Browser-Fenster handelt
   isDesktop: boolean = true;
@@ -105,12 +109,17 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
   // Daten für das Altitude Chart
   altitudeData: any;
 
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
+
   private ngUnsubscribe = new Subject();
 
   constructor(
     public breakpointObserver: BreakpointObserver,
     public snackBar: MatSnackBar,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private infoService: InfoService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.chartOptions = {
       series: [
@@ -128,6 +137,13 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
           show: false,
           autoSelected: 'selection',
         },
+        animations: {
+          enabled: true,
+          dynamicAnimation: {
+            enabled: false,
+          },
+        },
+        fontFamily: 'font-family: Roboto, Helvetica Neue, sans-serif;',
       },
       dataLabels: {
         enabled: false,
@@ -153,16 +169,6 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
     };
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (
-      changes.darkMode != undefined &&
-      changes.darkMode.previousValue != undefined &&
-      changes.darkMode.previousValue != changes.darkMode.currentValue
-    ) {
-      this.updateThemeColorsInOptions();
-    }
-  }
-
   ngOnInit() {
     // Initiiere Abonnements
     this.initSubscriptions();
@@ -170,7 +176,7 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy() {
     if (this.chart != undefined) this.chart.destroy();
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(void 0);
     this.ngUnsubscribe.complete();
   }
 
@@ -184,6 +190,20 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
 
           // Update auch text color, wenn view noch nicht initialisiert wurde
           this.updateThemeColorsInOptions();
+        }
+      });
+
+    this.isDark$.pipe(takeUntil(this.ngUnsubscribe)).subscribe((isDark) => {
+      this.darkMode = isDark;
+      this.updateThemeColorsInOptions();
+    });
+
+    this.infoService.updateAircraftSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((aircraft) => {
+        if (aircraft) {
+          this.aircraft = aircraft;
+          this.changeDetectorRef.detectChanges();
         }
       });
 
@@ -234,9 +254,13 @@ export class InfoComponent implements OnInit, OnDestroy, OnChanges {
     if (this.isDesktop) {
       this.widthInfoBox = '21rem';
       this.topInfoBox = '3.5rem';
+      this.marginInfoBox = '0.3rem';
+      this.borderRadiusInfoBox = '15px';
     } else {
       this.widthInfoBox = '100%';
       this.topInfoBox = '0';
+      this.marginInfoBox = '0';
+      this.borderRadiusInfoBox = '0';
     }
 
     // Setze Variable, dass große Info-Box

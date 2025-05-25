@@ -117,7 +117,7 @@ public class SpacecraftService {
 
       // Default-Werte für ISS
       iss.setOnGround(false);
-      iss.setLastSeen(0);
+      iss.setLastSeenPos(0);
       iss.setRoll(0.0);
 
       // Aktualisiere Trail des Flugzeugs mit neuer Position und Höhe

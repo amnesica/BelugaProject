@@ -151,7 +151,7 @@ export class Markers {
     }
 
     if (isReentered || altitude == null) {
-      rgb = [0, 0, 0];
+      rgb = [25, 25, 25];
     }
 
     if (isCesium) {

@@ -1,19 +1,24 @@
 package com.amnesica.belugaproject.services.trails;
 
+import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.config.StaticValues;
 import com.amnesica.belugaproject.entities.aircraft.AircraftSuperclass;
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;
 import com.amnesica.belugaproject.entities.trails.TrailSuperclass;
 import com.amnesica.belugaproject.repositories.trails.AircraftTrailRepository;
+import com.amnesica.belugaproject.services.helper.HelperService;
 import com.amnesica.belugaproject.services.helper.TrailHelperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,6 +28,13 @@ public class AircraftTrailService {
   private AircraftTrailRepository aircraftTrailRepository;
   @Autowired
   private TrailHelperService trailHelperService;
+  @Autowired
+  private Configuration configuration;
+
+  // key: feeder name, value: map for feeder (angleToSite, trail)
+  final Map<String, Map<Integer, AircraftTrail>> actualOutlineMap = new ConcurrentHashMap<>();
+
+  private final double EFFECTIVE_MAX_RANGE_KM = 666.72;
 
   /**
    * Speichert einen Trail im AircraftTrailRepository
@@ -31,11 +43,19 @@ public class AircraftTrailService {
    * @param feederName String
    */
   public void addTrail(AircraftSuperclass aircraft, String feederName) {
-    if (aircraft != null) {
+    if (aircraft != null && aircraft.getLatitude() != null && aircraft.getLongitude() != null) {
       // Erstelle neues Trail-Element
       AircraftTrail trail = new AircraftTrail(aircraft.getHex(), aircraft.getLongitude(), aircraft.getLatitude(),
           aircraft.getAltitude(), aircraft.getReenteredAircraft(), System.currentTimeMillis(), feederName,
           aircraft.getSourceCurrentFeeder(), aircraft.getTrack(), aircraft.getRoll());
+
+      trail.setFlightId(aircraft.getFlightId());
+      trail.setRegistration(aircraft.getRegistration());
+      trail.setCategory(aircraft.getCategory());
+      trail.setType(aircraft.getType());
+
+      addDistanceAndAngleToSite(trail);
+      addTrailToOutlineMapIfNecessary(trail, feederName);
 
       try {
         // Speichere Trail in Datenbank
@@ -47,21 +67,57 @@ public class AircraftTrailService {
     }
   }
 
+  public void addTrailToOutlineMapIfNecessary(AircraftTrail trail, String feederName) {
+    if (trail.getDistanceToSite() == null || trail.getAngleToSite() == null) return;
+
+    Map<Integer, AircraftTrail> outlineMapForFeeder = actualOutlineMap.get(feederName);
+    if (outlineMapForFeeder == null) outlineMapForFeeder = new ConcurrentHashMap<>();
+
+    final AircraftTrail trailAtSameAngle = outlineMapForFeeder.get(trail.getAngleToSite());
+
+    if (trail.getDistanceToSite() > EFFECTIVE_MAX_RANGE_KM) return; // trail ist Outlier (max distance ist 360nm)
+
+    if (trailAtSameAngle == null || // angle in map existiert noch nicht
+        trail.getDistanceToSite() >= trailAtSameAngle.getDistanceToSite() || // neuer trail hat höhere distance
+        trailAtSameAngle.getTimestamp() < System.currentTimeMillis() - 86400000L) // existierender trail ist älter als 24h
+    {
+      outlineMapForFeeder.put(trail.getAngleToSite(), trail);
+      actualOutlineMap.put(feederName, outlineMapForFeeder);
+    }
+  }
+
   /**
-   * Gibt alle Trails zu einem Hex und einem Feeder zurück
+   * Berechnet die Distanz und den Winkel zur Site
+   *
+   * @param trail AircraftTrail
+   */
+  private void addDistanceAndAngleToSite(AircraftTrail trail) {
+    Double distanceToSite = HelperService.getDistanceBetweenPositions(configuration.getLatFeeder(), configuration.getLonFeeder(),
+        trail.getLatitude(), trail.getLongitude());
+    trail.setDistanceToSite(distanceToSite);
+
+    Integer angleToSite = (int) HelperService.getAngleBetweenPositions(configuration.getLatFeeder(), configuration.getLonFeeder(),
+        trail.getLatitude(), trail.getLongitude());
+    trail.setAngleToSite(angleToSite);
+  }
+
+  /**
+   * Gibt alle Trails zu einem Hex und einem Feeder aus der letzten Stunde zurück
    *
    * @param hex            String
    * @param selectedFeeder String
    * @return List<AircraftTrail>
    */
-  public List<AircraftTrail> getAllTrails(String hex, List<String> selectedFeeder) {
+  public List<AircraftTrail> getAllTrailsFromLastHour(String hex, List<String> selectedFeeder) {
     List<AircraftTrail> trails = new ArrayList<>();
+    long timeOneHourAgo = System.currentTimeMillis() - 3600000L;
+
     if (hex != null && !hex.isEmpty()) {
       for (String feeder : selectedFeeder) {
         if (feeder != null && !feeder.isEmpty()) {
           // Gebe nur Trails vom selektierten Feeder zurück
           try {
-            trails.addAll(aircraftTrailRepository.findAllByHexAndFeederOrderByTimestampAsc(hex, feeder));
+            trails.addAll(aircraftTrailRepository.findAllByHexAndFeederAndTimestampGreaterThanEqualOrderByTimestampAsc(hex, feeder, timeOneHourAgo));
           } catch (Exception e) {
             log.error("Server - DB error when retrieving all trails for aircraft with hex " + hex
                 + ": Exception = " + e);
@@ -79,18 +135,19 @@ public class AircraftTrailService {
   }
 
   /**
-   * Gibt alle gespeicherten Trails zurück
+   * Gibt alle gespeicherten Trails aus der letzten Stunde zurück
    *
    * @return List<List < AircraftTrail>>
    */
-  public List<List<AircraftTrail>> getAllTrails() {
+  public List<List<AircraftTrail>> getAllTrailsFromLastHour() {
     List<List<AircraftTrail>> trails = new ArrayList<>();
+    long timeOneHourAgo = System.currentTimeMillis() - 3600000L;
 
     try {
-      List<String> hexList = new ArrayList<>(aircraftTrailRepository.findAllHex());
+      List<String> hexList = new ArrayList<>(aircraftTrailRepository.findAllHexUpdatedInLastHour());
 
       for (String hex : hexList) {
-        List<AircraftTrail> allTrailsForHex = aircraftTrailRepository.findAllByHexOrderByTimestampAsc(hex);
+        List<AircraftTrail> allTrailsForHex = aircraftTrailRepository.findAllByHexAndTimestampGreaterThanEqualOrderByTimestampAsc(hex, timeOneHourAgo);
         allTrailsForHex = allTrailsForHex.stream().distinct().toList();
         allTrailsForHex = trailHelperService.checkAircraftTrailsFor180Border(allTrailsForHex);
         trails.add(allTrailsForHex);
@@ -128,27 +185,47 @@ public class AircraftTrailService {
   }
 
   /**
-   * Methode kopiert alle Trails, die älter als eine Stunde sind
-   * in die HistoryTrails-Tabelle und löscht die betroffenen Trails aus der
-   * AircraftTrails-Tabelle. Methode wird alle INTERVAL_REMOVE_OLD_TRAILS_LOCAL
-   * Sekunden aufgerufen
+   * Methode kopiert alle Trails, die älter als RETENTION_TIME_TRAILS_LOCAL
+   * (Default = 1 Stunde) sind in die HistoryTrails-Tabelle und löscht
+   * die betroffenen Trails aus der AircraftTrails-Tabelle.
+   * Methode wird alle INTERVAL_REMOVE_OLD_TRAILS_LOCAL
+   * Millisekunden aufgerufen (Default = 600000 = 10 Minuten)
    */
+  @Transactional
   @Scheduled(fixedRate = StaticValues.INTERVAL_REMOVE_OLD_TRAILS_LOCAL)
-  private void putOldTrailsInTrailsHistoryTable() {
-    // Berechne timestamp vor 1 Stunde (3600 Sekunden, entspricht 3600000
-    // Millisekunden), damit nur alte Trails kopiert und gelöscht werden
-    long startTime = System.currentTimeMillis() - 3600000;
+  protected void putOldTrailsInTrailsHistoryTable() {
+    long retention_time_trails_local = StaticValues.RETENTION_TIME_TRAILS_LOCAL;
+    long timestampOneDayAgo = System.currentTimeMillis() - retention_time_trails_local;
 
-    // Hole Trails der aktuellen Iteration
-    List<AircraftTrail> listOldTrails = aircraftTrailRepository
-        .findAllByTimestampLessThanEqual(startTime);
+    aircraftTrailRepository.deleteAllByTimestampLessThanEqual(timestampOneDayAgo);
 
-    // Kopiere und lösche alle alten Trails
-    if (listOldTrails != null) {
-      // Lösche alle betroffenen Flugzeuge aus der AircraftTrails-Tabelle
-      // TODO: Einstiegspunkt zum Speichern der Trail History
-      aircraftTrailRepository.deleteAll(listOldTrails);
+    // TODO: Einstiegspunkt zum Speichern der Trail History
+  }
+
+  public List<AircraftTrail> getActualOutlineFromLast24Hours(List<String> selectedFeeder) {
+    if (selectedFeeder == null || selectedFeeder.isEmpty()) return null;
+
+    // Map zur Speicherung des maximalen AircraftTrail für jeden Winkel für alle selectedFeeder insgesamt
+    Map<Integer, AircraftTrail> maxTrailsPerAngle = new ConcurrentHashMap<>();
+
+    for (String feeder : selectedFeeder) {
+      Map<Integer, AircraftTrail> feederMap = actualOutlineMap.get(feeder);
+      if (feederMap != null) {
+        for (Map.Entry<Integer, AircraftTrail> entry : feederMap.entrySet()) {
+          final Integer angleToSite = entry.getKey();
+          final AircraftTrail trail = entry.getValue();
+
+          if (angleToSite == null || trail == null) continue;
+
+          // Vergleichen und speichern des maximalen Trails pro Winkel
+          maxTrailsPerAngle.merge(angleToSite, trail, (existingTrail, newTrail) ->
+              (newTrail.getDistanceToSite() > existingTrail.getDistanceToSite()) ? newTrail : existingTrail);
+        }
+      }
     }
+
+    return maxTrailsPerAngle.values().stream().sorted(Comparator.comparing(TrailSuperclass::getAngleToSite))
+        .collect(Collectors.toList());
   }
 }
 

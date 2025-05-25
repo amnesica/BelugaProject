@@ -137,31 +137,6 @@ export class ServerService {
   }
 
   /**
-   * Methode ruft alle RangeData-Einträge zwischen einer Start- und
-   * einer Endzeit vom Server ab (Server-Aufruf)
-   */
-  getRangeDataBetweenTimestamps(
-    startTime: number,
-    endTime: number
-  ): Observable<any> {
-    // Initialiere Params-Objekt
-    let params = new HttpParams();
-
-    // Weise Parameter zu
-    params = params.append('startTime', startTime.toString());
-    params = params.append('endTime', endTime.toString());
-
-    let response = this.httpClient.get(
-      Globals.urlGetRangeDataBetweenTimestamps,
-      {
-        params: params,
-      }
-    );
-
-    return response;
-  }
-
-  /**
    * Methode holt benötigte Konfigurations-Variablen vom Server (Server-Aufruf)
    */
   getConfigurationData(): any {
@@ -181,5 +156,62 @@ export class ServerService {
    */
   getAllTrails(): Observable<any> {
     return this.httpClient.get(Globals.urlGetAllTrailData);
+  }
+
+  /**
+   * Methode ruft AIS-Daten von aisstream.io ab
+   * @param lomin lower bound for the longitude in decimal degrees
+   * @param lamin lower bound for the latitude in decimal degrees
+   * @param lomax upper bound for the longitude in decimal degrees
+   * @param lamax upper bound for the latitude in decimal degrees
+   * @returns
+   */
+  getAisDataInExtent(
+    lomin: number,
+    lamin: number,
+    lomax: number,
+    lamax: number,
+    enable: boolean
+  ): Observable<any> {
+    // Initialiere Params-Objekt
+    let params = new HttpParams();
+
+    // Weise Parameter zu
+    params = params.append('lomin', lomin.toString());
+    params = params.append('lamin', lamin.toString());
+    params = params.append('lomax', lomax.toString());
+    params = params.append('lamax', lamax.toString());
+    params = params.append('enable', enable);
+
+    return this.httpClient.get<any>(Globals.urlGetAisData, {
+      params: params,
+    });
+  }
+
+  getAisPhoto(mmsi: string): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('mmsi', mmsi.toString());
+
+    return this.httpClient.get<any>(Globals.urlGetAisPhoto, {
+      params: params,
+    });
+  }
+
+  getActualRangeOutline(selectedFeeder: any): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('selectedFeeder', selectedFeeder.toString());
+
+    return this.httpClient.get<any>(Globals.urlGetActualRangeOutline, {
+      params: params,
+    });
+  }
+
+  getAddressFromServer(inputPlace: any): Observable<any> {
+    let params = new HttpParams();
+    params = params.append('inputPlace', inputPlace.toString());
+
+    return this.httpClient.get<any>(Globals.urlGetLocationFromPlaceInput, {
+      params: params,
+    });
   }
 }

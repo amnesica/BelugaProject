@@ -2,30 +2,34 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { AircraftTableService } from 'src/app/_services/aircraft-table-service/aircraft-table-service.service';
 import { Aircraft } from 'src/app/_classes/aircraft';
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTableDataSource as MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Globals } from 'src/app/_common/globals';
 import { slideInOutRight } from 'src/app/_common/animations';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 @Component({
   selector: 'app-aircraft-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './aircraft-table.component.html',
-  styleUrls: ['./aircraft-table.component.css'],
+  styleUrls: ['./aircraft-table.component.scss'],
   animations: [slideInOutRight],
 })
 export class AircraftTableComponent implements OnInit {
   // Boolean, ob System im DarkMode ist
-  @Input() darkMode: boolean = false;
+  darkMode: boolean = false;
+
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
 
   // Liste mit anzuzeigenden Flugzeugen
   aircraftList: any = new MatTableDataSource<Aircraft>([]);
@@ -33,11 +37,12 @@ export class AircraftTableComponent implements OnInit {
   // Boolean, ob Tabelle angezeigt werden soll
   showAircraftTableDiv: boolean = false;
 
-  // Breite der Tabelle
+  // CSS
   showAircraftTableWidth: string = 'auto';
-
-  // Breite des Filter-Divs
-  filterFieldWidth: string = '60rem';
+  margin: string | undefined;
+  marginTop: string | undefined;
+  borderRadius: string | undefined;
+  filterFieldWidth: string = '51rem';
 
   // Anzuzeigende Spalten der Tabelle
   displayedColumns: string[] = [
@@ -49,7 +54,8 @@ export class AircraftTableComponent implements OnInit {
     'verticalRate',
     'speed',
     'track',
-    'lastSeen',
+    'sourceCurrentFeeder',
+    'lastSeenPos',
     'feeder',
     'distance',
     'dummy',
@@ -79,7 +85,7 @@ export class AircraftTableComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(void 0);
     this.ngUnsubscribe.complete();
   }
 
@@ -89,11 +95,17 @@ export class AircraftTableComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((isDesktop) => {
         if (isDesktop == true) {
-          this.showAircraftTableWidth = '45rem';
-          this.filterFieldWidth = '45rem';
+          this.showAircraftTableWidth = '51rem';
+          this.filterFieldWidth = '51rem';
+          this.margin = '0.3rem';
+          this.marginTop = '3.8rem';
+          this.borderRadius = '15px';
         } else {
           this.showAircraftTableWidth = '100%';
           this.filterFieldWidth = '100%';
+          this.margin = '0';
+          this.marginTop = '3.5rem';
+          this.borderRadius = '0';
         }
       });
 

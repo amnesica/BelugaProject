@@ -5,8 +5,9 @@
 
 set -eu pipefail
 
+BRANCH=master # TODO master || dev
 REPO_NAME=BelugaProject
-REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/master.zip"
+REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/$BRANCH.zip"
 REPO_ZIP_FILENAME=$REPO_NAME.zip
 ENV_FILENAME=.env
 WHIPTAIL_TITLE="Installation of the Beluga Project"
@@ -94,7 +95,7 @@ _unzip_repo_with_progress() {
 
 _rename_repo_with_progress() {
   echo -e "XXX\n33\nRenaming directory... \nXXX"
-  mv $REPO_NAME-master/ $REPO_NAME
+  mv $REPO_NAME-$BRANCH/ $REPO_NAME
   sleep 0.1
   echo -e "XXX\n66\nRenaming directory... Done.\nXXX"
   sleep 1
@@ -163,7 +164,8 @@ _set_env_values() {
 
   _show_whiptail_input_box "9) Choose a PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
 
-  _show_whiptail_input_box "10) Enter the URL of your productive systems ip address (for a simple test you can use 'localhost')." "PROD_BASE_URL_WEBAPP" 8 100
+  _show_whiptail_input_box "10) Enter the ip address of your productive system  (for a local test you can use 'localhost').\
+  \n\nImportant: Do NOT enter the ip address with 'http://', only enter the ip itself (e.g. '192.168.123.10')" "PROD_BASE_URL_WEBAPP" 16 100
 
   _show_whiptail_input_box "11) Optional: Enter your Opensky-Network USERNAME to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_USERNAME" 8 100
 
@@ -180,6 +182,8 @@ _set_env_values() {
   \n* All three should appear in 'My Assets'\
   \n* Create an access token under 'Access Tokens'\
   \n* Copy the ACESS TOKEN and paste it below" "CESIUM_ION_DEFAULTACCESSTOKEN" 18 100
+
+  _show_whiptail_input_box "15) Optional: If you want to fetch ships from aisstream.io (AIS messages) provide an API-KEY for aisstream.io (https://aisstream.io/)." "AISSTREAM_IO_API_KEY" 8 100
 
   _show_whiptail_yes_no_box "Values have been configured. The Beluga Project will now be installed.\n\nThis process takes some time. Do not close the console.\
   \n\nOn an RaspberryPi 4B:\

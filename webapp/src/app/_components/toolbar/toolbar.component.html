@@ -1,25 +1,54 @@
 <mat-toolbar class="toolbar">
-  <!-- Anzahl der Flugzeuge -->
-  <div id="counter-aircraft">
-    {{ counterAircraft }}
-  </div>
+  <div style="width: 120px; min-width: 60px">
+    <!-- Anzahl der Flugzeuge -->
+    <div id="counter-aircraft">
+      {{ counterAircraft }}
+    </div>
 
-  <!-- Logo der App -->
-  <img
-    mat-card-image
-    src="../../../favicon.ico"
-    style="width: 2rem; margin: 0%"
-  />
+    <!-- Logo der App -->
+    <img id="logo" />
+  </div>
 
   <!-- Abstandhalter -->
   <span class="spacer"></span>
 
+  <!-- Input für Ort-Suche -->
+  <div
+    class="input-mat-form-field mat-app-background"
+    [style.width]="isDesktop ? '18rem' : '11rem'"
+  >
+    <input
+      matInput
+      class="search-input mat-app-background"
+      type="text"
+      [(ngModel)]="inputPlace"
+      (click)="inputPlace = ''"
+      (keydown.enter)="searchLocation(inputPlace)"
+      [style.width]="isDesktop ? '15rem' : '6rem'"
+    />
+    <button
+      *ngIf="inputPlace"
+      style="padding: 0"
+      matSuffix
+      mat-icon-button
+      aria-label="Submit"
+      (click)="searchLocation(inputPlace)"
+    >
+      <mat-icon>search</mat-icon>
+    </button>
+  </div>
+
+  <!-- Abstandhalter -->
+  <span class="spacer"></span>
+
+  <!-- Zurücksetzen der Map-Position -->
+  <button mat-icon-button (click)="resetMapPosition()">
+    <mat-icon>home</mat-icon>
+  </button>
+
   <!-- Tabelle mit Flugzeugen -->
-  <app-aircraft-table
-    [darkMode]="darkMode"
-    @dummyParentAnimation
-  ></app-aircraft-table>
+  <app-aircraft-table @dummyParentAnimation></app-aircraft-table>
 
   <!-- Einstellungs-Menu -->
-  <app-settings [darkMode]="darkMode" @dummyParentAnimation></app-settings>
+  <app-settings @dummyParentAnimation></app-settings>
 </mat-toolbar>

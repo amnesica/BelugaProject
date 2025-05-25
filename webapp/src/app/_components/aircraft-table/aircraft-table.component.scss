@@ -1,0 +1,66 @@
+.aircraft-table-div {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-size: 14px;
+  overflow: auto;
+  border-radius: 15px;
+  margin-top: 3.8rem;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.aircraft-table {
+  margin-top: 3.5rem;
+}
+
+.mat-mdc-table {
+  background: inherit;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-mdc-table {
+  white-space: nowrap;
+}
+
+.mat-mdc-row {
+  height: auto;
+  line-height: 1.5rem;
+}
+
+.mat-mdc-header-cell,
+td.mat-mdc-cell,
+td.mat-mdc-footer-cell {
+  padding: 0;
+  padding-left: 0.5rem;
+}
+
+.form-field-filter {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+}
+
+.mdc-data-table__cell {
+  text-align: center;
+}
+
+.selected {
+  background-color: #b9b9b9 !important;
+}
+
+.mat-header-colomn-row {
+  line-height: 1rem;
+  font-weight: bold;
+  align-items: center;
+}
+
+.mat-cell-element {
+  font-size: 14px;
+  font-weight: 400;
+}

@@ -1,34 +1,24 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  Input,
+  inject,
   OnInit,
-  ViewChild,
 } from '@angular/core';
-import { MatLegacySlideToggleChange as MatSlideToggleChange } from '@angular/material/legacy-slide-toggle';
+import { MatSlideToggleChange as MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { SettingsService } from 'src/app/_services/settings-service/settings-service.service';
-import { UntypedFormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
-import { skip, takeUntil } from 'rxjs/operators';
-import { Helper } from 'src/app/_classes/helper';
+import { takeUntil } from 'rxjs/operators';
 import { ServerService } from 'src/app/_services/server-service/server-service.service';
 import { environment } from 'src/environments/environment';
 import { Globals } from 'src/app/_common/globals';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
-import {
-  MtxCalendarView,
-  MtxDatetimepickerMode,
-  MtxDatetimepickerType,
-} from '@ng-matero/extensions/datetimepicker';
-import {
-  DatetimeAdapter,
-  MTX_DATETIME_FORMATS,
-} from '@ng-matero/extensions/core';
-import { MomentDatetimeAdapter } from '@ng-matero/extensions-moment-adapter';
+import { MatSnackBar as MatSnackBar } from '@angular/material/snack-bar';
 import { slideInOutRight } from 'src/app/_common/animations';
 import { Feeder } from 'src/app/_classes/feeder';
 import { Storage } from 'src/app/_classes/storage';
+import { ThemeManager } from 'src/app/_services/theme-service/theme-manager.service';
 
 export interface DialogData {
   times: string[];
@@ -38,93 +28,28 @@ export interface DialogData {
   selector: 'app-settings',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css'],
-  providers: [
-    {
-      provide: DatetimeAdapter,
-      useClass: MomentDatetimeAdapter,
-    },
-    {
-      provide: MTX_DATETIME_FORMATS,
-      useValue: {
-        parse: {
-          dateInput: 'YYYY-MM-DD',
-          monthInput: 'MMMM',
-          yearInput: 'YYYY',
-          timeInput: 'HH:mm',
-          datetimeInput: 'YYYY-MM-DD HH:mm',
-        },
-        display: {
-          dateInput: 'YYYY-MM-DD',
-          monthInput: 'MMMM',
-          yearInput: 'YYYY',
-          timeInput: 'HH:mm',
-          datetimeInput: 'YYYY-MM-DD HH:mm',
-          monthYearLabel: 'YYYY MMMM',
-          dateA11yLabel: 'LL',
-          monthYearA11yLabel: 'MMMM YYYY',
-          popupHeaderDateLabel: 'MMM DD, ddd',
-        },
-      },
-    },
-  ],
+  styleUrls: ['./settings.component.scss'],
+  providers: [],
   animations: [slideInOutRight],
 })
 export class SettingsComponent implements OnInit {
-  // Boolean, ob System im DarkMode ist
-  @Input() darkMode: boolean = false;
-
-  // Boolean, ob RangeData versteckt werden soll
-  @Input() hideRangeData: boolean = false;
-
   // Boolean, ob Settings angezeigt werden sollen
   showSettingsDiv = false;
 
   // Breite der Settings
   settingsDivWidth: string | undefined;
-
-  // Boolean, ob alle Range Data vom Server angezeigt werden soll
-  isCheckedShowAllRange = false;
+  margin: string | undefined;
+  marginTop: string | undefined;
+  borderRadius: string | undefined;
 
   // Boolean, ob Anwendung im Desktop-Modus ist
   isDesktop: boolean | undefined;
 
-  // Boolean, ob RangeData nach Feedern angezeigt werden soll
-  markRangeDataByFeeder: boolean = false;
+  // Boolean, ob Outline-Data nach Feedern angezeigt werden soll
+  markOutlineDataByFeeder: boolean = false;
 
-  // Boolean, ob RangeData nach Höhe angezeigt werden soll
-  markRangeDataByHeight: boolean = false;
-
-  // Boolean, ob Toggle-Switch "hideRangeData" disabled angezeigt werden soll
-  disableRangeData: boolean = true;
-
-  // String-Array für Ergebnis aus DateTimePickern
-  times: Date[] = [];
-
-  // Referenz zu DialogCustomRangeDataComponent
-  dialogRef;
-
-  // STartzeit vom Datetimepicker
-  @Input() selectedStarttime: Date | null | undefined;
-
-  // STartzeit vom Datetimepicker
-  @Input() selectedEndtime: Date | null | undefined;
-
-  // Einstellungen für Datetime-Picker
-  type: MtxDatetimepickerType = 'datetime';
-  mode: MtxDatetimepickerMode = 'auto';
-  startView: MtxCalendarView = 'month';
-  multiYearSelector = false;
-  touchUi = false;
-  twelvehour = false;
-  timeInterval = 1;
-  timeInput = true;
-
-  datetimeStart = new UntypedFormControl();
-  datetimeEnd = new UntypedFormControl();
-
-  // Ausgewählte Start- und Endzeit als DateString zur Anzeige im FrontEnd
-  timesAsDateStrings: String[] | undefined;
+  // Boolean, ob Outline-Data nach Höhe angezeigt werden soll
+  markOutlineDataByHeight: boolean = false;
 
   // Booleans für Toggles (mit Default-Werten, wenn nötig)
   showAircraftLabels: boolean = false;
@@ -134,18 +59,14 @@ export class SettingsComponent implements OnInit {
   showIss: boolean = true;
   showAircraftPositions: boolean = true;
   showOnlyMilitaryPlanes: boolean = false;
-
-  // Boolean, ob Range Data verbunden angezeigt werden soll
-  showFilteredRangeDatabyFeeder: boolean | undefined;
+  showDayNightLine: boolean = true;
+  showRouteToDestination: boolean = false;
 
   // Liste an Feeder (Verlinkung zu Globals, enthält 'All Feeder'-Feeder)
   listFeeder: any;
 
   // Ausgewählte Feeder in Multi-Select
   selectedFeeder: Feeder[] = [];
-
-  // Ausgewählte Feeder für Range Data in Multi-Select
-  selectedFeederRangeData: Feeder[] = [];
 
   // App-Name
   appName: any;
@@ -184,8 +105,6 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Opensky-Credentials existieren, wenn nicht disable switch
   openskyCredentialsExist: boolean = false;
 
-  private ngUnsubscribe = new Subject();
-
   // Boolean, ob Rainviewer (Rain) Daten angezeigt werden sollen
   rainViewerRain: boolean = false;
 
@@ -216,6 +135,9 @@ export class SettingsComponent implements OnInit {
   // Small icon size multiplier für Plane-Icons
   sliderSmallIconSizeValue: any;
 
+  // Min Zoom Level für AIS outlines
+  sliderAisOutlinesZoomValue: any;
+
   // Boolean, ob Altitude Chart angezeigt werden soll
   showAltitudeChart: boolean = Storage.getPropertyFromLocalStorage(
     'showAltitudeChart',
@@ -225,11 +147,29 @@ export class SettingsComponent implements OnInit {
   // Boolean, ob Trail-Data angezeigt werden soll
   showTrailData: boolean = false;
 
+  // Boolean, ob aisstream API-Key existiert, wenn nicht disable switch
+  aisstreamApiKeyExists: boolean = false;
+
+  // Boolean, ob AIS-Daten angezeigt werden sollen
+  showAisData: boolean = false;
+
+  // Aktuelles Zoom-Level der Map
+  currentMapZoomLevel: number = 0;
+
+  // Boolean, ob actual range outline angezeigt werden soll
+  showActualRangeOutline: boolean = true;
+
+  themeManager = inject(ThemeManager);
+  isDark$ = this.themeManager.isDark$;
+
+  private snackBar = inject(MatSnackBar);
+  private ngUnsubscribe = new Subject();
+
   constructor(
     public settingsService: SettingsService,
     public breakpointObserver: BreakpointObserver,
     public serverService: ServerService,
-    private snackBar: MatSnackBar
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   setSettingsFromLocalStorage() {
@@ -245,7 +185,7 @@ export class SettingsComponent implements OnInit {
       Storage.getPropertyFromLocalStorage('airportLabels', true)
     );
 
-    this.toggleDarkMode(Storage.getPropertyFromLocalStorage('darkMode', false));
+    //this.toggleDarkMode(Storage.getPropertyFromLocalStorage('darkMode', false));
 
     this.toggleDarkStaticFeatures(
       Storage.getPropertyFromLocalStorage('darkStaticFeatures', true)
@@ -286,12 +226,12 @@ export class SettingsComponent implements OnInit {
 
     this.sliderGlobalIconSizeValue = Storage.getPropertyFromLocalStorage(
       'globalIconSize',
-      1.3
+      1.6
     );
     this.settingsService.setGlobalIconSize(+this.sliderGlobalIconSizeValue);
 
     this.sliderSmallIconSizeValue = Storage.getPropertyFromLocalStorage(
-      'gsmallIconSize',
+      'smallIconSize',
       1.0
     );
     this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
@@ -303,52 +243,41 @@ export class SettingsComponent implements OnInit {
     this.toggleAirplanesLivePlanes(
       Storage.getPropertyFromLocalStorage('showAirplanesLive', false)
     );
+
+    this.toggleAisData(
+      Storage.getPropertyFromLocalStorage('showAisData', false)
+    );
+
+    this.sliderAisOutlinesZoomValue = Storage.getPropertyFromLocalStorage(
+      'aisOutlineMinZoom',
+      11.5
+    );
+    this.settingsService.setAisOutlineMinZoom(+this.sliderAisOutlinesZoomValue);
+
+    this.toggleActualRangeOutline(
+      Storage.getPropertyFromLocalStorage('showActualRangeOutline', true)
+    );
+
+    this.toggleDayNightLine(
+      Storage.getPropertyFromLocalStorage('dayNightLine', true)
+    );
+
+    this.toggleRouteToDestination(
+      Storage.getPropertyFromLocalStorage('routeToDestination', false)
+    );
   }
 
   ngOnInit(): void {
     // Initiiere Abonnements
     this.initSubscriptions();
 
-    // Prüfe WebGL-Support des Browsers und
-    // setze Default-Boolean entsprechend
-    this.checkWebglSupport();
-
     // Hole IP-Adresse des Servers aus Environment
     this.serverAddress = environment.baseUrl;
   }
 
   ngOnDestroy() {
-    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.next(void 0);
     this.ngUnsubscribe.complete();
-  }
-
-  /**
-   * Prüfe WebGL-Support des Browsers und setze Default-Boolean entsprechend.
-   * Sollte WebGL nicht supportet werden, wird der Toggle deaktiviert
-   */
-  checkWebglSupport() {
-    const webglSupported = Helper.detectWebGL();
-    if (webglSupported == 1) {
-      this.webgl = true;
-    } else if (webglSupported == 0) {
-      this.webgl = false;
-      console.log(
-        'WebGL is currently disabled in your browser. For better performance enable WebGL.'
-      );
-    } else {
-      this.webgl = false;
-      console.log(
-        'WebGL is not supported in your browser. For better performance use a browser with WebGL support.'
-      );
-    }
-
-    // Deaktiviere Toggle, wenn WebGL nicht unterstützt wird
-    if (!this.webgl) {
-      this.webglNotSupported = true;
-    }
-
-    // Setze Boolean, ob WebGL beim Start der Anwendung benutzt werden soll
-    Globals.useWebglOnStartup = this.webgl;
   }
 
   /**
@@ -363,10 +292,16 @@ export class SettingsComponent implements OnInit {
           // Setze Variable auf 'Mobile'
           this.isDesktop = false;
           this.settingsDivWidth = '100%';
+          this.margin = '0';
+          this.marginTop = '3.5rem';
+          this.borderRadius = '0';
         } else {
           // Setze Variable auf 'Desktop'
           this.isDesktop = true;
-          this.settingsDivWidth = '20rem';
+          this.settingsDivWidth = '25rem';
+          this.margin = '0.3rem';
+          this.marginTop = '3.8rem';
+          this.borderRadius = '15px';
         }
       });
 
@@ -378,7 +313,6 @@ export class SettingsComponent implements OnInit {
 
         // Füge default-Liste an Feedern hinzu
         this.selectedFeeder.push(...listFeeder);
-        this.selectedFeederRangeData.push(...listFeeder);
 
         // Map ist fertig mit Initialisierung -> setze Default-werte
         this.setSettingsFromLocalStorage();
@@ -416,55 +350,22 @@ export class SettingsComponent implements OnInit {
         this.listAvailableMaps = listAvailableMaps;
         this.selectCurrentlySelectedMapStyle();
       });
-  }
 
-  /**
-   * Methode erstellt ein Array mit Timestamps aus der bestimmten
-   * Start- und EndZeit und ruft Methode zum Senden dieser an die
-   * Map-Komponente auf. Methode wird durch Button "Show Data"
-   * aufgerufen
-   */
-  showRangeDataBetweenCustomTimestamps() {
-    if (this.selectedStarttime && this.selectedEndtime) {
-      // Wandle Dates in timestamps um
-      let timesAsTimestamps = [
-        new Date(this.selectedStarttime).getTime(),
-        new Date(this.selectedEndtime).getTime(),
-      ];
+    // Weise aisstreamApiKeyExists zu, damit Switch
+    // disabled werden kann, falls diese nicht vorhanden sind
+    this.settingsService.aisstreamApiKeyExistsSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((aisstreamApiKeyExists) => {
+        this.aisstreamApiKeyExists = aisstreamApiKeyExists;
+      });
 
-      this.showRangeDataBetweenTimestamps(timesAsTimestamps);
-    }
-  }
-
-  /**
-   * Zeigt RangeData eines bestimmten Zeitraumes an
-   */
-  showRangeDataBetweenTimestamps(timesAsTimestampsArray: number[]) {
-    if (timesAsTimestampsArray[0] && timesAsTimestampsArray[1]) {
-      // Enable Toggle-Switch "hideRangeData"
-      this.disableRangeData = false;
-
-      // Zeige ausgewählte Zeit formatiert im FrontEnd an
-      this.timesAsDateStrings = [
-        new Date(timesAsTimestampsArray[0]).toLocaleDateString() +
-          ' ' +
-          new Date(timesAsTimestampsArray[0]).toLocaleTimeString(),
-        new Date(timesAsTimestampsArray[1]).toLocaleDateString() +
-          ' ' +
-          new Date(timesAsTimestampsArray[1]).toLocaleTimeString(),
-      ];
-
-      let selectedFeederNames = this.getNamesOfSelectedFeeder(
-        this.selectedFeederRangeData
-      );
-
-      // Kontaktiere Map-Komponente, damit Server-Aufruf
-      // gemacht wird mit Start- und Endzeit
-      this.settingsService.showRangeDataBetweenTimestamps(
-        selectedFeederNames,
-        timesAsTimestampsArray
-      );
-    }
+    // Aktuelles Zoom-Level der Karte anzeigen
+    this.settingsService.mapZoomLevelSource$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((mapZoomLevel) => {
+        this.currentMapZoomLevel = mapZoomLevel;
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   /**
@@ -483,128 +384,42 @@ export class SettingsComponent implements OnInit {
     this.settingsService.toggleAircraftLabels(this.showAircraftLabels);
   }
 
-  /**
-   * Methode zeigt oder versteckt die RangeData
-   * @param event MatSlideToggleChange
-   */
-  toggleHideRangeData(event: MatSlideToggleChange) {
-    this.hideRangeData = event.checked;
-
-    // Kontaktiere Map-Component und übergebe hideRangeData-Boolean
-    this.settingsService.toggleHideRangeData(this.hideRangeData);
-  }
-
-  /**
-   * Methode markiert die RangeData farblich nach den Feedern
-   * @param event MatSlideToggleChange
-   */
-  toggleMarkRangeDataByFeeder(event: MatSlideToggleChange) {
-    this.markRangeDataByFeeder = event.checked;
+  toggleMarkOutlineDataByFeeder(event: MatSlideToggleChange) {
+    this.markOutlineDataByFeeder = event.checked;
 
     // Unchecke den Button "Filter by Height" und sorge für eine
     // Default-Ausgangsbasis, indem die Points wieder auf Default
     // zurückgesetzt werden. Nur ein Toggle-Switch ist zur Zeit aktiv
     // (a little hacky)
-    if (this.markRangeDataByHeight) {
-      this.toggleMarkRangeDataByHeight(
+    if (this.markOutlineDataByHeight) {
+      this.toggleMarkOutlineDataByHeight(
         new MatSlideToggleChange(event.source, !event.checked)
       );
     }
 
-    // Kontaktiere Map-Component und übergebe
-    // isCheckedFilterRangeDataByFeeder-Boolean
-    this.settingsService.toggleMarkRangeDataByFeeder(
-      this.markRangeDataByFeeder
+    // Kontaktiere Map-Component und übergebe boolean
+    this.settingsService.toggleMarkOutlineDataByFeeder(
+      this.markOutlineDataByFeeder
     );
   }
 
-  /**
-   * Methode zeigt die RangeData der laufenden Stunde an
-   */
-  showRangeDataLastHour() {
-    let startTime;
-    let endTime;
-
-    // Bestimme aktuelle Zeit
-    let currentDate = new Date();
-
-    // Erstelle Start- und EndZeit
-    startTime = currentDate.setHours(currentDate.getHours() - 1);
-    endTime = currentDate.setHours(currentDate.getHours() + 1);
-
-    this.showRangeDataBetweenTimestamps([startTime, endTime]);
-  }
-
-  /**
-   * Methode zeigt die RangeData des aktuellen Tages an
-   */
-  showRangeDataToday() {
-    let startTime;
-    let endTime;
-
-    // Bestimme aktuelle Zeit
-    let currentDate = new Date();
-
-    // Erstelle Start- und EndZeit
-    startTime = currentDate.setHours(0, 0, 0);
-    endTime = currentDate.setHours(23, 59, 59);
-
-    this.showRangeDataBetweenTimestamps([startTime, endTime]);
-  }
-
-  /**
-   * Methode zeigt die RangeData der letzten 7 Tage an
-   */
-  showRangeDataLastSevenDays() {
-    let startTime;
-    let endTime;
-
-    // Bestimme aktuelle Zeit
-    let currentDate = new Date();
-
-    // Erstelle Start- und EndZeit
-    endTime = currentDate.getTime();
-    startTime = new Date(
-      currentDate.setDate(currentDate.getDate() - 7)
-    ).getTime();
-
-    this.showRangeDataBetweenTimestamps([startTime, endTime]);
-  }
-
-  /**
-   * Methode markiert die RangeData nach der Höhe
-   * @param event MatSlideToggleChange
-   */
-  toggleMarkRangeDataByHeight(event: MatSlideToggleChange) {
-    this.markRangeDataByHeight = event.checked;
+  toggleMarkOutlineDataByHeight(event: MatSlideToggleChange) {
+    this.markOutlineDataByHeight = event.checked;
 
     // Unchecke den Button "Filter by Feeder" und sorge für eine
     // Default-Ausgangsbasis, indem die Points wieder auf Default
     // zurückgesetzt werden. Nur ein Toggle-Switch ist zur Zeit aktiv
     // (a little hacky)
-    if (this.markRangeDataByFeeder) {
-      this.toggleMarkRangeDataByFeeder(
+    if (this.markOutlineDataByFeeder) {
+      this.toggleMarkOutlineDataByFeeder(
         new MatSlideToggleChange(event.source, !event.checked)
       );
     }
 
-    // Kontaktiere Map-Component und übergebe
-    // filterRangeDataByHeight-Boolean
-    this.settingsService.toggleMarkRangeDataByHeight(
-      this.markRangeDataByHeight
+    // Kontaktiere Map-Component und übergebe boolean
+    this.settingsService.toggleMarkOutlineDataByHeight(
+      this.markOutlineDataByHeight
     );
-  }
-
-  /**
-   * Zeige Range Data der selektierten Feeder an
-   */
-  selectRangeDataByFeeder() {
-    let selectedFeederNames = this.getNamesOfSelectedFeeder(
-      this.selectedFeederRangeData
-    );
-
-    // Kontaktiere Map-Component und übergebe selectFeeder-Name
-    this.settingsService.selectRangeDataByFeeder(selectedFeederNames);
   }
 
   /**
@@ -682,12 +497,15 @@ export class SettingsComponent implements OnInit {
    * @param checked: boolean
    */
   toggleDarkMode(checked: boolean) {
-    this.darkMode = checked;
+    let theme = checked ? 'dark' : 'light';
+    this.changeTheme(theme);
 
-    Storage.savePropertyInLocalStorage('darkMode', this.darkMode);
+    // Kontaktiere Map-Component und übergebe boolean
+    this.settingsService.toggleDarkMode(checked);
+  }
 
-    // Kontaktiere Map-Component und übergebe showDarkMode-Boolean
-    this.settingsService.toggleDarkMode(this.darkMode);
+  changeTheme(theme: string) {
+    this.themeManager.changeTheme(theme);
   }
 
   /**
@@ -918,9 +736,22 @@ export class SettingsComponent implements OnInit {
     this.settingsService.setSmallIconSize(+this.sliderSmallIconSizeValue);
   }
 
+  onInputChangeAisOutlineMinZoom(event: any) {
+    this.sliderAisOutlinesZoomValue = event.target.valueAsNumber;
+
+    Storage.savePropertyInLocalStorage(
+      'aisOutlineMinZoom',
+      this.sliderAisOutlinesZoomValue
+    );
+
+    // Kontaktiere Map-Component
+    this.settingsService.setAisOutlineMinZoom(+this.sliderAisOutlinesZoomValue);
+  }
+
   resetIconSizeSlider() {
     this.sliderGlobalIconSizeValue = Globals.defaultGlobalScaleFactorIcons;
     this.sliderSmallIconSizeValue = Globals.defaultSmallScaleFactorIcons;
+    this.sliderAisOutlinesZoomValue = 11.5;
 
     Storage.savePropertyInLocalStorage(
       'globalIconSize',
@@ -930,10 +761,15 @@ export class SettingsComponent implements OnInit {
       'smallIconSize',
       this.sliderSmallIconSizeValue
     );
+    Storage.savePropertyInLocalStorage(
+      'aisOutlineMinZoom',
+      this.sliderAisOutlinesZoomValue
+    );
 
     // Kontaktiere Map-Component
     this.settingsService.setGlobalIconSize(this.sliderGlobalIconSizeValue);
     this.settingsService.setSmallIconSize(this.sliderSmallIconSizeValue);
+    this.settingsService.setAisOutlineMinZoom(+this.sliderAisOutlinesZoomValue);
   }
 
   toggleAltitudeChart(checked: boolean) {
@@ -978,5 +814,45 @@ export class SettingsComponent implements OnInit {
     this.settingsService.toggleAirplanesLivePlanes(
       this.showAirplanesLivePlanes
     );
+  }
+
+  toggleAisData(checked: boolean) {
+    this.showAisData = checked;
+
+    Storage.savePropertyInLocalStorage('showAisData', this.showAisData);
+
+    // Kontaktiere Map-Component und übergebe showAisData-Boolean
+    this.settingsService.toggleAisData(this.showAisData);
+  }
+
+  toggleActualRangeOutline(checked: boolean) {
+    this.showActualRangeOutline = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'showActualRangeOutline',
+      this.showActualRangeOutline
+    );
+
+    // Kontaktiere Map-Component und übergebe showActualRangeOutline-Boolean
+    this.settingsService.toggleActualRangeOutline(this.showActualRangeOutline);
+  }
+
+  toggleDayNightLine(checked: boolean) {
+    this.showDayNightLine = checked;
+
+    Storage.savePropertyInLocalStorage('dayNightLine', this.showDayNightLine);
+
+    this.settingsService.toggleDayNightLine(this.showDayNightLine);
+  }
+
+  toggleRouteToDestination(checked: boolean) {
+    this.showRouteToDestination = checked;
+
+    Storage.savePropertyInLocalStorage(
+      'routeToDestination',
+      this.showRouteToDestination
+    );
+
+    this.settingsService.toggleRouteToDestination(this.showRouteToDestination);
   }
 }

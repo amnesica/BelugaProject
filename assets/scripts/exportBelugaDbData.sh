@@ -15,7 +15,7 @@ SECONDS=0
 SECONDS_AT_START=$SECONDS
 
 echo ----------------------------------------------------------------------
-echo $(timestamp) exportBelugaDbData.sh Version 4-0-1
+echo $(timestamp) exportBelugaDbData.sh Version 4-1-0
 echo ----------------------------------------------------------------------
 
 echo ----------------------------------------------------------------------
@@ -104,7 +104,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'aircraft_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'aircraft_data'), 
@@ -120,6 +120,7 @@ psql -c "COPY airport_data (ident,
 							elevation_ft,
 							gps_code,
 							home_link,
+							icao_code,
 							iata_code,
 							iso_country,
 							iso_region,
@@ -148,7 +149,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'airport_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'airport_data'), 
@@ -179,7 +180,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'country_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'country_data'), 
@@ -208,7 +209,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'flightroute_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'flightroute_data'), 
@@ -240,7 +241,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'map_cat_to_shape_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'map_cat_to_shape_data'), 
@@ -269,7 +270,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'map_operator_icao_to_iata',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'map_operator_icao_to_iata'), 
@@ -301,7 +302,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'map_type_to_shape_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'map_type_to_shape_data'), 
@@ -335,7 +336,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'operator_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'operator_data'), 
@@ -364,7 +365,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'regcode_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'regcode_data'), 
@@ -399,7 +400,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'shape_data',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'shape_data'), 
@@ -432,7 +433,7 @@ psql -c "INSERT INTO public.version_info(
             last_updated)
 	        VALUES (
 	        'typecode_tags',
-	        '4.0.1',
+	        '4.1.0',
 	        (SELECT n_live_tup
 		        FROM pg_stat_user_tables
 		        where relname = 'typecode_tags'), 

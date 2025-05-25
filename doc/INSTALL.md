@@ -3,7 +3,7 @@
 Use command
 
 ```
-$ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/master/install.sh)"
 ```
 
 for a comfortable menu driven installation process.
@@ -11,9 +11,9 @@ for a comfortable menu driven installation process.
 If you already have BelugaProject installed in a docker container before, first execute the following commands
 
 ```
-$ cd BelugaProject
-$ sudo ./run.sh docker-rm
-$ cd .. && sudo rm -r BelugaProject BelugaProject.zip
+cd BelugaProject
+sudo ./run.sh docker-rm
+cd .. && sudo rm -r BelugaProject BelugaProject.zip
 ```
 
 **Alternatively** this document guides you step-by-step through the necessary commands to install the Beluga Project **manually**.
@@ -37,6 +37,12 @@ If you want to use the 3D view, follow these steps:
 - Create an access token under "Access Tokens"
 - Copy the access token and paste it in your .env file as `CESIUM_ION_DEFAULTACCESSTOKEN`
 
+If you want to display AIS-data, follow these steps:
+
+- Visit [aisstream.io](https://aisstream.io/)
+- Follow the "Get Started" instructions and create an API-Key
+- Copy the access token and paste it in your .env file as `AISSTREAM_IO_API_KEY`
+
 <p align="center">
 <img alt="App View" src="../assets/images/BelugaProjectOverviewV4.png" width="60%" />
 </p>
@@ -48,24 +54,24 @@ If you want to use the 3D view, follow these steps:
     If you already have BelugaProject installed in a docker container before, first execute the following commands
 
     ```
-    $ cd BelugaProject
-    $ sudo ./run.sh docker-rm
-    $ cd .. && sudo rm -r BelugaProject BelugaProject.zip
+    cd BelugaProject
+    sudo ./run.sh docker-rm
+    cd .. && sudo rm -r BelugaProject BelugaProject.zip
     ```
 
 2.  Download the Beluga Project from [GitHub](https://github.com/amnesica/BelugaProject) as ZIP, rename and extract it
 
     ```
-    $ wget https://github.com/amnesica/BelugaProject/archive/refs/heads/master.zip -O BelugaProject.zip
-    $ unzip BelugaProject.zip
-    $ mv BelugaProject-master/ BelugaProject
+    wget https://github.com/amnesica/BelugaProject/archive/refs/heads/master.zip -O BelugaProject.zip
+    unzip BelugaProject.zip
+    mv BelugaProject-master/ BelugaProject
     ```
 
 3.  Rename the environment variables template file `.env.template` in `.env` and configure the environment variables in the `.env` file. You can use `nano` for editing the config file.
 
     ```
-    $ cp .env.template .env
-    $ nano .env
+    cp .env.template .env
+    nano .env
     ```
 
     For further information on how to configure the `.env` file expand the following section
@@ -129,7 +135,7 @@ If you want to use the 3D view, follow these steps:
         FEEDER_AMOUNT=2
         ```
 
-    7.  Production URL for the frontend (`PROD_BASE_URL_WEBAPP`): Enter the URL of your productive systems ip address (for a simple test you can use `localhost`)
+    7.  Production URL for the frontend (`PROD_BASE_URL_WEBAPP`): Enter the URL of your productive systems ip address (for a simple test you can use `localhost`). Important: Do not enter URL with "http://", only enter the ip (e.g. "192.168.123.10")
 
     8.  Database password (`SPRING_DATASOURCE_PASSWORD`): Set password for the database `belugaDb`
 
@@ -137,11 +143,12 @@ If you want to use the 3D view, follow these steps:
 
     10. Search engine URL to search for aircraft pictures when planespotters.net does not find results (default is startpage): (**Optional**) Replace given URL with a new one. Important: `<PLACEHOLDER>` is required, because it will be replaced with registration or hex.
 
-    11. Add your API-Keys for additional maps and the 3D view (**Optional**). For the 3D view follow the instructions at "Preparations" above (without these API-Keys you cannot use the 3D view and cannot use all available maps in settings)
+    11. Add your API-Keys for additional maps, the 3D view and AIS-data (**Optional**). For the 3D view and AIS-data follow the instructions at "Preparations" above (without these API-Keys you cannot use the 3D view or AIS-data and cannot use all available maps in settings)
 
         ```
         GEOAPIFY_API_KEY=
         CESIUM_ION_DEFAULTACCESSTOKEN=
+        AISSTREAM_IO_API_KEY=
         ```
 
    </details>
@@ -151,7 +158,7 @@ If you want to use the 3D view, follow these steps:
     `Important:` If you installed docker only for root user, you need to execute the command below with `sudo` privilege
 
     ```
-    $ ./run.sh install
+    ./run.sh install
     ```
 
     If you get error messages please take a look into [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
@@ -163,7 +170,7 @@ If you want to use the 3D view, follow these steps:
     BelugaProject comes with standing data (aircraft data, airport data, flightroute data) which may be outdated meanwhile. So you should update them with command
 
     ```
-    $ ./run.sh update-db
+    ./run.sh update-db
     ```
 
     `Important:` If you installed docker only for root user, you need to execute the command above with `sudo` privilege.
@@ -175,7 +182,7 @@ If you want to use the 3D view, follow these steps:
     Executing
 
     ```
-    $ ./run.sh
+    ./run.sh
     ```
 
     will show some options for troubleshooting, operation and **database maintanance**. `Important:` If you installed docker only for root user, you need to execute the command with `sudo` privilege.

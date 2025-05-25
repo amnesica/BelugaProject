@@ -100,7 +100,9 @@
     [@slideInOutBottom]
     [style.width]="widthMap3d"
     [ngClass]="
-      darkMode ? 'background-and-color-dark' : 'background-and-color-light'
+      (isDark$ | async) === true
+        ? 'background-and-color-dark'
+        : 'background-and-color-light'
     "
     id="settings3dDiv"
   >
@@ -113,7 +115,8 @@
           align-items: center;
           font-size: large;
           font-weight: bold;
-          background-color: #327db6;
+          background: #2196f3;
+          color: white;
           border-top-right-radius: 15px;
           border-bottom-right-radius: 0;
           border-top-left-radius: 15px;
@@ -128,7 +131,7 @@
       </button>
     </div>
 
-    <div style="padding-left: 1.5rem">
+    <div style="padding-left: 1.5rem; display: grid">
       <mat-slide-toggle
         [checked]="displayGooglePhotorealistic3d"
         (click)="$event.stopPropagation()"
@@ -169,22 +172,27 @@
         "
       >
         <button
-          mat-button
-          style="background-color: gray; color: white; margin-right: 0.5rem"
+          mat-raised-button
+          class="button-rounded"
+          color="primary"
+          style="margin-right: 0.3rem"
           (click)="showLowGraphicSettings()"
         >
           Low
         </button>
         <button
-          mat-button
-          style="background-color: gray; color: white; margin-right: 0.5rem"
+          mat-raised-button
+          class="button-rounded"
+          color="primary"
+          style="margin-right: 0.3rem"
           (click)="showMediumGraphicSettings()"
         >
           Medium
         </button>
         <button
-          mat-button
-          style="background-color: gray; color: white"
+          mat-raised-button
+          class="button-rounded"
+          color="primary"
           (click)="showHighGraphicSettings()"
         >
           High
@@ -249,8 +257,8 @@
         >FXAA (Fast Anti-aliasing)</mat-slide-toggle
       >
 
-      <div style="display: flex; justify-content: start; max-height: 2rem">
-        <mat-slider min="0" max="8" step="2">
+      <div style="display: flex; justify-content: start; max-height: 3rem">
+        <mat-slider min="0" max="8" step="2" color="accent">
           <input
             matSliderThumb
             [(ngModel)]="sliderMsaa3dValue"
@@ -262,7 +270,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            max-height: 2rem;
+            max-height: 3rem;
             padding-left: 1rem;
           "
         >

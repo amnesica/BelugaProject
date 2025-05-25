@@ -5,19 +5,19 @@
 While running
 
 ```
-$ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/master/install.sh)"
 ```
 
 or
 
 ```
-$ ./run.sh install
+./run.sh install
 ```
 
 or
 
 ```
-$ sudo ./run.sh install
+sudo ./run.sh install
 ```
 
 error messages might appear. Here are some hints to handle them.
@@ -42,13 +42,13 @@ Sometimes we got error messages like this in the container build process:
 In all this cases we executed or simply repeated
 
 ```
-$ ./run.sh install
+./run.sh install
 ```
 
 or
 
 ```
-$ sudo ./run.sh install
+sudo ./run.sh install
 ```
 
 until container build was finished. We guess that timeouts occured while downloading objects from repositories.
@@ -56,7 +56,7 @@ until container build was finished. We guess that timeouts occured while downloa
 Sometimes the simultanous container pull process for containers `belugaproject/belugaproject-webapp` and `belugaproject/belugaproject-server` failed with timeout or network error messages. Proceed with
 
 ```
-$ ./run.sh install
+./run.sh install
 ```
 
 to finish installation.
@@ -95,7 +95,7 @@ Are all 3 containers (postgres, server and webapp) running? Maybe containers are
 Check status of docker containers with command (sudo may be required)
 
 ```
-$ docker ps
+docker ps
 ```
 
 ### Opensky Network

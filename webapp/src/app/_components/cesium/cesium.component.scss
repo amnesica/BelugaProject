@@ -1,0 +1,243 @@
+.button-3d-map {
+  position: absolute;
+  color: white;
+  min-width: auto;
+  z-index: 21;
+  background-color: black;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  margin: 0.5rem;
+  padding: 10px;
+  line-height: 14px;
+}
+
+.mat-mdc-button > .mat-icon {
+  margin: 0;
+}
+
+#closeButton3dMap {
+  top: 0;
+  right: 0;
+}
+
+#resetToNorthButton3dMap {
+  top: 0;
+  left: 0rem;
+}
+
+#showSettings {
+  top: 9rem;
+  left: 0rem;
+}
+
+#followPlane3d {
+  top: 12rem;
+  left: 0rem;
+}
+
+#showCockpitView3d {
+  top: 15rem;
+  left: 0rem;
+}
+
+#showCockpitModel3d {
+  top: 18rem;
+  left: 0rem;
+}
+
+#show3dMapFullscreen {
+  bottom: 3rem;
+  left: 0rem;
+}
+
+#settings3dDiv {
+  height: auto;
+  bottom: 0;
+  z-index: 110;
+  position: fixed;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 0;
+  font-weight: 500;
+  overflow: auto;
+  padding-bottom: 1rem;
+  display: grid;
+}
+
+#closeButton {
+  position: absolute;
+  color: white;
+  top: 0;
+  right: 0;
+  padding: 4px;
+  line-height: 14px;
+  min-width: auto;
+}
+
+.background-and-color-light {
+  background-color: #efeff4;
+  color: black;
+}
+
+.background-and-color-dark {
+  background-color: #383838;
+  color: white;
+}
+
+::ng-deep .cesium-credit-textContainer {
+  display: none !important;
+}
+
+::ng-deep .cesium-viewer {
+  position: absolute !important;
+}
+
+::ng-deep .cesium-viewer-toolbar {
+  top: 0.35rem !important;
+  right: 4rem !important;
+}
+
+::ng-deep .cesium-performanceDisplay-defaultContainer {
+  top: 4rem !important;
+}
+
+::ng-deep .cesium-baseLayerPicker-dropDown {
+  background-color: black !important;
+  border: 0 !important;
+  z-index: 50 !important;
+  margin-right: -3.5rem !important;
+}
+
+::ng-deep .cesium-baseLayerPicker-choices {
+  border: 0 !important;
+}
+
+::ng-deep
+  .cesium-baseLayerPicker-selectedItem
+  .cesium-baseLayerPicker-itemIcon {
+  border: double 4px #ffab40;
+  border-color: #ffab40;
+}
+
+::ng-deep .cesium-svgPath-svg {
+  position: relative;
+  fill: white;
+  width: 24px;
+  height: 24px;
+}
+
+::ng-deep .cesium-button {
+  fill: white;
+  width: 24px;
+  height: 24px;
+  margin: 0.5rem;
+  padding: 10px;
+  line-height: 14px;
+  min-width: auto;
+  z-index: 21;
+  background-color: black;
+  border-radius: 50%;
+  border: 0;
+}
+
+::ng-deep .cesium-toolbar-button {
+  color: white;
+  margin: 0.15rem;
+  padding: 10px;
+  line-height: 14px;
+  min-width: auto;
+  z-index: 21;
+  background-color: black;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+}
+
+::ng-deep .cesium-button:hover {
+  color: #ffffff;
+  fill: #ffffff;
+  background: rgb(0, 0, 0);
+  border-color: rgb(0, 0, 0);
+  box-shadow: 0 0 0px #fff;
+}
+
+mat-divider {
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+::ng-deep .cesium-performanceDisplay {
+  background-color: black;
+}
+
+::ng-deep .cesium-baseLayerPicker-selected {
+  position: relative;
+  border-radius: inherit;
+}
+
+::ng-deep .cesium-viewer-geocoderContainer .cesium-geocoder-input {
+  border: solid 0px #444;
+  background-color: rgb(0, 0, 0, 0);
+}
+
+::ng-deep .cesium-geocoder-searchButton {
+  position: unset;
+  color: white;
+  margin-right: 0rem;
+  padding: 10px;
+  line-height: 14px;
+  min-width: auto;
+  z-index: 21;
+  background-color: black;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}
+
+::ng-deep .cesium-geocoder-searchButton:hover {
+  background-color: black;
+}
+
+::ng-deep .cesium-viewer-geocoderContainer:hover .cesium-geocoder-input {
+  border-color: transparent;
+  box-shadow: 0 0 0px #fff;
+}
+
+::ng-deep .cesium-timeline-bar {
+  background: black;
+}
+
+::ng-deep .cesium-animation-knobOuter,
+.cesium-animation-shuttleRingPausePointer {
+  stroke: #fff !important;
+}
+
+::ng-deep .cesium-animation-knobInner,
+.cesium-animation-shuttleRingG:hover,
+.cesium-animation-shuttleRingSwoosh {
+  fill: #000 !important;
+}
+
+::ng-deep .cesium-animation-shuttleRingBack {
+  fill: #000 !important;
+  stroke: #000 !important;
+  fill-opacity: 1 !important;
+}
+
+::ng-deep .cesium-animation-knobOuter {
+  fill: #000 !important;
+}
+
+::ng-deep .cesium-animation-shuttleRingG {
+  fill: #ffab40 !important;
+}
+
+::ng-deep .cesium-animation-shuttleRingSwoosh {
+  fill: #ffab40 !important;
+}
+
+::ng-deep .cesium-navigationHelpButton-wrapper {
+  display: none !important;
+}

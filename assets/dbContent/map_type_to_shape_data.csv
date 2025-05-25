@@ -634,7 +634,7 @@ E400	RexKramer1	Extra EA-400	F406	0.65	2023-07-27 00:00:00
 E737	RexKramer1	Boeing 737-700 Wedgetail	E737	0.5	2023-07-27 00:00:00
 EH10	RexKramer1	AgustaWestland EH-101 Merlin	S61	0.8	2023-07-27 00:00:00
 F35	RexKramer1	F-35A/C Lightning 2	F35	0.7	2023-07-27 00:00:00
-FA6X	RexKramer1	Dassault Falcon 6X	Jet_swept	0.4	2023-07-27 00:00:00
+FA6X	RexKramer1	Dassault Falcon 6X	JET_swept	0.4	2023-07-27 00:00:00
 H53	RexKramer1	Sikorsky CH53	S61	0.8	2023-07-27 00:00:00
 KC46	RexKramer1	Boeing KC-46 Pegasus (ICAO Type designator = B762)	KC46	0.5	2023-07-27 00:00:00
 LJ36	RexKramer1	Lear Jet 36	LJ35	0.7	2023-07-27 00:00:00

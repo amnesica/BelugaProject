@@ -1,0 +1,65 @@
+@use "@angular/material" as mat;
+
+.toolbar {
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  background-color: black;
+  color: white;
+  height: 3.5rem;
+  visibility: visible;
+}
+
+.input-mat-form-field {
+  display: flex; 
+  justify-content: space-between;
+  padding: 0rem;
+  width: 15rem;
+  border-radius: 1rem;
+  height: 2.5rem;
+  line-height: 1.5rem;
+  font-size: large;
+}
+
+.search-input {
+  margin-left: 1rem;
+  border: none; 
+  border-width: 0; 
+  box-shadow: none;
+  border-radius: 1rem;
+  font-weight: 700;
+  background: transparent;
+}
+
+input:focus, textarea:focus, select:focus{
+  outline: none;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+#counter-aircraft {
+  position: absolute;
+  z-index: 101;
+  font-size: 0.8rem;
+  font-weight: bold;
+  width: 2.5em;
+  height: 1.5em;
+  background: #fff;
+  border: 0.1em solid rgb(0, 0, 0);
+  color: #000;
+  text-align: center;
+  border-radius: 15%;
+  line-height: 1.8em;
+  box-sizing: content-box;
+  margin-left: 1rem;
+  margin-top: 1rem;
+}
+
+#logo {
+  width: 2rem; 
+  margin: 0%
+}

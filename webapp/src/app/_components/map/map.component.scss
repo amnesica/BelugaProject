@@ -1,0 +1,233 @@
+#map_canvas {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  visibility: visible;
+}
+
+#smallInfoBox {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  border-radius: 0rem;
+  padding: 0%;
+  min-width: 10rem;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#hoveredAircraftPopupHeader {
+  height: 2.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  padding-left: 0.6rem;
+}
+
+/** Wichtig, damit Schrift richtig angezeigt wird! */
+::ng-deep .mat-typography p {
+  margin: 0 0 0px !important;
+}
+
+mat-grid-tile div {
+  width: 100%;
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+mat-card-header {
+  height: 2.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+}
+
+#outlineDataPopupHeader {
+  height: 2.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+  padding-left: 0.6rem;
+}
+
+#outlineDataPopup {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  padding: 0%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
+}
+
+::ng-deep .mat-card-header-text {
+  margin: 0 8px !important;
+}
+
+#airportDataPopup {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  padding: 0%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
+}
+
+#airportDataPopupHeader {
+  height: 1.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+  padding-left: 0.6rem;
+}
+
+#airportDataSchedule {
+  position: absolute;
+  top: 0;
+  right: 2rem;
+  padding: 5px;
+  line-height: 14px;
+  min-width: auto;
+}
+
+#airportDataLinkOurAirports {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 5px;
+  padding-right: 6px;
+  line-height: 14px;
+  min-width: auto;
+}
+
+#aisDataPopup {
+  position: absolute;
+  z-index: 5;
+  cursor: pointer;
+  padding: 0%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: ruby;
+}
+
+#aisDataPopupHeader {
+  height: 1.5rem;
+  padding-top: 0.5rem;
+  background-color: #303030;
+  width: 100%;
+  text-align: left;
+  margin: 0%;
+  flex-grow: 1;
+  overflow: hidden;
+  flex-direction: column;
+  padding-left: 0.6rem;
+}
+
+table,
+th,
+td {
+  border-collapse: collapse;
+  line-height: 0.8rem;
+}
+
+::ng-deep .ol-zoom {
+  top: 4rem !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  color: white;
+}
+
+::ng-deep .ol-attribution.ol-collapsed {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  color: white;
+}
+
+::ng-deep .ol-control button {
+  background-color: rgba(0, 0, 0, 1) !important;
+  color: white;
+}
+
+::ng-deep .ol-attribution.ol-uncollapsible {
+  color: white;
+  font-size: smaller !important;
+  padding: 0;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+::ng-deep .ol-scale-line {
+  background: rgba(0, 0, 0, 0.4) !important;
+}
+
+::ng-deep .ol-scale-line-inner {
+  color: white;
+}
+
+.background-and-color-light {
+  background-color: #efeff4;
+  color: black;
+}
+
+.background-and-color-dark {
+  background-color: #383838;
+  color: white;
+}
+
+.background-color-light {
+  background-color: white;
+}
+
+.background-color-dark {
+  background-color: #555555;
+}
+
+.color-grey {
+  color: grey;
+}
+
+.mat-card-content {
+  margin-bottom: 0px;
+}
+
+#altitude_chart {
+  position: absolute;
+  z-index: 1;
+  background-color: transparent;
+  bottom: 0;
+  margin-bottom: 1rem;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  width: 100vw;
+  pointer-events: none;
+  transform: scale(2);
+  visibility: hidden;
+}
+
+#cesium-map {
+  position: fixed;
+  image-rendering: pixelated;
+  z-index: 20;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  font-size: 14px;
+  overflow: hidden;
+  margin-top: 3.8rem;
+  margin-bottom: 0.3rem;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+  border-radius: 15px;
+}

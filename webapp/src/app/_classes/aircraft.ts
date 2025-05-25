@@ -43,7 +43,7 @@ export class Aircraft {
   selectedQnh!: number;
   selectedAltitude!: number;
   selectedHeading!: number;
-  lastSeen!: number;
+  lastSeenPos!: number;
   feederList!: string;
   sourceList!: string;
   fullType!: string;
@@ -77,11 +77,14 @@ export class Aircraft {
   messages: any;
   emergency: any;
   navModes: any;
+  sourceCurrentFeeder: any;
+  sendWithPos: any;
 
   // Daten für Info-Abschnitt PositionOfMinimumDistance
   pomdLatitude!: any;
   pomdLongitude!: any;
   pomdDistanceKm!: any;
+
   // Estimated Time Of Arrival
   pomdETA!: any;
   pomdRemainingKm!: any;
@@ -94,16 +97,9 @@ export class Aircraft {
   // Ist Flugzeug markiert
   isMarked = false;
 
-  // Marker des Flugzeugs (ehem. iconFeature)
-  marker: any = null;
-
   // Stil des Flugzeugs mit SVG und Style
   typeDesignatorAndScaleArray: any = [];
   strokeWidth = 0.4;
-  fillColor = '';
-  strokeColor = '';
-  svgURI = '';
-  iconStyle: any = null;
 
   //Trail des Flugzeugs als Punkte
   trackLinePoints: any; // 2D-Karte
@@ -144,8 +140,7 @@ export class Aircraft {
   destinationIataCode: any;
 
   // Flugzeug-Label
-  labelStyleWasSet: boolean = false;
-  labelStyle: Style = new Style();
+  labelFeature: any;
   offsetY: any;
   offsetX: any;
 
@@ -154,14 +149,6 @@ export class Aircraft {
 
   // Zeitpunkt des letzten Updates des Flugzeugs
   lastUpdate: any;
-
-  // Svg-Key Daten
-  markerSvgKey: any;
-  styleKey: any;
-
-  // Icon und Style des Markers
-  markerIcon: any;
-  markerStyle!: Style;
 
   // Shape-Data als Object
   shapeData: any;
@@ -221,7 +208,7 @@ export class Aircraft {
     speed: number,
     flightId: string,
     distance: number,
-    lastSeen: number,
+    lastSeenPos: number,
     verticalRate: number,
     feederList: string,
     position: any,
@@ -249,7 +236,9 @@ export class Aircraft {
     trueHeading: any,
     messages: any,
     emergency: any,
-    navModes: any
+    navModes: any,
+    sourceCurrentFeeder: any,
+    sendWithPos: any
   ) {
     this.hex = hex;
     this.latitude = latitude;
@@ -261,7 +250,7 @@ export class Aircraft {
     this.speed = speed;
     this.flightId = this.trimFlightId(flightId);
     this.distance = distance;
-    this.lastSeen = lastSeen;
+    this.lastSeenPos = lastSeenPos;
     this.verticalRate = verticalRate;
     this.feederList = feederList;
     this.position = position;
@@ -290,6 +279,8 @@ export class Aircraft {
     this.messages = messages;
     this.emergency = emergency;
     this.navModes = navModes;
+    this.sourceCurrentFeeder = sourceCurrentFeeder;
+    this.sendWithPos = sendWithPos;
   }
 
   /**
@@ -298,6 +289,10 @@ export class Aircraft {
    * @param aircraftJSONElement JSONElement vom Server
    */
   static createNewAircraft(aircraftJSONElement: Aircraft): Aircraft {
+    let hasPosition =
+      aircraftJSONElement.longitude != undefined &&
+      aircraftJSONElement.latitude != undefined;
+
     return new Aircraft(
       aircraftJSONElement.hex,
       aircraftJSONElement.latitude,
@@ -309,10 +304,12 @@ export class Aircraft {
       aircraftJSONElement.speed,
       aircraftJSONElement.flightId,
       aircraftJSONElement.distance,
-      aircraftJSONElement.lastSeen,
+      aircraftJSONElement.lastSeenPos,
       aircraftJSONElement.verticalRate,
       aircraftJSONElement.feederList,
-      [aircraftJSONElement.longitude, aircraftJSONElement.latitude],
+      hasPosition
+        ? [aircraftJSONElement.longitude, aircraftJSONElement.latitude]
+        : undefined,
       aircraftJSONElement.onGround,
       aircraftJSONElement.rssi,
       aircraftJSONElement.category,
@@ -337,159 +334,23 @@ export class Aircraft {
       aircraftJSONElement.trueHeading,
       aircraftJSONElement.messages,
       aircraftJSONElement.emergency,
-      aircraftJSONElement.navModes
+      aircraftJSONElement.navModes,
+      aircraftJSONElement.sourceCurrentFeeder,
+      aircraftJSONElement.sendWithPos
     );
   }
 
-  /**
-   * Erstellt das dargestellte Flugzeug, indem mit
-   * passender Form, Skalierung, Rotation und Farbe
-   * (nach Hoehe) ein Flugzeug-Icon erstellt wird
-   */
-  updateIcon() {
-    // Beziehe Farben
-    this.fillColor = Markers.getColorFromAltitude(
-      this.altitude,
-      this.onGround,
-      true,
-      this.isMarked,
-      false,
-      false
-    );
+  createLabelFeature() {
+    this.setLabelOffsets();
 
-    // Setze StrokeColor anders, wenn Flugzeug von Remote kommt
-    if (this.isFromRemote != null || this.isFromRemote != undefined) {
-      this.strokeColor = '#fff';
-    } else {
-      this.strokeColor = '#000';
-    }
-
-    // Initialisiere labelText
-    let labelText: any = null;
-
-    // Setze flightId als labelText, wenn dies gewünscht ist
-    if (Globals.showAircraftLabel && this.flightId) {
-      labelText = this.flightId;
-    }
-
-    // Initialisiere svgKey zum Wiederfinden des gecachten Svgs
-    let svgKey =
-      this.fillColor +
-      '!' +
-      this.shapeDesignator +
-      '!' +
-      this.strokeWidth +
-      '!' +
-      this.strokeColor;
-
-    // Suche nach gecachtem Svg oder erstelle ein neues Svg
-    // (ehem. "this.markerSvgKey != svgKey")
-    if (
-      !Globals.webgl &&
-      (this.markerStyle == null ||
-        this.markerIcon == null ||
-        this.markerSvgKey != svgKey)
-    ) {
-      if (Globals.iconCache[svgKey] == undefined) {
-        let svgURI = Markers.svgShapeToURI(
-          this.shapeData,
-          this.fillColor,
-          this.strokeColor,
-          this.strokeWidth
-        );
-
-        // Cache Svg
-        Globals.addToIconCache.push([svgKey, null, svgURI]);
-
-        if (Globals.amountDisplayedAircraft < 200) {
-          this.markerIcon = new Icon({
-            scale: this.shapeScale * Globals.globalScaleFactorIcons,
-            imgSize: [this.shapeData.w, this.shapeData.h],
-            src: svgURI,
-            rotation: this.shapeData.noRotate
-              ? 0
-              : Helper.degreesToRadians(this.track),
-          });
-        } else {
-          svgKey = this.markerSvgKey;
-        }
-      } else {
-        this.markerIcon = new Icon({
-          scale: this.shapeScale * Globals.globalScaleFactorIcons,
-          imgSize: [this.shapeData.w, this.shapeData.h],
-          img: Globals.iconCache[svgKey],
-          rotation: this.shapeData.noRotate
-            ? 0
-            : Helper.degreesToRadians(this.track),
-        });
-      }
-      this.markerSvgKey = svgKey;
-    }
-
-    if (!this.markerIcon && !Globals.webgl) return;
-
-    // Initialisiere styleKey zum Wiederfinden des gecachten Styles
-    let styleKey =
-      (Globals.webgl ? '' : svgKey) + '!' + labelText + '!' + this.shapeScale;
-
-    // Erstelle Style des Markers mit markerIcon und Flugzeug-Label,
-    // wenn dies gewünscht ist
-    if (this.styleKey != styleKey) {
-      this.styleKey = styleKey;
-      let style;
-      if (labelText) {
-        this.setLabelOffsets();
-
-        // Erstelle Style mit Label (Text)
-        style = {
-          image: this.markerIcon,
-          text: new Text({
-            font: 'bold 10px Roboto',
-            text: labelText,
-            offsetY: this.offsetY,
-            offsetX: this.offsetX,
-            scale: 1.2,
-            overflow: false,
-            backgroundFill: new Fill({
-              color: 'rgba(20, 20, 20, 0.5)',
-            }),
-            fill: new Fill({
-              color: 'white',
-            }),
-            textAlign: 'center',
-            textBaseline: 'middle',
-          }),
-        };
-      } else {
-        // Kein Label
-        style = {
-          image: this.markerIcon,
-        };
-      }
-
-      if (Globals.webgl) {
-        delete style.image;
-      }
-
-      // Erstelle aus temporärem Style den markerStyle
-      this.markerStyle = new Style(style);
-
-      if (this.marker) {
-        // Fuege Style (markerStyle) zum Feature hinzu
-        this.marker.setStyle(this.markerStyle);
-      }
-    }
-
-    if (Globals.webgl) return;
-
-    // Überspringe Anpassung der Rotation, wenn 'noRotate'
-    // in den shapeData gesetzt ist
-    if (this.shapeData.noRotate) return;
-
-    // Setze Rotation, wenn nötig
-    if (this.markerIcon.getRotation() != Helper.degreesToRadians(this.track)) {
-      this.markerIcon.setRotation(Helper.degreesToRadians(this.track));
-    }
+    this.labelFeature = new Feature({ geometry: this.olPoint });
+    this.labelFeature.flightId = this.flightId.toUpperCase();
+    this.labelFeature.hex = this.hex;
+    this.labelFeature.offsetX = this.offsetX;
+    this.labelFeature.offsetY = this.offsetY;
+    this.labelFeature.set('hex', this.hex);
+    this.labelFeature.featureName = 'PlaneLabelText';
+    return this.labelFeature;
   }
 
   /**
@@ -575,7 +436,7 @@ export class Aircraft {
     this.selectedQnh = listElement.selectedQnh;
     this.selectedAltitude = listElement.selectedAltitude;
     this.selectedHeading = listElement.selectedHeading;
-    this.lastSeen = listElement.lastSeen;
+    this.lastSeenPos = listElement.lastSeenPos;
     this.feederList = listElement.feederList;
     this.sourceList = listElement.sourceList;
     this.fullType = listElement.fullType;
@@ -620,6 +481,8 @@ export class Aircraft {
     this.messages = listElement.messages;
     this.emergency = listElement.emergency;
     this.navModes = listElement.navModes;
+    this.sourceCurrentFeeder = listElement.sourceCurrentFeeder;
+    this.sendWithPos = listElement.sendWithPos;
 
     // Generell: Berechne POMD-Point nur, wenn dieser auch angefragt wird
     // Ausnahme: Flugzeug ist das aktuell markierte, dann aktualisiere Werte,
@@ -689,94 +552,42 @@ export class Aircraft {
 
     this.getShapeData();
 
-    if (!this.marker && (!Globals.webgl || Globals.showAircraftLabel)) {
-      // Erstelle Feature für PlaneIconFeatures
-      this.createMarker();
-    } else if (Globals.webgl && !Globals.showAircraftLabel && !this.marker) {
-      // Erstelle marker auch bei Web-GL, damit Flugzeug-Label gesetzt werden kann
-      this.createMarker();
-    }
-
-    if (Globals.webgl && !Globals.showAircraftLabel && this.marker) {
-      if (this.marker.visible) {
-        // Entferne PlaneIconFeatures-Marker, wenn WebGL enabled ist
-        Globals.PlaneIconFeatures.removeFeature(this.marker);
-        this.marker.visible = false;
-      }
-    }
-
     // Erstelle Feature für WebGL
-    if (Globals.webgl) {
-      if (!this.glMarker) {
-        this.createWebGlMarker();
-      }
-
-      this.setWebglMarkerRgb();
-      const iconRotation = this.shapeData.noRotate ? 0 : this.track;
-      this.glMarker.set('rotation', (iconRotation * Math.PI) / 180.0);
-      this.glMarker.set(
-        'size',
-        this.shapeScale *
-          Math.max(this.shapeData.w, this.shapeData.h) *
-          (this.pngScale < 0.39
-            ? this.pngScale * Globals.smallScaleFactorIcons
-            : this.pngScale) *
-          (Globals.globalScaleFactorIcons / 1.3)
-      );
-      this.glMarker.set(
-        'cx',
-        Markers.getSpriteX(this.pngId) / Globals.glImapWidth
-      );
-      this.glMarker.set(
-        'cy',
-        Markers.getSpriteY(this.pngId) / Globals.glImapHeight
-      );
-      this.glMarker.set(
-        'dx',
-        (Markers.getSpriteX(this.pngId) + 1) / Globals.glImapWidth
-      );
-      this.glMarker.set(
-        'dy',
-        (Markers.getSpriteY(this.pngId) + 1) / Globals.glImapHeight
-      );
+    if (!this.glMarker) {
+      this.createWebGlMarker();
     }
 
-    if (this.marker && (!Globals.webgl || Globals.showAircraftLabel)) {
-      // Aktualisere Icon
-      this.updateIcon();
+    this.setWebglMarkerRgb();
+    const iconRotation = this.shapeData.noRotate ? 0 : this.track;
+    this.glMarker.set('rotation', (iconRotation * Math.PI) / 180.0);
+    this.glMarker.set(
+      'scale',
+      ((this.shapeScale * Math.max(this.shapeData.w, this.shapeData.h)) /
+        Globals.glIconSize) *
+        (this.pngScale < 0.39
+          ? this.pngScale * Globals.smallScaleFactorIcons
+          : this.pngScale) *
+        (Globals.globalScaleFactorIcons / 1.3)
+    );
+    this.glMarker.set(
+      'sx',
+      Markers.getSpriteX(this.pngId) * Globals.glIconSize
+    );
+    this.glMarker.set(
+      'sy',
+      Markers.getSpriteY(this.pngId) * Globals.glIconSize
+    );
 
-      if (!this.marker.visible) {
-        this.marker.visible = true;
-        // Fuege Feature zum Array an Features hinzu (Liste an Flugzeugen)
-        Globals.PlaneIconFeatures.addFeature(this.marker);
-      }
-    }
-
-    if (Globals.webgl && this.glMarker && !this.glMarker.visible) {
+    if (!this.glMarker.visible) {
       this.glMarker.visible = true;
       // Fuege Feature zum Array an WebGL-Features hinzu (Liste an Flugzeugen)
       Globals.WebglFeatures.addFeature(this.glMarker);
-    }
-
-    if (!Globals.webgl && this.glMarker && this.glMarker.visible) {
-      // Entferne WebglFeatures-Marker, wenn WebGL disabled ist
-      Globals.WebglFeatures.removeFeature(this.glMarker);
-      this.glMarker.visible = false;
     }
 
     // Erstelle oder aktualisiere POMD-Point für das Flugzeug
     if (this.isMarked && Globals.showPOMDPoint) {
       this.updatePOMDMarker(true);
     }
-  }
-
-  /**
-   * Erstellt einen Marker für das Flugzeug als OL-Feature (für Nicht-Web-GL)
-   */
-  createMarker() {
-    this.marker = new Feature(this.olPoint);
-    this.marker.hex = this.hex;
-    this.marker.name = 'plane';
   }
 
   /**
@@ -789,7 +600,7 @@ export class Aircraft {
   }
 
   /**
-   * Setzt die Felder shaüeData und shapeScale. In dieser Methode
+   * Setzt die Felder shapeData und shapeScale. In dieser Methode
    * wird die Datenstruktur shapesMap aus Globals verwendet
    */
   getShapeData() {
@@ -1112,22 +923,6 @@ export class Aircraft {
   }
 
   /**
-   * Setzt Boolean und erstellt ein Label,
-   * damit ein Label für das Flugzeug angezeigt wird
-   */
-  showLabel() {
-    //this.createLabel();
-    this.updateIcon();
-  }
-
-  /**
-   * Versteckt das Label
-   */
-  hideLabel() {
-    this.updateIcon();
-  }
-
-  /**
    * Trimmt die FlightId
    * @param flightId String
    */
@@ -1219,21 +1014,13 @@ export class Aircraft {
    * Entfernt den Marker des Flugzeugs aus den PlaneIconFeatures
    */
   clearMarker() {
-    if (this.marker && this.marker.visible) {
-      Globals.PlaneIconFeatures.removeFeature(this.marker);
-      this.marker.visible = false;
-    }
-
     if (this.glMarker && this.glMarker.visible) {
       Globals.WebglFeatures.removeFeature(this.glMarker);
       this.glMarker.visible = false;
     }
 
     delete this.glMarker;
-    delete this.marker;
     delete this.olPoint;
-    delete this.markerSvgKey;
-    delete this.styleKey;
   }
 
   /**

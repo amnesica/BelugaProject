@@ -9,33 +9,30 @@
 
 <!-- Einstellungs-Menü Desktop -->
 <div
-  [ngClass]="
-    darkMode
-      ? 'background-and-color-dark settingsDiv'
-      : 'background-and-color-light settingsDiv'
-  "
+  class="settings mat-app-background mat-typography"
   *ngIf="showSettingsDiv"
   [style.width]="settingsDivWidth"
+  [style.margin-top]="marginTop"
+  [style.margin-left]="margin"
+  [style.margin-right]="margin"
+  [style.margin-bottom]="margin"
+  [style.border-radius]="borderRadius"
   [@slideInOutRight]
 >
   <mat-tab-group
     [disablePagination]="true"
     [dynamicHeight]="true"
-    [disableRipple]="true"
     animationDuration="0ms"
     (click)="$event.stopPropagation()"
   >
     <!-- Tab Map-Eintellungen -->
     <mat-tab label="Map">
       <div style="padding: 0.5rem">
-        <h3>Planes</h3>
+        <h3 class="h3" class="h3">Planes</h3>
 
         <!-- Select, um Flugzeuge nach Feeder zu selektieren (default: Alle Feeder) -->
         <div style="display: flex; justify-content: center">
-          <mat-form-field
-            appearance="fill"
-            style="width: 100%; margin-left: 1rem"
-          >
+          <mat-form-field style="width: 100%; margin-left: 1rem">
             <mat-label>Select planes by feeder</mat-label>
             <mat-select
               [(ngModel)]="selectedFeeder"
@@ -49,94 +46,125 @@
           </mat-form-field>
 
           <div
-            style="display: flex; justify-content: center; margin-top: 0.3rem"
+            style="display: flex; justify-content: center; margin-top: 0.4rem"
           >
             <button
-              mat-icon-button
+              mat-raised-button
+              color="primary"
+              style="
+                border-radius: 50px;
+                margin: 0.3rem;
+                padding: 0;
+                width: 0.5rem;
+              "
+              class="button-rounded"
               (click)="refreshSelectedFeeder()"
               aria-label="Refresh icon"
             >
-              <mat-icon>refresh</mat-icon>
+              <mat-icon style="margin: 0; padding: 0">refresh</mat-icon>
             </button>
           </div>
         </div>
 
-        <mat-slide-toggle
-          [checked]="showAircraftPositions"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAircraftPositions($event.checked)"
-          >Aircraft Positions</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAircraftLabels"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAircraftLabels($event.checked)"
-          >Aircraft Labels</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showOpenskyPlanes"
-          [disabled]="!openskyCredentialsExist || showAirplanesLivePlanes"
-          (click)="$event.stopPropagation()"
-          (change)="toggleOpenskyPlanes($event.checked)"
-          >Fetch from Opensky-Network</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAirplanesLivePlanes"
-          [disabled]="showOpenskyPlanes"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAirplanesLivePlanes($event.checked)"
-          >Fetch from Airplanes-Live (250nm max)</mat-slide-toggle
-        >
-
-        <div style="display: flex; justify-content: start; align-items: center">
+        <div class="button-area">
           <mat-slide-toggle
-            [checked]="showIss"
+            [checked]="showAircraftPositions"
             (click)="$event.stopPropagation()"
-            (change)="toggleIss($event.checked)"
-            >ISS</mat-slide-toggle
+            (change)="toggleAircraftPositions($event.checked)"
+            >Aircraft Positions</mat-slide-toggle
           >
-          <div mat-dialog-actions style="margin-left: 8.5rem">
-            <button
-              mat-button
-              [disabled]="!showIss"
-              style="background-color: gray; color: white"
-              (click)="toggleCenterMapOnIss()"
+
+          <mat-slide-toggle
+            [checked]="showAircraftLabels"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAircraftLabels($event.checked)"
+            >Show Labels</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showActualRangeOutline"
+            (click)="$event.stopPropagation()"
+            (change)="toggleActualRangeOutline($event.checked)"
+            >Show Actual Range Outline</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showOpenskyPlanes"
+            [disabled]="!openskyCredentialsExist || showAirplanesLivePlanes"
+            (click)="$event.stopPropagation()"
+            (change)="toggleOpenskyPlanes($event.checked)"
+            >Fetch from Opensky-Network</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showAirplanesLivePlanes"
+            [disabled]="showOpenskyPlanes"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAirplanesLivePlanes($event.checked)"
+            >Fetch from Airplanes-Live (250nm max)</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showAisData"
+            [disabled]="!aisstreamApiKeyExists"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAisData($event.checked)"
+            >Fetch AIS data from aisstream.io</mat-slide-toggle
+          >
+
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-right: 0.5rem;
+            "
+          >
+            <mat-slide-toggle
+              [checked]="showIss"
+              (click)="$event.stopPropagation()"
+              (change)="toggleIss($event.checked)"
+              >ISS</mat-slide-toggle
             >
-              Show ISS
-            </button>
+            <div mat-dialog-actions>
+              <button
+                mat-raised-button
+                color="primary"
+                class="button-rounded"
+                [disabled]="!showIss"
+                (click)="toggleCenterMapOnIss()"
+              >
+                Show ISS
+              </button>
+            </div>
           </div>
+
+          <mat-slide-toggle
+            [checked]="showOnlyMilitaryPlanes"
+            (click)="$event.stopPropagation()"
+            (change)="toggleShowOnlyMilitaryPlanes($event.checked)"
+            >Show only military</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showPOMDPoint"
+            (click)="$event.stopPropagation()"
+            (change)="togglePOMDPoint($event.checked)"
+            >Toggle POMD-Feature</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showRouteToDestination"
+            (click)="$event.stopPropagation()"
+            (change)="toggleRouteToDestination($event.checked)"
+            >Show Route To Destination</mat-slide-toggle
+          >
         </div>
-
-        <mat-slide-toggle
-          [checked]="showOnlyMilitaryPlanes"
-          (click)="$event.stopPropagation()"
-          (change)="toggleShowOnlyMilitaryPlanes($event.checked)"
-          >Show only military</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showPOMDPoint"
-          (click)="$event.stopPropagation()"
-          (change)="togglePOMDPoint($event.checked)"
-          >Toggle POMD-Feature</mat-slide-toggle
-        >
-
-        <!-- WebGL -->
-        <mat-slide-toggle
-          [checked]="webgl"
-          [disabled]="webglNotSupported"
-          (click)="$event.stopPropagation()"
-          (change)="toggleWebgl($event.checked)"
-          >WebGL</mat-slide-toggle
-        >
 
         <mat-divider style="margin-bottom: 0"></mat-divider>
 
         <div style="display: flex; justify-content: start; max-height: 2rem">
-          <mat-slider min="0.5" max="10" step="0.1">
+          <mat-slider min="0.5" max="10" step="0.1" color="accent">
             <input
               matSliderThumb
               [(ngModel)]="sliderGlobalIconSizeValue"
@@ -157,7 +185,7 @@
         </div>
 
         <div style="display: flex; justify-content: start; max-height: 2rem">
-          <mat-slider min="0.1" max="10" step="0.1">
+          <mat-slider min="0.1" max="10" step="0.1" color="accent">
             <input
               matSliderThumb
               [(ngModel)]="sliderSmallIconSizeValue"
@@ -177,6 +205,31 @@
           </p>
         </div>
 
+        <div style="display: flex; justify-content: start; max-height: 2rem">
+          <mat-slider min="8" max="16" step="0.5" color="accent">
+            <input
+              matSliderThumb
+              [(ngModel)]="sliderAisOutlinesZoomValue"
+              (input)="onInputChangeAisOutlineMinZoom($event)"
+            />
+          </mat-slider>
+          <p
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              max-height: 2rem;
+              padding-top: 0.6rem;
+              text-wrap: wrap;
+              line-height: normal;
+            "
+          >
+            AIS Outlines at Zoom (>{{ sliderAisOutlinesZoomValue }}) (Current:{{
+              currentMapZoomLevel
+            }})
+          </p>
+        </div>
+
         <div
           style="
             display: flex;
@@ -186,20 +239,22 @@
           "
         >
           <button
-            mat-button
-            style="background-color: gray; color: white"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
             (click)="resetIconSizeSlider()"
           >
-            Reset Icon Sizes
+            Reset sliders
           </button>
         </div>
 
-        <h3 style="margin-top: 1rem">General</h3>
+        <mat-divider style="margin-bottom: 0"></mat-divider>
+
+        <h3 class="h3">General</h3>
 
         <!-- Select, um Map-Stil auszuwählen (default: OSM) -->
         <div style="display: flex; justify-content: center">
           <mat-form-field
-            appearance="fill"
             style="width: 100%; margin-left: 1rem; margin-right: 1rem"
           >
             <mat-label>Map style</mat-label>
@@ -220,50 +275,59 @@
           </mat-form-field>
         </div>
 
-        <!-- Dark mode -->
-        <div>
+        <div class="button-area">
+          <!-- Dark mode -->
+          <div>
+            <mat-slide-toggle
+              [checked]="(isDark$ | async) === true"
+              (click)="$event.stopPropagation()"
+              (change)="toggleDarkMode($event.checked)"
+              >Dark Mode</mat-slide-toggle
+            >
+          </div>
+
+          <!-- Dim map -->
+          <div>
+            <mat-slide-toggle
+              [checked]="dimMap"
+              (click)="$event.stopPropagation()"
+              (change)="toggleDimMap($event.checked)"
+              >Dim Map</mat-slide-toggle
+            >
+          </div>
+
+          <!-- Dark static features -->
+          <div>
+            <mat-slide-toggle
+              [checked]="darkStaticFeatures"
+              (click)="$event.stopPropagation()"
+              (change)="toggleDarkStaticFeatures($event.checked)"
+              >Dark Static Features</mat-slide-toggle
+            >
+          </div>
+
           <mat-slide-toggle
-            [checked]="darkMode"
+            [checked]="showAltitudeChart"
+            [disabled]="!isDesktop"
             (click)="$event.stopPropagation()"
-            (change)="toggleDarkMode($event.checked)"
-            >Dark Mode</mat-slide-toggle
+            (change)="toggleAltitudeChart($event.checked)"
+            >Show Altitude Chart</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showAirports"
+            (click)="$event.stopPropagation()"
+            (change)="toggleAirports($event.checked)"
+            >Airport Labels</mat-slide-toggle
+          >
+
+          <mat-slide-toggle
+            [checked]="showDayNightLine"
+            (click)="$event.stopPropagation()"
+            (change)="toggleDayNightLine($event.checked)"
+            >Show Day/Night Line</mat-slide-toggle
           >
         </div>
-
-        <!-- Dim map -->
-        <div>
-          <mat-slide-toggle
-            [checked]="dimMap"
-            (click)="$event.stopPropagation()"
-            (change)="toggleDimMap($event.checked)"
-            >Dim Map</mat-slide-toggle
-          >
-        </div>
-
-        <!-- Dark static features -->
-        <div>
-          <mat-slide-toggle
-            [checked]="darkStaticFeatures"
-            (click)="$event.stopPropagation()"
-            (change)="toggleDarkStaticFeatures($event.checked)"
-            >Dark Static Features</mat-slide-toggle
-          >
-        </div>
-
-        <mat-slide-toggle
-          [checked]="showAltitudeChart"
-          [disabled]="!isDesktop"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAltitudeChart($event.checked)"
-          >Show Altitude Chart</mat-slide-toggle
-        >
-
-        <mat-slide-toggle
-          [checked]="showAirports"
-          (click)="$event.stopPropagation()"
-          (change)="toggleAirports($event.checked)"
-          >Airport Labels</mat-slide-toggle
-        >
 
         <mat-divider></mat-divider>
 
@@ -278,15 +342,17 @@
           "
         >
           <button
-            mat-button
-            style="background-color: gray; color: white"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
             (click)="setCurrentDevicePosition()"
           >
             Set Device Pos.
           </button>
           <button
-            mat-button
-            style="background-color: gray; color: white"
+            mat-raised-button
+            color="primary"
+            class="button-rounded"
             (click)="deleteCurrentDevicePosition()"
           >
             Delete Device Pos.
@@ -307,7 +373,9 @@
           </mat-slide-toggle>
         </div>
 
-        <h3 style="margin-top: 1rem">Weather</h3>
+        <mat-divider style="margin-bottom: 0"></mat-divider>
+
+        <h3 class="h3">Weather</h3>
 
         <!-- Rainviewer (Rain) -->
         <div>
@@ -346,173 +414,30 @@
     <!-- Tab Statistik-Eintellungen -->
     <mat-tab label="Statistics">
       <div style="padding: 0.5rem">
-        <h3>Range Data</h3>
-        <!-- Toggle, um RangeData aus- oder einzublenden (initial disabled) -->
+        <h3 class="h3">Actual Range Outline</h3>
+        <!-- Toggle, um Outline-Data nach Feeder farblich anzuzeigen-->
         <div>
           <mat-slide-toggle
-            [disabled]="disableRangeData"
-            [checked]="hideRangeData"
+            [checked]="markOutlineDataByFeeder"
             (click)="$event.stopPropagation()"
-            (change)="toggleHideRangeData($event)"
-            >Hide range data</mat-slide-toggle
+            (change)="toggleMarkOutlineDataByFeeder($event)"
+            >Mark outline data by feeder</mat-slide-toggle
           >
         </div>
 
-        <!-- Toggle, um RangeData nach Feeder farblich anzuzeigen-->
+        <!-- Toggle, um Outline-Data nach Höhe farblich anzuzeigen-->
         <div>
           <mat-slide-toggle
-            [checked]="markRangeDataByFeeder"
+            [checked]="markOutlineDataByHeight"
             (click)="$event.stopPropagation()"
-            (change)="toggleMarkRangeDataByFeeder($event)"
-            >Mark range data by feeder</mat-slide-toggle
+            (change)="toggleMarkOutlineDataByHeight($event)"
+            >Mark outline data by height</mat-slide-toggle
           >
-        </div>
-
-        <!-- Toggle, um RangeData nach Höhe farblich anzuzeigen-->
-        <div>
-          <mat-slide-toggle
-            [checked]="markRangeDataByHeight"
-            (click)="$event.stopPropagation()"
-            (change)="toggleMarkRangeDataByHeight($event)"
-            >Mark range data by height</mat-slide-toggle
-          >
-        </div>
-
-        <!-- Select, um Range Data nach Feeder zu selektieren -->
-        <div style="display: flex; justify-content: center">
-          <mat-form-field appearance="fill">
-            <mat-label>Select range data by feeder</mat-label>
-            <mat-select
-              [(ngModel)]="selectedFeederRangeData"
-              (selectionChange)="selectRangeDataByFeeder()"
-              multiple
-            >
-              <mat-option *ngFor="let feeder of listFeeder" [value]="feeder">{{
-                feeder.name
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <mat-divider></mat-divider>
-
-        <!-- Info-Text -->
-        <p class="info-text">
-          Please specify the desired period for which the range data should be
-          displayed
-        </p>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0">Selected times:</h4>
-        <p *ngIf="timesAsDateStrings && timesAsDateStrings[0]">
-          StartTime: {{ timesAsDateStrings[0] }}
-        </p>
-        <p *ngIf="timesAsDateStrings && timesAsDateStrings[1]">
-          EndTime: {{ timesAsDateStrings[1] }}
-        </p>
-        <p *ngIf="!timesAsDateStrings">StartTime: /</p>
-        <p *ngIf="!timesAsDateStrings">EndTime: /</p>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0">Predefined times:</h4>
-
-        <!-- Button-Toggles, um vordefinierte Zeiträume für die Range Data auszuwählen -->
-        <div style="display: flex; justify-content: center">
-          <button
-            mat-button
-            style="background-color: gray; color: white; margin-right: 0.5rem"
-            value="current-hour"
-            (click)="showRangeDataLastHour()"
-          >
-            Last Hour
-          </button>
-          <button
-            mat-button
-            style="background-color: gray; color: white; margin-right: 0.5rem"
-            (click)="showRangeDataToday()"
-          >
-            Today
-          </button>
-          <button
-            mat-button
-            style="background-color: gray; color: white"
-            (click)="showRangeDataLastSevenDays()"
-          >
-            Last 7 Days
-          </button>
-        </div>
-
-        <h4 style="margin-top: 1rem; margin-bottom: 0">
-          Pick your own time slot:
-        </h4>
-
-        <!-- Picker, um Start- und Endzeit für die Zeitspanne der
-          anzuzeigenden Range Data auszuwählen -->
-        <div class="time-picker">
-          <!-- Starttime -->
-          <mat-form-field>
-            <mat-label>Starttime</mat-label>
-            <mtx-datetimepicker
-              #datetimeStart
-              [type]="type"
-              [mode]="mode"
-              [multiYearSelector]="multiYearSelector"
-              [startView]="startView"
-              [twelvehour]="twelvehour"
-              [timeInterval]="timeInterval"
-              [touchUi]="touchUi"
-              [timeInput]="timeInput"
-              (selectedChanged)="selectedStarttime = $event"
-            ></mtx-datetimepicker>
-            <input [mtxDatetimepicker]="datetimeStart" matInput required />
-            <mtx-datetimepicker-toggle
-              [for]="datetimeStart"
-              matSuffix
-            ></mtx-datetimepicker-toggle>
-          </mat-form-field>
-        </div>
-
-        <div class="time-picker">
-          <!-- Endtime -->
-          <mat-form-field>
-            <mat-label>Endtime</mat-label>
-            <mtx-datetimepicker
-              #datetimeEnd
-              [type]="type"
-              [mode]="mode"
-              [multiYearSelector]="multiYearSelector"
-              [startView]="startView"
-              [twelvehour]="twelvehour"
-              [timeInterval]="timeInterval"
-              [touchUi]="touchUi"
-              [timeInput]="timeInput"
-              (selectedChanged)="selectedEndtime = $event"
-            ></mtx-datetimepicker>
-            <input [mtxDatetimepicker]="datetimeEnd" matInput required />
-            <mtx-datetimepicker-toggle
-              [for]="datetimeEnd"
-              matSuffix
-            ></mtx-datetimepicker-toggle>
-          </mat-form-field>
-        </div>
-
-        <!-- Submit chosen date and time -->
-        <div mat-dialog-actions>
-          <button
-            mat-button
-            style="
-              background-color: gray;
-              color: white;
-              margin-left: 0.5rem;
-              margin-top: 0.2rem;
-            "
-            (click)="showRangeDataBetweenCustomTimestamps()"
-          >
-            Show data
-          </button>
         </div>
 
         <mat-divider style="margin-bottom: 0"></mat-divider>
 
-        <h3>Trail Data</h3>
+        <h3 class="h3">Trail Data</h3>
         <!-- Toggle, um alle gespeicherten Trails aus- oder einzublenden -->
         <div>
           <mat-slide-toggle
@@ -528,7 +453,7 @@
     <!-- Tab About -->
     <mat-tab label="About">
       <div style="padding: 0.5rem">
-        <h3>About</h3>
+        <h3 class="h3">About</h3>
         <div>
           <!-- Logo -->
           <img
@@ -538,6 +463,7 @@
               display: block;
               margin-left: auto;
               margin-right: auto;
+              margin-bottom: 0.5rem;
               width: 3rem;
               margin-top: 1rem;
             "
@@ -581,7 +507,7 @@
             "
           >
             <!-- App-BuildTime -->
-            BuildTime {{ appBuildTime *1000 | date: 'yyyy-MM-dd HH:mm:ss'}}
+            BuildTime {{ appBuildTime * 1000 | date : "yyyy-MM-dd HH:mm:ss" }}
           </p>
 
           <p
@@ -597,7 +523,7 @@
           </p>
         </div>
 
-        <h3 style="padding-top: 1rem">Debug</h3>
+        <h3 class="h3">Debug</h3>
         <!-- Ip-Addresse des Clients -->
         <p class="info-text">Client-IP: {{ clientAddress }}</p>
 
@@ -606,7 +532,7 @@
 
         <!-- Button zum Anzeigen der Debug-Logs -->
         <div mat-dialog-actions style="padding-top: 0.5rem">
-          <button mat-button style="background-color: gray">
+          <button mat-raised-button color="primary" class="button-rounded">
             <!-- Hinweis: Nur im production-Mode wird der Link richtig aufgerufen -->
             <a
               href="/getLogs"

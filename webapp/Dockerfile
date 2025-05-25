@@ -1,8 +1,8 @@
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR webapp
 COPY . .
 RUN cd webapp && npm install
-RUN cd webapp && npm install -g npm@10.2.5 
+RUN cd webapp && npm install -g npm@10.8.2 
 RUN cd webapp && node --max_old_space_size=2500 ./node_modules/@angular/cli/bin/ng build --configuration production
 
 FROM nginx:alpine

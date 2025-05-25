@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { Aircraft } from '../_classes/aircraft';
 import VectorSource from 'ol/source/Vector';
 import { Point } from 'ol/geom';
+import { FeatureLike } from 'ol/Feature';
 
 /**
  * Globale Variablen
@@ -25,11 +26,8 @@ export class Globals {
   // (Hinweis: In EPSG:3857 gespeichert!)
   static SitePosition;
 
-  // Flugzeug-Icons als Features
-  static PlaneIconFeatures = new Vector();
-
   // Flugzeug-Icons als Features (WebGL)
-  static WebglFeatures = new Vector<Point>();
+  static WebglFeatures = new Vector<FeatureLike>();
 
   // Liste mit Flugzeugen (sollte immer mit Planes synchron gehalten werden)
   static PlanesOrdered: Aircraft[] = [];
@@ -72,10 +70,7 @@ export class Globals {
   static showAircraftLabel: boolean = false;
 
   // Boolean, ob WebGL benutzt werden soll
-  static webgl: boolean = false;
-
-  // Boolean, ob WebGL beim Start der Anwendung genutzt werden soll
-  static useWebglOnStartup: boolean;
+  static webgl: boolean = true;
 
   // Initiale Werte für WebGL-Icon ggf. anpassen
   static glIconSize = 72;
@@ -131,14 +126,6 @@ export class Globals {
   static urlGetAircraftData =
     'http://' + Globals.serverUrl + ':8080/getAllAircraftData';
 
-  // URL zum Server zum Senden des Flugzeugs für die Range-Daten
-  static urlPostRangeData: string =
-    'http://' + Globals.serverUrl + ':8080/postRangeData';
-
-  // URL zum Server zum Holen von Range-Daten zwischen einem bestimmten Zeitraum
-  static urlGetRangeDataBetweenTimestamps: string =
-    'http://' + Globals.serverUrl + ':8080/getRangeDataBetweenTimestamps';
-
   // URL zum Server zum Holen von Konfigurations-Variablen
   static urlGetConfigurationData: string =
     'http://' + Globals.serverUrl + ':8080/getConfigurationData';
@@ -158,4 +145,16 @@ export class Globals {
   // URL zum Server zum Holen aller Trails
   static urlGetAllTrailData: string =
     'http://' + Globals.serverUrl + ':8080/getAllTrails';
+
+  // URL zum Server zum Fetchen von AIS-Daten
+  static urlGetAisData = 'http://' + Globals.serverUrl + ':8080/getAisData';
+
+  // URL zum Server zum Fetchen von AIS-Schiff-Foto-Urls
+  static urlGetAisPhoto = 'http://' + Globals.serverUrl + ':8080/getAisPhoto';
+
+  static urlGetActualRangeOutline =
+    'http://' + Globals.serverUrl + ':8080/getActualRangeOutline';
+
+  static urlGetLocationFromPlaceInput =
+    'http://' + Globals.serverUrl + ':8080/getLocationFromInput';
 }
