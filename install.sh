@@ -5,7 +5,7 @@
 
 set -eu pipefail
 
-BRANCH=dev # TODO master || dev
+BRANCH=master # TODO master || dev
 REPO_NAME=BelugaProject
 REPO_URL="https://github.com/amnesica/$REPO_NAME/archive/refs/heads/$BRANCH.zip"
 REPO_ZIP_FILENAME=$REPO_NAME.zip
