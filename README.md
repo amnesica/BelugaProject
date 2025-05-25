@@ -108,7 +108,7 @@ If you get any error messages have take a look into [TROUBLESHOOTING.md](./doc/T
 BelugaProject comes with standing data (aircraft data, airport data, flightroute data) which may be outdated meanwhile. So you should update them with command
 
 ```
-$ sudo ./run.sh update-db
+sudo ./run.sh update-db
 ```
 
 This will take some time. On an RaspberryPi 4B update database takes about 10 minutes.
