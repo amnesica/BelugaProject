@@ -164,8 +164,8 @@ _set_env_values() {
 
   _show_whiptail_input_box "9) Choose a PASSWORD for the database of the Beluga Project." "SPRING_DATASOURCE_PASSWORD" 8 100
 
-  _show_whiptail_input_box "10) Enter the URL of your productive systems ip address (for a simple test you can use 'localhost').\
-  \n\nImportant: Do NOT enter URL with 'http://', only enter the ip (e.g. '192.168.123.10')" "PROD_BASE_URL_WEBAPP" 14 100
+  _show_whiptail_input_box "10) Enter the ip address of your productive system  (for a local test you can use 'localhost').\
+  \n\nImportant: Do NOT enter the ip address with 'http://', only enter the ip itself (e.g. '192.168.123.10')" "PROD_BASE_URL_WEBAPP" 16 100
 
   _show_whiptail_input_box "11) Optional: Enter your Opensky-Network USERNAME to use the Opensky-Network. If you do not provide credentials this function will be disabled." "OPENSKY_NETWORK_USERNAME" 8 100
 
