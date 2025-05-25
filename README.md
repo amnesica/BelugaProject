@@ -90,15 +90,15 @@ The application runs on a Raspberry Pi 4B in the local network. We can access th
 Execute the following command on your Raspberry Pi (or any debian-based system). We recommend using a Pi >=4B with 64 bit OS version.
 
 ```
-$ sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/master/install.sh)"
+sudo bash -c "$(wget -nv -O - https://github.com/amnesica/BelugaProject/raw/master/install.sh)"
 ```
 
 **Important**: If you already have a version < 4.0.0 of the Beluga Project installed, first execute the following commands and then use the install script with the link above.
 
 ```
-$ cd BelugaProject
-$ sudo ./run.sh docker-rm
-$ cd .. && sudo rm -r BelugaProject BelugaProject.zip
+cd BelugaProject
+sudo ./run.sh docker-rm
+cd .. && sudo rm -r BelugaProject BelugaProject.zip
 ```
 
 If you get any error messages have take a look into [TROUBLESHOOTING.md](./doc/TROUBLESHOOTING.md).
