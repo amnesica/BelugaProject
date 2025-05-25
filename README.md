@@ -6,7 +6,7 @@
 
 ![GitHub version](https://img.shields.io/badge/version-v4.1.0-brightgreen)
 
-Spring Boot Angular web application that displays one or multiple, local ADS-B feeders along with additional information on a map interface in the browser.
+Spring Boot Angular web application that displays data of one or multiple, local ADS-B feeders and AIS-data along with additional information on a map interface in the browser.
 
 <p align="center">
 <img alt="Web View" src="assets/images/demo.gif"\>
@@ -43,10 +43,10 @@ We started our ADS-B experience with an [AirSquitter](https://airsquitter.com) r
   - Cockpit mode (with or without cockpit model), Follow-Plane mode
   - High Quality mode, HDR, clouds
 - Display ships (AIS messages) from [aisstream.io](https://aisstream.io/) (API key is required) (Important: Given that this uses a stream API, it might take some time until all ships are loaded)
+- Show range data of your feeders with clickable range data points (helpful for aligning antennas)
 - See additional information about tracked aircraft like model and type, country of registration, operator callsign and more
 - Track flight progress with route information (origin, destination)
 - Display aircraft picture from planespotters.net
-- Show range data of your feeders on the map
 - Show weather information (current, forecast, clouds) from [Rainviewer](https://www.rainviewer.com/)
 - Filter option for military planes
 - Choose one of several map styles (2D/3D map, for some of the 2D maps an API key from [Geoapify](https://www.geoapify.com/) is required)
