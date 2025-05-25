@@ -101,7 +101,7 @@ sudo ./run.sh docker-rm
 cd .. && sudo rm -r BelugaProject BelugaProject.zip
 ```
 
-If you get any error messages have take a look into [TROUBLESHOOTING.md](./doc/TROUBLESHOOTING.md).
+If you get any error messages take a look into [TROUBLESHOOTING.md](./doc/TROUBLESHOOTING.md).
 
 ## Update standing data
 
