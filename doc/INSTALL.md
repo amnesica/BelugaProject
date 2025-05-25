@@ -129,7 +129,7 @@ If you want to use the 3D view, follow these steps:
         FEEDER_AMOUNT=2
         ```
 
-    7.  Production URL for the frontend (`PROD_BASE_URL_WEBAPP`): Enter the URL of your productive systems ip address (for a simple test you can use `localhost`)
+    7.  Production URL for the frontend (`PROD_BASE_URL_WEBAPP`): Enter the URL of your productive systems ip address (for a simple test you can use `localhost`). Important: Do not enter URL with "http://", only enter the ip (e.g. "192.168.123.10")
 
     8.  Database password (`SPRING_DATASOURCE_PASSWORD`): Set password for the database `belugaDb`
 
