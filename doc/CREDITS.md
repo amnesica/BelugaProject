@@ -6,7 +6,7 @@ The BelugaProject allows you to add live data from [Opensky network](https://ope
 
 Airplane images come from [planespotters.net](https://www.planespotters.net) together with a link to their site. Ship images come from [VesselFinder](https://vesselfinder.com/) with a link to their site.
 
-By clicking on an airport icon you will see airport data from [OurAirports](https://ourairports.com/data/). Via hyperlink you can open the airport data website from [OurAirports](https://ourairports.com/data/) for the selected airport.
+By clicking on an airport icon you will see airport data from [OurAirports](https://ourairports.com/data/). Via hyperlink you can open the airport data website from [OurAirports](https://ourairports.com/data/) for the selected airport. Airport arrival and departure boards are provided by [Avionio.com](https://www.avionio.com).
 
 In our database we use data from
 - [Opensky network](https://opensky-network.org/): aircraft data
