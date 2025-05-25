@@ -20,7 +20,7 @@ Additional information about the aircraft are added through a PostgreSQL databas
 
 The ISS (International Space Station) is displayed by default with information from the ["Where the ISS at?" API](https://wheretheiss.at/w/developer).
 
-Ships (AIS messages) can be displayed from [aisstream.io](https://aisstream.io/). To use this feature you need an API key. Visit their site for more info. [VesselFinder](https://vesselfinder.com/) is used for ship images.
+Ships (AIS messages) can be displayed from [aisstream.io](https://aisstream.io/). To use this feature you need an API key. Visit their site for more info. [VesselFinder](https://vesselfinder.com/) is used for ship images (source is credited and link is provided).
 
 The Beluga Project uses aircraft icons from [this](https://github.com/RexKramer1/AircraftShapesSVG) repository by [RexKramer1](https://github.com/RexKramer1). 3D models from [this](https://github.com/amnesica/BelugaProject-3D-Models) repository are used.
 
