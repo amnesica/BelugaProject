@@ -72,6 +72,7 @@ public class AisStreamWebsocketClient extends WebSocketListener {
   @Override
   public void onMessage(WebSocket webSocket, okio.ByteString bytes) {
     try {
+      if (bytes == null) return;
       String jsonString = bytes.string(StandardCharsets.UTF_8);
       if (jsonString.isEmpty()) return;
       JSONObject jsonObject = new JSONObject(jsonString);
@@ -88,13 +89,12 @@ public class AisStreamWebsocketClient extends WebSocketListener {
 
   @Override
   public void onClosed(WebSocket webSocket, int code, String reason) {
-    isConnected = false;
+    this.isConnected = false;
   }
 
   @Override
   public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-    log.error("Server - Error on AIS stream websocket : Exception = {}", String.valueOf(t));
-    isConnected = false;
+    this.isConnected = false;
   }
 
   public void updateBoundingBox(Double minLat, Double minLong, Double maxLat, Double maxLong) {
@@ -116,11 +116,9 @@ public class AisStreamWebsocketClient extends WebSocketListener {
         Arrays.toString(this.box1) + "," + Arrays.toString(this.box2) +
         "]], \"FilterMessageTypes\": [\"PositionReport\", \"ShipStaticData\"]}";
     try {
-      if (webSocket != null) {
-        webSocket.send(subscriptionText);
-        this.lastSendSubscriptionMessage = Instant.now();
-        this.isConnected = true;
-      }
+      webSocket.send(subscriptionText);
+      this.lastSendSubscriptionMessage = Instant.now();
+      this.isConnected = true;
     } catch (Exception e) {
       log.error("Server - Failed to send subscription message. WebSocket might not be connected", e);
       this.isConnected = false;

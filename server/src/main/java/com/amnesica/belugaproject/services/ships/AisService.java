@@ -40,6 +40,9 @@ public class AisService {
       aisShipsLongTermMap.putAll(client.getAisShips());
       client = null;
       return null;
+    } else if (client != null) {
+      // temp. save ships if client crashes
+      aisShipsLongTermMap.putAll(client.getAisShips());
     }
 
     if (!enableAis) return null;
