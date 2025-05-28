@@ -1,6 +1,6 @@
 package com.amnesica.belugaproject.services.data;
 
-import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
+import com.amnesica.belugaproject.services.network.NetworkHandlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;

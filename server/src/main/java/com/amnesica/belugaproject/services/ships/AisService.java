@@ -2,7 +2,7 @@ package com.amnesica.belugaproject.services.ships;
 
 import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.entities.ships.Ship;
-import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
+import com.amnesica.belugaproject.services.network.NetworkHandlerService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

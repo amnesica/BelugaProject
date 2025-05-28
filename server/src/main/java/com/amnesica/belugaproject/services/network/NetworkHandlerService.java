@@ -1,13 +1,13 @@
-package com.amnesica.belugaproject.services.helper;
+package com.amnesica.belugaproject.services.network;
 
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.*;
+import okhttp3.Response;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -126,12 +126,4 @@ public class NetworkHandlerService {
   }
 }
 
-class CallbackFuture extends CompletableFuture<Response> implements Callback {
-  public void onResponse(Call call, Response response) {
-    super.complete(response);
-  }
 
-  public void onFailure(Call call, IOException e) {
-    super.completeExceptionally(e);
-  }
-}
