@@ -16,6 +16,7 @@ ext {
   hypersistenceVersion = "3.9.10"
   okhttpVersion = "4.12.0"
   lombokVersion = "1.18.38"
+  mockServerVersion = "1.0.17"
 }
 
 repositories {
@@ -23,6 +24,10 @@ repositories {
   maven {
     url = uri('https://repo.maven.apache.org/maven2/')
   }
+}
+
+configurations.configureEach {
+  exclude module: 'slf4j-jdk14'
 }
 
 dependencies {
@@ -38,6 +43,8 @@ dependencies {
   compileOnly "org.projectlombok:lombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
   testImplementation "org.springframework.boot:spring-boot-starter-test"
+  testImplementation "software.xdev.mockserver:client:${mockServerVersion}"
+  testImplementation "software.xdev.mockserver:server:${mockServerVersion}"
 }
 
 group = "com.amnesica"
