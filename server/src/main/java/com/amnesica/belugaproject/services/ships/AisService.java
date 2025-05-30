@@ -21,14 +21,14 @@ public class AisService {
   @Autowired
   private Configuration configuration;
   private final String aisStreamIoSocketUrl = "wss://stream.aisstream.io/v0/stream";
-
-  public record VesselFinderResponse(String photoUrl) {
-  }
-
   private VesselFinderResponse response;
   private AisStreamWebsocketClient client;
   private final int MAX_SIZE_SHIP_HASHMAP = 10000;
   private static final NetworkHandlerService networkHandler = new NetworkHandlerService();
+
+  public record VesselFinderResponse(String photoUrl) {
+  }
+
   @Getter
   private final ConcurrentHashMap<Integer, Ship> aisShipsLongTermMap = new ConcurrentHashMap<>();
 
@@ -66,8 +66,7 @@ public class AisService {
     // Lösche alte ships (älter als 2h)
     long time2hAgo = System.currentTimeMillis() - 7200000L;
     for (Ship ship : client.getAisShips().values()) {
-      if (ship.getTimestamp() < time2hAgo)
-        client.getAisShips().remove(ship.getUserId());
+      if (ship.getTimestamp() < time2hAgo) client.getAisShips().remove(ship.getUserId());
     }
 
     if (client.boundingBoxHasMoved(lamin, lomin, lamax, lomax)) client.updateBoundingBox(lamin, lomin, lamax, lomax);
@@ -76,9 +75,7 @@ public class AisService {
   private void createClient(double lamin, double lomin, double lamax, double lomax) {
     try {
       if (!configuration.aisstreamApiKeyIsValid()) return;
-      client = new AisStreamWebsocketClient(new URI(aisStreamIoSocketUrl), configuration.getAisstreamApiKey(),
-          lamin, lomin, lamax, lomax, aisShipsLongTermMap);
-      client.run();
+      client = new AisStreamWebsocketClient(new URI(aisStreamIoSocketUrl), configuration.getAisstreamApiKey(), lamin, lomin, lamax, lomax, aisShipsLongTermMap);
     } catch (URISyntaxException e) {
       log.error("Server - Error when starting websocket client: {}", e.getMessage());
     }
