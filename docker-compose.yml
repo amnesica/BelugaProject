@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: belugaproject/belugaproject-server:4.1.0
+    image: belugaproject/belugaproject-server:4.1.1
     container_name: belugaproject-server
     depends_on:
       - postgres
