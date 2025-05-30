@@ -42,7 +42,7 @@ services:
     build:
       context: .
       dockerfile: webapp/Dockerfile
-    image: belugaproject/belugaproject-webapp:4.1.0
+    image: belugaproject/belugaproject-webapp:4.1.1
     container_name: belugaproject-webapp
     environment:
       - PROD_BASE_URL_WEBAPP=${PROD_BASE_URL_WEBAPP}
