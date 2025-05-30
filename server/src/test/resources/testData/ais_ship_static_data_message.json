@@ -1,0 +1,31 @@
+{
+  "MessageType": "ShipStaticData",
+  "Message": {
+    "ShipStaticData": {
+      "UserID": 123456,
+      "CallSign": "TEST123",
+      "Destination": "Hamburg ",
+      "ImoNumber": 9876543,
+      "MaximumStaticDraught": 10.5,
+      "Dimension": {
+        "A": 100,
+        "B": 20,
+        "C": 10,
+        "D": 10
+      },
+      "Name": "Test Ship Full Name ",
+      "Type": 70,
+      "Eta": {
+        "Month": 2,
+        "Day": 15,
+        "Hour": 14,
+        "Minute": 30
+      }
+    }
+  },
+  "MetaData": {
+    "time_utc": "2023-01-01T13:00:00Z",
+    "MMSI": 123456,
+    "ShipName": "Updated Ship Name "
+  }
+}

@@ -9,7 +9,7 @@ import com.amnesica.belugaproject.services.aircraft.AircraftService;
 import com.amnesica.belugaproject.services.aircraft.HistoryAircraftService;
 import com.amnesica.belugaproject.services.aircraft.LocalFeederService;
 import com.amnesica.belugaproject.services.data.*;
-import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
+import com.amnesica.belugaproject.services.network.NetworkHandlerService;
 import com.amnesica.belugaproject.services.trails.AircraftTrailService;
 import com.amnesica.belugaproject.utils.TestUtil;
 import lombok.SneakyThrows;

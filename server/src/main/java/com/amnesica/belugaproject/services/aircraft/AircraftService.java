@@ -10,7 +10,7 @@ import com.amnesica.belugaproject.services.data.FlightrouteDataService;
 import com.amnesica.belugaproject.services.data.OperatorDataService;
 import com.amnesica.belugaproject.services.data.RegcodeDataService;
 import com.amnesica.belugaproject.services.helper.HelperService;
-import com.amnesica.belugaproject.services.helper.NetworkHandlerService;
+import com.amnesica.belugaproject.services.network.NetworkHandlerService;
 import com.amnesica.belugaproject.services.trails.AircraftTrailService;
 import com.amnesica.belugaproject.utility.Utility;
 import lombok.extern.slf4j.Slf4j;

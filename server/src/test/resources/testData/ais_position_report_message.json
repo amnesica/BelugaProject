@@ -1,0 +1,20 @@
+{
+  "MessageType": "PositionReport",
+  "Message": {
+    "PositionReport": {
+      "Latitude": 53.5,
+      "Longitude": 9.5,
+      "UserID": 123456,
+      "Cog": 180.0,
+      "NavigationalStatus": 0,
+      "RateOfTurn": 0,
+      "Sog": 10,
+      "TrueHeading": 180
+    }
+  },
+  "MetaData": {
+    "time_utc": "2023-01-01T12:00:00Z",
+    "MMSI": 123456,
+    "ShipName": "Test Ship"
+  }
+}
