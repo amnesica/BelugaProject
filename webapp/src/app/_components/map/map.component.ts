@@ -1151,7 +1151,7 @@ export class MapComponent implements OnInit {
     // Fuege Layer fuer Range-Ringe und Feeder-Position hinzu
     const staticFeaturesLayer = this.createVectorLayer(
       this.StaticFeatures,
-      100,
+      8,
       false,
       renderBuffer,
       {
