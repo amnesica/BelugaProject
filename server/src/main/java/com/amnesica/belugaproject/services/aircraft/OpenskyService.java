@@ -11,6 +11,7 @@ import com.amnesica.belugaproject.services.helper.HelperService;
 import com.amnesica.belugaproject.services.helper.Request;
 import com.amnesica.belugaproject.services.helper.TrailHelperService;
 import com.amnesica.belugaproject.services.network.NetworkHandlerService;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,12 +50,19 @@ public class OpenskyService {
   // Url zum Fetchen der Track-Daten von Opensky
   private static final String URL_OPENSKY_LIVE_TRACK_API = "https://opensky-network.org/api/tracks/all?";
 
+  // Url zum Fetchen des Access Tokens
+  private static final String URL_OPENSKY_LIVE_TOKEN_API = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token";
+
+  private String openskyAccessToken;
+
+  @Setter
+  private Instant lastTokenFetchTime;
+
   void fetchAircraftData(Request request) {
     JSONArray jsonArrayFromOpensky;
 
     // Hole Flugzeuge als JSONArray vom Opensky-Network
-    jsonArrayFromOpensky = getDataFromOpensky(request.getLomin(), request.getLamin(), request.getLomax(),
-        request.getLamax());
+    jsonArrayFromOpensky = getDataFromOpensky(request.getLomin(), request.getLamin(), request.getLomax(), request.getLamax());
 
     // Initialisiere Feeder, wenn nötig
     if (openskyFeeder == null) {
@@ -72,9 +81,7 @@ public class OpenskyService {
 
         // Prüfe, ob element alle Basis-Eigenschaften erfüllt (bspw. 'lat','lon' sind
         // vorhanden)
-        if (element != null && element.has("hex") && element.has("lat") && element.has("lon")
-            && !element.isNull("lat") && !element.isNull("lon") && element.getDouble("lat") != 0
-            && element.getDouble("lon") != 0) {
+        if (element != null && element.has("hex") && element.has("lat") && element.has("lon") && !element.isNull("lat") && !element.isNull("lon") && element.getDouble("lat") != 0 && element.getDouble("lon") != 0) {
 
           // Erstelle aus Daten des Feeders ein neues Flugzeug
           RemoteAircraft aircraftNew = aircraftService.createNewRemoteAircraft(element, openskyFeeder);
@@ -98,8 +105,7 @@ public class OpenskyService {
               // Schreibe Flugzeug in OpenskyAircraft-Tabelle
               remoteAircraftRepository.save(aircraftInDb);
             } catch (Exception e) {
-              log.error("Server - DB error when writing opensky aircraftNew for hex "
-                  + aircraftNew.getHex() + ": Exception = " + e);
+              log.error("Server - DB error when writing opensky aircraftNew for hex " + aircraftNew.getHex() + ": Exception = " + e);
             }
 
           } else {
@@ -116,8 +122,7 @@ public class OpenskyService {
               // Schreibe Flugzeug in OpenskyAircraft-Tabelle
               remoteAircraftRepository.save(aircraftNew);
             } catch (Exception e) {
-              log.error("Server - DB error when writing new opensky aircraftNew for hex "
-                  + aircraftNew.getHex() + ": Exception = " + e);
+              log.error("Server - DB error when writing new opensky aircraftNew for hex " + aircraftNew.getHex() + ": Exception = " + e);
             }
           }
         }
@@ -139,8 +144,7 @@ public class OpenskyService {
     JSONArray jsonArray = null;
 
     // Genriere URL mit Daten der Bounding-Box vom Frontend
-    final String url = URL_OPENSKY_LIVE_API + "lamin=" + lamin + "&lomin=" + lomin + "&lamax=" + lamax + "&lomax="
-        + lomax;
+    final String url = URL_OPENSKY_LIVE_API + "lamin=" + lamin + "&lomin=" + lomin + "&lamax=" + lamax + "&lomax=" + lomax;
 
     // Anfrage an Opensky mit url und Credentials
     String jsonStr = networkHandler.makeOpenskyServiceCall(url, configuration.getOpenskyUsername(), configuration.getOpenskyPassword());
@@ -160,9 +164,7 @@ public class OpenskyService {
         }
       }
     } catch (Exception e) {
-      log.error(
-          "Server: Data from Opensky-Network could not get fetched or there are no planes in this area. Url: "
-              + url);
+      log.error("Server: Data from Opensky-Network could not get fetched or there are no planes in this area. Url: " + url);
     }
 
     return jsonArray;
@@ -290,9 +292,7 @@ public class OpenskyService {
         jsonArrayTrackStates = jsonObject.getJSONArray("path");
       }
     } catch (Exception e) {
-      log.error(
-          "Server: Track-Data from Opensky-Network could not get fetched or there are no planes in this area. Url: "
-              + url);
+      log.error("Server: Track-Data from Opensky-Network could not get fetched or there are no planes in this area. Url: " + url);
     }
 
     return jsonArrayTrackStates;
@@ -320,22 +320,18 @@ public class OpenskyService {
             final Double baroAltitude = innerArray.getDouble(3);
             final Integer track = (int) innerArray.getDouble(4);
             final int altitudeInFeet = (int) HelperService.convertMeter2Foot(baroAltitude);
-            final AircraftTrail openskyTrail = new AircraftTrail(hex, longitude, latitude, altitudeInFeet, false,
-                timestamp * 1000, "Opensky", null, track, null); // convert timestamp to be in milli seconds
+            final AircraftTrail openskyTrail = new AircraftTrail(hex, longitude, latitude, altitudeInFeet, false, timestamp * 1000, "Opensky", null, track, null); // convert timestamp to be in milli seconds
             trails.add(openskyTrail);
           }
         }
       } catch (Exception e) {
-        log.error("Server - DB error when retrieving all trails for aircraft from Opensky-Network with hex " + hex
-            + ": Exception = " + e);
+        log.error("Server - DB error when retrieving all trails for aircraft from Opensky-Network with hex " + hex + ": Exception = " + e);
       }
     }
 
-    if (trails != null)
-      trails = trails.stream().distinct().collect(Collectors.toList());
+    if (trails != null) trails = trails.stream().distinct().collect(Collectors.toList());
 
-    if (trails != null)
-      trails = trailHelperService.checkAircraftTrailsFor180Border(trails);
+    if (trails != null) trails = trailHelperService.checkAircraftTrailsFor180Border(trails);
 
     return trails;
   }
@@ -371,5 +367,44 @@ public class OpenskyService {
     feeder.setMapping(mapping);
 
     return feeder;
+  }
+
+  /**
+   * Gibt den Access-Token für das Opensky-Network zurück (neuer OAuth2-Ansatz für neu erstellte Accounts)
+   * <p>
+   * Siehe <a href="https://openskynetwork.github.io/opensky-api/rest.html#oauth2-client-credentials-flow">Docs</a>
+   *
+   * @return String
+   */
+  public String getOpenskyAccessToken() {
+    final String clientId = configuration.getOpenskyClientId();
+    final char[] clientSecret = configuration.getOpenskyClientSecret();
+
+    // Check if the token is still valid (cached for 30 minutes)
+    if (this.lastTokenFetchTime != null && Instant.now().isBefore(this.lastTokenFetchTime.plusSeconds(1800))) {
+      // Return cached token if it was fetched within the last hour
+      return this.openskyAccessToken;
+    }
+
+    if (clientId == null || clientId.isEmpty() || clientSecret == null || clientSecret.length == 0) {
+      log.error("Opensky username or password is not configured properly.");
+      return null;
+    }
+
+    final String jsonStr = networkHandler.makeOpenskyTokenCall(URL_OPENSKY_LIVE_TOKEN_API, clientId, clientSecret);
+
+    try {
+      if (jsonStr != null) {
+        JSONObject jsonObject = new JSONObject(jsonStr);
+        final String accessToken = jsonObject.getString("access_token");
+        this.openskyAccessToken = accessToken;
+        this.lastTokenFetchTime = Instant.now();
+        return accessToken;
+      }
+    } catch (Exception e) {
+      log.error("Server: Access token from Opensky-Network could not get fetched. Url: " + URL_OPENSKY_LIVE_TOKEN_API);
+    }
+
+    return null;
   }
 }

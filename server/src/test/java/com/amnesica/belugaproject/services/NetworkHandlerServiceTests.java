@@ -13,11 +13,11 @@ import software.xdev.mockserver.client.MockServerClient;
 import software.xdev.mockserver.model.Delay;
 import software.xdev.mockserver.model.MediaType;
 import software.xdev.mockserver.netty.MockServer;
+import software.xdev.mockserver.verify.VerificationTimes;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static software.xdev.mockserver.model.HttpRequest.request;
 import static software.xdev.mockserver.model.HttpResponse.response;
 
@@ -158,6 +158,62 @@ public class NetworkHandlerServiceTests {
 
     // Verify
     assertEquals(jsonResponse, result);
+  }
+
+  @Test
+  public void testMakeOpenskyTokenCall_Successful() {
+    // Setup mock response
+    String jsonResponse = "{\"access_token\": \"mock_access_token\"}";
+    mockServerClient.when(request().withMethod("POST").withPath("/auth/realms/opensky-network/protocol/openid-connect/token").withHeader("Content-Type", "application/x-www-form-urlencoded").withBody("grant_type=client_credentials&client_id=mock_client_id&client_secret=mock_secret")).respond(response().withStatusCode(200).withContentType(MediaType.APPLICATION_JSON).withBody(jsonResponse));
+
+    // Execute
+    String url = "http://localhost:1080/auth/realms/opensky-network/protocol/openid-connect/token";
+    String clientId = "mock_client_id";
+    char[] clientSecret = "mock_secret".toCharArray();
+    String result = networkHandlerService.makeOpenskyTokenCall(url, clientId, clientSecret);
+
+    // Assert
+    assertNotNull(result);
+    assertEquals(jsonResponse, result);
+
+    // Verify
+    mockServerClient.verify(request().withMethod("POST").withPath("/auth/realms/opensky-network/protocol/openid-connect/token"), VerificationTimes.exactly(1));
+  }
+
+  @Test
+  public void testMakeOpenskyTokenCall_InvalidCredentials() {
+    // Setup mock response for invalid credentials
+    mockServerClient.when(request().withMethod("POST").withPath("/auth/realms/opensky-network/protocol/openid-connect/token")).respond(response().withStatusCode(401).withBody("{\"error\": \"invalid_client\", \"error_description\": \"Invalid client credentials\"}").withContentType(MediaType.APPLICATION_JSON));
+
+    // Execute the method
+    String url = "http://localhost:1080/auth/realms/opensky-network/protocol/openid-connect/token";
+    String clientId = "invalid_client_id";
+    char[] clientSecret = "invalid_secret".toCharArray();
+    String result = networkHandlerService.makeOpenskyTokenCall(url, clientId, clientSecret);
+
+    // Assert
+    assertNull(result);
+
+    // Verify
+    mockServerClient.verify(request().withMethod("POST").withPath("/auth/realms/opensky-network/protocol/openid-connect/token"), VerificationTimes.exactly(1));
+  }
+
+  @Test
+  public void testMakeOpenskyTokenCall_ServerError() {
+    // Setup mock response for server error
+    mockServerClient.when(request().withMethod("POST").withPath("/auth/realms/opensky-network/protocol/openid-connect/token")).respond(response().withStatusCode(500).withBody("Internal Server Error"));
+
+    // Execute the method
+    String url = "http://localhost:1080/auth/realms/opensky-network/protocol/openid-connect/token";
+    String clientId = "mock_client_id";
+    char[] clientSecret = "mock_secret".toCharArray();
+    String result = networkHandlerService.makeOpenskyTokenCall(url, clientId, clientSecret);
+
+    // Assert
+    assertNull(result);
+
+    // Verify
+    mockServerClient.verify(request().withMethod("POST").withPath("/auth/realms/opensky-network/protocol/openid-connect/token"), VerificationTimes.exactly(1));
   }
 }
 

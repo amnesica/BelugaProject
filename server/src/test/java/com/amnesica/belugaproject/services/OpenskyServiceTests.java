@@ -1,0 +1,184 @@
+package com.amnesica.belugaproject.services;
+
+import com.amnesica.belugaproject.config.Configuration;
+import com.amnesica.belugaproject.services.aircraft.OpenskyService;
+import com.amnesica.belugaproject.services.network.NetworkHandlerService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.time.Instant;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
+public class OpenskyServiceTests {
+
+  @Mock
+  private Configuration configuration;
+
+  @Mock
+  private NetworkHandlerService networkHandler;
+
+  @InjectMocks
+  private OpenskyService openskyService;
+
+  private static final String MOCK_CLIENT_ID = "mock_client_id";
+  private static final char[] MOCK_CLIENT_SECRET = "mock_client_secret".toCharArray();
+  private static final String MOCK_URL = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token";
+  private static final String MOCK_ACCESS_TOKEN_STRING = "{\"access_token\": \"mock_access_token\"}";
+
+  @BeforeEach
+  public void setup() {
+    // Reset mocks before each test
+    reset(configuration, networkHandler);
+  }
+
+  @Test
+  public void testGetOpenskyAccessToken_Successful() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
+    when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
+    when(networkHandler.makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET)).thenReturn(MOCK_ACCESS_TOKEN_STRING);
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNotNull(accessToken);
+    assertEquals("mock_access_token", accessToken);
+    verify(configuration).getOpenskyClientId();
+    verify(configuration).getOpenskyClientSecret();
+    verify(networkHandler).makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET);
+  }
+
+  @Test
+  public void testGetOpenskyAccessToken_NullClientId() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(null);
+    when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNull(accessToken);
+    verify(configuration).getOpenskyClientId();
+    verify(configuration).getOpenskyClientSecret();
+    verify(networkHandler, never()).makeOpenskyTokenCall(anyString(), anyString(), any());
+  }
+
+  @Test
+  public void testGetOpenskyAccessToken_EmptyClientSecret() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
+    when(configuration.getOpenskyClientSecret()).thenReturn(new char[]{});
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNull(accessToken);
+    verify(configuration).getOpenskyClientId();
+    verify(configuration).getOpenskyClientSecret();
+    verify(networkHandler, never()).makeOpenskyTokenCall(anyString(), anyString(), any());
+  }
+
+  @Test
+  public void testGetOpenskyAccessToken_InvalidJsonResponse() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
+    when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
+    when(networkHandler.makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET)).thenReturn("Invalid JSON");
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNull(accessToken);
+    verify(configuration).getOpenskyClientId();
+    verify(configuration).getOpenskyClientSecret();
+    verify(networkHandler).makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET);
+  }
+
+  @Test
+  public void testNetworkCall_TriggeredWhenLastTokenFetchTimeIsOld() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
+    when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
+    when(networkHandler.makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET)).thenReturn(MOCK_ACCESS_TOKEN_STRING);
+
+    // Simulate last token fetch time more than 1800 seconds in the past
+    openskyService.setLastTokenFetchTime(Instant.now().minusSeconds(1801));
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNotNull(accessToken);
+    assertEquals("mock_access_token", accessToken);
+    verify(networkHandler, times(1)).makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET);
+  }
+
+  @Test
+  public void testNetworkCall_NotTriggeredWhenLastTokenFetchTimeIsRecent() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
+    when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
+
+    // Simulate last token fetch time within 1800 seconds
+    openskyService.setLastTokenFetchTime(Instant.now().minusSeconds(1700));
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNull(accessToken);
+    verify(networkHandler, never()).makeOpenskyTokenCall(anyString(), anyString(), any());
+  }
+
+  @Test
+  public void testNetworkCall_TriggeredWhenLastTokenFetchTimeIsNull() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
+    when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
+    when(networkHandler.makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET)).thenReturn(MOCK_ACCESS_TOKEN_STRING);
+
+    // Simulate null value for lastTokenFetchTime
+    openskyService.setLastTokenFetchTime(null);
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNotNull(accessToken);
+    assertEquals("mock_access_token", accessToken);
+    verify(networkHandler, times(1)).makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET);
+  }
+
+  @Test
+  public void testNetworkCall_HandlesEdgeCaseOfExactly1800Seconds() {
+    // Setup mocks
+    when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
+    when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
+    when(networkHandler.makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET)).thenReturn(MOCK_ACCESS_TOKEN_STRING);
+
+    // Simulate last token fetch time exactly 1800 seconds ago
+    openskyService.setLastTokenFetchTime(Instant.now().minusSeconds(1800));
+
+    // Execute
+    String accessToken = openskyService.getOpenskyAccessToken();
+
+    // Verify
+    assertNotNull(accessToken);
+    assertEquals("mock_access_token", accessToken);
+    verify(networkHandler, times(1)).makeOpenskyTokenCall(MOCK_URL, MOCK_CLIENT_ID, MOCK_CLIENT_SECRET);
+  }
+}
+
