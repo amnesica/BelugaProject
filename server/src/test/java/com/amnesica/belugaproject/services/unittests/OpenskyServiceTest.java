@@ -1,4 +1,4 @@
-package com.amnesica.belugaproject.services;
+package com.amnesica.belugaproject.services.unittests;
 
 import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.services.aircraft.OpenskyService;
@@ -9,16 +9,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
-public class OpenskyServiceTests {
+public class OpenskyServiceTest {
 
   @Mock
   private Configuration configuration;
@@ -41,7 +39,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testGetOpenskyAccessToken_Successful() {
+  public void getOpenskyAccessTokenSuccessfulTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
     when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
@@ -59,7 +57,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testGetOpenskyAccessToken_NullClientId() {
+  public void getOpenskyAccessTokenNullClientIdTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(null);
     when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
@@ -75,7 +73,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testGetOpenskyAccessToken_EmptyClientSecret() {
+  public void getOpenskyAccessTokenEmptyClientSecretTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
     when(configuration.getOpenskyClientSecret()).thenReturn(new char[]{});
@@ -91,7 +89,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testGetOpenskyAccessToken_InvalidJsonResponse() {
+  public void getOpenskyAccessTokenInvalidJsonResponseTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
     when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
@@ -108,7 +106,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testNetworkCall_TriggeredWhenLastTokenFetchTimeIsOld() {
+  public void networkCallTriggeredWhenLastTokenFetchTimeIsOldTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
     when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
@@ -127,7 +125,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testNetworkCall_NotTriggeredWhenLastTokenFetchTimeIsRecent() {
+  public void networkCallNotTriggeredWhenLastTokenFetchTimeIsRecentTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
     when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
@@ -144,7 +142,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testNetworkCall_TriggeredWhenLastTokenFetchTimeIsNull() {
+  public void networkCallTriggeredWhenLastTokenFetchTimeIsNullTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
     when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
@@ -163,7 +161,7 @@ public class OpenskyServiceTests {
   }
 
   @Test
-  public void testNetworkCall_HandlesEdgeCaseOfExactly1800Seconds() {
+  public void networkCallHandlesEdgeCaseOfExactly1800SecondsTest() {
     // Setup mocks
     when(configuration.getOpenskyClientId()).thenReturn(MOCK_CLIENT_ID);
     when(configuration.getOpenskyClientSecret()).thenReturn(MOCK_CLIENT_SECRET);
