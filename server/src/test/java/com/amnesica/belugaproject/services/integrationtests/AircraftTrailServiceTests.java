@@ -1,4 +1,4 @@
-package com.amnesica.belugaproject.services;
+package com.amnesica.belugaproject.services.integrationtests;
 
 import com.amnesica.belugaproject.config.Configuration;
 import com.amnesica.belugaproject.entities.trails.AircraftTrail;

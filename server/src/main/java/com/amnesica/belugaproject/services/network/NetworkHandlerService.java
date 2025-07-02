@@ -1,10 +1,7 @@
 package com.amnesica.belugaproject.services.network;
 
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.Credentials;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,7 +33,7 @@ public class NetworkHandlerService {
    */
   public String makeServiceCall(String url) {
     try {
-      Request request = createDefaultRequest(url);
+      Request request = createDefaultGetRequest(url);
       return executeRequest(request);
     } catch (Exception e) {
       logRequestError(url, e);
@@ -57,7 +54,29 @@ public class NetworkHandlerService {
       validateOpenskyParameters(url, username, password);
 
       String credential = Credentials.basic(username, String.valueOf(password), StandardCharsets.UTF_8);
-      Request request = createAuthenticatedRequest(url, credential);
+      Request request = createAuthenticatedGetRequest(url, credential);
+
+      return executeRequest(request);
+    } catch (Exception e) {
+      logRequestError(url, e);
+      return null;
+    }
+  }
+
+  /**
+   * Makes a POST request to the Opensky Network API to retrieve an access token
+   *
+   * @param url          URL to make the request to
+   * @param clientId     Client ID for authentication
+   * @param clientSecret Client secret for authentication
+   * @return Response body as string, or null if the request failed
+   */
+  public String makeOpenskyTokenCall(String url, String clientId, char[] clientSecret) {
+    try {
+      validateOpenskyParameters(url, clientId, clientSecret);
+
+      RequestBody requestBody = createRequestBodyWithCredentials(clientId, String.valueOf(clientSecret));
+      Request request = createPostRequestWithFormBody(url, requestBody);
 
       return executeRequest(request);
     } catch (Exception e) {
@@ -78,7 +97,7 @@ public class NetworkHandlerService {
     }
 
     try {
-      Request request = createDefaultRequest(url);
+      Request request = createDefaultGetRequest(url);
       return executeRequest(request);
     } catch (Exception e) {
       logRequestError(url, e);
@@ -92,7 +111,7 @@ public class NetworkHandlerService {
    * @param url URL to make the request to
    * @return Configured Request object
    */
-  private Request createDefaultRequest(String url) {
+  private Request createDefaultGetRequest(String url) {
     return new Request.Builder()
         .url(url)
         .header("User-Agent", USER_AGENT)
@@ -106,12 +125,41 @@ public class NetworkHandlerService {
    * @param credential Authentication credential string
    * @return Configured Request object
    */
-  private Request createAuthenticatedRequest(String url, String credential) {
+  private Request createAuthenticatedGetRequest(String url, String credential) {
     return new Request.Builder()
         .url(url)
         .method("GET", null)
         .header("User-Agent", USER_AGENT)
         .addHeader("Authorization", credential)
+        .build();
+  }
+
+  /**
+   * Creates a POST request body with client credentials for token retrieval
+   *
+   * @param clientId     Client ID for authentication
+   * @param clientSecret Client secret for authentication
+   * @return RequestBody containing the credentials
+   */
+  private RequestBody createRequestBodyWithCredentials(String clientId, String clientSecret) {
+    return new FormBody.Builder()
+        .add("grant_type", "client_credentials")
+        .add("client_id", clientId)
+        .add("client_secret", clientSecret)
+        .build();
+  }
+
+  /**
+   * Creates a POST request with form body
+   *
+   * @param url      URL to make the request to
+   * @param formBody Form body
+   * @return Configured Request object
+   */
+  private Request createPostRequestWithFormBody(String url, RequestBody formBody) {
+    return new Request.Builder()
+        .url(url)
+        .post(formBody)
         .build();
   }
 

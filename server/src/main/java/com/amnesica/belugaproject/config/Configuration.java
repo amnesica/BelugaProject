@@ -77,6 +77,12 @@ public class Configuration {
   @Value("${opensky.network.password}")
   private char[] openskyPassword;
 
+  @Value("${opensky.network.clientId:null}")
+  private String openskyClientId;
+
+  @Value("${opensky.network.clientSecret:null}")
+  private char[] openskyClientSecret;
+
   // Url zur Photo-Suche einer Suchmaschine
   @Value("${search.engine.url}")
   private String searchEngineUrl;
