@@ -17,6 +17,7 @@ ext {
   okhttpVersion = "4.12.0"
   lombokVersion = "1.18.38"
   mockServerVersion = "1.0.17"
+  nettyVersion = "4.2.2.Final"
 }
 
 repositories {
@@ -45,6 +46,7 @@ dependencies {
   testImplementation "org.springframework.boot:spring-boot-starter-test"
   testImplementation "software.xdev.mockserver:client:${mockServerVersion}"
   testImplementation "software.xdev.mockserver:server:${mockServerVersion}"
+  testImplementation "io.netty:netty-all:${nettyVersion}"
 }
 
 group = "com.amnesica"

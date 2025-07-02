@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -20,18 +18,29 @@ import java.util.regex.Pattern;
 public class AisService {
   @Autowired
   private Configuration configuration;
+
   private final String aisStreamIoSocketUrl = "wss://stream.aisstream.io/v0/stream";
-  private VesselFinderResponse response;
-  private AisStreamWebsocketClient client;
-  private final int MAX_SIZE_SHIP_HASHMAP = 10000;
   private static final NetworkHandlerService networkHandler = new NetworkHandlerService();
+
+  private final WebSocketClientFactory webSocketClientFactory;
+  private AisStreamWebsocketClient client;
+
+  private VesselFinderResponse response;
 
   public record VesselFinderResponse(String photoUrl) {
   }
 
   @Getter
   private final ConcurrentHashMap<Integer, Ship> aisShipsLongTermMap = new ConcurrentHashMap<>();
+  private final int MAX_SIZE_SHIP_HASHMAP = 10000;
 
+  @Autowired
+  public AisService(Configuration configuration,
+                    WebSocketClientFactory webSocketClientFactory) {
+    this.configuration = configuration;
+    this.webSocketClientFactory = webSocketClientFactory;
+  }
+  
   public Collection<Ship> getAisData(double lamin, double lomin, double lamax, double lomax, boolean enableAis) {
     if (!configuration.aisstreamApiKeyIsValid()) return null;
 
@@ -47,13 +56,29 @@ public class AisService {
 
     if (!enableAis) return null;
 
-    if (client == null || !client.isConnected()) {
+    if (client == null || !client.isConnected) {
       createClient(lamin, lomin, lamax, lomax);
     } else {
       updateClient(lamin, lomin, lamax, lomax);
     }
 
     return client.getAisShips().values();
+  }
+
+  private void createClient(double lamin, double lomin, double lamax, double lomax) {
+    if (!configuration.aisstreamApiKeyIsValid()) return;
+
+    try {
+      client = new AisStreamWebsocketClient(
+          webSocketClientFactory,
+          aisStreamIoSocketUrl,
+          configuration.getAisstreamApiKey(),
+          lamin, lomin, lamax, lomax,
+          aisShipsLongTermMap
+      );
+    } catch (Exception e) {
+      log.error("Server - Error when starting websocket client: {}", e.getMessage());
+    }
   }
 
   private void updateClient(double lamin, double lomin, double lamax, double lomax) {
@@ -70,15 +95,6 @@ public class AisService {
     }
 
     if (client.boundingBoxHasMoved(lamin, lomin, lamax, lomax)) client.updateBoundingBox(lamin, lomin, lamax, lomax);
-  }
-
-  private void createClient(double lamin, double lomin, double lamax, double lomax) {
-    try {
-      if (!configuration.aisstreamApiKeyIsValid()) return;
-      client = new AisStreamWebsocketClient(new URI(aisStreamIoSocketUrl), configuration.getAisstreamApiKey(), lamin, lomin, lamax, lomax, aisShipsLongTermMap);
-    } catch (URISyntaxException e) {
-      log.error("Server - Error when starting websocket client: {}", e.getMessage());
-    }
   }
 
   public VesselFinderResponse getPhotoUrlFromVesselFinder(Integer mmsi) {
