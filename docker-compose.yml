@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile
-    image: belugaproject/belugaproject-server:4.1.1
+    image: belugaproject/belugaproject-server:4.1.2
     container_name: belugaproject-server
     depends_on:
       - postgres
@@ -42,7 +42,7 @@ services:
     build:
       context: .
       dockerfile: webapp/Dockerfile
-    image: belugaproject/belugaproject-webapp:4.1.1
+    image: belugaproject/belugaproject-webapp:4.1.2
     container_name: belugaproject-webapp
     environment:
       - PROD_BASE_URL_WEBAPP=${PROD_BASE_URL_WEBAPP}
